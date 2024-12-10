@@ -1584,7 +1584,7 @@ void DatabaseCanvas::UnselectAllTables()
     }
 }
 
-int DatabaseCanvas::ApplyProperties(const wxAny &any)
+int DatabaseCanvas::ApplyProperties(const wxAny &any, bool logOnly)
 {
     return 0;
 }

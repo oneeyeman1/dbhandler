@@ -216,7 +216,7 @@ BandProperties Divider::GetDividerProperties() const
     return any.As<BandProperties>();
 }
 
-int Divider::ApplyProperties(const wxAny &any)
+int Divider::ApplyProperties(const wxAny &any, bool logOnly)
 {
     return 0;
 }

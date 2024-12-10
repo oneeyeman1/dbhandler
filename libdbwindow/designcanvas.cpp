@@ -606,7 +606,7 @@ void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
 
 }
 
-int DesignCanvas::ApplyProperties(const wxAny &any)
+int DesignCanvas::ApplyProperties(const wxAny &any, bool logOnly)
 {
     return 0;
 }

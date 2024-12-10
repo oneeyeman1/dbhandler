@@ -31,7 +31,7 @@ public:
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
     void SetProperties(TableProperties properties);
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     void ClearGrid();

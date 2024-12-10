@@ -18,7 +18,7 @@ public:
     virtual ~DesignLabel();
     virtual wxAny &GetProperties() wxOVERRIDE;
     void Select(bool selected);
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly) wxOVERRIDE;
 protected:
     void InitSerializable();
 private:

@@ -7,6 +7,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
+#include "database.h"
 #include "configuration.h"
 #include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
@@ -496,8 +497,9 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties(const wxAny &any)
+int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly)
 {
+    TableProperties prop = any.As<TableProperties>();
     return 0;
 }
 

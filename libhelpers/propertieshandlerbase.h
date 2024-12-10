@@ -37,7 +37,7 @@ public:
     PropertiesHandler() { }
     virtual ~PropertiesHandler() { }
 //    virtual void EditProperies(wxNotebook *parent) = 0;
-    virtual int ApplyProperties(const wxAny &any) = 0;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly) = 0;
     virtual wxAny &GetProperties() = 0;
     virtual bool IsLogOnly() const { return false; };
     virtual const std::wstring &GetCommand() const { return L""; };

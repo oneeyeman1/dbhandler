@@ -239,19 +239,50 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 bool PropertiesDialog::ApplyProperties()
 {
     wxAny any;
+    bool logOnly = false;
     switch( m_handler->GetType() )
     {
         case DatabaseFieldPropertiesType:
         {
             FieldProperties prop;
+            logOnly = m_page6->IsLogOnly();
             prop.m_comment = m_page6->GetCommentCtrl()->GetValue();
             any = prop;
         }
         break;
+        case DatabaseTablePropertiesType:
+        {
+            TableProperties prop;
+            logOnly = m_page1->IsLogOnly();
+            prop.m_comment = m_page1->GetComment();
+            prop.m_dataFontCharacterSet = m_page2->GetFont().font.GetEncoding();
+            prop.m_dataFontSize = m_page2->GetFont().font.GetPointSize();
+            prop.m_dataFontName = m_page2->GetFont().font.GetFaceName();
+            prop.m_dataFontItalic = m_page2->GetFont().font.GetStyle() == wxFONTSTYLE_ITALIC;
+            prop.m_dataFontStrikethrough = m_page2->GetFont().font.GetStrikethrough();
+            prop.m_dataFontUnderline = m_page2->GetFont().font.GetUnderlined();
+            prop.m_dataFontWeight = m_page2->GetFont().font.GetWeight();
+            prop.m_headingFontCharacterSet = m_page3->GetFont().font.GetEncoding();
+            prop.m_headingFontName = m_page3->GetFont().font.GetFaceName();
+            prop.m_headingFontItalic = m_page3->GetFont().font.GetStyle() == wxFONTSTYLE_ITALIC;
+            prop.m_headingFontName = m_page3->GetFont().font.GetFaceName();
+            prop.m_headingFontItalic = m_page3->GetFont().font.GetStyle() == wxFONTSTYLE_ITALIC;
+            prop.m_headingFontStrikethrough = m_page3->GetFont().font.GetStrikethrough();
+            prop.m_headingFontUnderline = m_page3->GetFont().font.GetUnderlined();
+            prop.m_headingFontWeight = m_page3->GetFont().font.GetWeight();
+            prop.m_labelFontCharacterSer = m_page4->GetFont().font.GetEncoding();
+            prop.m_labelFontName = m_page4->GetFont().font.GetFaceName();
+            prop.m_labelFontName = m_page4->GetFont().font.GetFaceName();
+            prop.m_labelFontItalic = m_page4->GetFont().font.GetStyle() == wxFONTSTYLE_ITALIC;
+            prop.m_labelFontStrikethrough = m_page4->GetFont().font.GetStrikethrough();
+            prop.m_labelFontUnderline = m_page4->GetFont().font.GetUnderlined();
+            prop.m_labelFontWeight = m_page4->GetFont().font.GetWeight();
+            any = prop;
+        }
     }
     std::vector<std::wstring> errors;
     bool result = true;
-    m_handler->ApplyProperties( any );
+    m_handler->ApplyProperties( any, logOnly );
 /*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
@@ -315,4 +346,7 @@ bool PropertiesDialog::IsLogOnly() const
 {
     if( m_page1 )
         return m_page1->IsLogOnly();
+    if( m_page6 )
+        return m_page6->IsLogOnly();
+    return false;
 }

@@ -20,7 +20,7 @@ public:
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftDoubleClick(wxMouseEvent &event) wxOVERRIDE;
 
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE { return any; }
     void PopulateQueryCanvas(const std::vector<TableField *> &queryFields, const std::vector<GroupFields> &groupByFields);
 protected:
