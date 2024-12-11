@@ -27,6 +27,7 @@ public:
         if( display ) m_columns++; else m_columns--;
     }
     void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
+    void SetDatabase(const Database *db) { m_db = db; }
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
@@ -53,6 +54,7 @@ private:
     DatabaseTable *m_table;
     bool m_displayTypes, m_displayComments;
     int m_columns;
+    const Database *m_db;
     wxString m_catalogName, m_schemaName, m_tableName;
 };
 
