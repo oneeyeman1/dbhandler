@@ -1591,5 +1591,5 @@ int DatabaseCanvas::ApplyProperties(const wxAny &any, bool logOnly)
 
 wxAny &DatabaseCanvas::GetProperties()
 {
-    return any;
+    return m_any;
 }

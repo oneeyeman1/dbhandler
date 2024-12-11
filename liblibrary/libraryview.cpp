@@ -951,7 +951,7 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     {
         std::unique_ptr<PropertiesHandler> ptr( this );
         wxString title = _( "Options" );
-        any = this;
+        m_any = this;
         wxString command = wxEmptyString;
         SetType( LibraryPainterPropertiesType );
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
@@ -986,5 +986,5 @@ int LibraryViewPainter::ApplyProperties(const wxAny &any, bool logOnly)
 
 wxAny &LibraryViewPainter::GetProperties()
 {
-    return any;
+    return m_any;
 }

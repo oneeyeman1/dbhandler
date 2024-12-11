@@ -49,7 +49,7 @@ public:
     const wxString &GetFieldType() const { return m_type; }
 protected:
     int m_object;
-    wxAny any;
+    wxAny m_any;
     Database *m_db;
     wxString m_type;
 };
