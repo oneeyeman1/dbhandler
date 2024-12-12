@@ -29,6 +29,7 @@
 
 TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, bool isTable) : PropertyPageBase( parent )
 {
+    m_isLogOnly = false;
     m_commentText = comment;
     m_nameText = name;
     m_ownerText = owner;
@@ -123,7 +124,7 @@ wxTextCtrl *TableGeneralProperty::GetCommentCtrl()
     return m_comment;
 }
 
-void TableGeneralProperty::OnLogOnly( wxCommandEvent &event )
+void TableGeneralProperty::OnLogOnly(wxCommandEvent &event)
 {
     m_isLogOnly = event.GetInt();
 }
