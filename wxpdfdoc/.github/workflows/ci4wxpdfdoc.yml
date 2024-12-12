@@ -1,0 +1,48 @@
+name: CI for wxPdfDoc
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Install dependencies (Linux)
+      run: |
+        sudo apt-get -qq update
+        #sudo apt-get install -y libwxgtk3.0-gtk3-dev
+        sudo add-apt-repository ppa:kicad/kicad-7.0-releases
+        sudo apt update
+        sudo apt-get install -y libwxgtk3.2-dev
+      if: matrix.os == 'ubuntu-latest'
+    - name: Install dependencies (macOS)
+      run: |
+        # brew update
+        brew install automake
+        brew install wxwidgets
+      if: matrix.os == 'macos-latest'
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Configure
+      run: |
+        autoreconf
+        ./configure
+    - name: Build
+      run: |
+        make
+    - name: Testing
+      run: |
+        pwd
+        ./samples/minimal/minimal -t -s ./samples/minimal -f ../../lib/fonts
+    - name: Installing
+      run: |
+        sudo make install
