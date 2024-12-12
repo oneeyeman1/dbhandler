@@ -456,6 +456,26 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     sqlite3_finalize( stmt );
     sqlite3_finalize( stmt1 );
     m_numOfTables = count;
+    if( !result )
+    {
+        res = sqlite3_exec( m_db, "COMMIT TRANSACTION", nullptr, nullptr, &err );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        res = sqlite3_exec( m_db, "COMMIT TRANSACTION", nullptr, nullptr, &err );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
     return result;
 }
 
@@ -703,19 +723,12 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         id = QT;
 #endif // __WXGTK__
     }
+    char *error;
     std::wstring errorMessage, query;
     std::wostringstream istr;
     bool exist;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
-    int res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
-    if( res != SQLITE_OK )
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
-    }
-    else
     {
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
@@ -976,37 +989,47 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             }
             if( !isLog )
             {
-                res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
-                if( res == SQLITE_OK )
+                int res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &error );
+                if( res != SQLITE_OK )
                 {
-                    res = sqlite3_step( stmt );
-                    if( res != SQLITE_DONE )
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    result = 1;
+                }
+                else
+                {
+                    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
+                    if( res == SQLITE_OK )
+                    {
+                        res = sqlite3_step( stmt );
+                        if( res != SQLITE_DONE )
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                        }
+                    }
+                    else
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
                     }
+                    sqlite3_finalize( stmt );
+                    if( result == 0 )
+                        query = L"COMMIT;";
+                    else
+                        query = L"ROLLBACK;";
+                    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
+                    if( res != SQLITE_OK )
+                    {
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                        result = 1;
+                    }
                 }
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                }
-                sqlite3_finalize( stmt );
             }
         }
-    }
-    if( result == 0 )
-        query = L"COMMIT;";
-    else
-        query = L"ROLLBACK;";
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
-    if( res != SQLITE_OK )
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
     }
     return result;
 }
