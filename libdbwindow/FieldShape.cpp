@@ -152,7 +152,7 @@ void FieldShape::SetField(TableField *field)
     for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::iterator it = field->GetFieldProperties().m_display.m_format.begin(); it != field->GetFieldProperties().m_display.m_format.end(); ++it )
         for( std::vector<std::pair<std::wstring,std::wstring> >::iterator it1 = (*it).second.begin(); it1 != (*it).second.end(); ++it1 )
             prop.m_display.m_format[(*it).first].push_back( (*it1) );
-    any = prop;
+    m_any = prop;
 }
 
 TableField *FieldShape::GetField()
@@ -208,10 +208,10 @@ int FieldShape::ApplyProperties(const wxAny &any, bool logOnly)
 
 wxAny &FieldShape::GetProperties()
 {
-    return any;
+    return m_any;
 }
 
 void FieldShape::SetProperties(FieldProperties prop)
 {
-    any = prop;
+    m_any = prop;
 }

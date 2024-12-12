@@ -505,10 +505,10 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly)
 
 wxAny &MyErdTable::GetProperties()
 {
-    return any;
+    return m_any;
 }
 
 void MyErdTable::SetProperties(TableProperties properties)
 {
-    any = properties;
+    m_any = properties;
 }
