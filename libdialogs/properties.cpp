@@ -254,7 +254,7 @@ bool PropertiesDialog::ApplyProperties()
         {
             TableProperties prop;
             logOnly = m_page1->IsLogOnly();
-            prop.m_comment = m_page1->GetComment();
+            prop.m_comment = m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
             prop.m_dataFontCharacterSet = m_page2->GetFont().font.GetEncoding();
             prop.m_dataFontSize = m_page2->GetFont().font.GetPointSize();
             prop.m_dataFontName = m_page2->GetFont().font.GetFaceName();
