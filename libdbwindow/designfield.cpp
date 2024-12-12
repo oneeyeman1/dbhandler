@@ -111,7 +111,7 @@ wxAny &DesignField::GetProperties()
     return m_any;
 }
 
-int DesignField::ApplyProperties(const wxAny &any, bool logOnly)
+int DesignField::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

@@ -959,7 +959,7 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-int LibraryViewPainter::ApplyProperties(const wxAny &any, bool logOnly)
+int LibraryViewPainter::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     if( !m_conf->m_libPainterOptions.m_general.m_showCheckedOut )
         m_tree->SetColumnWidth( COL_CHECKEDOUT, 0 );

@@ -258,6 +258,8 @@ extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, std::unique_pt
     if( dlg.ShowModal() == wxID_OK )
     {
         logOnly = dlg.IsLogOnly();
+        if( logOnly )
+            command = dlg.GetCommand();
     }
 }
 

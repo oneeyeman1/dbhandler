@@ -11,7 +11,7 @@ public:
     const wxString &GetDividerType() const;
     BandProperties GetDividerProperties() const;
     virtual void OnDragging(const wxPoint& pos) wxOVERRIDE;
-    virtual int ApplyProperties(const wxAny &any, bool logOnly) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;

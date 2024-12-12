@@ -201,7 +201,7 @@ void FieldShape::Select(bool state)
     return rect;
 }
 */
-int FieldShape::ApplyProperties(const wxAny &any, bool logOnly)
+int FieldShape::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

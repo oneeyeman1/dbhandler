@@ -282,7 +282,7 @@ bool PropertiesDialog::ApplyProperties()
     }
     std::vector<std::wstring> errors;
     bool result = true;
-    m_handler->ApplyProperties( any, logOnly );
+    m_handler->ApplyProperties( any, logOnly, m_command );
 /*    int res = m_handler->GetProperties( errors );
     if( !res )
     {

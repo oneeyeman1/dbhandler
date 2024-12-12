@@ -497,9 +497,11 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly)
+int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
+    std::vector<std::wstring> errorMsg;
     TableProperties prop = any.As<TableProperties>();
+//    m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
     return 0;
 }
 
