@@ -501,8 +501,13 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
 {
     std::vector<std::wstring> errorMsg;
     TableProperties prop = any.As<TableProperties>();
-//    m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
-    return 0;
+    auto result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+    if( !result )
+    {
+        m_table->SetTableProperties( prop );
+        m_comment->SetText( prop.m_comment );
+    }
+    return result;
 }
 
 wxAny &MyErdTable::GetProperties()
