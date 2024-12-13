@@ -1651,17 +1651,31 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else // *nix
     {
+#ifdef __WXGTK__
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
         if( pimpl.m_subtype == L"MySQL" )
-            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' );";
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
             if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON COMFLCT DO NOTHING;";
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' ) ON COMFLCT DO NOTHING;";
             else
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' );";
         }
+#elif __WXQT__
+        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
+        if( pimpl.m_subtype == L"MySQL" )
+            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
+        if( pimpl.m_subtype == L"PostgreSQL" )
+        {
+            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' ) ON COMFLCT DO NOTHING;";
+            else
+                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
+        }
+#endif // __WXGTK__
     }
     SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
