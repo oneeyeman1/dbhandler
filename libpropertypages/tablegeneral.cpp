@@ -40,7 +40,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
     m_owner = new wxTextCtrl( this, wxID_ANY, owner, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     m_tableName = new wxTextCtrl( this, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-    m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_NO_VSCROLL );
+    m_comment = new wxTextCtrl( this, wxID_ANY, comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_NO_VSCROLL );
     m_comment->SetMaxLength( 215 );
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
     set_properties();
@@ -58,6 +58,8 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
         m_label1->Hide();
         m_label2->Hide();
     }
+    m_comment->SetFocus();
+    m_comment->SetSelection( 0, -1 );
 }
 
 TableGeneralProperty::~TableGeneralProperty()
