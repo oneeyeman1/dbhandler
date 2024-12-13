@@ -373,7 +373,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     else // *nix
     {
 #ifdef __WXGTK__
-        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
 #else
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
 #endif // __WXGTK__
