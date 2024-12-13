@@ -274,10 +274,33 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 #endif
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, title, pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
 //    m_frame->SetMenuBar( m_parent->GetMenuBar() );
+    auto id = wxPlatformInfo::Get().GetOperatingSystemId();
     if( m_type == DatabaseView )
     {
         m_log = new wxFrame( m_frame, wxID_ANY, _( "Activity Log" ), wxDefaultPosition, wxDefaultSize, wxMINIMIZE_BOX | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT );
         m_text = new wxTextCtrl( m_log, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY );
+        auto font = m_text->GetFont();
+        if( id & wxOS_WINDOWS )
+        {
+            font.SetFaceName( "MS Sans Seriff" );
+            font.SetPointSize( 8 );
+        }
+        else if( id & wxOS_MAC )
+        {
+            font.SetFaceName( "MS Sans Seriff" );
+            font.SetPointSize( 8 );
+        }
+        else
+        {
+#ifdef __WXGTK__
+            font.SetFaceName( "Cantarell" );
+            font.SetPointSize( 11 );
+#elif __WXQT__
+            font.SetFaceName( "Mono Seriff" );
+            font.SetPointSize( 10 );
+#endif
+        }
+        m_text->SetFont( font );
     }
     sizer = new wxBoxSizer( wxVERTICAL );
 //    sizer->Layout();
@@ -1546,6 +1569,11 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
 //        TableProperties *props = *static_cast<TableProperties *>( properties );
         res = func( m_frame, propertiesPtr, title, command, erdTable->GetTable(), logOnly );
+        if( logOnly )
+        {
+            m_text->SetValue( command );
+            m_log->Show();
+        }
     }
 }
 
