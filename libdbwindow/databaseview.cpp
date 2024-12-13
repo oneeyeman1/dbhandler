@@ -1472,7 +1472,10 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
                 {
                     dbField = wxDynamicCast( shape, FieldShape );
                     if( dbField )
+                    {
+                        erdTable = wxDynamicCast( dbField->GetParentShape()->GetParentShape(), MyErdTable );
                         type = DatabaseFieldPropertiesType;
+                    }
                     else
                     {
                         designField = wxDynamicCast( shape, DesignField );
