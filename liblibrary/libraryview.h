@@ -12,7 +12,7 @@ class LibraryViewPainter :  public ABLBaseView, public PropertiesHandler
 public:
     virtual bool OnCreate(wxDocument *doc, long flags) wxOVERRIDE;
     virtual void OnDraw(wxDC *) wxOVERRIDE;
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
     void SetViewType(ViewType type) { m_type = type; }
     void SetParentWindow(wxWindow *window) { m_parent = wxStaticCast( window, wxDocMDIParentFrame ); }

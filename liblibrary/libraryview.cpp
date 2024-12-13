@@ -951,7 +951,7 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     {
         std::unique_ptr<PropertiesHandler> ptr( this );
         wxString title = _( "Options" );
-        any = this;
+        m_any = this;
         wxString command = wxEmptyString;
         SetType( LibraryPainterPropertiesType );
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
@@ -959,7 +959,7 @@ void LibraryViewPainter::OnPainterProperties(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-int LibraryViewPainter::ApplyProperties(const wxAny &any)
+int LibraryViewPainter::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     if( !m_conf->m_libPainterOptions.m_general.m_showCheckedOut )
         m_tree->SetColumnWidth( COL_CHECKEDOUT, 0 );
@@ -986,5 +986,5 @@ int LibraryViewPainter::ApplyProperties(const wxAny &any)
 
 wxAny &LibraryViewPainter::GetProperties()
 {
-    return any;
+    return m_any;
 }

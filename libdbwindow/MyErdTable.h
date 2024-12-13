@@ -27,11 +27,12 @@ public:
         if( display ) m_columns++; else m_columns--;
     }
     void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
+    void SetDatabase(Database *db) { m_db = db; }
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
     const wxString &GetTableName() const { return m_tableName; }
     void SetProperties(TableProperties properties);
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     void ClearGrid();
@@ -53,6 +54,7 @@ private:
     DatabaseTable *m_table;
     bool m_displayTypes, m_displayComments;
     int m_columns;
+    Database *m_db;
     wxString m_catalogName, m_schemaName, m_tableName;
 };
 

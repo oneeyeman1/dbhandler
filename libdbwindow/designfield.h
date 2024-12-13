@@ -7,7 +7,7 @@ public:
     DesignField(const wxFont font, const wxString &label, int alignment);
     virtual ~DesignField();
     virtual wxAny &GetProperties() wxOVERRIDE;
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
 private:
     wxString m_label;
     wxSFTextShape *m_text;

@@ -18,7 +18,7 @@ public:
     PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, const DatabaseTable *table);
     const std::wstring &GetCommand();
     void GetTableProperties();
-
+    bool IsLogOnly() const;
 private:
     TableGeneralProperty *m_page1;
     CFontPropertyPage *m_page2, *m_page3, *m_page4;

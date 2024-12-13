@@ -7,6 +7,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
+#include "database.h"
 #include "configuration.h"
 #include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
@@ -496,17 +497,25 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties(const wxAny &any)
+int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
-    return 0;
+    std::vector<std::wstring> errorMsg;
+    TableProperties prop = any.As<TableProperties>();
+    auto result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+    if( !result )
+    {
+        m_table->SetTableProperties( prop );
+        m_comment->SetText( prop.m_comment );
+    }
+    return result;
 }
 
 wxAny &MyErdTable::GetProperties()
 {
-    return any;
+    return m_any;
 }
 
 void MyErdTable::SetProperties(TableProperties properties)
 {
-    any = properties;
+    m_any = properties;
 }

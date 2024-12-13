@@ -143,7 +143,6 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
             m_db = mysql_real_connect( m_db, m_pimpl->m_myconv.to_bytes( m_pimpl->m_host.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_user.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_password.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( m_pimpl->m_dbName.c_str() ).c_str(), m_port, m_pimpl->m_socket == L"" ? NULL : m_pimpl->m_myconv.to_bytes( m_pimpl->m_socket.c_str() ).c_str(), m_flags );
             if( !m_db )
             {
-                auto e = mysql_error( m_db );
                 err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                 errorMsg.push_back( err );
                 errorMsg.push_back( L"Connection to database failed!" );
@@ -240,7 +239,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
         }
         else
         {
-            res == mysql_rollback( m_db );
+            res = mysql_rollback( m_db );
             if( res )
             {
                 err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -2217,7 +2216,40 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &ta
 
 int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
+    std::map<std::wstring, std::vector<TableDefinition> > defs;
+    int count = 0;
     int result = 0;
+    std::wstring query = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
+    auto res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( res )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    else
+    {
+        MYSQL_RES *results = mysql_store_result( m_db );
+        if( !results )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        else
+        {
+            auto row =  mysql_fetch_row( results );
+            while( row )
+            {
+                auto catalog = m_pimpl->m_myconv.from_bytes( row[0] );
+                auto schema = m_pimpl->m_myconv.from_bytes( row[1] );
+                auto table = m_pimpl->m_myconv.from_bytes( row[2] );
+                defs[catalog].push_back( TableDefinition( catalog, schema, table ) );
+                count++;
+                row =  mysql_fetch_row( results );
+            }
+        }
+    }
     return result;
 }
 
@@ -2335,11 +2367,59 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
                             {
                                 headerStr = m_pimpl->m_myconv.from_bytes( comment );
                             }
+                            else
+                            {
+                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                                errorMsg.push_back( err );
+                                result = 1;
+                            }
+                        }
+                        else
+                        {
+                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                            errorMsg.push_back( err );
+                            result = 1;
                         }
                     }
+                    else
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                    }
+                }
+                else
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                    errorMsg.push_back( err );
+                    result = 1;
                 }
             }
+            else
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
+        else
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        if( !mysql_stmt_close( res ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    else
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+        errorMsg.push_back( err );
+        result = 1;
     }
     return result;
 }

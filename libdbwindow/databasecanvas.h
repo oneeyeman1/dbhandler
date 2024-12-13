@@ -82,7 +82,7 @@ public:
     void LoadQuery(const std::map<std::wstring, std::vector<DatabaseTable *> >&tables);
     void SetQueryArguments(const std::vector<QueryArguments> arguments);
     void UnselectAllTables();
-    virtual int ApplyProperties(const wxAny &any) wxOVERRIDE;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     bool IsTableDisplayed(const std::wstring &name);

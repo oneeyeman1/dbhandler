@@ -1491,6 +1491,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
             res = db->GetTableProperties( dbTable, errors );
         }
         erdTable->SetProperties( erdTable->GetTable()->GetTableProperties() );
+        erdTable->SetDatabase( db );
         std::unique_ptr<PropertiesHandler> ptr( erdTable );
         propertiesPtr = std::move( ptr );
         propertiesPtr->SetDatabase( db );

@@ -28,7 +28,7 @@ XS_IMPLEMENT_CLONABLE_CLASS(DesignLabel, wxSFRectShape);
 DesignLabel::DesignLabel() : wxSFRectShape()
 {
     m_object = DesignLabelPropertiesType;
-    auto prop = any.As<DesignLabelProperties>();
+    auto prop = m_any.As<DesignLabelProperties>();
     SetHAlign( wxSFShapeBase::halignCENTER );
     SetVAlign( wxSFShapeBase::valignMIDDLE );
     AddStyle( sfsLOCK_CHILDREN );
@@ -53,7 +53,7 @@ DesignLabel::DesignLabel() : wxSFRectShape()
 
 DesignLabel::DesignLabel(const wxFont font, const wxString &label, int alignment) : wxSFRectShape()
 {
-    auto prop = any.As<DesignLabelProperties>();
+    auto prop = m_any.As<DesignLabelProperties>();
     m_object = DesignLabelPropertiesType;
     prop.m_general.m_name = label + "_t";
     prop.m_general.m_tag = "";
@@ -135,7 +135,7 @@ DesignLabel::~DesignLabel()
 
 void DesignLabel::InitSerializable()
 {
-    auto prop = any.As<DesignLabelProperties>();
+    auto prop = m_any.As<DesignLabelProperties>();
     XS_SERIALIZE( prop.m_general.m_name, "LabelName" );
     XS_SERIALIZE( prop.m_general.m_tag, "Tag" );
     XS_SERIALIZE( prop.m_general.m_supressPrint, "SuppressPrint" );
@@ -149,7 +149,7 @@ void DesignLabel::InitSerializable()
 
 wxAny &DesignLabel::GetProperties()
 {
-    return any;
+    return m_any;
 }
 
 void DesignLabel::Select(bool selected)
@@ -158,7 +158,7 @@ void DesignLabel::Select(bool selected)
     wxSFRectShape::Select( selected );
 }
 
-int DesignLabel::ApplyProperties(const wxAny &any)
+int DesignLabel::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

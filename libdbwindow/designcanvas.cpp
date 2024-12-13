@@ -67,7 +67,7 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas
     m_view = view;
     startPoint.x = 1;
     startPoint.y = 1;
-    DesignProperties options = any.As<DesignProperties>();
+    DesignProperties options = m_any.As<DesignProperties>();
     options.m_general.colorBackground = *wxWHITE;
 //    m_options.customMove = true;
     options.m_general.interval = 0;
@@ -606,7 +606,7 @@ void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
 
 }
 
-int DesignCanvas::ApplyProperties(const wxAny &any)
+int DesignCanvas::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

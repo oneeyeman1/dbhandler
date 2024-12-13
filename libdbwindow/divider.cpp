@@ -30,7 +30,7 @@ Divider::Divider() : wxSFRectShape()
 {
     m_object = DividerPropertiesType;
     m_Fill = wxBrush( *wxGREY_BRUSH );
-    BandProperties props = any.As<BandProperties>();
+    BandProperties props = m_any.As<BandProperties>();
     props.m_general.m_color = "Transparent";
     props.m_general.m_height = 200;
     props.m_cursorFile = wxEmptyString;
@@ -76,7 +76,7 @@ Divider::Divider() : wxSFRectShape()
 
 Divider::Divider(const wxString &text, const wxString &cursorFile, int stockCursor, wxSFDiagramManager *manager) : wxSFRectShape( wxRealPoint( 1, 1 ), wxRealPoint( 5000, -1 ), manager )
 {
-    BandProperties props = any.As<BandProperties>();
+    BandProperties props = m_any.As<BandProperties>();
     m_object = DividerPropertiesType;
     props.m_type = text;
     props.m_general.m_color = "Transparent";
@@ -213,15 +213,15 @@ const wxString &Divider::GetDividerType() const
 
 BandProperties Divider::GetDividerProperties() const
 {
-    return any.As<BandProperties>();
+    return m_any.As<BandProperties>();
 }
 
-int Divider::ApplyProperties(const wxAny &any)
+int Divider::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }
 
 wxAny &Divider::GetProperties()
 {
-    return any;
+    return m_any;
 }

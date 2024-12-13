@@ -29,6 +29,7 @@
 
 TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &name, const wxString &owner, const wxString &comment, bool isTable) : PropertyPageBase( parent )
 {
+    m_isLogOnly = false;
     m_commentText = comment;
     m_nameText = name;
     m_ownerText = owner;
@@ -37,8 +38,8 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Owner" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Table" ) );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Table comment:" ) );
-    m_owner = new wxTextCtrl( this, wxID_ANY );
-    m_tableName = new wxTextCtrl( this, wxID_ANY );
+    m_owner = new wxTextCtrl( this, wxID_ANY, owner, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+    m_tableName = new wxTextCtrl( this, wxID_ANY, name, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_PROCESS_ENTER | wxTE_NO_VSCROLL );
     m_comment->SetMaxLength( 215 );
     m_log = new wxCheckBox( this, wxID_ANY, _( "Log Only" ) );
@@ -49,6 +50,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
         ok->SetDefault();
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
+    m_log->Bind( wxEVT_CHECKBOX, &TableGeneralProperty::OnLogOnly, this );
     if( m_isTable )
     {
         m_owner->Hide();
@@ -117,12 +119,12 @@ const std::wstring &TableGeneralProperty::GetComment()
     return m_comment->GetValue().ToStdWstring();
 }
 
-bool TableGeneralProperty::IsLogOnly()
-{
-    return m_log->GetValue();
-}
-
 wxTextCtrl *TableGeneralProperty::GetCommentCtrl()
 {
     return m_comment;
+}
+
+void TableGeneralProperty::OnLogOnly(wxCommandEvent &event)
+{
+    m_isLogOnly = event.GetInt();
 }

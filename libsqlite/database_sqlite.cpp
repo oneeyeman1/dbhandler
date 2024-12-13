@@ -138,7 +138,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     }
     else
     {
-        res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, &err );
+        res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &err );
         if( res != SQLITE_OK )
         {
             GetErrorMessage( res, errorMessage );
@@ -360,6 +360,7 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 
 int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
+    char *err = nullptr;
     std::wstring errorMessage;
     sqlite3_stmt *stmt = nullptr, *stmt1 = nullptr;
     int result = 0, res = SQLITE_OK, count = 0;
@@ -378,65 +379,103 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
 #endif // __WXGTK__
     }
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt1, 0 );
+    res = sqlite3_busy_timeout( m_db, 6000 );
     if( res != SQLITE_OK )
     {
         GetErrorMessage( res, errorMessage );
         errorMsg.push_back( errorMessage );
         result = 1;
     }
-    else
+    res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &err );
+    if( res != SQLITE_OK )
     {
-        if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+        result = 1;
+    }
+    sqlite3_free( err );
+    if( !result )
+    {
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt1, 0 );
+        if( res != SQLITE_OK )
         {
-            for( ; ; )
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+            result = 1;
+        }
+        if( !result )
+        {
+            if( ( res = sqlite3_prepare_v2( m_db, query1.c_str(), (int) query1.length(), &stmt, 0 ) ) == SQLITE_OK )
             {
-                res = sqlite3_step( stmt );
-                if( res == SQLITE_ROW  )
+                for( ; ; )
                 {
-                    const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                    res = sqlite3_bind_text( stmt1, 1, tableName, -1, SQLITE_STATIC );
-                    if( res != SQLITE_OK )
+                    res = sqlite3_step( stmt );
+                    if( res == SQLITE_ROW  )
                     {
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
-                        result = 1;
-                    }
-                    else
-                    {
-                        res = sqlite3_step( stmt1 );
-                        if( res != SQLITE_DONE )
+                        const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
+                        res = sqlite3_bind_text( stmt1, 1, tableName, -1, SQLITE_STATIC );
+                        if( res != SQLITE_OK )
                         {
                             GetErrorMessage( res, errorMessage );
                             errorMsg.push_back( errorMessage );
                             result = 1;
                         }
+                        else
+                        {
+                            res = sqlite3_step( stmt1 );
+                            if( res != SQLITE_DONE )
+                            {
+                                GetErrorMessage( res, errorMessage );
+                                errorMsg.push_back( errorMessage );
+                                result = 1;
+                            }
+                        }
+                        pimpl.m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                        count++;
+                        res = sqlite3_reset( stmt1 );
                     }
-                    pimpl.m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, L"main", sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
-                    count++;
-                    res = sqlite3_reset( stmt1 );
-                }
-                else if( res == SQLITE_DONE )
-                    break;
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                    break;
+                    else if( res == SQLITE_DONE )
+                        break;
+                    else
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                        break;
+                    }
                 }
             }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
         }
-        else
+    }
+    sqlite3_finalize( stmt );
+    sqlite3_finalize( stmt1 );
+    m_numOfTables = count;
+    if( !result )
+    {
+        res = sqlite3_exec( m_db, "COMMIT TRANSACTION", nullptr, nullptr, &err );
+        if( res != SQLITE_OK )
         {
             result = 1;
             GetErrorMessage( res, errorMessage );
             errorMsg.push_back( errorMessage );
         }
     }
-    sqlite3_finalize( stmt );
-    sqlite3_finalize( stmt1 );
-    m_numOfTables = count;
+    else
+    {
+        res = sqlite3_exec( m_db, "COMMIT TRANSACTION", nullptr, nullptr, &err );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
     return result;
 }
 
@@ -445,7 +484,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     std::wstring errorMessage, query;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
+    res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, 0 );
     if( res == SQLITE_OK )
     {
         bool exists = IsIndexExists( index_name, L"", schemaName, tableName, errorMsg );
@@ -684,19 +723,12 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         id = QT;
 #endif // __WXGTK__
     }
+    char *error;
     std::wstring errorMessage, query;
     std::wostringstream istr;
     bool exist;
     sqlite3_stmt *stmt = NULL;
     int result = 0;
-    int res = sqlite3_exec( m_db, "BEGIN TRANSACTION", NULL, NULL, 0 );
-    if( res != SQLITE_OK )
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
-    }
-    else
     {
         std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
         std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
@@ -957,37 +989,47 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             }
             if( !isLog )
             {
-                res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
-                if( res == SQLITE_OK )
+                int res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &error );
+                if( res != SQLITE_OK )
                 {
-                    res = sqlite3_step( stmt );
-                    if( res != SQLITE_DONE )
+                    GetErrorMessage( res, errorMessage );
+                    errorMsg.push_back( errorMessage );
+                    result = 1;
+                }
+                else
+                {
+                    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), (int) command.length(), &stmt, 0 );
+                    if( res == SQLITE_OK )
+                    {
+                        res = sqlite3_step( stmt );
+                        if( res != SQLITE_DONE )
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMessage );
+                            errorMsg.push_back( errorMessage );
+                        }
+                    }
+                    else
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
                         errorMsg.push_back( errorMessage );
                     }
+                    sqlite3_finalize( stmt );
+                    if( result == 0 )
+                        query = L"COMMIT;";
+                    else
+                        query = L"ROLLBACK;";
+                    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
+                    if( res != SQLITE_OK )
+                    {
+                        GetErrorMessage( res, errorMessage );
+                        errorMsg.push_back( errorMessage );
+                        result = 1;
+                    }
                 }
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
-                }
-                sqlite3_finalize( stmt );
             }
         }
-    }
-    if( result == 0 )
-        query = L"COMMIT;";
-    else
-        query = L"ROLLBACK;";
-    res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
-    if( res != SQLITE_OK )
-    {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
-        result = 1;
     }
     return result;
 }

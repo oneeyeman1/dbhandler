@@ -37,7 +37,7 @@ public:
     PropertiesHandler() { }
     virtual ~PropertiesHandler() { }
 //    virtual void EditProperies(wxNotebook *parent) = 0;
-    virtual int ApplyProperties(const wxAny &any) = 0;
+    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) = 0;
     virtual wxAny &GetProperties() = 0;
     virtual bool IsLogOnly() const { return false; };
     virtual const std::wstring &GetCommand() const { return L""; };
@@ -49,7 +49,7 @@ public:
     const wxString &GetFieldType() const { return m_type; }
 protected:
     int m_object;
-    wxAny any;
+    wxAny m_any;
     Database *m_db;
     wxString m_type;
 };

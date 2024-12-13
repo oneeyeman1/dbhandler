@@ -21,15 +21,9 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
 {
     m_isModified = false;
     m_table = table;
-    temp = new wxTextCtrl( this, wxID_ANY );
+    m_foreignKeyColumnsFields = new FieldWindow( this/*, pt1, width1*/ );
     m_label = new wxStaticText( this, wxID_ANY, _( "Table Columns" ) );
     m_fields = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    set_properties();
-    do_layout();
-    wxPoint pt1 = temp->GetPosition();
-    int width1 = temp->GetSize().GetWidth();
-    temp->Hide();
-    m_foreignKeyColumnsFields = new FieldWindow( this, pt1, width1 );
     for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
         if( (*it)->IsPrimaryKey() )
@@ -38,6 +32,8 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
     }
+    set_properties();
+    do_layout();
 }
 
 void TablePrimaryKey::do_layout()
@@ -46,7 +42,7 @@ void TablePrimaryKey::do_layout()
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( temp, 0, wxEXPAND, 0 );
+    sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
     sizer1->Add( 60, 60, 0, wxEXPAND, 0 );
     sizer1->Add( m_label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
