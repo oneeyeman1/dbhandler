@@ -226,7 +226,12 @@ void PropertiesDialog::do_layout()
 void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
     if( ApplyProperties() )
+    {
         dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) )->Enable( false );
+        if( !( m_page1 && m_page1->IsLogOnly() ) || ( !( m_page6 && m_page6->IsLogOnly() ) ) )
+            FindWindowByName( "dbcanvas" )->Refresh();
+        m_isApplied = true;
+    }
 }
 
 void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
