@@ -77,6 +77,8 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, const DatabaseTable *table):
     wxDialog(parent, id, title)
 {
+    m_page1 = nullptr;
+    m_page6 = nullptr;
     std::vector<std::wstring> errors;
     m_isApplied = false;
     m_handler = handler;
@@ -238,6 +240,7 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     if( !m_isApplied )
         ApplyProperties();
+    wxYield();
     EndModal( wxID_OK );
 }
 
