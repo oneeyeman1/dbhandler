@@ -31,14 +31,16 @@ protected:
     void OnEditNewFormat(wxCommandEvent &event);
     void OnUpdateUIEditButton(wxUpdateUIEvent &event);
     // begin wxGlade: DatabaseFieldDisplay::attributes
-    wxListBox* m_formats;
-    wxButton* m_edit;
-    wxButton* m_new;
-    wxComboBox* m_justify;
-    wxTextCtrl* m_height;
-    wxTextCtrl* m_width;
+    wxListBox *m_formats;
+    wxButton *m_edit;
+    wxButton *m_new;
+    wxComboBox *m_justify, *m_case;
+    wxTextCtrl *m_displayHeight;
+    wxTextCtrl *m_displayWidth;
     // end wxGlade
     void OnPageModified(wxCommandEvent &event);
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
+    wxCheckBox *m_picture;
 }; // wxGlade: end class
 
 

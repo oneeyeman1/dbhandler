@@ -35,16 +35,12 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 3, 3, 5, 5 );
-    sizer_3->Add( grid_sizer_1, 1, wxEXPAND, 0 );
-    wxStaticText* label_1 = new wxStaticText( this, wxID_ANY, _( "Display Format:" ) );
-    grid_sizer_1->Add( label_1, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_ALWAYS_SB | wxLB_SINGLE );
+    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 3, 5 );
+    sizer_3->Add( grid_sizer_1, 0, wxEXPAND, 0 );
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Dislay Frmat" ) );
+    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
+    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
     for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_format.begin(); it != prop.m_format.end(); ++it )
     {
         for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
@@ -54,52 +50,57 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
                 m_formats->Select( item );
         }
     }
-    grid_sizer_1->Add( m_formats, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_formats, 0, /*wxEXPAND*/0, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
     grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
     m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
-    sizer_4->Add( m_edit, 0, wxEXPAND, 0 );
+    sizer_4->Add( m_edit, 0, 0, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_new = new wxButton( this, wxID_ANY, _( "New" ) );
-    sizer_4->Add( m_new, 0, wxEXPAND, 0 );
+    m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
+    sizer_4->Add( m_new, 0, 0, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxStaticBoxSizer* sizer_5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxHORIZONTAL );
-    sizer_3->Add( sizer_5, 0, wxEXPAND, 0 );
-    wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer( 3, 3, 5, 5 );
-    sizer_5->Add( grid_sizer_2, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
-    grid_sizer_2->Add( sizer_6, 0, wxEXPAND, 0 );
-    wxStaticText* label_2 = new wxStaticText( this, wxID_ANY, _( "Justify::" ) );
-    sizer_6->Add( label_2, 0, wxEXPAND, 0 );
-    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    wxStaticBoxSizer* sizer_5 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
+    sizer_3->Add( sizer_5, 0, 0, 0 );
+    wxGridSizer* grid_sizer_2 = new wxGridSizer( 2, 2, 5, 4 );
+    sizer_5->Add( grid_sizer_2, 0, 0, 0 );
+    wxFlexGridSizer* grid_sizer_3 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    grid_sizer_2->Add( grid_sizer_3, 0, 0, 0 );
+    m_label2 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Justify" ) );
+    grid_sizer_3->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     const wxString m_justify_choices[] = {
-        "left",
-        "rght",
+        _( "Left" ),
+        _( "Right" ),
     };
-    m_justify = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
-    m_justify->SetSelection( prop.m_justify );
-    sizer_6->Add( m_justify, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_7 = new wxBoxSizer( wxHORIZONTAL );
-    grid_sizer_2->Add( sizer_7, 0, wxEXPAND, 0 );
-    wxStaticText* label_3 = new wxStaticText( this, wxID_ANY, _( "Display Height:" ) );
-    sizer_7->Add( label_3, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_height = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    sizer_7->Add( m_height, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    grid_sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_8 = new wxBoxSizer( wxHORIZONTAL );
-    grid_sizer_2->Add( sizer_8, 0, wxEXPAND, 0 );
-    wxStaticText* label_4 = new wxStaticText( this, wxID_ANY, _( "Display Width:" ) );
-    sizer_8->Add( label_4, 0, 0, 0 );
-    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_width = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    sizer_8->Add( m_width, 0, wxEXPAND, 0 );
+    m_justify = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
+    m_justify->SetSelection( 0 );
+    grid_sizer_3->Add( m_justify, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_label3 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Case" ) );
+    grid_sizer_3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    const wxString m_case_choices[] = {
+        _( "Any" ),
+        _( "UPPER" ),
+        _( "lower" ),
+    };
+    m_case = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 4, m_case_choices, wxCB_DROPDOWN );
+    m_case->SetSelection( 0 );
+    grid_sizer_3->Add( m_case, 0, 0, 0 );
+    wxFlexGridSizer* grid_sizer_4 = new wxFlexGridSizer( 2, 3, 5, 5 );
+    grid_sizer_2->Add( grid_sizer_4, 0, 0, 0 );
+    wxStaticText* m_label4 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Display Height" ) );
+    grid_sizer_4->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_displayHeight = new wxTextCtrl( sizer_5->GetStaticBox(), wxID_ANY, "" );
+    grid_sizer_4->Add( m_displayHeight, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_label5 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
+    grid_sizer_4->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_label6 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Dsplay Width" ) );
+    grid_sizer_4->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_displayWidth = new wxTextCtrl( sizer_5->GetStaticBox(), wxID_ANY, "" );
+    grid_sizer_4->Add( m_displayWidth, 0, 0, 0 );
+    m_label7 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
+    grid_sizer_4->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_2->Add( 5, 5, 0, 0, 0 );
+    m_picture = new wxCheckBox( sizer_5->GetStaticBox(), wxID_ANY, _( "Picture" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+    grid_sizer_2->Add( m_picture, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
@@ -107,8 +108,8 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     sizer_1->Fit( this );
     // end wxGlade
     m_justify->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
-    m_height->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
-    m_width->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_displayHeight->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_displayWidth->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_formats->SetSelection( wxNOT_FOUND );

@@ -36,6 +36,7 @@ protected:
     wxButton* m_new;
     wxComboBox* m_initValue;
     // end wxGlade
+    wxStaticText *m_label1, *m_label2;
 }; // wxGlade: end class
 
 

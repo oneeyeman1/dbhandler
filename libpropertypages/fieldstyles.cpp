@@ -10,47 +10,69 @@
 //
 #include <wx/wx.h>
 #include <wx/image.h>
+#include "wx/dynlib.h"
+#include "wx/filename.h"
+#include "wx/stdpaths.h"
 #include "propertypagebase.h"
 #include "fieldstyles.h"
+
+typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-
 FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
 {
     // begin wxGlade: MyDialog::MyDialog
-    auto sizer1 = new wxBoxSizer( wxVERTICAL );
-    auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
-    sizer1->Add( sizer2, 1, wxEXPAND, 0 );
-    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer3 = new wxBoxSizer( wxVERTICAL );
-    sizer2->Add( sizer3, 1, wxEXPAND, 0 );
-    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto grid4 = new wxFlexGridSizer( 2, 2, 5, 5 );
-    sizer3->Add( grid4, 0, wxEXPAND, 0 );
-    wxStaticText* m_label = new wxStaticText( this, wxID_ANY, _( "Style Names:" ) );
-    grid4->Add( m_label, 0, wxEXPAND, 0 );
-    grid4->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    sizer_2->Add( grid_sizer_1, 1, wxEXPAND, 0 );
+    m_label1 = new wxStaticText(this, wxID_ANY, _( "Style Name:" ) );
+    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_styles = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    grid4->Add( m_styles, 0, wxEXPAND, 0 );
-    auto sizer5 = new wxBoxSizer( wxVERTICAL );
-    grid4->Add(sizer5, 0, wxEXPAND, 0);
-    m_edit = new wxButton( this, wxID_ANY, _( "&Edit..." ) );
-    sizer5->Add( m_edit, 0, wxEXPAND, 0 );
-    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_new = new wxButton( this, wxID_ANY, _( "&New" ) );
-    sizer5->Add( m_new, 0, wxEXPAND, 0 );
-    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    
-    grid4->AddGrowableRow( 0 );
-    grid4->AddGrowableRow( 1 );
-    grid4->AddGrowableCol( 0 );
-    grid4->AddGrowableCol( 1 );
-    SetSizer( sizer1 );
-    sizer1->Fit( this );
+    grid_sizer_1->Add( m_styles, 0, 0, 0 );
+    auto sizer_3 = new wxBoxSizer(wxVERTICAL);
+    grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
+    m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
+    sizer_3->Add( m_edit, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
+    sizer_3->Add( m_new, 0, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     // end wxGlade
+    m_new->Bind( wxEVT_BUTTON, &FieldStyles::OnNew, this );
 }
 
+void FieldStyles::OnNew(wxCommandEvent &WXUNUSED(event))
+{
+    wxString libName, path;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    path = fn.GetPathWithSep();
+    libName = path + "dialogs";
+#elif __WXMAC__
+    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
+    fn.RemoveLastDir();
+    path = fn.GetPathWithSep() + "Frameworks/";
+    libName = path + "liblibdialogs.dylib";
+#else
+    path = wxStandardPaths::Get().GetInstallPrefix() + "/lib/";
+    libName = path + "libdialogs";
+#endif
+    lib.Load( libName );
+    if( lib.IsLoaded() )
+    {
+        NEWEDITSTYLE func = (NEWEDITSTYLE) lib.GetSymbol( "NewEditStyle" );
+        func( nullptr, true );
+    }
+}

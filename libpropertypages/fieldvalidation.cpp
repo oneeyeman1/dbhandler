@@ -21,40 +21,37 @@
 FieldValidation::FieldValidation(wxWindow* parent) : PropertyPageBase( parent )
 {
     // begin wxGlade: FieldValidation::FieldValidation
-    wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_2 = new wxBoxSizer( wxVERTICAL );
+    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
     sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
-    sizer_2->Add( grid_sizer_1, 1, wxEXPAND, 0 );
-    wxStaticText* m_label1 = new wxStaticText( this, wxID_ANY, _( "Validation &Rule:" ) );
-    grid_sizer_1->Add( m_label1, 0, wxEXPAND, 0 );
-    grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_3 = new wxBoxSizer( wxVERTICAL );
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    sizer_3->Add( grid_sizer_1, 1, wxEXPAND, 0 );
+    m_label1 = new wxStaticText( this, wxID_ANY, _( "Validation Rule" ) );
+    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    grid_sizer_1->Add( m_rules, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
-    grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
-    m_edit = new wxButton( this, wxID_ANY, _( "&Edit" ) );
-    sizer_3->Add( m_edit, 0, 0, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_new = new wxButton( this, wxID_ANY, _( "&New..." ) );
-    sizer_3->Add( m_new, 0, 0, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
-    sizer_2->Add( sizer_4, 0, wxEXPAND, 0 );
-    wxStaticText* m_label2 = new wxStaticText( this, wxID_ANY, _( "Initial &Value:" ) );
-    sizer_4->Add( m_label2, 0, 0, 0 );
+    grid_sizer_1->Add( m_rules, 0, 0, 0 );
+    auto sizer_4 = new wxBoxSizer( wxVERTICAL );
+    grid_sizer_1->Add( sizer_4, 1, wxEXPAND, 0 );
+    m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
+    sizer_4->Add( m_edit, 0, 0, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
+    sizer_4->Add( m_new, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_label2 = new wxStaticText( this, wxID_ANY, _( "Initial Vale" ) );
+    sizer_3->Add( m_label2, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     m_initValue = new wxComboBox( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
-    sizer_4->Add( m_initValue, 0, wxEXPAND, 0 );
+    sizer_3->Add( m_initValue, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    
-    grid_sizer_1->AddGrowableRow( 0 );
-    grid_sizer_1->AddGrowableCol( 0 );
+
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
 }
-

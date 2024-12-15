@@ -19,22 +19,21 @@
 // end wxGlade
 
 
-class WXEXPORT FieldStyles: public PropertyPageBase {
+class WXEXPORT FieldStyles: public PropertyPageBase
+{
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
-
     FieldStyles(wxWindow* parent);
-
 private:
-
+    void OnNew(wxCommandEvent &event);
 protected:
     // begin wxGlade: MyDialog::attributes
     wxListBox* m_styles;
     wxButton* m_edit;
     wxButton* m_new;
     // end wxGlade
+    wxStaticText *m_label1; 
 }; // wxGlade: end class
-
 
 #endif // FIELDSTYLES_H
