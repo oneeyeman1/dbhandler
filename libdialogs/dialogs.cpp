@@ -22,6 +22,7 @@
 #include "wx/filepicker.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
+#include "wx/statline.h"
 #include "wx/listctrl.h"
 #include "wx/notebook.h"
 #include "wx/spinctrl.h"
@@ -91,6 +92,7 @@
 #include "attachdb.h"
 #include "detachdb.h"
 #include "datasource.h"
+#include "neweditstyle.h"
 #include "createviewoptions.h"
 #include "saveview.h"
 
@@ -548,6 +550,13 @@ extern "C" WXEXPORT int SaveNewView(wxWindow *parent, wxString &viewName)
 extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString &type, const wxString &format, Database *db)
 {
     DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, format, db );
+    dlg.ShowModal();
+    return 0;
+}
+
+extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
+{
+    NewEditFieldStyle dlg( parent, isNew );
     dlg.ShowModal();
     return 0;
 }
