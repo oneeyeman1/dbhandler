@@ -1121,7 +1121,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL );" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL );" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
@@ -1251,7 +1251,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
@@ -1368,7 +1368,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1483,7 +1483,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1573,7 +1573,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1666,7 +1666,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1766,7 +1766,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1859,7 +1859,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );

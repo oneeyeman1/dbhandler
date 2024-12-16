@@ -164,7 +164,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
-    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NLL );" );
+    queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
