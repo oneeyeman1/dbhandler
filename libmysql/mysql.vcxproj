@@ -44,7 +44,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>mysql</ProjectName>
     <ProjectGuid>{33992568-0337-47DF-8C4D-05FB71CA4D1C}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">

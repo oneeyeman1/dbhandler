@@ -37,7 +37,7 @@
   <PropertyGroup Label="Globals">
     <ProjectName>fieldswindow</ProjectName>
     <ProjectGuid>{EF89C84B-B5ED-496F-A980-5C7071081A19}</ProjectGuid>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL Release|Win32'" Label="Configuration">
