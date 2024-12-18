@@ -25,10 +25,10 @@ public:
     // begin wxGlade: FieldValidation::ids
     // end wxGlade
 
-    FieldValidation(wxWindow* parent);
+    FieldValidation(wxWindow* parent, Database *db);
 
 private:
-
+    Database *m_db;
 protected:
     // begin wxGlade: FieldValidation::attributes
     wxListBox* m_rules;
@@ -37,6 +37,7 @@ protected:
     wxComboBox* m_initValue;
     // end wxGlade
     wxStaticText *m_label1, *m_label2;
+    void OnEditUpdateUI(wxUpdateUIEvent &event);
 }; // wxGlade: end class
 
 

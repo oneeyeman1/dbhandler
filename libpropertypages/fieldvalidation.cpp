@@ -10,15 +10,14 @@
 //
 
 #include <wx/wx.h>
+#include "database.h"
 #include "propertypagebase.h"
 #include "fieldvalidation.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-
-FieldValidation::FieldValidation(wxWindow* parent) : PropertyPageBase( parent )
+FieldValidation::FieldValidation(wxWindow* parent, Database *db) : PropertyPageBase( parent )
 {
     // begin wxGlade: FieldValidation::FieldValidation
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -34,6 +33,11 @@ FieldValidation::FieldValidation(wxWindow* parent) : PropertyPageBase( parent )
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
+    std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> >::const_iterator it = db->GetTableVector().m_validators.begin();
+    for( it; it < db->GetTableVector().m_validators.end(); ++it )
+    {
+        m_rules->Append( std::get<(0)>( *it ) );
+    }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
     grid_sizer_1->Add( sizer_4, 1, wxEXPAND, 0 );
@@ -54,4 +58,13 @@ FieldValidation::FieldValidation(wxWindow* parent) : PropertyPageBase( parent )
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
+}
+
+void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_rules->GetSelection() == wxNOT_FOUND )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }
