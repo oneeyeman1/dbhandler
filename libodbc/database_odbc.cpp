@@ -1005,6 +1005,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 {
                                     result = 1;
                                 }
+                                ret = PopulateValdators( errorMsg );
+                                if( ret )
+                                    result = 1;
                             }
                         }
                     }
@@ -7213,3 +7216,105 @@ int ODBCDatabase::AddUpdateFormat()
     return 0;
 }
 
+int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM abcatvld;";
+    auto qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    else
+    {
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        else
+        {
+            SQLLEN colDataLen;
+            SQLWCHAR name[32], rule[256], message[256];
+            short int validType;
+            int control;
+            std::wstring validName, validRule, validMessage;
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_CHAR, &name, 32, &colDataLen );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            if( !result )
+            {
+                ret = SQLBindCol( m_hstmt, 2, SQL_C_CHAR, &rule, 32, &colDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLBindCol( m_hstmt, 3, SQL_C_SSHORT, &validType, 0, &colDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLBindCol( m_hstmt, 4, SQL_C_SLONG, &control, 0, &colDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLBindCol( m_hstmt, 4, SQL_C_CHAR, &message, 256, &colDataLen );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                for( ; ; )
+                {
+                    ret = SQLFetch( m_hstmt );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        str_to_uc_cpy( validName, name );
+                        str_to_uc_cpy( validRule, rule );
+                        str_to_uc_cpy( validMessage, message );
+                        pimpl.m_validators.push_back( std::make_tuple( validName, validRule, validType, control, validMessage ) );
+                    }
+                    if( ret == SQL_NO_DATA )
+                        break;
+                    else
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                        break;
+                    }
+                }
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );;
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+        }
+    }
+    return result;
+}

@@ -359,6 +359,7 @@ private:
 struct /*Database::*/Impl
 {
     const std::wstring m_desktop;
+    std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> > m_validators;
     static std::mutex my_mutex;
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
@@ -399,6 +400,7 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
 public:
     Database(const int osId, const std::wstring &desktop) : m_osId( osId ), pimpl{ desktop } { }
     const Impl &GetTableVector() const { return pimpl; };

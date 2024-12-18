@@ -125,6 +125,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 {
                     result = 1;
                 }
+                if( PopulateValdators( errorMsg ) )
+                    result = 1;
             }
         }
     }
@@ -1736,3 +1738,30 @@ int PostgresDatabase::AddUpdateFormat()
     return 0;
 }
 
+int PostgresDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM abcatvld;";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    ExecStatusType status = PQresultStatus( res );
+    if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Retrieve database list: " + err );
+        result = 1;
+    }
+    else if( status == PGRES_TUPLES_OK )
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+            auto rule = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            unsigned short type = (unsigned short) PQgetvalue( res, i, 2 );
+            int control = (int) PQgetvalue( res, i, 3 );
+            auto message = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 4 ) );
+            pimpl.m_validators.push_back( std::make_tuple( name, rule, type, control, message ) );
+        }
+    }
+    PQclear( res );
+    return result;
+}

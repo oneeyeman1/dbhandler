@@ -48,6 +48,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
     virtual int AddDropTable(const std::wstring &UNUSED(catalog), const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &UNUSED(ownerName), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg) override;
+    virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
 private:
     sqlite3 *m_db;
     sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3, *m_stmt;

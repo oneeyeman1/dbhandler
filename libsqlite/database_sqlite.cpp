@@ -302,7 +302,15 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             else
                 result = 1;
         }
-        GetServerVersion( errorMsg );
+        res = PopulateValdators( errorMsg );
+        if( res )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+        else
+            GetServerVersion( errorMsg );
     }
     if( result && m_db )
         Disconnect( errorMsg );
@@ -2512,4 +2520,45 @@ int SQLiteDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
 int SQLiteDatabase::AddUpdateFormat()
 {
     return 0;
+}
+
+int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
+{
+    auto result = 0;
+    std::wstring errorMessage;
+    char *query = "SELECT * FROM \"sys.abcatvld\";";
+    auto res = sqlite3_prepare_v2( m_db, query, strlen( query ), &m_stmt, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    else
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
+            {
+                auto name = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt, 0 ) );
+                auto rule = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt, 1 ) );
+                auto type = sqlite3_column_int( m_stmt, 2 );
+                auto control = sqlite3_column_int( m_stmt, 3 );
+                auto message = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt, 4 ) );
+                pimpl.m_validators.push_back( std::make_tuple( name, rule, type, control, message ) );
+            }
+            else if( res == SQLITE_DONE )
+            {
+                break;
+            }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+    }
+    return result;
 }

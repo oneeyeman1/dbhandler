@@ -517,6 +517,7 @@
     <ClCompile Include="gotoline.cpp" />
     <ClCompile Include="jointype.cpp" />
     <ClCompile Include="neweditstyle.cpp" />
+    <ClCompile Include="neweditvaldation.cpp" />
     <ClCompile Include="newquery.cpp" />
     <ClCompile Include="odbcconfigure.cpp" />
     <ClCompile Include="odbccredentials.cpp" />
@@ -543,6 +544,7 @@
     <ClInclude Include="gotoline.h" />
     <ClInclude Include="jointype.h" />
     <ClInclude Include="neweditstyle.h" />
+    <ClInclude Include="neweditvaldation.h" />
     <ClInclude Include="newquery.h" />
     <ClInclude Include="odbcconfigure.h" />
     <ClInclude Include="odbccredentials.h" />
