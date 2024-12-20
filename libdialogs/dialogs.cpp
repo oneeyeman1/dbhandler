@@ -93,6 +93,7 @@
 #include "detachdb.h"
 #include "datasource.h"
 #include "neweditstyle.h"
+#include "neweditvaldation.h"
 #include "createviewoptions.h"
 #include "saveview.h"
 
@@ -549,6 +550,9 @@ extern "C" WXEXPORT int SaveNewView(wxWindow *parent, wxString &viewName)
 
 extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString &type, const wxString &format, Database *db)
 {
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
     DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, format, db );
     dlg.ShowModal();
     return 0;
@@ -556,7 +560,21 @@ extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString
 
 extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
 {
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
     NewEditFieldStyle dlg( parent, isNew );
     dlg.ShowModal();
     return 0;
+}
+
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule)
+{
+    int result = 0;
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    NewEditValidator dlg( nullptr, wxID_ANY, "", isNew, type, db, rule );
+    dlg.ShowModal();
+    return result;
 }

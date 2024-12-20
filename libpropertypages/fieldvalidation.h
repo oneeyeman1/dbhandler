@@ -25,10 +25,11 @@ public:
     // begin wxGlade: FieldValidation::ids
     // end wxGlade
 
-    FieldValidation(wxWindow* parent, Database *db);
+    FieldValidation(wxWindow* parent, Database *db, const wxString &fieldType);
 
 private:
     Database *m_db;
+    wxString m_fieldType;
 protected:
     // begin wxGlade: FieldValidation::attributes
     wxListBox* m_rules;
@@ -38,6 +39,7 @@ protected:
     // end wxGlade
     wxStaticText *m_label1, *m_label2;
     void OnEditUpdateUI(wxUpdateUIEvent &event);
+    void OnButtonPress(wxCommandEvent &event);
 }; // wxGlade: end class
 
 

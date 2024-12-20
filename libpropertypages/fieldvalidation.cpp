@@ -10,6 +10,9 @@
 //
 
 #include <wx/wx.h>
+#include "wx/dynlib.h"
+#include "wx/stdpaths.h"
+#include "wx/filename.h"
 #include "database.h"
 #include "propertypagebase.h"
 #include "fieldvalidation.h"
@@ -17,8 +20,12 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-FieldValidation::FieldValidation(wxWindow* parent, Database *db) : PropertyPageBase( parent )
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &);
+
+FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
+    m_fieldType = fieldType;
+    m_db = db;
     // begin wxGlade: FieldValidation::FieldValidation
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -36,7 +43,8 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db) : PropertyPageB
     std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> >::const_iterator it = db->GetTableVector().m_validators.begin();
     for( it; it < db->GetTableVector().m_validators.end(); ++it )
     {
-        m_rules->Append( std::get<(0)>( *it ) );
+        auto item = m_rules->Append( std::get<(0)>( *it ) );
+        m_rules->SetClientObject( item, (wxClientData *) &(*it) );
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
@@ -59,6 +67,8 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db) : PropertyPageB
     sizer_1->Fit( this );
     // end wxGlade
     m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
+    m_edit->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
+    m_new->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
 }
 
 void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
@@ -67,4 +77,39 @@ void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void FieldValidation::OnButtonPress(wxCommandEvent &event)
+{
+    auto fieldType = m_fieldType;
+    wxDynamicLibrary lib;
+    wxString libName;
+    bool isNew;
+    auto stdPath = wxStandardPaths::Get();
+    std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> rule;
+    if( event.GetEventObject() == m_new )
+    {
+        rule = std::make_tuple( L"", L"", 0, 0, L"" );
+        isNew = true;
+    }
+    else
+    {
+        rule = *( std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> *) m_rules->GetClientObject( m_rules->GetSelection() );
+        isNew = false;
+    }
+#ifdef __WXMSW__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    libName = fn.GetPathWithSep() + "dialogs";
+#elif __WXMAC__
+    wxFileName fn( stdPath.GetExecutablePath() );
+    fn.RemoveLastDir();
+    libName = fn.GetPathWithSep() + "Frameworks/" + "liblibdialogs.dylib";
+#else
+    libName = stdPath.GetInstallPrefix() +  "/lib/" + "libdialogs";
+#endif
+    if( lib.Load( libName ) )
+    {
+        NEWEDITVALDATION func = (NEWEDITVALDATION) lib.GetSymbol( "NewEditValidation" );
+        int res = func( nullptr, isNew, fieldType, m_db, rule );
+    }
 }

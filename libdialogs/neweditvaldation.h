@@ -12,9 +12,6 @@
 #ifndef NEWEDITVALDATION_H
 #define NEWEDITVALDATION_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-
 // begin wxGlade: ::dependencies
 // end wxGlade
 
@@ -27,7 +24,7 @@ public:
     // begin wxGlade: NewEditValidator::ids
     // end wxGlade
 
-    NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule);
 
 private:
 

@@ -51,7 +51,7 @@ protected:
     int m_object;
     wxAny m_any;
     Database *m_db;
-    wxString m_type;
+    wxString m_type, m_objectName;
 };
 
 

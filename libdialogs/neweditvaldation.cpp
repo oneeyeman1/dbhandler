@@ -8,15 +8,20 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-
+#include <algorithm>
+#include <wx/wx.h>
+#include "database.h"
 #include "neweditvaldation.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule):
+    wxDialog(parent, id, "" )
 {
+    auto ruleName    = std::get<0>( rule );
+    auto ruleRule    = std::get<1>( rule );
+    auto ruleMessage = std::get<4>( rule );
     // begin wxGlade: NewEditValidator::NewEditValidator
     SetTitle( _( "Input Valdation" ) );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -38,12 +43,11 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Name" ) );
     m_label->Enable( 0 );
     grid_sizer_1->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_name = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString );
+    m_name = new wxTextCtrl( m_panel, wxID_ANY, ruleName );
     grid_sizer_1->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "Type" ) );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString *m_type_choices = NULL;
-    m_type = new wxComboBox( m_panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
+    m_type = new wxComboBox( m_panel, wxID_ANY, type, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
     m_type->Enable( 0 );
     grid_sizer_1->Add( m_type, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -52,7 +56,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
     m_label3 = new wxStaticText( m_panel, wxID_ANY, _( "Rule Definition" ) );
     sizer_8->Add( m_label3, 0, 0, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_definition = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_definition = new wxTextCtrl( m_panel, wxID_ANY, ruleRule, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
     sizer_8->Add( m_definition, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_9 = new wxBoxSizer( wxVERTICAL );
@@ -71,7 +75,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
     m_label4 = new wxStaticText( m_panel, wxID_ANY, _( "Valdation Error Message" ) );
     sizer_10->Add( m_label4, 0, 0, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_errorMsg = new wxTextCtrl( m_panel, wxID_ANY, wxEmptyString );
+    m_errorMsg = new wxTextCtrl( m_panel, wxID_ANY, ruleMessage );
     sizer_10->Add( m_errorMsg, 0, wxEXPAND, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_11 = new wxStaticBoxSizer( new wxStaticBox( m_panel, wxID_ANY, _( "Paste" ) ), wxVERTICAL );
@@ -94,5 +98,12 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
+    if( !isNew )
+    {
+        m_name->Disable();
+        m_type->Disable();
+        m_label2->Disable();
+        m_label->Enable();
+    }
 }
 
