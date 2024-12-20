@@ -2526,8 +2526,8 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
 {
     auto result = 0;
     std::wstring errorMessage;
-    char *query = "SELECT * FROM \"sys.abcatvld\";";
-    auto res = sqlite3_prepare_v2( m_db, query, strlen( query ), &m_stmt, nullptr );
+    std::wstring query = L"SELECT * FROM \"sys.abcatvld\";";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, nullptr );
     if( res != SQLITE_OK )
     {
         result = 1;

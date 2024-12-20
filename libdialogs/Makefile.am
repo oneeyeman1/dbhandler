@@ -46,7 +46,11 @@ libdialogs_la_SOURCES =  \
 	saveview.cpp \
 	saveview.h \
 	displayformatdefinition.cpp \
-	displayformatdefinition.h
+	displayformatdefinition.h \
+	neweditstyle.cpp \
+	neweditstyle.h \
+	neweditvaldation.cpp \
+	neweditvaldation.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

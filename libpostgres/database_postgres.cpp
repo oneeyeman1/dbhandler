@@ -1756,8 +1756,8 @@ int PostgresDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
         {
             auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
             auto rule = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-            unsigned short type = (unsigned short) PQgetvalue( res, i, 2 );
-            int control = (int) PQgetvalue( res, i, 3 );
+            unsigned short type = (unsigned short) strtoul( PQgetvalue( res, i, 2 ), nullptr, 10 );
+            int control = (int) strtoul( PQgetvalue( res, i, 3 ), nullptr, 10 );
             auto message = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 4 ) );
             pimpl.m_validators.push_back( std::make_tuple( name, rule, type, control, message ) );
         }
