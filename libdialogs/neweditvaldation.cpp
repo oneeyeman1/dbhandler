@@ -19,6 +19,8 @@
 NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule):
     wxDialog(parent, id, "" )
 {
+    m_isNew = isNew;
+    m_db = db;
     auto ruleName    = std::get<0>( rule );
     auto ruleRule    = std::get<1>( rule );
     auto ruleMessage = std::get<4>( rule );
@@ -105,5 +107,25 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
         m_label2->Disable();
         m_label->Enable();
     }
+    m_ok->Bind( wxEVT_BUTTON, &NewEditValidator::OnOK, this );
 }
 
+void NewEditValidator::OnOK(wxCommandEvent &event)
+{
+    std::vector<std::wstring> errorMsg;
+    auto name = m_name->GetValue().ToStdWstring();
+    auto type = m_type->GetValue().MakeLower();
+    int typeValue;
+    if( type == "integer" || type == "double" || type == "float" || type == "int" )
+        typeValue = 81;
+    else
+        typeValue = 80;
+    auto rule = m_definition->GetValue().ToStdWstring();
+    auto message = m_errorMsg->GetValue().ToStdWstring();
+    auto result = m_db->CreateUpdateValidationRule( m_isNew, name, rule, typeValue, message, errorMsg );
+    if( result )
+    {
+        for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); ++it )
+            wxMessageBox( (*it) );
+    }
+}
