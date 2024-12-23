@@ -14,6 +14,7 @@ liblibrary_la_SOURCES =  \
 
 liblibrary_la_CXXFLAGS = -I../../libhelpers \
 	-I../../dbinterface \
+	-I../../dbhandler/ \
 	@WX_CXXFLAGS@
 
 liblibrary_la_LDFLAGS = -L../libhelpers \
