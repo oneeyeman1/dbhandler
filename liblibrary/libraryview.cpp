@@ -294,7 +294,7 @@ void LibraryViewPainter::LayoutChildren(const wxSize &size)
     }
     else
         m_tb->Hide();
-#if defined( __WXMSW__ ) || defined( __WXGTK__ )
+#if defined( __WXMSW__ ) || defined( __WXGTK__ ) || defined( __WXQT__ )
     m_frame->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
 #else
     m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
