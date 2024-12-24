@@ -250,20 +250,22 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT void CreatePropertiesDialog(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title, wxString &command, const DatabaseTable *table, bool &logOnly)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, const DatabaseTable *table, bool &logOnly)
 {
     int res = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    PropertiesDialog dlg( parent, wxID_ANY, title, handler.get(), table );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler, table );
     dlg.Center();
-    if( dlg.ShowModal() == wxID_OK )
+    res = dlg.ShowModal();
+    if( res == wxID_OK )
     {
         logOnly = dlg.IsLogOnly();
         if( logOnly )
             command = dlg.GetCommand();
     }
+    return res;
 }
 
 extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::unique_ptr<PropertiesHandler> &handler, const wxString &title)

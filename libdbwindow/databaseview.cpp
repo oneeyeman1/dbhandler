@@ -130,7 +130,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, DatabaseTable *, bool &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &);
 typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
@@ -1508,7 +1508,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
 #endif
     lib.Load( libName );
     int res = 0;
-    std::unique_ptr<PropertiesHandler> propertiesPtr;
+    PropertiesHandler *propertiesPtr = nullptr;
     wxString title;
     if( type == DatabaseTablePropertiesType )
     {
@@ -1519,8 +1519,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         }
         erdTable->SetProperties( erdTable->GetTable()->GetTableProperties() );
         erdTable->SetDatabase( db );
-        std::unique_ptr<PropertiesHandler> ptr( erdTable );
-        propertiesPtr = std::move( ptr );
+        propertiesPtr = erdTable;
         propertiesPtr->SetDatabase( db );
         erdTable->SetType( DatabaseTablePropertiesType );
         title = _( "Table " );
@@ -1536,8 +1535,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         }
         dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
         dbField->SetType( DatabaseFieldPropertiesType );
-        std::unique_ptr<PropertiesHandler> ptr( dbField );
-        propertiesPtr = std::move( ptr );
+        propertiesPtr = dbField;
         propertiesPtr->SetDatabase( db );
         propertiesPtr->SetFieldType( dbField->GetField()->GetFieldType() );
         title = _( "Column " );
