@@ -2661,3 +2661,15 @@ int MySQLDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
     }
     return result;
 }
+
+int MySQLDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring errorMessage;
+    std::wstring query = L"";
+    if( isNew )
+        query = L"INSERT INTO \"abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( ?, ?, ?, 0, ?)";
+    else
+        query = L"UPDATE \"abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_cntr\" = 0, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
+    return result;
+}

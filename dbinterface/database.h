@@ -429,6 +429,7 @@ public:
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;
     virtual int AddUpdateFormat() = 0;
+    virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 #endif

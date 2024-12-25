@@ -27,8 +27,10 @@ public:
     NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule);
 
 private:
-
+    Database *m_db;
+    bool m_isNew;
 protected:
+    void OnOK(wxCommandEvent &event);
     // begin wxGlade: NewEditValidator::attributes
     wxPanel* m_panel;
     wxStaticText* m_label;

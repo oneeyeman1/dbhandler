@@ -1765,3 +1765,29 @@ int PostgresDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
     PQclear( res );
     return result;
 }
+
+int PostgresDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring errorMessage;
+    std::wstring query = L"";
+    const char *paramValues[4];
+    if( isNew )
+        query = L"INSERT INTO \"abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( $1, $2, $3, 0, $4)";
+    else
+        query = L"UPDATE \"abcatvld\" SET \"abv_name\" = $1, \"abv_vald\" = $2, \"abv_type\" = $3, \"abv_cntr\" = 0, \"abv_msg\" = $4 WHERE \"abv_name\" = $1";
+    paramValues[0] = m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str();
+    paramValues[1] = m_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str();
+    paramValues[2] = std::to_string( type ).c_str();
+    paramValues[3] = m_pimpl->m_myconv.to_bytes( message.c_str() ).c_str();
+    auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 4, nullptr,
+        paramValues, nullptr, nullptr, 1 );      /* ask for binary results */
+    if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Update validation table: " + err );
+        result = 1;
+    }
+    PQclear( res );
+    return result;
+}

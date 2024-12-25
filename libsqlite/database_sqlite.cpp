@@ -957,7 +957,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
             {
                 command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
                 command += std::to_wstring( id );
-                command += L"\', ";
+                command += L"\', \'";
                 command += tableName;
                 command += L"\', ";
                 istr << tableId;
@@ -2558,6 +2558,82 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
+        }
+    }
+    return result;
+}
+
+int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring errorMessage;
+    std::wstring query = L"";
+    if( isNew )
+        query = L"INSERT INTO \"sys.abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( ?, ?, ?, 0, ?)";
+    else
+        query = L"UPDATE \"sys.abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_cntr\" = 0, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    else
+    {
+        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( name.c_str() ).c_str(), (int) name.length(), SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+        if( !result )
+        {
+            res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str(), (int) name.length(), SQLITE_TRANSIENT );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        if( !result )
+        {
+            res = sqlite3_bind_text( m_stmt, 5, sqlite_pimpl->m_myconv.to_bytes( message.c_str() ).c_str(), (int) name.length(), SQLITE_TRANSIENT );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        if( !result )
+        {
+            res = sqlite3_bind_int( m_stmt, 3, type );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        if( !result )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res != SQLITE_DONE )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMessage );
+                errorMsg.push_back( errorMessage );
+            }
+        }
+        sqlite3_finalize( m_stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
         }
     }
     return result;
