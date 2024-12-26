@@ -7,6 +7,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/DiagramManager.h"
+#include "wxsf/ShapeCanvas.h"
 #include "database.h"
 #include "configuration.h"
 #include "guiobjectsproperties.h"
@@ -79,6 +80,14 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
+        if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+        {
+            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+            m_comment->GetFont().SetPointSize( 8 );
+            m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+            m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
+        }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
@@ -149,16 +158,23 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         //table name
         if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
         {
-            auto temp = m_table->GetTableName();
-            if( m_displayComments )
-                temp += L" " + m_table->GetTableProperties().m_comment;
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-            m_pLabel->SetText( temp );
+            m_pLabel->SetText( m_table->GetTableName() );
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
             m_pLabel->Activate( false );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+        }
+        if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+        {
+            m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+            m_comment->GetFont().SetPointSize( 8 );
+            m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+            m_comment->SetText( m_table->GetTableProperties().m_comment );
+            m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+            m_comment->Activate( false );
+            //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
         }
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
@@ -508,6 +524,9 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         {
             m_table->SetTableProperties( prop );
             m_comment->SetText( prop.m_comment );
+            if( m_displayComments )
+                GetShapeManager()->GetShapeCanvas()->Refresh();
+//                m_header->Refresh();
         }
     }
     return result;
