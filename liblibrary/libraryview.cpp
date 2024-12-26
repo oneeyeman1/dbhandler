@@ -13,7 +13,7 @@
 #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__) || defined( __WXQT__)
 #include "libraryopen.h"
 #include "libraryclosed.h"
 #include "query.h"
@@ -242,7 +242,7 @@ void LibraryViewPainter::CreateViewToolBar()
     {
         selectall = wxBitmapBundle::FromSVG( (const char *) dataSelectAll, wxSize( 16, 16 ) );
     }
-#elif __WXGTK__
+#elif defined( __WXGTK__ ) || defined( __WXQT__)
     selectall = wxBitmapBundle::FromSVG( selectAll, wxSize( 16, 16 ) );
 #else
     selectall = wxBitmapBundle::FromSVGResource( "selectall", wxSize( 16, 16 ) );
@@ -299,6 +299,7 @@ void LibraryViewPainter::LayoutChildren(const wxSize &size)
 #else
     m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
 #endif
+*/
 }
 
 void LibraryViewPainter::CreateLibraryMenu()
