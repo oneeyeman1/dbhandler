@@ -172,6 +172,37 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
+    TableProperties &operator=( const TableProperties &right )
+    {
+        if( this == &right )
+            return *this;
+        else
+        {
+            this->m_comment = right.m_comment;;;
+            this->m_dataFontName = right.m_dataFontName;
+            this->m_headingFontName = right.m_headingFontName;
+            this->m_labelFontName = right.m_labelFontName;
+            this->m_dataFontWeight = right.m_dataFontWeight;
+            this->m_headingFontWeight = right.m_headingFontWeight;
+            this->m_labelFontWeight = right.m_labelFontWeight;
+            this->m_dataFontItalic = right.m_dataFontItalic;
+            this->m_headingFontItalic = right.m_headingFontItalic;
+            this->m_labelFontItalic = right.m_labelFontItalic;
+            this->m_dataFontSize = right.m_dataFontSize;
+            this->m_headingFontSize = right.m_headingFontSize;
+            this->m_labelFontSize = right.m_labelFontSize;
+            this->m_dataFontUnderline = right.m_dataFontUnderline;
+            this->m_headingFontUnderline = right.m_headingFontUnderline;
+            this->m_labelFontUnderline = right.m_labelFontUnderline;
+            this->m_dataFontStrikethrough = right.m_dataFontStrikethrough;
+            this->m_headingFontStrikethrough = right.m_headingFontStrikethrough;
+            this->m_labelFontStrikethrough = right.m_labelFontStrikethrough;
+            this->m_dataFontCharacterSet = right.m_dataFontCharacterSet;
+            this->m_headingFontCharacterSet = right.m_headingFontCharacterSet;
+            this->m_labelFontCharacterSer = right.m_labelFontCharacterSer;
+        }
+        return *this;
+    }
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name, catalog, fullName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
