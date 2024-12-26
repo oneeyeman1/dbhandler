@@ -1038,35 +1038,44 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
         }
         else
         {
-            MYSQL_BIND values[3];
+            MYSQL_BIND values[4];
             memset( values, 0, sizeof( values ) );
             str_data[0] = new char[schemaName.length()];
             str_data[1] = new char[tableName.length()];
             str_data[2] = new char[indexName.length()];
+            str_data[3] = new char[catalogName.length()];
             str_length[0] = new unsigned long;
             str_length[1] = new unsigned long;
             str_length[2] = new unsigned long;
+            str_length[3] = new unsigned long;
             values[0].buffer_type = MYSQL_TYPE_STRING;
             values[1].buffer_type = MYSQL_TYPE_STRING;
             values[2].buffer_type = MYSQL_TYPE_STRING;
+            values[3].buffer_type = MYSQL_TYPE_STRING;
             values[0].buffer = str_data[0];
             values[1].buffer = str_data[1];
             values[2].buffer = str_data[2];
+            values[3].buffer = str_data[3];
             values[0].buffer_length = schemaName.length();
             values[1].buffer_length = tableName.length();
             values[2].buffer_length = indexName.length();
+            values[3].buffer_length = catalogName.length();
             values[0].is_null = 0;
             values[1].is_null = 0;
             values[2].is_null = 0;
+            values[3].is_null = 0;
             values[0].length = str_length[0];
             values[1].length = str_length[1];
             values[2].length = str_length[2];
+            values[3].length = str_length[3];
             strncpy( str_data[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
             strncpy( str_data[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
             strncpy( str_data[2], m_pimpl->m_myconv.to_bytes( indexName.c_str() ).c_str(), indexName.length() );
+            strncpy( str_data[3], m_pimpl->m_myconv.to_bytes( catalogName.c_str() ).c_str(), catalogName.length() );
             *str_length[0] = schemaName.length();
             *str_length[1] = tableName.length();
             *str_length[2] = indexName.length();
+            *str_length[3] = catalogName.length();
             if( mysql_stmt_bind_param( res, values ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
@@ -1081,8 +1090,14 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
                 }
                 else
                 {
-                    if( mysql_stmt_fetch( res ) != MYSQL_NO_DATA )
+                    auto result = mysql_stmt_fetch( res );
+                    if( !result )
                         exists = 1;
+                    else if( result != MYSQL_NO_DATA )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+                        errorMsg.push_back( err );
+                    }
                 }
             }
         }
