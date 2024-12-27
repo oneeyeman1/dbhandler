@@ -1005,8 +1005,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                                 {
                                     result = 1;
                                 }
-                                ret = PopulateValdators( errorMsg );
-                                if( ret )
+                                if( PopulateValdators( errorMsg ) )
                                     result = 1;
                             }
                         }
@@ -7328,7 +7327,7 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     if( isNew )
         query = L"INSERT INTO \"abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_msg\") VALUES( ?, ?, ?, ?)";
     else
-        query = L"UPDATE \"abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
+        query = L"UPDATE \"abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_msg\" = ? WHERE \"abv_name\" = ?";
     auto qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
@@ -7385,7 +7384,7 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
         }
         if( isNew && !result )
         {
-            ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 32, 0, qryName, 0, &val1 );
+            ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 32, 0, qryName, 0, &val5 );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
