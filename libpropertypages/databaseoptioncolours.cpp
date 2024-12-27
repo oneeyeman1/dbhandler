@@ -127,7 +127,7 @@ void DatabaseptionsColours::OnColorChanged(wxCommandEvent &event)
     m_isModified = true;
 }
 
-void DatabaseptionsColours::OnRestore(wxCommandEvent &event)
+void DatabaseptionsColours::OnRestore(wxCommandEvent &WXUNUSED(event))
 {
     if( m_isModified )
     {

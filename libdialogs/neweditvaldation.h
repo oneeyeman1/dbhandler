@@ -24,7 +24,7 @@ public:
     // begin wxGlade: NewEditValidator::ids
     // end wxGlade
 
-    NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule);
+    NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule);
 
 private:
     Database *m_db;

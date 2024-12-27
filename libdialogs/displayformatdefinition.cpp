@@ -93,7 +93,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     m_ok->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnOK, this );
 }
 
-void DisplayFormatDefinition::OnOK(wxCommandEvent &event)
+void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     if( m_name->GetValue().IsEmpty() )
         wxMessageBox( _( "Name field can't be empty" ) );

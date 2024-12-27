@@ -95,7 +95,7 @@ DatabaseOptionGeneral::DatabaseOptionGeneral(wxWindow *parent, DBOptionGeneral &
     m_isModified = false;
 }
 
-void DatabaseOptionGeneral::FileNameChanged(wxFileDirPickerEvent &event)
+void DatabaseOptionGeneral::FileNameChanged(wxFileDirPickerEvent &WXUNUSED(event))
 {
     m_current.m_sharedProfile = m_sharedFolder->GetPath();
     m_isModified = true;

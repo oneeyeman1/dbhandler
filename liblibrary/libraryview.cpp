@@ -299,7 +299,7 @@ void LibraryViewPainter::LayoutChildren(const wxSize &size)
 #else
     m_canvas->SetSize( posFrame.x, posFrame.y, sizeFrame.GetWidth(), sizeFrame.GetHeight() );
 #endif
-*/
+
 }
 
 void LibraryViewPainter::CreateLibraryMenu()

@@ -576,7 +576,7 @@ extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wx
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    NewEditValidator dlg( nullptr, wxID_ANY, "", isNew, type, db, rule );
+    NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule );
     dlg.ShowModal();
     return result;
 }

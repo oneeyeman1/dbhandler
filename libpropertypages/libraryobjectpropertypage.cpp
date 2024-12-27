@@ -92,7 +92,7 @@ LibraryObjectPropertyPage::LibraryObjectPropertyPage(wxWindow *parent, LibraryOb
     m_comment->Bind( wxEVT_TEXT, &LibraryObjectPropertyPage::OnCommentChange, this );
 }
 
-void LibraryObjectPropertyPage::OnCommentChange(wxCommandEvent &event)
+void LibraryObjectPropertyPage::OnCommentChange(wxCommandEvent &WXUNUSED(event))
 {
     PageEdited();
 }

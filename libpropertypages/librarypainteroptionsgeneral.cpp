@@ -71,7 +71,7 @@ LibraryPainterOptionsGeneralPage::LibraryPainterOptionsGeneralPage(wxWindow *par
     m_confirmDelete->Bind( wxEVT_CHECKBOX, &LibraryPainterOptionsGeneralPage::OnPageChange, this );
 }
 
-void LibraryPainterOptionsGeneralPage::OnPageChange(wxCommandEvent &event)
+void LibraryPainterOptionsGeneralPage::OnPageChange(wxCommandEvent &WXUNUSED(event))
 {
     PageEdited();
 }

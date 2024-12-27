@@ -16,7 +16,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
@@ -110,7 +110,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, const wxStri
     m_ok->Bind( wxEVT_BUTTON, &NewEditValidator::OnOK, this );
 }
 
-void NewEditValidator::OnOK(wxCommandEvent &event)
+void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errorMsg;
     auto name = m_name->GetValue().ToStdWstring();
