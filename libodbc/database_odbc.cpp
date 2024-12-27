@@ -7324,7 +7324,7 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     int result = 0;
     std::wstring errorMessage;
     std::wstring query = L"";
-    SQLINTEGER val1, val2, val3, val4, val5;
+    SQLLEN val1, val2, val3, val4, val5;
     if( isNew )
         query = L"INSERT INTO \"abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_msg\") VALUES( ?, ?, ?, ?)";
     else
