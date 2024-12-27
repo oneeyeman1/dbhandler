@@ -9,7 +9,7 @@ libpostgres_la_SOURCES =  \
 	database_postgres.h \
 	postgres.cpp
 
-libpostgres_la_CXXFLAGS = -D__WXGTK__ \
+libpostgres_la_CXXFLAGS = @DBTOOLKIT@ \
 	-I../../dbinterface \
 	-I`pg_config \
 	--includedir` 

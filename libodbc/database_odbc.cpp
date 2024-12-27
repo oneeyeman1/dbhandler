@@ -2270,7 +2270,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
         if( pimpl.m_subtype == L"MySQL" )
@@ -2282,7 +2282,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else
                 query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' );";
         }
-#elif __WXQT__
+#elif __DBQT__
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
         if( pimpl.m_subtype == L"MySQL" )
@@ -2294,7 +2294,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else
                 query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
         }
-#endif // __WXGTK__
+#endif // __DBGTK__
     }
     SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
@@ -2710,7 +2710,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         id = OSX;
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         id = GTK;
 #else
         id = QT;

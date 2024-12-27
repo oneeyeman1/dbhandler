@@ -46,6 +46,7 @@ fi
 WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
 WX_LIBS="`$WXCONFIG --libs std,stc`"
+DBTOOLKIT=""
 
 if wx-config --list | grep -i default | grep -i qt ; then
     AC_MSG_NOTICE([Qt build found])
@@ -54,17 +55,20 @@ if wx-config --list | grep -i default | grep -i qt ; then
         WX_CXXFLAGS="$WX_CXXFLAGS $QT_CXXFLAGS"
         WX_LIBS="$WX_LIBS $QT_LIBS"
     ])
+    DBTOOLKIT="-D__DBQT__"
 fi 
 
 if wx-config --list | grep -i default | grep -i gtk ; then
     AC_MSG_NOTICE([GTK build found])
     WX_CXXFLAGS="$WX_CXXFLAGS `pkg-config --cflags gtk+-3.0`"
     WX_LIBS="$WX_LIBS `pkg-config --libs gtk+-3.9`"
+    DBTOOLKIT="-D__DBGTK__"
 fi
 
 AC_SUBST(WX_CPPFLAGS)
 AC_SUBST(WX_CXXFLAGS)
 AC_SUBST(WX_LIBS)
+AC_SUBST(DBTOOLKIT)
 
 AC_PROG_CPP
 AC_PROG_CXX
