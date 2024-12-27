@@ -11,7 +11,8 @@ libmysql_lib_la_SOURCES =  \
 libmysql_lib_la_CXXFLAGS = `mysql_config \
 	--cflags` \
 	-I../../dbinterface \
-	-DUNICODE 
+	-DUNICODE \
+	@DBTOOLKIT@
 
 libmysql_lib_la_LDFLAGS = `mysql_config \
 	--libs` 

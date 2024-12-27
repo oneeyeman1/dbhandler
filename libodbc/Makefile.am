@@ -13,7 +13,8 @@ libodbc_lib_la_CXXFLAGS = -I../../dbinterface \
 	-DUNIXODBC \
 	`pkg-config \
 	odbc \
-	--cflags`
+	--cflags`\
+	@DBTOOLKIT@
 
 libodbc_lib_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \

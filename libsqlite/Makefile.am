@@ -11,7 +11,8 @@ libsqlite_lib_la_SOURCES =  \
 	sqlite3.h \
 	sqlite3ext.h
 
-libsqlite_lib_la_CXXFLAGS = -I../../dbinterface 
+libsqlite_lib_la_CXXFLAGS = -I../../dbinterface \
+	@DBTOOLKIT@
 
 libsqlite_lib_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface 

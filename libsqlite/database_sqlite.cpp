@@ -458,11 +458,11 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
-#elif __WXQT__
+#elif __DBQT__
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', \'\' );";
-#endif // __WXGTK__
+#endif // __DBGTK__
     }
     res = sqlite3_busy_timeout( m_db, 6000 );
     if( res != SQLITE_OK )
@@ -679,11 +679,11 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
         id = OSX;
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         id = GTK;
 #else
         id = QT;
-#endif // __WXGTK__
+#endif // __DBGTK__
     }
     sqlite3_stmt *stmt = NULL;
     std::wstring errorMessage;
@@ -802,11 +802,11 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         id = OSX;
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         id = GTK;
 #else
         id = QT;
-#endif // __WXGTK__
+#endif // __DBGTK__
     }
     char *error;
     std::wstring errorMessage, query;
@@ -1128,11 +1128,11 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
         id = OSX;
     else // *nix
     {
-#ifdef __WXGTK__
+#ifdef __DBGTK__
         id = GTK;
 #else
         id = QT;
-#endif // __WXGTK__
+#endif // __DBGTK__
     }
     bool result = false;
     sqlite3_stmt *stmt = NULL;
