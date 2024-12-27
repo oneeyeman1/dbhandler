@@ -1906,7 +1906,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 GetErrorMessage( res, errorMessage );
                 errorMsg.push_back( errorMessage );
             }
-			else
+            else
             {
                 res3 = sqlite3_bind_text( stmt3, 2, sqlite_pimpl->m_myconv.to_bytes( schemaNamme ).c_str(), -1, SQLITE_TRANSIENT );
                 if( res3 != SQLITE_OK )
