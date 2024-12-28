@@ -110,7 +110,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
             labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( m_properties, prop.table_name, prop.m_owner, prop.m_comment, DatabaseTablePropertiesType );
+            m_page1 = new TableGeneralProperty( m_properties, prop.table_name, prop.m_owner, prop.m_comment, true );
             m_properties->AddPage( m_page1, _( "General" ) );
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );

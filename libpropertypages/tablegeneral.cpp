@@ -51,7 +51,7 @@ TableGeneralProperty::TableGeneralProperty(wxWindow *parent, const wxString &nam
     m_comment->Bind( wxEVT_CHAR, &TableGeneralProperty::OnCommentKeyEntered, this );
     m_comment->Bind( wxEVT_TEXT, &TableGeneralProperty::OnEditComment, this );
     m_log->Bind( wxEVT_CHECKBOX, &TableGeneralProperty::OnLogOnly, this );
-    if( m_isTable )
+    if( !m_isTable )
     {
         m_owner->Hide();
         m_tableName->Hide();
