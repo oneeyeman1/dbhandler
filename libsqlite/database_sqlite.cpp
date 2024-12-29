@@ -354,6 +354,8 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
     code = sqlite3_errcode( m_db );
+    auto stmt = sqlite3_next_stmt( m_db, nullptr );
+    auto sql = sqlite3_sql( stmt );
     switch( code )
     {
     case 1:
@@ -2560,6 +2562,7 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
             }
         }
     }
+    sqlite3_finalize( m_stmt );
     return result;
 }
 
