@@ -135,11 +135,9 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     SetRadius(15);
     m_header = new HeaderGrid();
     m_pLabel = new NameTableShape();
-    if( m_displayComments )
-    {
-        m_comment = new CommentTableShape( table );
-        m_comment->SetId( 1001 );
-    }
+    m_pLabel->SetId( 1000 );
+    m_comment = new CommentTableShape( table );
+    m_comment->SetId( 1001 );
     m_pGrid = new GridTableShape( type );
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
@@ -232,23 +230,28 @@ void MyErdTable::UpdateTable()
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     m_pLabel = new NameTableShape();
-    if( m_displayComments )
-    {
-        m_comment = new CommentTableShape();
-        m_comment->SetId( 1001 );
-    }
+    m_pLabel->SetId( 1000 );
+    m_comment = new CommentTableShape();
+    m_comment->SetId( 1001 );
     if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
     {
-        auto temp = m_table->GetTableName();
-        if( m_displayComments )
-            temp += L" " + m_table->GetTableProperties().m_comment;
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
-        m_pLabel->SetText( temp );
+        m_pLabel->SetText( m_table->GetTableName() );
         m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
         m_pLabel->Activate( false );
         //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
+    }
+    if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+    {
+        m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+        m_comment->GetFont().SetPointSize( 8 );
+        m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
+        m_comment->SetText( m_table->GetTableProperties().m_comment );
+        m_comment->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
+        m_comment->Activate( false );
+        //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
     }
     for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
@@ -525,7 +528,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
             m_table->SetTableProperties( prop );
             m_comment->SetText( prop.m_comment );
             if( m_displayComments )
-                GetShapeManager()->GetShapeCanvas()->Refresh();
+                Refresh();
 //                m_header->Refresh();
         }
     }
