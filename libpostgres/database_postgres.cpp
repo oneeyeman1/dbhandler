@@ -15,7 +15,7 @@
 #include <locale>
 #include <codecvt>
 #include <algorithm>
-#ifdef __WXGTK__
+#if defined( __DBGTK__ ) || defined( __DBQT__ )
 #include <arpa/inet.h>
 #endif
 #include <sstream>
