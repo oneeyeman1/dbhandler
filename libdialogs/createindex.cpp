@@ -32,6 +32,7 @@
 CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db):
     wxDialog(parent, id, title)
 {
+    m_label7 = nullptr;
     m_schema = schemaName;
     m_dbTable = table;
     m_db = db;
@@ -124,6 +125,19 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_fastUpdate->SetValue( true );
         m_label6 = new wxStaticText( panel_1, wxID_ANY, _( "TABLESPACE:" ) );
         m_tablespace = new wxTextCtrl( panel_1, wxID_ANY );
+    }
+    if( m_dbType == L"SQLite" )
+    {
+        m_label7 = new wxStaticText( panel_1, wxID_ANY, _( "Collate" ) );
+        m_label7->Disable();
+        const wxString collite_options[] =
+        {
+            "BINARY",
+            "NOCASE",
+            "RTRIM"
+        };
+        m_collite = new wxComboBox( panel_1, wxID_ANY, "BINARY", wxDefaultPosition, wxDefaultSize, 3, collite_options );
+        m_collite->Disable();
     }
     m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
@@ -367,6 +381,15 @@ void CreateIndex::do_layout()
     }
     sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
     sizer_14->Add( 30, 30, 0, wxEXPAND, 0 );
+    if( m_dbType == L"SQLite" )
+    {
+        auto sizer_17 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_17->Add( m_label7, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_17->Add( m_collite, 0, wxEXPAND, 0 );
+        sizer_14->Add( sizer_17, 0, wxEXPAND, 0 );
+        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
+    }
     sizer_15->Add( m_OK, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
     sizer_15->Add( m_logOnly, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
     sizer_15->Add( m_cancel, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
@@ -424,12 +447,22 @@ void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
             m_indexColumns->RemoveField( label );
             m_table->SetItemState( item, 0, wxLIST_STATE_SELECTED );
             m_table->SetItemState( item, 0, wxLIST_STATE_FOCUSED );
+            if( m_label7 && m_fields.size() == 0 )
+            {
+                m_label7->Disable();
+                m_collite->Disable();
+            }
         }
         else
         {
             m_indexColumns->AddField( label );
             m_fields.push_back( label.ToStdWstring() );
             m_table->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
+            if( m_label7 )
+            {
+                m_label7->Enable();
+                m_collite->Enable();
+            }
             event.Skip();
         }
     }

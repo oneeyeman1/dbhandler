@@ -108,6 +108,8 @@ protected:
     wxButton* m_cancel;
     wxButton* m_help;
     wxPanel* panel_1;
+    wxStaticText *m_label7;
+    wxComboBox *m_collite;
     // end wxGlade
 }; // wxGlade: end class
 
