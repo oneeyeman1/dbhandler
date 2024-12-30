@@ -64,7 +64,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         // set table header
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, 1 );
+        m_header->SetDimensions( 1, 2 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN );
         m_header->AcceptChild( wxT( "NameTableShape" ) );
@@ -146,7 +146,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetVAlign( wxSFShapeBase::valignTOP );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, 1 );
+        m_header->SetDimensions( 1, 2 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "NameTableShape" ) );
@@ -239,7 +239,7 @@ void MyErdTable::UpdateTable()
         m_header->SetRelativePosition( 0, 1 );
         m_header->SetVAlign( wxSFShapeBase::valignTOP );
         m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_header->SetDimensions( 1, 1 );
+        m_header->SetDimensions( 1, 2 );
         m_header->SetFill( *wxTRANSPARENT_BRUSH );
         m_header->SetBorder( *wxTRANSPARENT_PEN);
         m_header->AcceptChild( wxT( "NameTableShape" ) );
