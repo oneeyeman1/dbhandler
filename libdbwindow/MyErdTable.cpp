@@ -229,10 +229,24 @@ void MyErdTable::UpdateTable()
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
+    m_header = new HeaderGrid; 
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
     m_comment = new CommentTableShape();
     m_comment->SetId( 1001 );
+    if( m_header && m_pLabel && m_comment )
+    {
+        m_header->SetRelativePosition( 0, 1 );
+        m_header->SetVAlign( wxSFShapeBase::valignTOP );
+        m_header->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
+        m_header->SetDimensions( 1, 1 );
+        m_header->SetFill( *wxTRANSPARENT_BRUSH );
+        m_header->SetBorder( *wxTRANSPARENT_PEN);
+        m_header->AcceptChild( wxT( "NameTableShape" ) );
+        m_header->AcceptChild( wxT( "CommentTableShape" ) );
+        m_header->Activate( false );
+        SF_ADD_COMPONENT( m_header, wxT( "header" ) );
+    }
     if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
