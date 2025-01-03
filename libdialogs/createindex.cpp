@@ -442,8 +442,7 @@ void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
         auto state = m_table->GetItemState( item, wxLIST_STATE_SELECTED );
         if( state & wxLIST_STATE_SELECTED )
         {
-            m_fields.erase( std::remove_if( m_fields.begin(), m_fields.end(), 
-                           [&label](const std::wstring &e1) { return e1.find( label ) != e1.npos; } ), m_fields.end() );
+            m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), label ), m_fields.end() );
             m_indexColumns->RemoveField( label );
             m_table->SetItemState( item, 0, wxLIST_STATE_SELECTED );
             m_table->SetItemState( item, 0, wxLIST_STATE_FOCUSED );
@@ -458,14 +457,15 @@ void CreateIndex::OnSelectDeselectField(wxMouseEvent &event)
             m_indexColumns->AddField( label );
             m_fields.push_back( label.ToStdWstring() );
             m_table->SetItemState( item, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED );
+            m_table->SetItemState( item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
             if( m_label7 )
             {
                 m_label7->Enable();
                 m_collite->Enable();
             }
-            event.Skip();
         }
     }
+    event.Skip();
 }
 
 void CreateIndex::OnOkShowLog(wxCommandEvent &event)
