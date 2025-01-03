@@ -1039,15 +1039,15 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         queries.push_back( L"BEGIN TRANSACTION sysobjects" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254) PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE \"abcatcol\"(abc_tnam nvarchar(129) NOT NULL, abc_tid integer, abc_ownr nvarchar(129) NOT NULL, abc_cnam nvarchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt nvarchar(254), abc_edit varchar(31), abc_tag varchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatc_x\' AND object_id = OBJECT_ID( \'abcatcol') ) CREATE UNIQUE INDEX abcatc_f ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) PRIMARY KEY( abe_name, abe_seqn ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE \"abcatedt\"(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcate_x\' AND object_id = OBJECT_ID( \'abcatedt') ) CREATE UNIQUE INDEX abcate_f ON abcatedt( abe_name ASC, abe_seqn ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer PRIMARY KEY( abf_name ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE \"abcatfmt\"(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatf_x\' AND object_id = OBJECT_ID( \'abcatfmt\') ) CREATE UNIQUE INDEX abcarf_x ON abcatfmt( abf_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254) PRIMARY KEY( abt_tnam, abt_ownr ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE \"abcattbl\"(abt_os tinyint, abt_tnam nchar(129) NOT NULL, abt_tid integer, abt_ownr nchar(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt nchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatt_x\' AND object_id = OBJECT_ID( \'abcattbl\' )) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC ) WITH (IGNORE_DUP_KEY = ON);");
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) PRIMARY KEY( abv_name ));" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE \"abcatvld\"(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = \'abcatv_x\' AND object_id = OBJECT_ID( \'abcatvld\' ) ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'(General)\') INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'0\') INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 );" );
@@ -1932,7 +1932,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 {
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
-                        GetErrorMessage( errorMsg, 1 );
+                        GetErrorMessage( errorMsg, STMT_ERROR );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
                         break;
@@ -1942,7 +1942,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                         ret = SQLFetch( m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
-                            GetErrorMessage( errorMsg, 1 );
+                            GetErrorMessage( errorMsg, STMT_ERROR );
                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                             result = 1;
                             break;
@@ -1968,7 +1968,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 else
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                     {
-                        GetErrorMessage( errorMsg, 1 );
+                        GetErrorMessage( errorMsg, STMT_ERROR );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
                         break;
@@ -1978,6 +1978,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         if( !result )
         {
             SQLWCHAR temp[50];
+            memset( temp, '\0', 50 );
             if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ) // MS SQL SERVER
             {
                 uc_to_str_cpy( temp, L"COMMIT TRANSACTION sysobjects" );
@@ -1987,6 +1988,11 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 uc_to_str_cpy( temp, L"COMMIT" );
             }
             ret = SQLExecDirect( m_hstmt, temp, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
         }
         else
         {
@@ -1996,10 +2002,15 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             else
                 uc_to_str_cpy( temp, L"ROLLBACK" );
             ret = SQLExecDirect( m_hstmt, temp, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
         }
         if( result || ( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO ) )
         {
-            GetErrorMessage( errorMsg, 1 );
+            GetErrorMessage( errorMsg, STMT_ERROR );
             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
             result = 1;
         }
@@ -2008,7 +2019,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                GetErrorMessage( errorMsg, 1 );
+                GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
             m_hstmt = 0;
@@ -2229,6 +2240,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
+    short osid = 0;
     RETCODE ret;
     std::wstring query4, query2, owner;
     SQLHANDLE stmt = 0, hdbc = 0;
@@ -2241,59 +2253,31 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<int,std::vector<FKField *> > foreign_keys;
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
     {
-        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        if( pimpl.m_subtype == L"MySQL" )
-            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        if( pimpl.m_subtype == L"PostgreSQL" )
-        {
-            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
-            else
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        }
+        osid = WINDOWS;
     }
     else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
     {
-        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-            query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        if( pimpl.m_subtype == L"MySQL" )
-            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        if( pimpl.m_subtype == L"PostgreSQL" )
-        {
-            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
-            else
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 3, ?, 0, \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
-        }
+        osid = OSX;
     }
     else // *nix
     {
 #ifdef __DBGTK__
-        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
-        if( pimpl.m_subtype == L"MySQL" )
-            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' );";
-        if( pimpl.m_subtype == L"PostgreSQL" )
-        {
-            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' ) ON COMFLCT DO NOTHING;";
-            else
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarel\', \'\' );";
-        }
+        osid = GTK;
 #elif __DBQT__
-        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-            query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
-        if( pimpl.m_subtype == L"MySQL" )
-            query2 = L"INSERT IGNORE INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
-        if( pimpl.m_subtype == L"PostgreSQL" )
-        {
-            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' ) ON COMFLCT DO NOTHING;";
-            else
-                query2 = L"INSERT INTO \'abcattbl\' VALUES( 0, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Serif\', \'\' );";
-        }
+        osid = QT;
 #endif // __DBGTK__
+    }
+    if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
+//        query2 = L"IF NOT EXISTS(SELECT * FROM \"abcattbl\" WHERE abt_tnam=? AND abt_ownr=?) INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?), \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        query2 = L"IF NOT EXISTS(SELECT * FROM \"abcattbl\" WHERE abt_tnam='abcatcol' AND abt_ownr='dbo') INSERT INTO \"abcattbl\" VALUES( 0, 'abcatcol', (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo'), \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    if( pimpl.m_subtype == L"MySQL" )
+        query2 = L"INSERT IGNORE INTO \"abcattbl\" VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+            query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else
+            query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     }
     SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
 //    SQLSMALLINT numCols = 0;
@@ -2370,7 +2354,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                GetErrorMessage( errorMsg, 1 );
+                GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
                 break;
             }
@@ -2380,7 +2364,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             ret = SQLTables( m_hstmt, catalogDB, SQL_NTS, NULL, 0, NULL, 0, NULL, 0 );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                GetErrorMessage( errorMsg, 1 );
+                GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
             else
@@ -2414,48 +2398,111 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    SQLSMALLINT dataType, decimalDigits, nullable;
-                    SQLLEN SQLLenIndicator;
-                    SQLULEN paramSize;
-                    ret = SQLDescribeParam( stmt, 1, &dataType, &paramSize, &decimalDigits, &nullable );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    SQLLEN cbParam[6];
+                    if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-                        result = 1;
+/*                        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[0] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                            result = 1;
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length(), 0, schemaName, 0, &cbParam[1] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 3, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[4] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length(), 0, schemaName, 0, &cbParam[5] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }*/
+                    }
+                    if( pimpl.m_subtype == L"MySQL" )
+                    {
+                        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[0] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                            result = 1;
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[1] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[2] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length(), 0, schemaName, 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                            }
+                        }
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType, paramSize, decimalDigits, param, size, &SQLLenIndicator );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-                            result = 1;
-                        }
                         ret = SQLExecute( stmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                             result = 1;
                         }
-                        delete[] param;
-                        param = nullptr;
                     }
-                    pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
-                    count++;
-                }
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                {
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    fields.clear();
-                    pk_fields.clear();
-                    pk_fields.clear();
-                    fk_fieldNames.clear();
-                    indexes.clear();
-                }
-                else if( errorMsg.size() == 0 )
-                {
-                    bufferSize = 1024;
+                    if( !result )
+                    {
+                        pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
+                        count++;
+                    }
                 }
             }
         }
@@ -2474,11 +2521,27 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, 2 );
+        GetErrorMessage( errorMsg, STMT_ERROR );
         result = 1;
     }
     else
         m_hstmt = 0;
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+        result = 1;
+    }
+    else
+        stmt = 0;
+    ret = SQLDisconnect( hdbc );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR, hdbc );
+        result = 1;
+    }
+    else
+        hdbc = 0;
     delete[] qry2;
     qry2 = nullptr;
     if( !result )
