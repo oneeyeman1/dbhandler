@@ -338,14 +338,6 @@ void ODBCDatabase::str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src)
     }
 }
 
-void ODBCDatabase::str_to_c_cpy(std::string &dest, const SQLCHAR *src)
-{
-    while( src && *src )
-    {
-        dest += *src++;
-    }
-}
-
 bool ODBCDatabase::equal(SQLWCHAR *dest, SQLWCHAR *src)
 {
     bool eq = true;
@@ -624,7 +616,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     }
                     if( !result )
                     {
-                        if( wcsstr( driver, L"SQL Server" ) != nullptr )
+                        std::wstring driverStr;
+                        str_to_uc_cpy( driverStr, driver );
+                        if( driverStr == L"SQL Server" )
                         {
                             uc_to_str_cpy( connectStrIn, L";Mars_Connection=yes" );
                         }
@@ -6646,14 +6640,14 @@ int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<st
     SQLSMALLINT columnCount, *nameLen = nullptr, *dataType = nullptr, *decimal = nullptr, *nullable = nullptr;
     SQLULEN  *columnSize = nullptr;
     SQLRETURN ret;
-    SQLCHAR *fieldString = nullptr;
+    SQLWCHAR *fieldString = nullptr;
     SQLWCHAR *fieldStr = nullptr;
     char *fieldBlob = nullptr;
     SQLINTEGER fieldInt;
     SQLFLOAT fieldFloat;
     SQLLEN *columnDataLen = nullptr;
     std::wstring strCol;
-    std::string stringCol;
+    std::wstring stringCol;
     if( m_fieldsInRecordSet == 0 )
     {
         ret = SQLNumResultCols( m_hstmt, &columnCount );
@@ -6705,14 +6699,14 @@ int ODBCDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<st
                     case SQL_LONGVARCHAR:
                         ctype = SQL_C_CHAR;
                         valueType = 3;
-                        fieldString = new SQLCHAR[columnSize[i] + 2];
+                        fieldString = new SQLWCHAR[columnSize[i] + 2];
                         memset( fieldString, '\0', columnSize[i] + 2 );
                         ret = SQLGetData( m_hstmt, i + 1, ctype, fieldString, columnSize[i], &columnDataLen[i] );
                         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
-                            str_to_c_cpy( stringCol, fieldString );
+                            str_to_uc_cpy( stringCol, fieldString );
                             row.push_back( DataEditFiield( stringCol ) );
-                            delete fieldString;
+                            delete[] fieldString;
                             fieldString = nullptr;
                         }
                         else

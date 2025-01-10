@@ -67,7 +67,6 @@ protected:
     int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
     int GetSQLStringSize(SQLWCHAR *str);
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
-    void str_to_c_cpy(std::string &dest, const SQLCHAR *src);
     void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
     void copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src);
     bool equal(SQLWCHAR *dest, SQLWCHAR *src);
