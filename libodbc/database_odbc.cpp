@@ -2275,7 +2275,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 #endif // __DBGTK__
     }
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-        query2 = L"INSERT INTO abcattbl SELECT ?, \'abcatcol\', (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo'),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam='abcatcol' AND abt_ownr='dbo');";
+        query2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam='abcatcol' AND abt_ownr='dbo');";
     if( pimpl.m_subtype == L"MySQL" )
         query2 = L"INSERT IGNORE INTO \"abcattbl\" VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -2389,7 +2389,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         schema = cat;
                         copy_uc_to_uc( schemaName, catalogName );
                     }
-                    SQLLEN cbParam[6];
+                    SQLLEN cbParam[6] = {0, 0, 0, 0, 0, 0};
                     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                     {
                         ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
@@ -2399,37 +2399,37 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             result = 1;
                             break;
                         }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[0] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[2] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( stmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length(), 0, schemaName, 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
+                                result = 1;
+                                break;
+                            }
+                        }
 /*                        if( !result )
-                        {
-                            ret = SQLDescribeParam( stmt, 2, &dataType, &paramSize, &decimalDigts, &nullable );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType, paramSize, decimalDigts, tableName, 0, &cbParam[0] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length(), 0, schemaName, 0, &cbParam[1] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, CONN_ERROR, stmt );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
                         {
                             ret = SQLBindParameter( stmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length(), 0, tableName, 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
