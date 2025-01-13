@@ -1034,8 +1034,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::vector<std::wstring> queries;
-    SQLWCHAR *query = NULL;
+    std::vector<SQLWCHAR *> queries;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         queries.push_back( L"BEGIN TRANSACTION sysobjects" );
@@ -1901,14 +1900,9 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     {
         if( pimpl.m_subtype != L"Oracle" || ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
         {
-            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+            for( std::vector<SQLWCHAR *>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                query = new SQLWCHAR[(*it).length() + 2];
-                memset( query, '\0', (*it).length() + 2 );
-                uc_to_str_cpy( query, (*it) );
-                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
-                query = nullptr;
+                ret = SQLExecDirect( m_hstmt, (*it), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -1921,14 +1915,9 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         else
         {
             int i = 1;
-            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+            for( std::vector<SQLWCHAR *>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                query = new SQLWCHAR[(*it).length() + 2];
-                memset( query, '\0', (*it).size() + 2 );
-                uc_to_str_cpy( query, (*it) );
-                ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-                delete[] query;
-                query = nullptr;
+                ret = SQLExecDirect( m_hstmt, (*it), SQL_NTS );
                 if( i % 2 != 0 )
                 {
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -2037,23 +2026,19 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
 
 int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring query;
     SQLWCHAR *qry = nullptr, *dbName = nullptr;
     int result = 0;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
+        qry = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
-        query = L"SELECT name FROM sp_helpdb";
+        qry = L"SELECT name FROM sp_helpdb";
     if( pimpl.m_subtype == L"MySQL"  )
-        query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
+        qry = L"SELECT schema_name AS Database FROM information_schema.schemata;";
     if( pimpl.m_subtype == L"PostgreSQL" )
-        query = L"SELECT datname AS Database FROM pg_database;";
+        qry = L"SELECT datname AS Database FROM pg_database;";
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
     {
-        qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
         ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -2111,8 +2096,6 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<s
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
-    delete qry;
-    qry = nullptr;
     delete dbName;
     dbName = nullptr;
     return result;
@@ -2245,7 +2228,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     RETCODE ret;
     std::wstring query4, query2, owner;
     SQLHANDLE stmt = 0;
-    SQLSMALLINT OutConnStrLen;
     int result = 0, bufferSize = 1024, count = 0;
     std::vector<TableField *> fields;
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
@@ -2268,18 +2250,19 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         osid = QT;
 #endif // __DBGTK__
     }
+    SQLWCHAR *qry2 = nullptr;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-        query2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+        qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WTH( TABLOCK ) WHERE abt_tnam=? AND abt_ownr=?);";
     if( pimpl.m_subtype == L"MySQL" )
-        query2 = L"INSERT IGNORE INTO \"abcattbl\" VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        qry2 = L"INSERT IGNORE INTO \"abcattbl\" VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-            query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else
-            query2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     }
-    SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr, *qry2 = nullptr;
+    SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     if( !result )
     {
@@ -2332,9 +2315,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        qry2 = new SQLWCHAR[query2.length() + 1];
-        memset( qry2, '\0', query2.length() + 1 );
-        uc_to_str_cpy( qry2, query2 );
         ret = SQLPrepare( stmt, qry2, SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -2580,8 +2560,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
         stmt = 0;
-    delete[] qry2;
-    qry2 = nullptr;
     if( !result )
         m_numOfTables = count;
     return result;
