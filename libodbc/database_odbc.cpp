@@ -2795,7 +2795,6 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, id;
-    SQLSMALLINT OutConnStrLen;
     SQLWCHAR *qry = NULL;
     unsigned short dataFontSize = 0, dataFontWeight = 0, dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontUnderline = 0, labelFontStriken = 0;
     unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
@@ -6780,7 +6779,7 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
     }
     else
     {
-        auto qry = new SQLWCHAR[query.length() + 2];
+        qry = new SQLWCHAR[query.length() + 2];
         memset( qry, '\0', query.size() + 2 );
         uc_to_str_cpy( qry, query );
         ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
@@ -6842,6 +6841,8 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
             m_hstmt = 0;
         }
     }
+    delete[] qry;
+    qry = nullptr;
     return result;
 }
 
