@@ -937,12 +937,17 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                             }
                         }
                     }
+                    if( !result )
+                        ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+                    else
+                        ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
                     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
                         result = 1;
                     }
+                    m_hstmt = 0;
                 }
 /*****************************************/
                 if( !result )
@@ -1871,6 +1876,8 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 memset( qry, '\0', (*it).length() + 2 );
                 uc_to_str_cpy( qry, (*it) );
                 ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                delete[] qry;
+                qry = nullptr;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -1879,8 +1886,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     break;
                 }
             }
-            delete[] qry;
-            qry = nullptr;
         }
         else
         {
@@ -6954,6 +6959,7 @@ int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
+            m_hstmt = 0;
         }
     }
     delete[] qry;
