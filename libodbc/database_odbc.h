@@ -65,6 +65,7 @@ protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
     int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
+    int MonitorSchemaChanges(std::vector<std::wstring> &errorMsg);
     int GetSQLStringSize(SQLWCHAR *str);
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
     void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
