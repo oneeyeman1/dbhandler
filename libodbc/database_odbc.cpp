@@ -853,10 +853,10 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'0.00\') INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'#.##0\') INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'#.##0,00\') INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0;[#.##0]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0;|RED[$#.##0]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0;[$#.##0]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0;[RED][$#.##0]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[RED][$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0,00;[$#.##0,00]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0,00;|RED[$#.##0,00]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'$#.##0,00;[RED][$#.##0,00]\') INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[RED][$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'0%\') INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'0.00%\') INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'0.00E+00\') INSERT INTO \"abcatfmt\" VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 );" );
@@ -873,7 +873,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'mm/dd/yyyy\') INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'salary\') INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatfmt\" WHERE abf_name=\'mm-dd-yyyy\') INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatvld\" WHERE abv_name=\'Multiple_of_100\') INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatvld\" WHERE abv_name=\'Multiple_of_100\') INSERT INTO \"abcatvld\" VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatvld\" WHERE abv_name=\'Positive_number\') INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatvld\" WHERE abv_name=\'Y_or_N\') INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatvld\" WHERE abv_name=\'must_be_number\') INSERT INTO \"abcatvld\" VALUES( \'must_be_number\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
@@ -918,20 +918,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'DDD/YY HH:MM:SS\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'DDD/YYYY\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'DDD/YYYY HH:MM:SS\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department Lst\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department Lst\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department Lst\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department List\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department List\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Department List\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Dollars with cents\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=4) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=5) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=6) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=7) INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'empplyees\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'empplyees\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL );" );
-        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'empplyees\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=4) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=5) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=6) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Employee Status\' AND abe_seqn=7) INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'employees\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'employees\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL );" );
+        queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'employees\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Financial Codes\' AND abe_seqn=1) INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Financial Codes\' AND abe_seqn=2) INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL );" );
         queries.push_back( L"IF NOT EXISTS( SELECT * FROM \"abcatedt\" WHERE abe_name=\'Financial Codes\' AND abe_seqn=3) INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' );" );
@@ -1003,7 +1003,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
             queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
             queries.push_back( L"INSERT IGNORE INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
@@ -1048,20 +1048,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL );" );
+            queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL );" );
             queries.push_back( L"INSERT IGNORE INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' );" );
@@ -1121,7 +1121,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\') ON CONFLICT DO NOTHING;");
@@ -1166,20 +1166,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -1236,7 +1236,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'salary\', \'$###,##0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\') ON CONFLICT DO NOTHING;");
@@ -1281,20 +1281,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -1371,20 +1371,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -1465,20 +1465,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -1565,20 +1565,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
             queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -1659,20 +1659,20 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department Lst\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Empplyee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'empplyees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' ) ON CONFLICT DO NOTHING;" );
@@ -2005,11 +2005,20 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     {
         if( m_isConnected )
         {
-            ret = SQLDisconnect( m_hdbc );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
             if( ret != SQL_SUCCESS )
             {
                 GetErrorMessage( errorMsg, CONN_ERROR );
                 result = 1;
+            }
+            if( !result )
+            {
+                ret = SQLDisconnect( m_hdbc );
+                if( ret != SQL_SUCCESS )
+                {
+                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    result = 1;
+                }
             }
         }
         ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
@@ -4792,6 +4801,12 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, ENV_ERROR );
+        result = 1;
+    }
+    ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)50, 0 );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+    {
+        GetErrorMessage( errorMsg, 2 );
         result = 1;
     }
     if( !result )
