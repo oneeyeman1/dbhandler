@@ -269,69 +269,68 @@ MainFrame::~MainFrame()
 {
     std::vector<std::wstring> errorMsg;
     int result = 0;
-    wxConfigBase *config = wxConfigBase::Get( "DBManager" );
-    wxString path = config->GetPath();
-    config->SetPath( "CurrentDB" );
+    wxString path = m_config->GetPath();
+    m_config->SetPath( "CurrentDB" );
     if( m_db )
     {
         wxString temp1( m_db->GetTableVector().m_type );
-        config->Write( "Engine", temp1 );
+        m_config->Write( "Engine", temp1 );
         wxString temp2 = m_db->GetTableVector().m_subtype;
-        config->Write( "Subtype", temp2 );
+        m_config->Write( "Subtype", temp2 );
         if( temp2 == "PostgreSQL" )
         {
             wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
-            config->Write( "Logfile", temp3 );
+            m_config->Write( "Logfile", temp3 );
         }
         wxString currentProfile;
         temp1 = m_db->GetTableVector().m_connectString;
-        config->Write( "DatabaseName", temp1 );
+        m_config->Write( "DatabaseName", temp1 );
         if( m_db->GetTableVector().m_type == L"SQLite" )
 #ifdef __WXMSW__
             currentProfile = temp1.Mid( temp1.find_last_of( '\\' ) + 1 );
 #else
             currentProfile = temp1.Mid( temp1.find_last_of( '/' ) + 1 );
 #endif
-        config->SetPath( path );
-        config->SetPath( "Profiles" );
+        m_config->SetPath( path );
+        m_config->SetPath( "Profiles" );
         auto found = false;
         long counter;
         wxString profile;
-        auto res = config->GetFirstEntry( profile, counter );
+        auto res = m_config->GetFirstEntry( profile, counter );
         while( res && !found )
         {
-            auto prof = config->Read( profile, "" );
+            auto prof = m_config->Read( profile, "" );
             if( prof == currentProfile )
                 found = true;
-            res = config->GetNextEntry( profile, counter );
+            res = m_config->GetNextEntry( profile, counter );
         }
         if( !found )
-            config->Write( wxString::Format( "Profile%ld", counter ), currentProfile );
-        config->SetPath( path );
+            m_config->Write( wxString::Format( "Profile%ld", counter ), currentProfile );
+        m_config->SetPath( path );
         std::lock_guard<std::mutex>( m_db->GetTableVector().my_mutex );
         result = m_db->Disconnect( errorMsg );
     }
-    config->SetPath( "CurrentLibraries" );
-    config->Write( "Active", m_conf->m_currentLibrary );
-    config->SetPath( path );
-    config->SetPath( "MainToolbar" );
-    config->Write( "Show", m_conf->m_tbSettings["PowerBar"].m_hideShow );
-    config->Write( "ShowTooltip", m_conf->m_tbSettings["PowerBar"].m_showTooltips );
-    config->Write( "ShowText", m_conf->m_tbSettings["PowerBar"].m_showText );
-    config->Write( "Orientation", m_conf->m_tbSettings["PowerBar"].m_orientation );
-    config->SetPath( path );
-    config->SetPath( "ViewBar" );
-    config->Write( "Show", m_conf->m_tbSettings["ViewBar"].m_hideShow );
-    config->Write( "ShowTooltip", m_conf->m_tbSettings["ViewBar"].m_showTooltips );
-    config->Write( "ShowText", m_conf->m_tbSettings["ViewBar"].m_showText );
-    config->Write( "Orientation", m_conf->m_tbSettings["ViewBar"].m_orientation );
-    config->SetPath( path );
-    config->SetPath( "StyleBar" );
-    config->Write( "Show", m_conf->m_tbSettings["StyleBar"].m_hideShow );
-    config->Write( "ShowTooltip", m_conf->m_tbSettings["StyleBar"].m_showTooltips );
-    config->Write( "ShowText", m_conf->m_tbSettings["StyleBar"].m_showText );
-    config->Write( "Orientation", m_conf->m_tbSettings["StyleBar"].m_orientation );
-    config->SetPath( path );
+    m_config->SetPath( "CurrentLibraries" );
+    m_config->Write( "Active", m_conf->m_currentLibrary );
+    m_config->SetPath( path );
+    m_config->SetPath( "MainToolbar" );
+    m_config->Write( "Show", m_conf->m_tbSettings["PowerBar"].m_hideShow );
+    m_config->Write( "ShowTooltip", m_conf->m_tbSettings["PowerBar"].m_showTooltips );
+    m_config->Write( "ShowText", m_conf->m_tbSettings["PowerBar"].m_showText );
+    m_config->Write( "Orientation", m_conf->m_tbSettings["PowerBar"].m_orientation );
+    m_config->SetPath( path );
+    m_config->SetPath( "ViewBar" );
+    m_config->Write( "Show", m_conf->m_tbSettings["ViewBar"].m_hideShow );
+    m_config->Write( "ShowTooltip", m_conf->m_tbSettings["ViewBar"].m_showTooltips );
+    m_config->Write( "ShowText", m_conf->m_tbSettings["ViewBar"].m_showText );
+    m_config->Write( "Orientation", m_conf->m_tbSettings["ViewBar"].m_orientation );
+    m_config->SetPath( path );
+    m_config->SetPath( "StyleBar" );
+    m_config->Write( "Show", m_conf->m_tbSettings["StyleBar"].m_hideShow );
+    m_config->Write( "ShowTooltip", m_conf->m_tbSettings["StyleBar"].m_showTooltips );
+    m_config->Write( "ShowText", m_conf->m_tbSettings["StyleBar"].m_showText );
+    m_config->Write( "Orientation", m_conf->m_tbSettings["StyleBar"].m_orientation );
+    m_config->SetPath( path );
     m_config->SetPath( "Database/General" );
     m_config->Write( "Shared Profiles", m_conf->m_dbOptions.m_general.m_sharedProfile );
     m_config->Write( "Display Table List", m_conf->m_dbOptions.m_general.m_tableLst );
