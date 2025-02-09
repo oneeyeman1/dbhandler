@@ -2053,6 +2053,8 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     }
     delete odbc_pimpl;
     odbc_pimpl = nullptr;
+    delete[] m_connectString;
+    m_connectString = nullptr;
     return result;
 }
 
@@ -4780,7 +4782,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::wstring query, query1, strCommand;
     unsigned int count = 0;
     auto bufferSize = 1024;
-    if( m_connectString[0] == '\0' )
+    if( pimpl.m_connectString[0] == '\0' )
         return 0;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
