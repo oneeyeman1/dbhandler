@@ -25,7 +25,7 @@ public:
 
 private:
     std::vector<long> m_selectedItems;
-    std::vector<std::wstring> m_fields;
+    std::vector<std::wstring> m_fields, m_tableFields;
     std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
     Database *m_db;
@@ -37,8 +37,10 @@ private:
     // end wxGlade
 
 protected:
-    void OnSelectDeselectField(wxMouseEvent &event);
+    void OnFieldSelected(wxListEvent &event);
+    void OnFieldDeselected(wxListEvent &event);
     void OnOkShowLog(wxCommandEvent &event);
+    void OnColumnName(wxGridEditorCreatedEvent &event);
     bool Verify();
     void OnFillFactorUpdateUI(wxUpdateUIEvent &event);
     void OnFastUpdateUpdateUI(wxUpdateUIEvent &event);
@@ -75,10 +77,14 @@ protected:
     wxCheckBox *m_dropExisting;
     wxCheckBox *m_fastUpdate;
     wxCheckBox *m_online;
+    wxCheckBox *m_resumable;
+    wxCheckBox *m_optimize;
     wxCheckBox *m_allowRowLocks;
     wxCheckBox *m_allowPageLocks;
     wxStaticText *m_label5;
     wxSpinCtrl *m_maxDop;
+    wxSpinCtrl *m_maxDuration;
+    wxComboBox *m_dataCompression;
     wxRadioButton *m_dataCompressionNone;
     wxRadioButton *m_dataCompressionRow;
     wxRadioButton *m_dataCompressionPage;
@@ -93,7 +99,7 @@ protected:
     wxRadioButton *m_lockShared;
     wxRadioButton *m_lockExclusive;
     wxRadioButton *m_concurrently;
-    wxRadioButton *m_nonConcurrently;
+    wxCheckBox    *m_concurrency;
     wxRadioButton *m_indextypeGist;
     wxRadioButton *m_indextypeGin;
     wxRadioButton *m_nullsFirst;
@@ -109,7 +115,10 @@ protected:
     wxButton* m_help;
     wxPanel* panel_1;
     wxStaticText *m_label7;
-    wxComboBox *m_collite;
+    wxComboBox *m_collite = nullptr;
+    wxStaticText *m_label8;
+    wxGrid *m_where;
+    wxRadioBox *m_uniqueDup, *m_direction, *m_options;
     // end wxGlade
 }; // wxGlade: end class
 
