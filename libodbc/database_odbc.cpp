@@ -771,9 +771,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         result = MonitorSchemaChanges( errorMsg );
                     }
                     if( !result )
-                        ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                     else
-                        ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
@@ -2203,7 +2203,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+            auto qry = new SQLWCHAR[30];
+            memset( qry, '\0', 30 );
+            uc_to_str_cpy( qry, L"BEGIN TRANSACYION" );
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            delete[] qry;
+            qry = nullptr;
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2214,7 +2219,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             {
-                ret = SQLExecDirect( m_hstmt, L"SET NOCOUNT ON", SQL_NTS );
+                auto qry = new SQLWCHAR[30];
+                memset( qry, '\0', 30 );
+                uc_to_str_cpy( qry, L"SET NOCOUNT ON" );
+                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                delete[] qry;
+                qry = nullptr;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2222,7 +2232,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
-                    ret = SQLExecDirect( m_hstmt, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE", SQL_NTS );
+                    auto qry = new SQLWCHAR[30];
+                    memset( qry, '\0', 30 );
+                    uc_to_str_cpy( qry, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
+                    ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                    delete[] qry;
+                    qry = nullptr;
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2397,7 +2412,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
         {
-            ret = SQLExecDirect( m_hstmt, L"SET NOCOUNT OFF", SQL_NTS );
+            auto qry = new SQLWCHAR[30];
+            memset( qry, '\0', 30 );
+            uc_to_str_cpy( qry, L"SET NOCOUNT OFF" );
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            delete[] qry;
+            qry = nullptr;
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2449,7 +2469,12 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     }
     if( !result )
     {
-        ret = SQLExecDirect( m_hstmt, L"BEGIN TRANSACTION", SQL_NTS );
+        auto qry = new SQLWCHAR[30];
+        memset( qry, '\0', 30 );
+        uc_to_str_cpy( qry, L"BEGIN TRANSACTION" );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        delete[] qry;
+        qry = nullptr;
         if( ret != SQL_SUCCESS || ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -4775,7 +4800,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC dbc;
     SQLWCHAR outConnect[1024];
-    SQLWCHAR *command = L"";
+    SQLWCHAR *command = nullptr;
     int result = 0, ret;
     if( !m_isConnected )
         return result;
@@ -4857,7 +4882,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
             if( !result && ret != SQL_NO_DATA )
             {
-                SQLINTEGER indicator;
+                SQLLEN indicator;
                 if( SQLGetData( stmt, 1, SQL_C_WCHAR, command, 0, &indicator ) == SQL_SUCCESS_WITH_INFO )
                 {
                     if( indicator == SQL_NO_TOTAL )
@@ -7183,9 +7208,9 @@ int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
         if( !result )
-            ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
         else
-            ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
         if( !result )
         {
             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );;
@@ -7295,9 +7320,9 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
         }
     }
     if( !result )
-        ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     else
-        ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
