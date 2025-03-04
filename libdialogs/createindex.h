@@ -38,6 +38,7 @@ private:
 
 protected:
     void OnFieldSelected(wxListEvent &event);
+    void OnFileStreamSelected(wxCommandEvent &event);
     void OnFieldDeselected(wxListEvent &event);
     void OnOkShowLog(wxCommandEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
@@ -53,13 +54,12 @@ protected:
     void OnFillFactor(wxCommandEvent &event);
     void GenerateQuery();
     void OnOKUpdateUI(wxUpdateUIEvent &event);
+    void OnClusteredUnclustered(wxCommandEvent &event);
     // begin wxGlade: CreateIndex::attributes
     wxStaticText* m_label1;
     wxStaticText* m_tableName;
     wxStaticText* m_label2;
     wxTextCtrl* m_indexName;
-    wxRadioButton *m_clustered;
-    wxRadioButton *m_unclustered;
     wxRadioButton *m_defaultIndex;
     wxRadioButton *m_fullText;
     wxRadioButton *m_spatial;
@@ -117,8 +117,11 @@ protected:
     wxStaticText *m_label7;
     wxComboBox *m_collite = nullptr;
     wxStaticText *m_label8;
-    wxGrid *m_where;
+    wxGrid *m_where = nullptr;
     wxRadioBox *m_uniqueDup, *m_direction, *m_options;
+    wxStaticText *m_label9;
+    wxComboBox *m_filestream;
+    wxTextCtrl *m_fsname = nullptr;
     // end wxGlade
 }; // wxGlade: end class
 

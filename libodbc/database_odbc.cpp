@@ -498,11 +498,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
         connectingDSN = selectedDSN;
     else
     {
-        connectingDSN = selectedDSN.substr( 0, pos );
-        std::wstring temp = selectedDSN.substr( pos + 1 );
-        pos = temp.find( L';' );
-        connectingUser = temp.substr( 0, pos );
-        connectingPassword = temp.substr( pos + 1 );
+        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"DSN=" ) + 4 );
+        connectingDSN = temp.substr( 0, temp.find( L";") );
+//        connectingDSN = selectedDSN.substr( 0, pos );
+        temp = temp.substr( temp.find( L"UID=" ) + 4 );
+        connectingUser = temp.substr( 0, temp.find( L";" ) );
+        temp = temp.substr( temp.find( L"PWD=" ) + 4 );
+        connectingPassword = temp.substr( 0, temp.find( L";" ) );
         user = new SQLWCHAR[connectingUser.length() + 2];
         password = new SQLWCHAR[connectingPassword.length() + 2];
         memset( user, '\0', connectingUser.length() + 2 );
@@ -1819,7 +1821,7 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<s
 {
     SQLWCHAR *qry = nullptr, *dbName = nullptr;
     SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
-    SQLULEN columnSizePtr;
+    SQLULEN columnSizePtr = 0;
     SQLLEN cbDatabaseName;
     std::wstring query;
     int result = 0;
@@ -2061,7 +2063,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     short osid = 0;
-    RETCODE ret;
+    auto ret = SQL_SUCCESS;
     std::wstring query4, query2, owner;
     SQLLEN cbParam[6] = {0, 0, 0, 0, 0, 0};
     int result = 0, bufferSize = 1024, count = 0;
@@ -4854,7 +4856,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
-    else
+    if( !result )
     {
         SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
         memset( qry, '\0', query.length() + 2 );
@@ -4872,7 +4874,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             if( !result )
             {
                 ret = SQLFetch( stmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA  )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                     result = 1;
