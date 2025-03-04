@@ -125,7 +125,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 {
                     result = 1;
                 }
-                if( PopulateValdators( errorMsg ) )
+                if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
             }
         }
@@ -168,21 +168,21 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
-    if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+    if( pimpl.m_versionMajor >= 10 )
     {
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
-        queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_name, abt_ownr );" );
+        queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_tnam, abt_ownr );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
     }
     else
     {
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatc_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatc_x\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;" );
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcate_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcate_x\" ON \"abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC); END IF; END;" );
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END;" );
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatc_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatc_x\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END; $$;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcate_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcate_x\" ON \"abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC); END IF; END; $$;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END; $$;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END; $$;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END; $$;" );
     }
     std::wstring err;
     res = PQexec( m_db, "START TRANSACTION" );
