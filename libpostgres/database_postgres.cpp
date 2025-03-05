@@ -163,6 +163,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     int result = 0;
     PGresult *res;
     std::vector<std::wstring> queries;
+    queries.push_back( L"SET client_min_messages = WARNING;" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
@@ -1181,7 +1182,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     paramValues[0] = (char *) &binaryIntVal;
     paramLengths[0] = sizeof( binaryIntVal );
     paramFormats[0] = 1;
-    res = PQexecParams( m_db, "SELECT * FROM abccatfmt WHERE abf_type = $1", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
+    res = PQexecParams( m_db, "SELECT * FROM abcatfmt WHERE abf_type = $1", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
