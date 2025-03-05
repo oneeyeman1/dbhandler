@@ -1444,7 +1444,6 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                     errorMsg.push_back( err );
-                    PQclear( res2 );
                     fields.erase( fields.begin(), fields.end() );
                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     result = 1;
