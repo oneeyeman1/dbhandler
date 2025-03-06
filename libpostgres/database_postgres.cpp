@@ -1182,7 +1182,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     paramValues[0] = (char *) &binaryIntVal;
     paramLengths[0] = sizeof( binaryIntVal );
     paramFormats[0] = 1;
-    res = PQexecParams( m_db, "SELECT * FROM abcatfmt WHERE abf_type = $1", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
+    res = PQexecParams( m_db, "SELECT * FROM abcatfmt WHERE abf_type = $1::int4", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
