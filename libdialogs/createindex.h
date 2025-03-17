@@ -33,13 +33,14 @@ private:
     unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
-    void do_layout();
+//    void do_layout();
     // end wxGlade
 
 protected:
     void OnFieldSelected(wxListEvent &event);
     void OnFileStreamSelected(wxCommandEvent &event);
     void OnFieldDeselected(wxListEvent &event);
+    void OnAdvanced(wxCommandEvent &event);;
     void OnOkShowLog(wxCommandEvent &event);
     void OnColumnName(wxGridEditorCreatedEvent &event);
     bool Verify();
@@ -56,28 +57,28 @@ protected:
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnClusteredUnclustered(wxCommandEvent &event);
     // begin wxGlade: CreateIndex::attributes
-    wxStaticText* m_label1;
-    wxStaticText* m_tableName;
-    wxStaticText* m_label2;
-    wxTextCtrl* m_indexName;
+/*    wxStaticText  *m_label1;
+    wxStaticText  *m_tableName;
+    wxStaticText  *m_label2;
+    wxTextCtrl    *m_indexName;
     wxRadioButton *m_defaultIndex;
     wxRadioButton *m_fullText;
     wxRadioButton *m_spatial;
-    wxRadioButton* m_unique;
-    wxRadioButton* m_duplicate;
-    wxRadioButton* m_ascending;
-    wxRadioButton* m_descending;
-    wxCheckBox *m_padIndex;
-    wxStaticText *m_label4;
-    wxSpinCtrl *m_fillfactor;
-    wxCheckBox *m_sortTempDB;
-    wxCheckBox *m_ignoreDupKeys;
-    wxCheckBox *m_statisticsNoRecompute;
-    wxCheckBox *m_statisticsIncremental;
-    wxCheckBox *m_dropExisting;
-    wxCheckBox *m_fastUpdate;
-    wxCheckBox *m_online;
-    wxCheckBox *m_resumable;
+    wxRadioBox    *m_unique;
+    wxRadioButton *m_duplicate;
+    wxRadioButton *m_ascending;
+    wxRadioButton *m_descending;
+    wxCheckBox    *m_padIndex;
+    wxStaticText  *m_label4;
+    wxSpinCtrl    *m_fillfactor;
+    wxCheckBox    *m_sortTempDB;
+    wxCheckBox    *m_ignoreDupKeys;
+    wxCheckBox    *m_statisticsNoRecompute;
+    wxCheckBox    *m_statisticsIncremental;
+    wxCheckBox    *m_dropExisting;
+    wxCheckBox    *m_fastUpdate;
+    wxCheckBox    *m_online;
+    wxCheckBox    *m_resumable;
     wxCheckBox *m_optimize;
     wxCheckBox *m_allowRowLocks;
     wxCheckBox *m_allowPageLocks;
@@ -86,7 +87,6 @@ protected:
     wxSpinCtrl *m_maxDuration;
     wxComboBox *m_dataCompression;
     wxRadioButton *m_dataCompressionNone;
-    wxRadioButton *m_dataCompressionRow;
     wxRadioButton *m_dataCompressionPage;
     wxRadioButton *m_indextypeDefault;
     wxRadioButton *m_indextypeBtree;
@@ -118,11 +118,31 @@ protected:
     wxComboBox *m_collite = nullptr;
     wxStaticText *m_label8;
     wxGrid *m_where = nullptr;
-    wxRadioBox *m_uniqueDup, *m_direction, *m_options;
+    wxRadioBox *m_direction, *m_options;
     wxStaticText *m_label9;
     wxComboBox *m_filestream;
     wxTextCtrl *m_fsname = nullptr;
+    std::vector<std::tuple<wxString, wxString, wxString, wxString> > m_whereData;
+    // end wxGlade*/
+    // begin wxGlade: MyDialog::attributes
+    wxPanel *panel_1;
+    wxStaticText *m_label1;
+    wxStaticText *m_tableName;
+    wxStaticText *m_label2;
+    wxStaticText *m_label7;
+    wxTextCtrl *m_indexName;
+    wxRadioBox *m_unique;
+    wxRadioBox *m_direction;
+    FieldWindow *m_indexColumns;
+    wxListCtrl *m_table;
+    wxComboBox *m_collite;
+    wxButton *m_OK;
+    wxButton *m_Cancel;
+    wxButton *m_logOnly;
+    wxButton *m_advanced;
+    wxButton *m_help;
     // end wxGlade
+
 }; // wxGlade: end class
 
 

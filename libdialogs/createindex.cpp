@@ -18,6 +18,8 @@
 #endif
 
 #include <string>
+#include <vector>
+#include <tuple>
 #include "wx/listctrl.h"
 #include "wx/grid.h"
 #include "wx/spinctrl.h"
@@ -26,6 +28,7 @@
 #include "field.h"
 #include "fieldwindow.h"
 #include "createindex.h"
+#include "createindexsqlserver.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -33,15 +36,11 @@
 CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, const std::wstring &schemaName, Database *db):
     wxDialog(parent, id, title)
 {
-    m_label7 = nullptr;
     m_schema = schemaName;
     m_dbTable = table;
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_dbSubType = m_db->GetTableVector().m_subtype;
-    m_defaultIndex = NULL;
-    m_fullText = NULL;
-    m_spatial = NULL;
     // begin wxGlade: CreateIndex::CreateIndex
 /*    panel_1 = new wxPanel( this, wxID_ANY );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
@@ -156,7 +155,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_help = new wxButton( panel_1, wxID_HELP, _( "&Help" ) );
 */
 
-    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+/*    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     panel_1 = new wxPanel( this, wxID_ANY );
     sizer_1->Add( panel_1, 1, wxEXPAND, 0 );
     auto sizer_2 = new wxBoxSizer( wxHORIZONTAL );
@@ -191,9 +190,9 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         "Unique",
         "Duplicate",
     };
-    m_uniqueDup = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, radio_box_2_choices, 2, wxRA_SPECIFY_ROWS );
-    m_uniqueDup->SetSelection( 0 );
-    sizer_18->Add( m_uniqueDup, 0, wxALIGN_BOTTOM, 0 );
+    m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, radio_box_2_choices, 2, wxRA_SPECIFY_ROWS );
+    m_unique->SetSelection( 0 );
+    sizer_18->Add( m_unique, 0, wxALIGN_BOTTOM, 0 );
     const wxString m_direction_choices[] = {
         "Ascending",
         "Descending",
@@ -313,8 +312,10 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_maxDuration = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 60 );
         sizer_12->Add( m_maxDuration, 0, 0, 0 );
         m_allowRowLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Row Locks" );
+        m_allowRowLocks->SetValue( true );
         grid_sizer_2->Add( m_allowRowLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
         m_allowPageLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Page Locks");
+        m_allowPageLocks->SetValue( true );
         grid_sizer_2->Add( m_allowPageLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
         m_optimize = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Optimize for Sequental" );
         grid_sizer_2->Add( m_optimize, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -323,7 +324,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_label5 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Max DOP" );
         sizer_13->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer_13->Add( 5, 5, 0, 0, 0 );
-        m_maxDop = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 64 );
+        m_maxDop = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
         sizer_13->Add( m_maxDop, 0, 0, 0 );
         auto sizer_14 = new wxBoxSizer( wxHORIZONTAL );
         grid_sizer_2->Add( sizer_14, 0, wxEXPAND, 0 );
@@ -369,22 +370,119 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     Layout();
+*/
+// begin wxGlade: MyDialog::MyDialog
+    SetTitle( _( "dialog_1" ) );
+    wxBoxSizer *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    panel_1 = new wxPanel( this, wxID_ANY );
+    sizer_1->Add( panel_1, 1, wxEXPAND, 0 );
+    wxBoxSizer *sizer_2 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_3 = new wxBoxSizer(wxVERTICAL);
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, 0, 0 );
+    wxBoxSizer *sizer_4 = new wxBoxSizer( wxVERTICAL );
+    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    wxFlexGridSizer *grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    sizer_4->Add( grid_sizer_1, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_5 = new wxBoxSizer( wxVERTICAL );
+    grid_sizer_1->Add( sizer_5, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_6 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
+    m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
+    sizer_6->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_tableName = new wxStaticText( panel_1, wxID_ANY, _( "Table Name for Index" ) );
+    sizer_6->Add( m_tableName, 0, wxEXPAND, 0 );
+    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_7 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_5->Add( sizer_7, 0, wxEXPAND, 0 );
+    m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "Index Name" ) );
+    sizer_7->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer_7->Add( 5, 5, 0, 0, 0 );
+    m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
+    sizer_7->Add( m_indexName, 1, wxEXPAND, 0 );
+    const wxString m_unique_choices[] = {
+        _( "Unique" ),
+        _( "Duplicate" ),
+    };
+    m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_unique_choices, 1, wxRA_SPECIFY_COLS );
+    m_unique->SetSelection( 0 );
+    grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
+    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
+    const wxString m_direction_choices[] = {
+        _( "Ascending" ),
+        _( "Descendng" ),
+    };
+    m_direction = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_direction_choices, 1, wxRA_SPECIFY_COLS );
+    m_direction->SetSelection( 0 );
+    grid_sizer_1->Add( m_direction, 0, wxALIGN_RIGHT, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_indexColumns = new FieldWindow( panel_1 );
+    sizer_4->Add( m_indexColumns, 0, wxEXPAND, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
+    m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+    m_table->AppendColumn(wxT("A"), wxLIST_FORMAT_LEFT, -1);
+    sizer_8->Add( m_table, 0, wxEXPAND, 0 );
+    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    wxBoxSizer *sizer_9 = new wxBoxSizer( wxVERTICAL );
+    sizer_8->Add( sizer_9, 0, wxALIGN_RIGHT, 0 );
+    if( m_dbType == L"SQLite" )
+    {
+        m_label7 = new wxStaticText( panel_1, wxID_ANY, _( "Collate" ) );
+        m_label7->Disable();
+        const wxString collite_options[] =
+        {
+            "BINARY",
+            "NOCASE",
+            "RTRIM"
+        };
+        m_collite = new wxComboBox( panel_1, wxID_ANY, "BINARY", wxDefaultPosition, wxDefaultSize, 3, collite_options );
+        m_collite->Disable();
+        auto sizer_31 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_31->Add( m_label7, 0, wxEXPAND, 0 );
+        sizer_31->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_31->Add( m_collite, 0, wxEXPAND, 0 );
+        sizer_31->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_8->Add( sizer_31, 0, wxEXPAND, 0 );
+    }
+    m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
+    sizer_9->Add( m_OK, 0, wxALIGN_RIGHT, 0 );
+    sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_Cancel = new wxButton( panel_1, wxID_CANCEL, _( "Cancel" ) );
+    sizer_9->Add( m_Cancel, 0, wxALIGN_RIGHT, 0 );
+    sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_logOnly = new wxButton( panel_1, wxID_ANY, _( "Log Only" ) );
+    sizer_9->Add( m_logOnly, 0, wxALIGN_RIGHT, 0 );
+    sizer_9->Add( 5, 5, 0, 0, 0 );
+    m_advanced = new wxButton( panel_1, wxID_ANY, _( "Advanced..." ) );
+    sizer_9->Add( m_advanced, 0, wxALIGN_RIGHT, 0 );
+    sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_help = new wxButton( panel_1, wxID_HELP, _( "Help" ) );
+    sizer_9->Add( m_help, 0, wxALIGN_RIGHT, 0 );
+    sizer_4->Add( 0, 0, 0, 0, 0 );
+    sizer_4->Add( 0, 0, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+
+    panel_1->SetSizer( sizer_2 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
+    Layout();
+// end wxGlade
 
     set_properties();
 //    do_layout();
     // end wxGlade
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
+    m_advanced->Bind( wxEVT_BUTTON, &CreateIndex::OnAdvanced, this );
     m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelected, this );
     m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldDeselected, this );
     m_OK->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_logOnly->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        m_where->Bind( wxEVT_GRID_EDITOR_CREATED, &CreateIndex::OnColumnName, this );
-        m_filestream->Bind( wxEVT_COMBOBOX, &CreateIndex::OnFileStreamSelected, this );
-        m_options->Bind( wxEVT_RADIOBOX, &CreateIndex::OnClusteredUnclustered, this );
-    }
 }
 
 void CreateIndex::set_properties()
@@ -405,9 +503,9 @@ void CreateIndex::set_properties()
     // end wxGlade
 //    m_defaultIndex->SetValue( true );
 //    m_ascending->SetValue( true );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-//        m_nonConcurrently->SetValue( true );
+        m_nonConcurrently->SetValue( true );
         m_indextypeBtree->SetValue( true );
         m_nullsLast->SetValue( true );
         m_fillfactor->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnFillFactorUpdateUI, this );
@@ -430,10 +528,10 @@ void CreateIndex::set_properties()
     {
         m_padIndex->Bind( wxEVT_CHECKBOX, &CreateIndex::OnPadIndex, this );
         m_fillfactor->Bind( wxEVT_SPINCTRL, &CreateIndex::OnFillFactor, this );
-    }
+    }*/
 }
 
-void CreateIndex::do_layout()
+/*void CreateIndex::do_layout()
 {
     // begin wxGlade: CreateIndex::do_layout
     wxBoxSizer *sizer_2 = new wxBoxSizer( wxHORIZONTAL );
@@ -548,7 +646,6 @@ void CreateIndex::do_layout()
         sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
         sizer_19->Add( m_dataCompressionNone, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_dataCompressionRow, 0, wxEXPAND, 0 );
         sizer_19->Add( m_dataCompressionPage, 0, wxEXPAND, 0 );
         sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
     }
@@ -645,7 +742,7 @@ void CreateIndex::do_layout()
     Layout();
     // end wxGlade
 }
-
+*/
 CreateIndex::~CreateIndex()
 {
     delete m_indexColumns;
@@ -671,47 +768,6 @@ bool CreateIndex::Verify()
         wxMessageBox( _( "Index name is required" ), _( "Database" ), wxOK | wxICON_ERROR );
         success = false;
     }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        std::vector<wxString> cond;
-        for( auto i = 0; i < m_where->GetNumberRows(); ++i )
-        {
-            cond.push_back( m_where->GetCellValue( i, 0 ) );
-            cond.push_back( m_where->GetCellValue( i, 1 ) );
-            cond.push_back( m_where->GetCellValue( i, 2 ) );
-            if( cond.at( 0 ).empty() )
-            {
-                if( !cond.at( 1 ).empty() || !cond.at( 2 ).empty() )
-                {
-                    success = false;
-                }
-            }
-            else
-            {
-                if( cond.at( 1 ).empty() || cond.at( 2 ).empty() )
-                {
-                    success = false;
-                }
-            }
-            if( !success )
-            {
-                wxMessageBox( wxString::Format( _( "Incomplete WHERE condition at line %d" ), i + 1 ), _( "Error" ), wxICON_EXCLAMATION | wxOK );
-                break;
-            }
-            if( i == m_where->GetNumberRows() && m_where->GetCellValue( i, 4 ) == "AND" )
-            {
-                wxMessageBox( _( "Last line in WHERE is incorrect" ) );
-                success = false;
-                break;
-            }
-            if( m_where->GetCellValue( i, 1 ) == "IN" && m_where->GetCellValue( i, 2 ).find( ',' ) == std::string::npos )
-            {
-                wxMessageBox( _( "IN operation require a list" ), _( "Error" ), wxICON_EXCLAMATION | wxOK );
-                success = false;
-                break;
-            }
-        }
-    }
     return success;
 }
 
@@ -720,7 +776,7 @@ void CreateIndex::OnFieldSelected( wxListEvent &event )
     auto label = m_table->GetItemText( event.GetItem() );
     m_indexColumns->AddField( label );
     m_fields.push_back( label.ToStdWstring() );
-    if( m_label7 && m_collite )
+    if( m_dbType == L"SQLite" )
     {
         m_label7->Enable();
         m_collite->Enable();
@@ -732,7 +788,7 @@ void CreateIndex::OnFieldDeselected( wxListEvent &event )
     auto label = m_table->GetItemText( event.GetItem() );
     m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), label ), m_fields.end() );
     m_indexColumns->RemoveField( label );
-    if( m_label7 && m_collite && m_fields.size() == 0 )
+    if( m_dbType == L"SQLite" && m_fields.size() == 0 )
     {
         m_label7->Disable();
         m_collite->Disable();
@@ -751,14 +807,20 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 
 void CreateIndex::GenerateQuery()
 {
-    wxString with = "WITH ", where = "WHERE ";
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         for( auto i = 0; i < m_where->GetNumberRows(); ++i )
         {
             auto name = m_where->GetCellValue( i, 0 );
             auto sign = m_where->GetCellValue( i, 1 );
             auto value = m_where->GetCellValue( i, 2 );
+            auto condition = m_where->GetCellValue( i, 3 );
+            if( !name.empty() )
+            {
+                where += ( name + " " + sign + " " + value );
+                if( !condition.empty() )
+                    where += condition;
+            }
         }
         if( m_padIndex->GetValue() )
         {
@@ -793,7 +855,7 @@ void CreateIndex::GenerateQuery()
         if( !m_allowRowLocks->GetValue() )
             with += "ALLOW_ROW_LOCKS = OFF ";
         if( !m_allowPageLocks->GetValue() )
-            with += "ALLOW_ROW_LOCKS = OFF ";
+            with += "ALLOW_PAGE_LOCKS = OFF ";
         if( m_optimize->GetValue() )
             with += "OPTIMIZE_FOR_SEQUENTIAL_KEY = ON ";
         auto maxdop = m_maxDop->GetValue();
@@ -810,40 +872,45 @@ void CreateIndex::GenerateQuery()
             with += datacompression;
             with += " ";
         }
-    }
+    }*/
     m_command = L"CREATE ";
-    if( m_unique->GetValue() )
+    if( m_unique->GetSelection() == 0 )
         m_command += L"UNIQUE ";
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         if( m_options->GetSelection() == 1 )
             m_command += L"UNCLUSTERED ";
         if( m_options->GetSelection() == 0 )
             m_command += L"CLUSTERED ";
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    }*/
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_fullText->GetValue() )
             m_command += L"FULLTEXT ";
         if( m_spatial->GetValue() )
             m_command += L"SPATIAL ";
-    }
+    }*/
     m_command += L"INDEX ";
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_concurrently->GetValue() )
             m_command += L"CONCURRENTLY ";
-    }
+    }*/
     m_command += m_indexName->GetValue() + " ";
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    if( ( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" ) ||
+          ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        m_command += L"\n\r";
+    }
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_indextypeBtree->GetValue() )
             m_command += L"USING BTREE ";
         if( m_indextypeHash->GetValue() )
             m_command += L"USING HASH ";
-    }
+    }*/
     m_command += L"ON " + m_dbTable->GetTableName() + L" ";
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() )
             m_command += L"USING BTREE ";
@@ -853,7 +920,7 @@ void CreateIndex::GenerateQuery()
             m_command += L"USING GIST ";
         if( m_indextypeGin->GetValue() )
             m_command += L"USING GIN ";
-    }
+    }*/
     m_command += L"(";
     for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
     {
@@ -865,7 +932,7 @@ void CreateIndex::GenerateQuery()
         else
             m_command += L",";
     }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_algorythmInPlace->IsEnabled() && m_algorythmInPlace->GetValue() )
             m_command += L" ALGORITHM=INPLACE";
@@ -971,7 +1038,7 @@ void CreateIndex::GenerateQuery()
             }
             m_command += L"ONLINE = ON";
         }
-        if( m_allowRowLocks->GetValue() )
+        if( !m_allowRowLocks->GetValue() )
         {
             if( withCheck )
                 m_command += L" | ";
@@ -980,9 +1047,9 @@ void CreateIndex::GenerateQuery()
                 withCheck = true;
                 m_command += L" WITH ";
             }
-            m_command += L"ALLOW_ROW_LOCKS = ON";
+            m_command += L"ALLOW_ROW_LOCKS = OFF";
         }
-        if( m_allowPageLocks->GetValue() )
+        if( !m_allowPageLocks->GetValue() )
         {
             if( withCheck )
                 m_command += L" | ";
@@ -991,7 +1058,7 @@ void CreateIndex::GenerateQuery()
                 withCheck = true;
                 m_command += L" WITH ";
             }
-            m_command += L"ALLOW_PAGE_LOCKS = ON";
+            m_command += L"ALLOW_PAGE_LOCKS = OFF";
         }
         if( m_maxDop->GetValue() > 0 )
         {
@@ -1005,17 +1072,6 @@ void CreateIndex::GenerateQuery()
             m_command += L"MAXDOP = ";
             m_command += wxString::Format( "%d", m_maxDop->GetValue() ).ToStdWstring();
         }
-        if( m_dataCompressionRow->GetValue() )
-        {
-            if( withCheck )
-                m_command += L" | ";
-            else
-            {
-                withCheck = true;
-                m_command += L" WITH ";
-            }
-            m_command += L"DATA_COMPRESSION = ROW";
-        }
         if( m_dataCompressionPage->GetValue() )
         {
             if( withCheck )
@@ -1027,13 +1083,13 @@ void CreateIndex::GenerateQuery()
             }
             m_command += L"DATA_COMPRESSION = PAGE";
         }
-    }
+    }*/
     m_command += L";";
 }
 
-void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)
+void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() || m_indextypeHash->GetValue() || m_indextypeGist->GetValue() )
         {
@@ -1045,39 +1101,39 @@ void CreateIndex::OnFillFactorUpdateUI(wxUpdateUIEvent &event)
             event.Enable( false );
             m_label4->Enable( false );
         }
-    }
+    }*/
 }
 
-void CreateIndex::OnFastUpdateUpdateUI(wxUpdateUIEvent &event)
+void CreateIndex::OnFastUpdateUpdateUI(wxUpdateUIEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeGin->GetValue() )
             event.Enable( true );
         else
             event.Enable( false );
-    }
+    }*/
 }
 
 void CreateIndex::OnAscending(wxCommandEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         m_nullsLast->SetValue( true );
-    }
+    }*/
 }
 
 void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         m_nullsFirst->SetValue( true );
-    }
+    }*/
 }
 
 void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_algorythmDefault->Enable( true );
         m_algorythmInPlace->Enable( true );
@@ -1086,12 +1142,12 @@ void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &WXUNUSED(event))
         m_lockNone->Enable( true );
         m_lockShared->Enable( true );
         m_lockExclusive->Enable( true );
-    }
+    }*/
 }
 
 void CreateIndex::OnAlgorythm(wxCommandEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_algorythmDefault->Enable( true );
         m_algorythmInPlace->Enable( true );
@@ -1100,12 +1156,12 @@ void CreateIndex::OnAlgorythm(wxCommandEvent &WXUNUSED(event))
         m_lockNone->Enable( false );
         m_lockShared->Enable( false );
         m_lockExclusive->Enable( false );
-    }
+    }*/
 }
 
 void CreateIndex::OnLock(wxCommandEvent &WXUNUSED(event))
 {
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         m_algorythmDefault->Enable( false );
         m_algorythmInPlace->Enable( false );
@@ -1114,27 +1170,7 @@ void CreateIndex::OnLock(wxCommandEvent &WXUNUSED(event))
         m_lockNone->Enable( true );
         m_lockShared->Enable( true );
         m_lockExclusive->Enable( true );
-    }
-}
-
-void CreateIndex::OnPadIndex(wxCommandEvent &event)
-{
-    if( event.IsChecked() )
-    {
-        m_fillfactor->SetValue( 1 );
-    }
-    else
-    {
-        m_fillfactor->SetValue( 0 );
-    }
-}
-
-void CreateIndex::OnFillFactor(wxCommandEvent &WXUNUSED(event))
-{
-    if( m_fillfactor->GetValue() == 0 )
-        m_padIndex->SetValue( false );
-    else
-        m_padIndex->SetValue( true );
+    }*/
 }
 
 const wxTextCtrl *CreateIndex::GetIndexNameCtrl()
@@ -1150,43 +1186,9 @@ void CreateIndex::OnOKUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
 }
 
-void CreateIndex::OnColumnName(wxGridEditorCreatedEvent &event)
+void CreateIndex::OnAdvanced( wxCommandEvent &event )
 {
-    auto oldString = m_where->GetCellValue( event.GetRow(), 0 );
-    oldString += " " + m_where->GetCellValue( event.GetRow(), 1 );
-    oldString += " " + m_where->GetCellValue( event.GetRow(), 2 );
-    if( event.GetCol() == 0 )
-    {
-        wxComboBox *editor = dynamic_cast<wxComboBox *>( event.GetControl() );
-        for( std::vector<std::wstring>::iterator it = m_tableFields.begin(); it < m_tableFields.end(); it++ )
-            editor->Append( (*it) );
-    }
-}
-
-void CreateIndex::OnFileStreamSelected(wxCommandEvent &WXUNUSED(event))
-{
-    if( m_filestream->GetValue() != "NULL" )
-    {
-        m_fsname->Enable( true );
-        CallAfter( [this]() { m_fsname->SetFocus(); } );
-    }
-}
-
-void CreateIndex::OnClusteredUnclustered(wxCommandEvent &WXUNUSED(event))
-{
-    if( m_options->GetSelection() == 0 )
-    {
-        m_label9->Enable( true );
-        m_filestream->Enable( true );
-        if( m_filestream->GetValue() == "NULL" )
-            m_fsname->Enable( false );
-        else
-            m_fsname->Enable( true );
-    }
-    else
-    {
-        m_label9->Enable( false );
-        m_filestream->Enable( false );
-        m_fsname->Enable( false );
-    }
+    CreateIndexSQLServer dlg( nullptr, wxID_ANY, "Advanced options fr SQL Server" );
+    dlg.CenterOnScreen();
+    dlg.ShowModal();
 }
