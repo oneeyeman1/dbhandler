@@ -2203,12 +2203,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            auto qry = new SQLWCHAR[30];
-            memset( qry, '\0', 30 );
-            uc_to_str_cpy( qry, L"BEGIN TRANSACYION" );
-            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-            delete[] qry;
-            qry = nullptr;
+            auto qry1 = new SQLWCHAR[30];
+            memset( qry1, '\0', 30 );
+            uc_to_str_cpy( qry1, L"BEGIN TRANSACTION" );
+            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+            delete[] qry1;
+            qry1 = nullptr;
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2219,12 +2219,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             {
-                auto qry = new SQLWCHAR[30];
-                memset( qry, '\0', 30 );
-                uc_to_str_cpy( qry, L"SET NOCOUNT ON" );
-                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                delete[] qry;
-                qry = nullptr;
+                auto qry1 = new SQLWCHAR[30];
+                memset( qry1, '\0', 30 );
+                uc_to_str_cpy( qry1, L"SET NOCOUNT ON" );
+                ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+                delete[] qry1;
+                qry1 = nullptr;
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2232,12 +2232,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
-                    auto qry = new SQLWCHAR[30];
-                    memset( qry, '\0', 30 );
-                    uc_to_str_cpy( qry, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
-                    ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                    delete[] qry;
-                    qry = nullptr;
+                    auto qry1 = new SQLWCHAR[50];
+                    memset( qry1, '\0', 50 );
+                    uc_to_str_cpy( qry1, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
+                    ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+                    delete[] qry1;
+                    qry1 = nullptr;
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2412,12 +2412,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
         {
-            auto qry = new SQLWCHAR[30];
-            memset( qry, '\0', 30 );
-            uc_to_str_cpy( qry, L"SET NOCOUNT OFF" );
-            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-            delete[] qry;
-            qry = nullptr;
+            auto qry1 = new SQLWCHAR[30];
+            memset( qry1, '\0', 30 );
+            uc_to_str_cpy( qry1, L"SET NOCOUNT OFF" );
+            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+            delete[] qry1;
+            qry1 = nullptr;
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5105,13 +5105,16 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
         }*/
     }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( stmt != 0 )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-        result = 1;
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+        stmt = 0;
     }
-    stmt = 0;
     ret = SQLDisconnect( dbc );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
