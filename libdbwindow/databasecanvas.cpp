@@ -779,6 +779,13 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
                     dynamic_cast<DrawingView *>( m_view )->SetProperties( erdField );
             }
             break;
+        case wxID_OBJECTNEWINDEX:
+        {
+            wxCommandEvent evt( wxEVT_MENU, rc );
+            evt.SetEventObject( erdTable );
+            m_view->ProcessEvent( evt );
+            break;
+        }
     }
 /*    if( rc == wxID_NONE && erdField )
     {
