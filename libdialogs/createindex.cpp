@@ -41,338 +41,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_dbSubType = m_db->GetTableVector().m_subtype;
-    // begin wxGlade: CreateIndex::CreateIndex
-/*    panel_1 = new wxPanel( this, wxID_ANY );
-    m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
-    m_tableName = new wxStaticText( panel_1, wxID_ANY, wxEmptyString );
-    m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "&Index Name" ) );
-    m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        m_label8 = new wxStaticText( panel_1, wxID_ANY, _( "WHERE" ) );
-        m_where = new wxGrid( panel_1, wxID_ANY );
-        m_where->CreateGrid( 10, 4 );
-        m_where->SetRowLabelSize( 0 );
-        m_where->AppendCols( 4 );
-        m_where->SetColLabelValue( 0, _( "Column Name" ) );
-        m_where->SetColLabelValue( 1, _( "Sign" ) );
-        m_where->SetColLabelValue( 2, _( "Constant" ) );
-        m_where->SetColLabelValue( 3, _( "Condition" ) );
-        m_unclustered = new wxRadioButton( panel_1, wxID_ANY, _( "Unclustered" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_clustered = new wxRadioButton( panel_1, wxID_ANY, _( "Clustered" ) );
-    }
-    m_defaultIndex = new wxRadioButton( panel_1, wxID_ANY, _( "&Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-    m_unique = new wxRadioButton( panel_1, wxID_ANY, _( "&Unique" ) );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
-    {
-        m_fullText = new wxRadioButton( panel_1, wxID_ANY, _( "FullText" ) );
-        m_spatial = new wxRadioButton( panel_1, wxID_ANY, _( "Spatial" ) );
-    }
-    else
-        m_duplicate = new wxRadioButton( panel_1, wxID_ANY, _( "&Duplicate" ) );
-    m_ascending = new wxRadioButton( panel_1, wxID_ANY, _( "&Ascending" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-    m_descending = new wxRadioButton( panel_1, wxID_ANY, _( "&Descending" ) );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        m_padIndex = new wxCheckBox( panel_1, wxID_ANY, _( "PAD ONLY" ) );
-        m_padIndex->SetValue( false );
-        m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR" ) );
-        m_fillfactor = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER );
-        m_sortTempDB = new wxCheckBox( panel_1, wxID_ANY, _( "SORT TEMP DB" ) );
-        m_sortTempDB->SetValue( false );
-        m_ignoreDupKeys = new wxCheckBox( panel_1, wxID_ANY, _( "IGNORE DUP KEYS" ) );
-        m_ignoreDupKeys->SetValue( false );
-        m_statisticsNoRecompute = new wxCheckBox( panel_1, wxID_ANY, _( "STATISTICS NORECOMPUTE" ) );
-        m_statisticsNoRecompute->SetValue( false );
-        m_statisticsIncremental = new wxCheckBox( panel_1, wxID_ANY, _( "STATISTICS INCREMENTAL" ) );
-        m_statisticsIncremental->SetValue( false );
-        m_dropExisting = new wxCheckBox( panel_1, wxID_ANY, _( "DROP EXISTING" ) );
-        m_dropExisting->SetValue( false );
-        m_online = new wxCheckBox( panel_1, wxID_ANY, _( "ONLINE" ) );
-        m_online->SetValue( false );
-        m_allowRowLocks = new wxCheckBox( panel_1, wxID_ANY, _( "ALLOW ROW LOCKS" ) );
-        m_allowRowLocks->SetValue( false );
-        m_allowPageLocks = new wxCheckBox( panel_1, wxID_ANY, _( "ALLOW PAGE LOCKS" ) );
-        m_allowPageLocks->SetValue( false );
-        m_label5 = new wxStaticText( panel_1, wxID_ANY, _( "MAXDOP" ) );
-        m_maxDop = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER, 0, 64, 0 );
-        m_dataCompressionNone = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION NONE" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_dataCompressionRow = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION ROW" ) );
-        m_dataCompressionPage = new wxRadioButton( panel_1, wxID_ANY, _( "DATA COMPRESSION PAGE" ) );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        m_nonConcurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Non-Concurrently" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_concurrently = new wxRadioButton( panel_1, wxID_ANY, _( "Concurrently" ) );
-        m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
-        m_indextypeGist = new wxRadioButton( panel_1, wxID_ANY, _( "Using Gist" ) );
-        m_indextypeGin = new wxRadioButton( panel_1, wxID_ANY, _( "Using Gin" ) );
-        m_nullsFirst = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: First" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_nullsLast = new wxRadioButton( panel_1, wxID_ANY, _( "NULLS: Last" ) );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
-    {
-        m_indextypeDefault = new wxRadioButton( panel_1, wxID_ANY, _( "Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_indextypeBtree = new wxRadioButton( panel_1, wxID_ANY, _( "Using Btrree" ) );
-        m_indextypeHash = new wxRadioButton( panel_1, wxID_ANY, _( "Using Hash" ) );
-        m_algorythmDefault = new wxRadioButton( panel_1, wxID_ANY, _( "Algorythm: Default" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_algorythmInPlace = new wxRadioButton( panel_1, wxID_ANY, _( "Algorythm: InPlace" ) );
-        m_algorythmCopy = new wxRadioButton( panel_1, wxID_ANY, _( "Algorythm: Copy" ) );
-        m_lockDefault = new wxRadioButton( panel_1, wxID_ANY, _( "Lock: Default"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-        m_lockNone = new wxRadioButton( panel_1, wxID_ANY, _( "Lock: None" ) );
-        m_lockShared = new wxRadioButton( panel_1, wxID_ANY, _( "Lock: Shared" ) );
-        m_lockExclusive = new wxRadioButton( panel_1, wxID_ANY, _( "Lock: Exclusive" ) );
-    }
-    m_label3 = new wxStaticText( panel_1, wxID_ANY, _( "Index Columns:" ) );
-    m_indexColumns = new FieldWindow( panel_1 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "FILLFACTOR:" ) );
-        m_fillfactor = new wxSpinCtrl( panel_1, wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxTE_PROCESS_ENTER );
-        m_fastUpdate = new wxCheckBox( panel_1, wxID_ANY, _( "FASTUPDATE" ) );
-        m_fastUpdate->SetValue( true );
-        m_label6 = new wxStaticText( panel_1, wxID_ANY, _( "TABLESPACE:" ) );
-        m_tablespace = new wxTextCtrl( panel_1, wxID_ANY );
-    }
-    if( m_dbType == L"SQLite" )
-    {
-        m_label7 = new wxStaticText( panel_1, wxID_ANY, _( "Collate" ) );
-        m_label7->Disable();
-        const wxString collite_options[] =
-        {
-            "BINARY",
-            "NOCASE",
-            "RTRIM"
-        };
-        m_collite = new wxComboBox( panel_1, wxID_ANY, "BINARY", wxDefaultPosition, wxDefaultSize, 3, collite_options );
-        m_collite->Disable();
-    }
-    m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
-    m_logOnly = new wxButton( panel_1, wxID_ANY, _( "&Log Only" ) );
-    m_cancel = new wxButton( panel_1, wxID_CANCEL, _( "Cancel" ) );
-    m_help = new wxButton( panel_1, wxID_HELP, _( "&Help" ) );
-*/
-
-/*    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    panel_1 = new wxPanel( this, wxID_ANY );
-    sizer_1->Add( panel_1, 1, wxEXPAND, 0 );
-    auto sizer_2 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_3 = new wxBoxSizer( wxVERTICAL );
-    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_4 = new wxBoxSizer( wxVERTICAL );
-    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
-    auto sizer_17 = new wxBoxSizer( wxVERTICAL );
-    sizer_4->Add( sizer_17, 1, wxEXPAND, 0 );
-    auto sizer_18 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_17->Add( sizer_18, 1, wxEXPAND, 0 );
-    auto sizer_19 = new wxBoxSizer( wxVERTICAL );
-    sizer_18->Add( sizer_19, 1, wxEXPAND, 0 );
-    auto sizer_20 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_19->Add( sizer_20, 1, wxEXPAND, 0 );
-    m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
-    sizer_20->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer_20->Add( 5, 5, 0, 0, 0 );
-    m_tableName = new wxStaticText( panel_1, wxID_ANY, "" );
-    sizer_20->Add( m_tableName, 0, wxEXPAND, 0 );
-    sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_21 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_19->Add( sizer_21, 1, wxEXPAND, 0 );
-    m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "&Index Name" ) );
-    sizer_21->Add( m_label2, 0, 0, 0 );
-    sizer_21->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
-    sizer_21->Add( m_indexName, 1, 0, 0 );
-    const wxString radio_box_2_choices[] = {
-        "Unique",
-        "Duplicate",
-    };
-    m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, radio_box_2_choices, 2, wxRA_SPECIFY_ROWS );
-    m_unique->SetSelection( 0 );
-    sizer_18->Add( m_unique, 0, wxALIGN_BOTTOM, 0 );
-    const wxString m_direction_choices[] = {
-        "Ascending",
-        "Descending",
-    };
-    m_direction = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_direction_choices, 2, wxRA_SPECIFY_ROWS );
-    m_direction->SetSelection( 0 );
-    sizer_17->Add( m_direction, 0, wxALIGN_RIGHT, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        const wxString m_options_choices[] = {
-        "CLUSTERED",
-        "UNCLUSTERED",
-        };
-        m_options = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_options_choices, 2, wxRA_SPECIFY_ROWS );
-        m_options->SetSelection( 0 );
-        sizer_17->Add( m_options, 0, wxALIGN_RIGHT, 0 );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        m_concurrency = new wxCheckBox( panel_1, wxID_ANY, "CONCURRENTLY" );
-        sizer_17->Add( m_concurrency, 0, wxALIGN_RIGHT, 0 );
-    }
-    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_8 = new wxBoxSizer( wxVERTICAL );
-    sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
-    auto sizer_9 = new wxBoxSizer( wxVERTICAL );
-    sizer_8->Add( sizer_9, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        m_label8 = new wxStaticText(panel_1, wxID_ANY, "WHERE" );
-        sizer_9->Add( m_label8, 0, wxEXPAND, 0 );
-        sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
-        m_where = new wxGrid( panel_1, wxID_ANY );
-        m_where->CreateGrid( 4, 4 );
-        m_where->SetRowLabelSize( 0 );
-        m_where->EnableDragColSize( false );
-        m_where->EnableDragRowSize( false );
-        m_where->SetColLabelValue( 0, "Name" );
-        m_where->SetColLabelValue( 1, "Sign" );
-        m_where->SetColLabelValue( 2, "Value" );
-        m_where->SetColLabelValue( 3, "Cndition" );
-        wxString m_operatorChoices[] = 
-        {
-            "is",
-            "is not",
-            "=",
-            "<>",
-            "!=",
-            ">",
-            ">=",
-            "!>",
-            "<",
-            "<=",
-            "!<",
-            "IN"
-        };
-        wxString m_logicalChoices[] = { "AND" };
-        for( auto i = 0; i < 3; ++i )
-        {
-            m_where->SetCellEditor( i, 0, new wxGridCellChoiceEditor( 0, NULL, true ) );
-            m_where->SetCellEditor( i, 1, new wxGridCellChoiceEditor( 11, m_operatorChoices ) );
-            m_where->SetCellEditor( i, 3, new wxGridCellChoiceEditor( 1, m_logicalChoices ) );
-        }
-        sizer_9->Add( m_where, 1, 0, 0 );
-        const wxString filestreamOptions[] =
-        {
-            "filestream_name",
-            "partition_name",
-            "NULL"
-        };
-        m_label9 = new wxStaticText( panel_1, wxID_ANY, "FILESTREAM_ON" );
-        m_filestream = new wxComboBox( panel_1, wxID_ANY, "NULL",  wxDefaultPosition, wxDefaultSize, 3, filestreamOptions );
-        m_fsname = new wxTextCtrl( panel_1, wxID_ANY );
-        m_fsname->Disable();
-        auto sizer_30 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_30->Add( m_label9, 0, wxEXPAND, 0 );
-        sizer_30->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_30->Add( m_filestream, 0, wxEXPAND, 0 );
-        sizer_30->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_30->Add( m_fsname, 0, wxEXPAND, 0 );
-        sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_8->Add( sizer_30, 0, wxEXPAND, 0 );
-        auto sizer_10 = new wxStaticBoxSizer( new wxStaticBox( panel_1, wxID_ANY, "WTH" ), wxHORIZONTAL );
-        sizer_8->Add( sizer_10, 0, wxEXPAND, 0 );
-        auto grid_sizer_2 = new wxFlexGridSizer( 4, 4, 5, 5 );
-        sizer_10->Add( grid_sizer_2, 0, wxEXPAND, 0 );
-        m_padIndex = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Pad Index" );
-        grid_sizer_2->Add( m_padIndex, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        auto sizer_11 = new wxBoxSizer( wxHORIZONTAL );
-        grid_sizer_2->Add( sizer_11, 0, wxEXPAND, 0 );
-        m_label4 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Fill Factr" );
-        sizer_11->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        sizer_11->Add( 5, 5, 0, wxEXPAND, 0 );
-        m_fillfactor = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100 );
-        sizer_11->Add( m_fillfactor, 0, 0, 0 );
-        m_sortTempDB = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Sort TempDB" );
-        grid_sizer_2->Add( m_sortTempDB, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        m_ignoreDupKeys = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Ignore Dup Key" );
-        grid_sizer_2->Add( m_ignoreDupKeys, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        m_statisticsNoRecompute = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "NoRecompute" );
-        grid_sizer_2->Add( m_statisticsNoRecompute, 0, 0, 0 );
-        m_statisticsIncremental = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Incremental" );
-        grid_sizer_2->Add( m_statisticsIncremental, 0, 0, 0 );
-        m_dropExisting = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Drop Existing" );
-        grid_sizer_2->Add( m_dropExisting, 0, 0, 0 );
-        m_fastUpdate = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Fast Update" );
-        grid_sizer_2->Add( m_fastUpdate, 0, 0, 0 );
-        m_online = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Online" );
-        grid_sizer_2->Add( m_online, 0, 0, 0 );
-        m_resumable = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Resumable" );
-        grid_sizer_2->Add( m_resumable, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        auto sizer_12 = new wxBoxSizer( wxHORIZONTAL );
-        grid_sizer_2->Add( sizer_12, 0, wxEXPAND, 0 );
-        m_label5 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Max Duration" );
-        sizer_12->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        sizer_12->Add( 5, 5, 0, 0, 0 );
-        m_maxDuration = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 60 );
-        sizer_12->Add( m_maxDuration, 0, 0, 0 );
-        m_allowRowLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Row Locks" );
-        m_allowRowLocks->SetValue( true );
-        grid_sizer_2->Add( m_allowRowLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        m_allowPageLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Page Locks");
-        m_allowPageLocks->SetValue( true );
-        grid_sizer_2->Add( m_allowPageLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        m_optimize = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Optimize for Sequental" );
-        grid_sizer_2->Add( m_optimize, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        auto sizer_13 = new wxBoxSizer( wxHORIZONTAL );
-        grid_sizer_2->Add( sizer_13, 0, wxEXPAND, 0 );
-        m_label5 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Max DOP" );
-        sizer_13->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        sizer_13->Add( 5, 5, 0, 0, 0 );
-        m_maxDop = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
-        sizer_13->Add( m_maxDop, 0, 0, 0 );
-        auto sizer_14 = new wxBoxSizer( wxHORIZONTAL );
-        grid_sizer_2->Add( sizer_14, 0, wxEXPAND, 0 );
-        m_label7 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Data Compressiion" );
-        sizer_14->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
-        sizer_14->Add( 5, 5, 0, 0, 0 );
-        const wxString m_dataCompression_choices[] = {
-            "OFF",
-            "ROW",
-            "PAGE",
-        };
-        m_dataCompression = new wxComboBox( sizer_10->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, m_dataCompression_choices, wxCB_DROPDOWN );
-        m_dataCompression->SetSelection( 0 );
-        sizer_14->Add( m_dataCompression, 0, 0, 0 );
-    }
-    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_indexColumns = new FieldWindow( panel_1 );
-    sizer_4->Add( m_indexColumns, 0, wxEXPAND, 0 );
-    auto sizer_22 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_4->Add( sizer_22, 1, wxEXPAND, 0 );
-    m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES | wxLC_REPORT | wxLC_VRULES );
-    sizer_22->Add( m_table, 1, wxEXPAND, 0 );
-    auto sizer_23 = new wxBoxSizer( wxVERTICAL );
-    sizer_22->Add( sizer_23, 1, wxEXPAND, 0 );
-    m_OK = new wxButton( panel_1, wxID_OK, "OK" );
-    m_OK->Enable( false );
-    sizer_23->Add( m_OK, 0, wxALIGN_RIGHT, 0 );
-    sizer_23->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_logOnly = new wxButton( panel_1, wxID_ANY, "LogOnly" );
-    m_logOnly->Enable( false );
-    sizer_23->Add( m_logOnly, 0, wxALIGN_RIGHT, 0 );
-    sizer_23->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_cancel = new wxButton( panel_1, wxID_CANCEL, "Cancel" );
-    sizer_23->Add( m_cancel, 0, wxALIGN_RIGHT, 0 );
-    sizer_23->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_help = new wxButton( panel_1, wxID_HELP, "Help" );
-    sizer_23->Add( m_help, 0, wxALIGN_RIGHT, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-
-    panel_1->SetSizer( sizer_2 );
-    SetSizer( sizer_1 );
-    sizer_1->Fit( this );
-    Layout();
-*/
-// begin wxGlade: MyDialog::MyDialog
-    SetTitle( _( "dialog_1" ) );
+    // begin wxGlade: MyDialog::MyDialog
+    SetTitle( _( "Create Index" ) );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     panel_1 = new wxPanel( this, wxID_ANY );
     sizer_1->Add( panel_1, 1, wxEXPAND, 0 );
@@ -389,10 +59,11 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     grid_sizer_1->Add( sizer_5, 0, wxEXPAND, 0 );
     wxBoxSizer *sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
+    std::wstring tableName = m_dbTable->GetTableName();
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Table" ) );
     sizer_6->Add( m_label1, 0, wxEXPAND, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_tableName = new wxStaticText( panel_1, wxID_ANY, _( "Table Name for Index" ) );
+    m_tableName = new wxStaticText( panel_1, wxID_ANY, tableName );
     sizer_6->Add( m_tableName, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer *sizer_7 = new wxBoxSizer( wxHORIZONTAL );
@@ -424,11 +95,19 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
     m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    m_table->AppendColumn(wxT("A"), wxLIST_FORMAT_LEFT, -1);
+    m_table->AppendColumn( tableName );
+    std::vector<TableField *> fields = m_dbTable->GetFields();
+    int row = 0;
+    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+    {
+        m_table->InsertItem( row++, (*it)->GetFieldName() );
+        m_tableFields.push_back( (*it)->GetFieldName() );
+    }
     sizer_8->Add( m_table, 0, wxEXPAND, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_8->AddStretchSpacer();
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxVERTICAL );
-    sizer_8->Add( sizer_9, 0, wxALIGN_RIGHT, 0 );
+    sizer_8->Add( sizer_9, 0, wxEXPAND, 0 );
     if( m_dbType == L"SQLite" )
     {
         m_label7 = new wxStaticText( panel_1, wxID_ANY, _( "Collate" ) );
@@ -449,6 +128,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         sizer_8->Add( sizer_31, 0, wxEXPAND, 0 );
     }
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
+    m_OK->SetDefault();
     sizer_9->Add( m_OK, 0, wxALIGN_RIGHT, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     m_Cancel = new wxButton( panel_1, wxID_CANCEL, _( "Cancel" ) );
@@ -487,19 +167,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 
 void CreateIndex::set_properties()
 {
-    std::vector<TableField *> fields = m_dbTable->GetFields();
-    std::wstring tableName = m_dbTable->GetTableName();
-    m_tableName->SetLabel( tableName );
-    m_table->AppendColumn( tableName );
-    int row = 0;
-    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
-    {
-        m_table->InsertItem( row++, (*it)->GetFieldName() );
-        m_tableFields.push_back( (*it)->GetFieldName() );
-    }
     // begin wxGlade: CreateIndex::set_properties
-    SetTitle( _( "Create Index" ) );
-    m_OK->SetDefault();
     // end wxGlade
 //    m_defaultIndex->SetValue( true );
 //    m_ascending->SetValue( true );
@@ -1186,9 +854,9 @@ void CreateIndex::OnOKUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
 }
 
-void CreateIndex::OnAdvanced( wxCommandEvent &event )
+void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
 {
-    CreateIndexSQLServer dlg( nullptr, wxID_ANY, "Advanced options fr SQL Server" );
+    CreateIndexSQLServer dlg( nullptr, wxID_ANY, "Advanced options fr SQL Server", m_dbTable );
     dlg.CenterOnScreen();
     dlg.ShowModal();
 }

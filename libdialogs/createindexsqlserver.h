@@ -5,7 +5,7 @@ public:
     // begin wxGlade: CreateIndexSQLServer::ids
     // end wxGlade
 
-    CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString& title);
+    CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString& title, DatabaseTable *table);
 
 private:
     std::vector<std::wstring> m_tableFields, m_fields;

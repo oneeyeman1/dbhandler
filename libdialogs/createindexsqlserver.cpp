@@ -29,7 +29,7 @@
 #include "fieldwindow.h"
 #include "createindexsqlserver.h"
 
-CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString &title):
+CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString &title, DatabaseTable *table):
     wxDialog(parent, id, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE)
 {
     // begin wxGlade: CreateIndexSQLServer::CreateIndexSQLServer
@@ -64,7 +64,14 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     sizer_6->Add( 0, 0, 0, 0, 0 );
     sizer_6->Add( 5, 5, 0, 0, 0 );
     m_table = new wxListCtrl( sizer_5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    m_table->AppendColumn( "A", wxLIST_FORMAT_LEFT, -1 );
+    m_table->AppendColumn( table->GetTableName(), wxLIST_FORMAT_LEFT, -1 );
+    std::vector<TableField *> fields = table->GetFields();
+    int row = 0;
+    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+    {
+        m_table->InsertItem( row++, (*it)->GetFieldName() );
+        m_tableFields.push_back( (*it)->GetFieldName() );
+    }
     sizer_6->Add( m_table, 0, wxEXPAND, 0 );
     sizer_16->Add( 5, 5, 0, 0, 0 );
     wxBoxSizer* sizer_9 = new wxBoxSizer( wxVERTICAL );
@@ -186,15 +193,17 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     m_name = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
     sizer_8->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer = CreateStdDialogButtonSizer( wxID_OK | wxID_CANCEL | wxID_HELP );
-    sizer->Realize();
-    // WARNING: Code for instance "sizer_15" of "wxStdDialogButtonSizer" not generated: no suitable writer found
-/*
+//    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer = new wxStdDialogButtonSizer();
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
     m_OK->SetDefault();
+    SetAffirmativeId( wxID_OK ); 
     m_Cancel = new wxButton( panel_1, wxID_CANCEL, _( "Cancel" ) );
-    m_help = new wxButton( panel_1, wxID_HELP, _( "Help" ) );*/
+    m_help = new wxButton( panel_1, wxID_HELP, _( "Help" ) );
+    sizer->AddButton( m_OK );
+    sizer->AddButton( m_Cancel );
+    sizer->AddButton( m_help );
+    sizer->Realize();
     sizer_4->Add( sizer );
     sizer_3->Add( 5, 5, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
