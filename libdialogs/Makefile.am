@@ -50,7 +50,9 @@ libdialogs_la_SOURCES =  \
 	neweditstyle.cpp \
 	neweditstyle.h \
 	neweditvaldation.cpp \
-	neweditvaldation.h
+	neweditvaldation.h \
+	createindexsqlserver.cpp \
+	createindexsqlserver.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
