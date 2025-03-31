@@ -150,8 +150,10 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     m_maxDuration = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 60 );
     sizer_12->Add( m_maxDuration, 0, 0, 0 );
     m_rowLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Row Locks" );
+    m_rowLocks->SetValue( true );
     grid_sizer_2->Add( m_rowLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_pageLocks = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Allow Page Locks" );
+    m_pageLocks->SetValue( true );
     grid_sizer_2->Add( m_pageLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_optimize = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "Optimize for Sequental" );
     grid_sizer_2->Add( m_optimize, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -160,7 +162,7 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     wxStaticText* label_6 = new wxStaticText( sizer_10->GetStaticBox(), wxID_ANY, "Max DOP" );
     sizer_13->Add( label_6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_13->Add( 5, 5, 0, 0, 0 );
-    m_maxDOP = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 64 );
+    m_maxDOP = new wxSpinCtrl( sizer_10->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
     sizer_13->Add( m_maxDOP, 0, 0, 0 );
     wxBoxSizer* sizer_14 = new wxBoxSizer( wxHORIZONTAL );
     grid_sizer_2->Add( sizer_14, 0, wxEXPAND, 0 );
@@ -172,11 +174,35 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
         "ROW",
         "PAGE",
     };
-    m_dataCompression = new wxComboBox( sizer_10->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, m_dataCompression_choices, wxCB_DROPDOWN );
+    m_dataCompression = new wxComboBox( sizer_10->GetStaticBox(), wxID_ANY, "OFF", wxDefaultPosition, wxDefaultSize, 3, m_dataCompression_choices, wxCB_DROPDOWN );
     m_dataCompression->SetSelection( 0 );
     sizer_14->Add( m_dataCompression, 0, 0, 0 );
     checkbox_8 = new wxCheckBox( sizer_10->GetStaticBox(), wxID_ANY, "XML Compression" );
     grid_sizer_2->Add( checkbox_8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_17 = new wxStaticBoxSizer( new wxStaticBox( panel_1, wxID_ANY, "WAIT AT LOW PRIORITY" ), wxHORIZONTAL );
+    sizer_17->Hide( sizer_17, true );
+    sizer_4->Add( sizer_17, 0, wxEXPAND, 0 );
+    auto sizer_18 = new wxBoxSizer( wxVERTICAL );
+    sizer_17->Add( sizer_18 );
+    auto sizer_19 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_18->Add( sizer_19, 0, wxEXPAND, 0 );
+    m_label2 = new wxStaticText( sizer_17->GetStaticBox(), wxID_ANY, "Max Duration" );
+    sizer_19->Add( m_label2, 0, wxEXPAND, 0 );
+    m_maxDurationWait = new wxTextCtrl( sizer_17->GetStaticBox(), wxID_ANY, "0" );
+    sizer_19->Add( m_maxDurationWait, 0, wxEXPAND, 0 );
+    auto sizer_20 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_18->Add( sizer_20, 0, wxEXPAND, 0 );
+    m_label3 = new wxStaticText( sizer_17->GetStaticBox(), wxID_ANY, "Abort After Wait" );
+    sizer_20->Add( m_label3, 0, wxEXPAND, 0 );
+    const wxString abort_choices[] =
+    {
+        "NONE",
+        "SELF",
+        "BLOCKERS",
+    };
+    m_abort = new wxComboBox( sizer_17->GetStaticBox(), wxID_ANY, "NONE", wxDefaultPosition, wxDefaultSize, 3, abort_choices );
+    sizer_20->Add( m_abort, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( sizer_8, 1, wxEXPAND, 0 );
     m_label1 = new wxStaticText( panel_1, wxID_ANY, "FILESTREAM_ON" );
@@ -193,7 +219,6 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     m_name = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
     sizer_8->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
-//    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer = new wxStdDialogButtonSizer();
     m_OK = new wxButton( panel_1, wxID_OK, _( "OK" ) );
     m_OK->SetDefault();
@@ -269,7 +294,7 @@ void CreateIndexSQLServer::OnOkShowLog(wxCommandEvent &event)
     std::vector<std::wstring> errorMsg;
     if( Verify() )
     {
-//        GenerateQuery();
+        GenerateQuery();
         EndModal( event.GetId() );
     }
 }
@@ -357,4 +382,71 @@ bool CreateIndexSQLServer::Verify()
         }
     }
     return success;
+}
+
+void CreateIndexSQLServer::GenerateQuery()
+{
+    for( auto i = 0; i < m_where->GetNumberRows(); ++i )
+    {
+        auto name = m_where->GetCellValue( i, 0 );
+        auto sign = m_where->GetCellValue( i, 1 );
+        auto value = m_where->GetCellValue( i, 2 );
+        auto condition = m_where->GetCellValue( i, 3 );
+        if( !name.empty() )
+        {
+            where += ( name + " " + sign + " " + value );
+            if( !condition.empty() )
+                where += condition;
+        }
+    }
+    if( m_padIndex->GetValue() )
+    {
+        auto fillfactor = m_fillFactor->GetValue();
+        with += "PAD_INDEX = ON ";
+        with += "FILLFACTOR = ";
+        with << fillfactor;
+        with += " ";
+    }
+    if( m_sortInTemp->GetValue() )
+        with += "SORT_IN_TEMPDB = ON ";
+    if( m_ignoreDupKey->GetValue() )
+        with += "IGNORE_DUP_KEY = ON ";
+    if( m_noRecompute->GetValue() )
+        with += "STATISTICS_NORECOMPUTE = ON ";
+    if( m_incremental->GetValue() )
+        with += "STATISTICS_INCREMENTAL = ON ";
+    if( m_dropExisting->GetValue() )
+        with += "DROP_EXISTING = ON ";
+    if( m_online->GetValue() )
+    {
+        with += "ONLINE = ON ";
+        if( m_resumable->GetValue() )
+        {
+            with += "RESUMABLE = ON ";
+            auto duration = m_maxDuration->GetValue();
+            with += "MAX_DURATION = ";
+            with << duration;
+            with += " ";
+        }
+    }
+    if( !m_rowLocks->GetValue() )
+        with += "ALLOW_ROW_LOCKS = OFF ";
+    if( !m_pageLocks->GetValue() )
+        with += "ALLOW_PAGE_LOCKS = OFF ";
+    if( m_optimize->GetValue() )
+        with += "OPTIMIZE_FOR_SEQUENTIAL_KEY = ON ";
+    auto maxdop = m_maxDOP->GetValue();
+    if( maxdop > 0 )
+    {
+        with += "MAXDOP = ";
+        with << maxdop;;
+        with += " ";
+    }
+    auto datacompression = m_dataCompression->GetStringSelection();
+    if( datacompression != "OFF" )
+    {
+        with += "DATA_COMPRESSION = ";
+        with += datacompression;
+        with += " ";
+    }
 }

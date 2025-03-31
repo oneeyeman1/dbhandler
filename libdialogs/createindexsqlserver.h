@@ -6,6 +6,8 @@ public:
     // end wxGlade
 
     CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString& title, DatabaseTable *table);
+    const wxString &GetWhereCondition() const { return where; }
+    const wxString &GetWithPredicate() const { return with; }
 
 private:
     std::vector<std::wstring> m_tableFields, m_fields;
@@ -21,6 +23,7 @@ protected:
     void OnFieldDeselected(wxListEvent &event);
     void OnFillFactor(wxCommandEvent &event);
     bool Verify();
+    void GenerateQuery();
     // begin wxGlade: CreateIndexSQLServer::attributes
     wxPanel *panel_1;
     wxRadioBox *m_clustered;
@@ -43,11 +46,16 @@ protected:
     wxSpinCtrl *m_maxDOP;
     wxComboBox *m_dataCompression;
     wxCheckBox *checkbox_8;
+    wxStaticText *m_label2;
+    wxTextCtrl *m_maxDurationWait;
+    wxStaticText *m_label3;
+    wxComboBox *m_abort;
     wxStaticText *m_label1;
     wxComboBox *m_filestreamType;
     wxTextCtrl *m_name;
     wxButton *m_OK;
     wxButton *m_Cancel;
     wxButton *m_help;
+    wxStaticBoxSizer *sizer_17;
     // end wxGlade
 }; // wxGlade: end class

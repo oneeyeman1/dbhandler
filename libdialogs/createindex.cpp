@@ -154,7 +154,6 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 // end wxGlade
 
     set_properties();
-//    do_layout();
     // end wxGlade
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
@@ -199,218 +198,6 @@ void CreateIndex::set_properties()
     }*/
 }
 
-/*void CreateIndex::do_layout()
-{
-    // begin wxGlade: CreateIndex::do_layout
-    wxBoxSizer *sizer_2 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_3 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_4 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_5 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_14 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_15 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_13 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_6 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_10 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_12 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_11 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_7 = new wxBoxSizer( wxVERTICAL );
-    wxBoxSizer *sizer_9 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
-    wxBoxSizer *sizer_1 = new wxBoxSizer( wxVERTICAL );
-    wxSizer *sizer_16 = NULL;
-    wxBoxSizer *sizer_17 = NULL;
-    wxBoxSizer *sizer_18 = NULL;
-    wxBoxSizer *sizer_19 = NULL;
-    wxBoxSizer *sizer_20 = NULL;
-    wxBoxSizer *sizer_21 = NULL;
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        sizer_16 = new wxFlexGridSizer( 4, 3, 5, 5 );
-        sizer_17 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_18 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_19 = new wxBoxSizer( wxHORIZONTAL );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
-    {
-        sizer_16 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_17 = new wxBoxSizer( wxVERTICAL );
-        sizer_18 = new wxBoxSizer( wxVERTICAL );
-        sizer_19 = new wxBoxSizer( wxVERTICAL );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        sizer_16 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_17 = new wxBoxSizer( wxVERTICAL );
-        sizer_18 = new wxBoxSizer( wxVERTICAL );
-        sizer_19 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_20 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_21 = new wxBoxSizer( wxHORIZONTAL );
-    }
-    sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_8->Add( m_label1, 0, wxEXPAND, 0 );
-    sizer_8->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_8->Add( m_tableName, 0, wxEXPAND, 0 );
-    sizer_7->Add( sizer_8, 0, wxEXPAND, 0 );
-    sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_9->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer_9->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_9->Add( m_indexName, 1, wxEXPAND, 0 );
-    sizer_7->Add( sizer_9, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_7, 0, wxEXPAND, 0 );
-    sizer_6->Add( 20, 20, 0, wxEXPAND, 0 );
-    sizer_11->Add( m_defaultIndex, 0, wxEXPAND, 0 );
-    sizer_11->Add( m_unique, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
-    {
-        sizer_11->Add( m_fullText, 0, wxEXPAND, 0 );
-        sizer_11->Add( m_spatial, 0, wxEXPAND, 0 );
-    }
-    else
-        sizer_11->Add( m_duplicate, 0, wxEXPAND, 0 );
-    sizer_10->Add( sizer_11, 0, wxRIGHT | wxEXPAND, 0 );
-    sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_12->Add( m_ascending, 0, wxEXPAND, 0 );
-    sizer_12->Add( m_descending, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
-//        sizer_12->Add( m_nonConcurrently, 0, wxEXPAND, 0 );
-        sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_12->Add( m_concurrently, 0, wxEXPAND, 0 );
-    }
-    sizer_10->Add( sizer_12, 0, wxEXPAND, 0 );
-    sizer_6->Add( sizer_10, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_6, 0, wxEXPAND, 0 );
-    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        sizer_11->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_11->Add( m_label8, 0, wxEXPAND, 0 );
-        sizer_11->Add( 5, 5, wxEXPAND, 0 );
-        sizer_11->Add( m_where, 0, wxEXPAND, 0 );
-        sizer_11->Add( 5, 5, wxEXPAND, 0 );
-        sizer_5->Add( sizer_11, 0, wxEXPAND, 0 );
-        sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        sizer_16->Add( m_padIndex, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_label4, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_fillfactor, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_17, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_sortTempDB, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_ignoreDupKeys, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_statisticsNoRecompute, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_statisticsIncremental, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_dropExisting, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_online, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_allowRowLocks, 0, wxEXPAND, 0 );
-        sizer_16->Add( m_allowPageLocks, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_label5, 0, wxEXPAND, 0 );
-        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_maxDop, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_dataCompressionNone, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_dataCompressionPage, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_indextypeHash, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_indextypeGist, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_indextypeGin, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_17, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_nullsFirst, 0, wxEXPAND, 0 );
-        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_nullsLast, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
-    {
-        sizer_17->Add( m_indextypeDefault, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_indextypeBtree, 0, wxEXPAND, 0 );
-        sizer_17->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_17->Add( m_indextypeHash, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_17, 0, wxEXPAND, 0 );
-        sizer_16->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_algorythmDefault, 0, wxEXPAND, 0 );
-        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_algorythmInPlace, 0, wxEXPAND, 0 );
-        sizer_18->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_18->Add( m_algorythmCopy, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_18, 0, wxEXPAND, 0 );
-        sizer_16->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_lockDefault, 0, wxEXPAND, 0 );
-        sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_lockNone, 0, wxEXPAND, 0 );
-        sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_lockShared, 0, wxEXPAND, 0 );
-        sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_lockExclusive, 0, wxEXPAND, 0 );
-        sizer_16->Add( sizer_19, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_16, 0, wxEXPAND, 0 );
-    }
-    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_13->Add( m_label3, 0, wxEXPAND, 0 );
-    sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_13->Add( m_indexColumns, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_13, 0, wxEXPAND, 0 );
-    sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        sizer_20->Add( m_label4, 0, wxEXPAND, 0 );
-        sizer_20->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_20->Add( m_fillfactor, 0, wxEXPAND, 0 );
-        sizer_19->Add( sizer_20, 0, wxEXPAND, 0 );
-        sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_19->Add( m_fastUpdate, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_19, 0, wxEXPAND, 0 );
-        sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_21->Add( m_label6, 0, wxEXPAND, 0 );
-        sizer_21->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_21->Add( m_tablespace, 0, wxEXPAND, 0 );
-        sizer_5->Add( sizer_21, 0, wxEXPAND, 0 );
-        sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    }
-    sizer_14->Add( m_table, 0, wxALIGN_BOTTOM, 0 );
-    sizer_14->Add( 30, 30, 0, wxEXPAND, 0 );
-    if( m_dbType == L"SQLite" )
-    {
-        auto sizer_31 = new wxBoxSizer( wxHORIZONTAL );
-        sizer_31->Add( m_label7, 0, wxEXPAND, 0 );
-        sizer_31->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer_31->Add( m_collite, 0, wxEXPAND, 0 );
-        sizer_14->Add( sizer_31, 0, wxEXPAND, 0 );
-        sizer_31->Add( 5, 5, 0, wxEXPAND, 0 );
-    }
-    sizer_15->Add( m_OK, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
-    sizer_15->Add( m_logOnly, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
-    sizer_15->Add( m_cancel, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
-    sizer_15->Add( m_help, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
-    sizer_1->Add( sizer_15, 0, wxALIGN_TOP | wxALIGN_RIGHT, 0 );
-    sizer_14->Add( sizer_1, 0, wxEXPAND, 0 );
-    sizer_5->Add( sizer_14, 0, wxEXPAND, 0 );
-    sizer_4->Add( sizer_5, 0, wxEXPAND, 0 );
-    sizer_4->Add( 10, 10, 0, wxEXPAND, 0 );
-    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
-    sizer_3->Add( 10, 10, 0, wxEXPAND, 0 );
-    panel_1->SetSizer( sizer_3 );
-    sizer_2->Add( panel_1, 0, wxEXPAND, 0 );
-    SetSizer( sizer_2 );
-    sizer_2->Fit( this );
-    Layout();
-    // end wxGlade
-}
-*/
 CreateIndex::~CreateIndex()
 {
     delete m_indexColumns;
@@ -856,7 +643,14 @@ void CreateIndex::OnOKUpdateUI(wxUpdateUIEvent &event)
 
 void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
 {
-    CreateIndexSQLServer dlg( nullptr, wxID_ANY, "Advanced options fr SQL Server", m_dbTable );
-    dlg.CenterOnScreen();
-    dlg.ShowModal();
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        CreateIndexSQLServer dlg( nullptr, wxID_ANY, "Advanced options fr SQL Server", m_dbTable );
+        dlg.CenterOnScreen();
+        if( dlg.ShowModal() == wxID_OK )
+        {
+            m_where = dlg.GetWhereCondition();
+            m_with = dlg.GetWithPredicate();
+        }
+    }
 }

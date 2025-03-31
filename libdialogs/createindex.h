@@ -33,7 +33,7 @@ private:
     unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
-//    void do_layout();
+    wxString m_where, m_with;
     // end wxGlade
 
 protected:
