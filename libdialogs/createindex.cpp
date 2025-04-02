@@ -331,13 +331,10 @@ void CreateIndex::GenerateQuery()
     m_command = L"CREATE ";
     if( m_unique->GetSelection() == 0 )
         m_command += L"UNIQUE ";
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        if( m_options->GetSelection() == 1 )
-            m_command += L"UNCLUSTERED ";
-        if( m_options->GetSelection() == 0 )
-            m_command += L"CLUSTERED ";
-    }*/
+        m_command += m_clustered.ToStdWstring();
+    }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
         if( m_fullText->GetValue() )
@@ -649,8 +646,10 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
         dlg.CenterOnScreen();
         if( dlg.ShowModal() == wxID_OK )
         {
+            m_includeFields = dlg.GetIncludeVector();
             m_where = dlg.GetWhereCondition();
             m_with = dlg.GetWithPredicate();
+            m_clustered = dlg.GetClusteredChoce();
         }
     }
 }

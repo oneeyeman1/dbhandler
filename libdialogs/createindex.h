@@ -25,7 +25,7 @@ public:
 
 private:
     std::vector<long> m_selectedItems;
-    std::vector<std::wstring> m_fields, m_tableFields;
+    std::vector<std::wstring> m_fields, m_tableFields, m_includeFields;
     std::wstring m_command, m_dbType, m_dbSubType;
     DatabaseTable *m_dbTable;
     Database *m_db;
@@ -33,7 +33,7 @@ private:
     unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
-    wxString m_where, m_with;
+    wxString m_where, m_with, m_clustered = "NONCLUSTERED";
     // end wxGlade
 
 protected:

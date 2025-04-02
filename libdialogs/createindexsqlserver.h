@@ -7,8 +7,9 @@ public:
 
     CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString& title, DatabaseTable *table);
     const wxString &GetWhereCondition() const { return where; }
+    const wxString &GetClusteredChoce() const { if( m_clustered->GetSelection() == 0 ) return "CLUSTERED"; else return "UNCLUSTERED"; }
     const wxString &GetWithPredicate() const { return with; }
-
+    const std::vector<std::wstring> &GetIncludeVector() const { return m_fields; }
 private:
     std::vector<std::wstring> m_tableFields, m_fields;
     std::vector<std::tuple<wxString, wxString, wxString, wxString> > m_whereData;
