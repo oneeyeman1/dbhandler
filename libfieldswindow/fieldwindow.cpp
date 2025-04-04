@@ -27,8 +27,9 @@
 
 const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
-FieldWindow::FieldWindow(wxWindow *parent, const wxPoint &pos, int width) : wxSFShapeCanvas()
+FieldWindow::FieldWindow(wxWindow *parent, bool isIndex, const wxPoint &pos, int width) : wxSFShapeCanvas()
 {
+    m_isIndex = isIndex;
     m_draggingField = nullptr;
     m_isDragging = false;
     Create( parent, wxID_ANY, pos == wxDefaultPosition ? wxDefaultPosition : pos, wxSize( width == -1 ? parent->GetSize().GetWidth() : width, 55 ), wxBORDER_SIMPLE | wxHSCROLL | wxALWAYS_SHOW_SB );
@@ -89,18 +90,32 @@ void FieldWindow::OnLeftDown(wxMouseEvent &event)
     ShapeList shapes, allShapes;
     GetSelectedShapes( allShapes );
     GetShapesAtPosition( event.GetPosition(), shapes );
-    for( ShapeList::iterator it = allShapes.begin (); it != allShapes.end (); ++it )
+    if( m_isIndex )
     {
-        FieldWin *field = wxDynamicCast( *it, FieldWin );
-        if( field )
-            field->Select( false );
+        for( ShapeList::iterator it = shapes.begin (); it != shapes.end (); ++it )
+        {
+            FieldWin *field = wxDynamicCast( *it, FieldWin );
+            if( field )
+            {
+                m_currentField = field;
+            }
+        }
     }
-    Refresh();
-    for( ShapeList::iterator it = shapes.begin();  it != shapes.end(); ++it )
+    else
     {
-        FieldWin *field = wxDynamicCast( *it, FieldWin );
-        if( field )
-            field->Select( true );
+        for( ShapeList::iterator it = allShapes.begin (); it != allShapes.end (); ++it )
+        {
+            FieldWin *field = wxDynamicCast( *it, FieldWin );
+            if( field )
+                field->Select( false );
+        }
+        Refresh();
+        for( ShapeList::iterator it = shapes.begin();  it != shapes.end(); ++it )
+        {
+            FieldWin *field = wxDynamicCast( *it, FieldWin );
+            if( field )
+                field->Select( true );
+        }
     }
 }
 
@@ -202,4 +217,36 @@ void FieldWindow::OnLeftUp(wxMouseEvent &event)
         if( shape )
             shape->Select( false );
     Refresh( false );
+}
+
+void FieldWindow::SetIndexDirection( const wxString &dir )
+{
+    if( m_currentField )
+    {
+        auto found = false;
+        auto text = "";
+        for( std::vector<wxString>::iterator it = m_selectedFields.begin(); it < m_selectedFields.end() && !found; ++it )
+        {
+            if( (*it) == m_currentField->GetFieldName() )
+            {
+                if( (*it).find( ' ' ) == std::string::npos )
+                    (*it) = m_currentField->GetFieldName() + " " + dir;
+                else
+                    (*it).Replace( (*it).substr( (*it).Find( " " ) ), " " + dir );
+                found = true;
+                text = (*it);
+            }
+        }
+        m_startPoint.x = 10;
+        m_manager.Clear();
+        for( std::vector<wxString>::iterator it = m_selectedFields.begin (); it < m_selectedFields.end (); ++it )
+        {
+            FieldWin *field = new FieldWin( wxRealPoint( m_startPoint.x, m_startPoint.y ), (*it), m_manager );
+            m_manager.AddShape( field, NULL, m_startPoint, sfINITIALIZE );
+            m_startPoint.x += field->GetBoundingBox().GetWidth() + 5;
+            if( (*it) == text )
+                m_currentField = field;
+        }
+        Refresh();
+    }
 }

@@ -23,7 +23,13 @@ FieldWin::~FieldWin(void)
 {
 }
 
-wxString &FieldWin::GetFieldName()
+const wxString &FieldWin::GetFieldName() const
 {
     return m_fieldName;
+}
+
+void FieldWin::SetFieldName(const wxString &name)
+{
+    m_text->SetText( name );
+    m_fieldName = name;
 }

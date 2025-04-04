@@ -89,7 +89,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_direction->SetSelection( 0 );
     grid_sizer_1->Add( m_direction, 0, wxALIGN_RIGHT, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_indexColumns = new FieldWindow( panel_1 );
+    m_indexColumns = new FieldWindow( panel_1, true );
     sizer_4->Add( m_indexColumns, 0, wxEXPAND, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
@@ -162,6 +162,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldDeselected, this );
     m_OK->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_logOnly->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
+    m_direction->Bind( wxEVT_RADIOBOX, &CreateIndex::OnDirection, this );
 }
 
 void CreateIndex::set_properties()
@@ -567,22 +568,6 @@ void CreateIndex::OnFastUpdateUpdateUI(wxUpdateUIEvent &WXUNUSED(event))
     }*/
 }
 
-void CreateIndex::OnAscending(wxCommandEvent &WXUNUSED(event))
-{
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        m_nullsLast->SetValue( true );
-    }*/
-}
-
-void CreateIndex::OnDescending(wxCommandEvent &WXUNUSED(event))
-{
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        m_nullsFirst->SetValue( true );
-    }*/
-}
-
 void CreateIndex::OnAlgorythmLockDefault(wxCommandEvent &WXUNUSED(event))
 {
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
@@ -652,4 +637,15 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
             m_clustered = dlg.GetClusteredChoce();
         }
     }
+}
+
+void CreateIndex::OnDirection(wxCommandEvent &event)
+{
+    auto sel = m_direction->GetSelection();
+    auto direction = "";
+    if( sel == 0 )
+        direction = "ASC";
+    else
+        direction = "DESC";
+    m_indexColumns->SetIndexDirection( direction );
 }

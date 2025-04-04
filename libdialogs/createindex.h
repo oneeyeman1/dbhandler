@@ -22,7 +22,7 @@ public:
     ~CreateIndex();
     std::wstring &GetCommand();
     const wxTextCtrl *GetIndexNameCtrl();
-
+    void SetCurrentField(const wxString &field);
 private:
     std::vector<long> m_selectedItems;
     std::vector<std::wstring> m_fields, m_tableFields, m_includeFields;
@@ -33,7 +33,7 @@ private:
     unsigned int m_fillFactor;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
-    wxString m_where, m_with, m_clustered = "NONCLUSTERED";
+    wxString m_where, m_with, m_clustered = "NONCLUSTERED", m_currentField;
     // end wxGlade
 
 protected:
@@ -46,8 +46,6 @@ protected:
     bool Verify();
     void OnFillFactorUpdateUI(wxUpdateUIEvent &event);
     void OnFastUpdateUpdateUI(wxUpdateUIEvent &event);
-    void OnAscending(wxCommandEvent &event);
-    void OnDescending(wxCommandEvent &event);
     void OnAlgorythmLockDefault(wxCommandEvent &event);
     void OnAlgorythm(wxCommandEvent &event);
     void OnLock(wxCommandEvent &event);
@@ -56,6 +54,7 @@ protected:
     void GenerateQuery();
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnClusteredUnclustered(wxCommandEvent &event);
+    void OnDirection(wxCommandEvent &event);
     // begin wxGlade: CreateIndex::attributes
 /*    wxStaticText  *m_label1;
     wxStaticText  *m_tableName;

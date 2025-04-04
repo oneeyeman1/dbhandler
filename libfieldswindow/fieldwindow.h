@@ -8,10 +8,11 @@ class WXEXPORT FieldWindow : public wxSFShapeCanvas
         AFTER = 1
     };
 public:
-    FieldWindow(wxWindow *parent, const wxPoint &pos = wxDefaultPosition, int width = -1);
+    FieldWindow(wxWindow *parent, bool isIndex = false, const wxPoint &pos = wxDefaultPosition, int width = -1);
     virtual ~FieldWindow();
     void AddField(const wxString &fieldName);
     void RemoveField(const wxString &fieldName);
+    void SetIndexDirection(const wxString &dir);
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftUp(wxMouseEvent &event) wxOVERRIDE;
@@ -19,8 +20,8 @@ public:
 private:
     wxPoint m_startPoint;
     wxSFDiagramManager m_manager;
-    bool m_isDragging;
-    FieldWin *m_draggingField;
+    bool m_isDragging, m_isIndex;
+    FieldWin *m_draggingField, *m_currentField = nullptr;
     wxRect m_initialDraggerPosition;
     std::vector<wxString> m_selectedFields;
 };
