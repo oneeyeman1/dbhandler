@@ -94,11 +94,11 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     wxPoint pt1 = m_foreignKeyColumns->GetPosition();
     int width1 = m_foreignKeyColumns->GetSize().GetWidth();
     m_foreignKeyColumns->Hide();
-    m_foreignKeyColumnsFields = new FieldWindow( this, pt1, width1 );
+    m_foreignKeyColumnsFields = new FieldWindow( this, false, pt1, width1 );
     wxPoint pt2 = m_primaryKeyColumns->GetPosition();
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
-    m_primaryKeyColumnsFields = new FieldWindow( this, pt2, width2 );
+    m_primaryKeyColumnsFields = new FieldWindow( this, false, pt2, width2 );
     if( m_isView )
     {
         m_foreignKeyName->SetValue( keyName );

@@ -318,7 +318,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     wxASSERT( m_frame == GetFrame() );
     if( m_type != DatabaseView )
     {
-        m_fields = new FieldWindow( m_frame, wxDefaultPosition, wxDefaultCoord );
+        m_fields = new FieldWindow( m_frame, false, wxDefaultPosition, wxDefaultCoord );
         m_fields->SetCursor( wxCURSOR_HAND );
         sizer->Add( m_fields, 0, wxEXPAND, 0 );
     }
