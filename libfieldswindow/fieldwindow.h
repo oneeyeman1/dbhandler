@@ -13,6 +13,7 @@ public:
     void AddField(const wxString &fieldName);
     void RemoveField(const wxString &fieldName);
     void SetIndexDirection(const wxString &dir);
+    const wxString &GetCurrentFieldLabel() const { return m_currentFieldLabel; }
     virtual void OnLeftDown(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnMouseMove(wxMouseEvent &event) wxOVERRIDE;
     virtual void OnLeftUp(wxMouseEvent &event) wxOVERRIDE;
@@ -24,6 +25,7 @@ private:
     FieldWin *m_draggingField, *m_currentField = nullptr;
     wxRect m_initialDraggerPosition;
     std::vector<wxString> m_selectedFields;
+    wxString m_currentFieldLabel = "";
 };
 
 wxDECLARE_EVENT(wxEVT_FIELD_SHUFFLED, wxCommandEvent);

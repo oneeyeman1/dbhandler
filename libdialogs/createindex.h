@@ -55,6 +55,7 @@ protected:
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnClusteredUnclustered(wxCommandEvent &event);
     void OnDirection(wxCommandEvent &event);
+    void OnIndexFieldsMouseUp(wxMouseEvent &event);
     // begin wxGlade: CreateIndex::attributes
 /*    wxStaticText  *m_label1;
     wxStaticText  *m_tableName;

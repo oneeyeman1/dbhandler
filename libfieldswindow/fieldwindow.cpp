@@ -98,6 +98,7 @@ void FieldWindow::OnLeftDown(wxMouseEvent &event)
             if( field )
             {
                 m_currentField = field;
+                m_currentFieldLabel = m_currentField->GetFieldName();
             }
         }
     }

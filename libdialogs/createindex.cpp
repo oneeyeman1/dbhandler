@@ -163,6 +163,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_OK->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_logOnly->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_direction->Bind( wxEVT_RADIOBOX, &CreateIndex::OnDirection, this );
+    m_indexColumns->Bind( wxEVT_LEFT_UP, &CreateIndex::OnIndexFieldsMouseUp, this );
 }
 
 void CreateIndex::set_properties()
@@ -648,4 +649,13 @@ void CreateIndex::OnDirection(wxCommandEvent &event)
     else
         direction = "DESC";
     m_indexColumns->SetIndexDirection( direction );
+}
+
+void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &event)
+{
+    auto label = m_indexColumns->GetCurrentFieldLabel();
+    if( label.Find( "DESC" ) != std::string::npos )
+        m_direction->SetSelection( 1 );
+    else
+        m_direction->SetSelection( 0 );
 }
