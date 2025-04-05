@@ -433,7 +433,7 @@ protected:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
 public:
-    Database(const int osId, const std::wstring &desktop) : m_osId( osId ), pimpl{ desktop } { }
+    Database(const int osId, const std::wstring &desktop) : pimpl{ desktop }, m_osId( osId ) { }
     const Impl &GetTableVector() const { return pimpl; };
     bool IsConnected() { return m_isConnected; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
