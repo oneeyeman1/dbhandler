@@ -80,7 +80,18 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_unique_choices, 1, wxRA_SPECIFY_COLS );
     m_unique->SetSelection( 0 );
     grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
-    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
+    if( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        n_concurrently = new wxCheckBox( this, wxID_ANY, "CONCURRENTLY" );
+        m_only = new wxCheckBox( this, wxID_ANY, "ONLY" );
+        wxBoxSizer *pgsizer = new wxBoxSizer( wxHORIZONTAL );
+        pgsizer->Add( m_concurrently, 0, wxEXPAND, 0 );
+        pgsizer->Add( 5, 5, 0, wxEXPAND, 0 );
+        pgsizer->Add( m_only, 0, wxEXPAND, 0 );
+        grid_sizer_1->Add( pgsizer, 0, wxEXPAND, 0 );
+    }
+    else
+        grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     const wxString m_direction_choices[] = {
         _( "Ascending" ),
         _( "Descendng" ),
