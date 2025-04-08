@@ -83,22 +83,35 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        wxBoxSizer *pgsizer = new wxBoxSizer( wxHORIZONTAL );
+        wxBoxSizer *pgsizer0 = new wxBoxSizer( wxVERTICAL );
+        wxBoxSizer *pgsizer1 = new wxBoxSizer( wxHORIZONTAL );
         m_concurrently = new wxCheckBox( panel_1, wxID_ANY, "CONCURRENTLY" );
-        pgsizer->Add( m_concurrently, 0, wxEXPAND, 0 );
+        pgsizer1->Add( m_concurrently, 0, wxEXPAND, 0 );
         if( m_serverVersion >= 11 )
         {
             m_only = new wxCheckBox( panel_1, wxID_ANY, "ONLY" );
-            pgsizer->Add( 5, 5, 0, wxEXPAND, 0 );
-            pgsizer->Add( m_only, 0, wxEXPAND, 0 );
+            pgsizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+            pgsizer1->Add( m_only, 0, wxEXPAND, 0 );
         }
-        grid_sizer_1->Add( pgsizer, 0, wxEXPAND, 0 );
+        pgsizer0->Add( pgsizer1, 0, wxEXPAND, 0 );
+        const wxString method_choices[] =
+        {
+            "btree",
+            "hash",
+            "gist",
+            "spgist",
+            "gin",
+            "brin",
+        };
+        m_method = new wxComboBox( panel_1, wxID_ANY, "btree", wxDefaultPosition, wxDefaultSize, 6, method_choices );
+        pgsizer0->Add( m_method, 0, wxEXPAND, 0 );
+        grid_sizer_1->Add( pgsizer0, 0, wxEXPAND, 0 );
     }
     else
         grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     const wxString m_direction_choices[] = {
-        _( "Ascending" ),
-        _( "Descendng" ),
+        "Ascending",
+        "Descendng",
     };
     m_direction = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_direction_choices, 1, wxRA_SPECIFY_COLS );
     m_direction->SetSelection( 0 );
@@ -384,7 +397,13 @@ void CreateIndex::GenerateQuery()
         m_command += L"ONLY ";
     }
     m_command += m_dbTable->GetTableName() + L" ";
-
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        auto method = m_method->GetValue();
+        if( method != "btree" )
+            m_command += "USING " + method;
+    }
+    m_command += L"\n";
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() )

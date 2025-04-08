@@ -143,6 +143,7 @@ protected:
     wxButton *m_advanced;
     wxButton *m_help;
     wxCheckBox *m_concurrently, *m_only;
+    wxComboBox *m_method;
     // end wxGlade
 
 }; // wxGlade: end class
