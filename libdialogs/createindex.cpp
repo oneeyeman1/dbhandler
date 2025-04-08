@@ -379,8 +379,12 @@ void CreateIndex::GenerateQuery()
     for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
     {
         m_command += L"\"";
+        auto pos = (*it).find( L" " );
+        if( pos != std::string::npos )
+            (*it).replace( pos, 1, L"\" " );
+        else
+            (*it) += L"\"";
         m_command += (*it);
-        m_command += L"\"";
         if( it == m_fields.end() - 1 )
             m_command += L")";
         else
@@ -391,12 +395,16 @@ void CreateIndex::GenerateQuery()
         for( std::vector<std::wstring>::iterator it = m_includeFields.begin(); it < m_includeFields.end(); ++it )
         {
             if( it == m_includeFields.begin() )
-                m_command += L"\r\nINCLUDE( ";
+                m_command += L"\nINCLUDE( ";
             m_command += (*it);
-            if( it == m_fields.end() - 1 )
+            if( it == m_includeFields.end() - 1 )
                 m_command += L")";
             else
                 m_command += L",";
+        }
+        if( !m_where.IsEmpty() )
+        {
+            m_command += "\n" + m_where;
         }
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
