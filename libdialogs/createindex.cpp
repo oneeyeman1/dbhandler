@@ -346,7 +346,7 @@ void CreateIndex::GenerateQuery()
         m_command += L"UNIQUE ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        m_command += m_clustered.ToStdWstring();
+        m_command += m_clustered.ToStdWstring() + " ";
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -365,7 +365,7 @@ void CreateIndex::GenerateQuery()
     if( ( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" ) ||
           ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        m_command += L"\n\r";
+        m_command += L"\r";
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -396,6 +396,19 @@ void CreateIndex::GenerateQuery()
             m_command += L")";
         else
             m_command += L",";
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    {
+        for( std::vector<std::wstring>::iterator it = m_includeFields.begin(); it < m_includeFields.end(); ++it )
+        {
+            if( it == m_includeFields.begin() )
+                m_command += L"\r\nINCLUDE( ";
+            m_command += (*it);
+            if( it == m_fields.end() - 1 )
+                m_command += L")";
+            else
+                m_command += L",";
+        }
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -651,18 +664,39 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
     }
 }
 
-void CreateIndex::OnDirection(wxCommandEvent &event)
+void CreateIndex::OnDirection(wxCommandEvent &WXUNUSED(event))
 {
     auto sel = m_direction->GetSelection();
-    auto direction = "";
+    wxString direction = "";
+    int size = 0;
     if( sel == 0 )
+    {
         direction = "ASC";
+        size = 4;
+    }
     else
+    {
         direction = "DESC";
+        size = 5;
+    }
+    auto label = m_indexColumns->GetCurrentFieldLabel();
+    if( !label.IsEmpty() )
+    {
+        for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); ++it )
+        {
+            if( (*it) == label )
+            {
+                if( (*it).find( L' ' ) == std::string::npos )
+                    (*it) += L" " + direction;
+                else
+                    (*it).replace( (*it).find( L" " ), std::string::npos, L" " + direction );
+            }
+        }
+    }
     m_indexColumns->SetIndexDirection( direction );
 }
 
-void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &event)
+void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
 {
     auto label = m_indexColumns->GetCurrentFieldLabel();
     if( label.Find( "DESC" ) != std::string::npos )
