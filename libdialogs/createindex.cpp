@@ -41,6 +41,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_db = db;
     m_dbType = m_db->GetTableVector().m_type;
     m_dbSubType = m_db->GetTableVector().m_subtype;
+    m_serverVersion = m_db->GetTableVector().m_versionMajor;
     // begin wxGlade: MyDialog::MyDialog
     SetTitle( _( "Create Index" ) );
     wxBoxSizer *sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -80,14 +81,17 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_unique_choices, 1, wxRA_SPECIFY_COLS );
     m_unique->SetSelection( 0 );
     grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
-    if( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        n_concurrently = new wxCheckBox( this, wxID_ANY, "CONCURRENTLY" );
-        m_only = new wxCheckBox( this, wxID_ANY, "ONLY" );
         wxBoxSizer *pgsizer = new wxBoxSizer( wxHORIZONTAL );
+        m_concurrently = new wxCheckBox( panel_1, wxID_ANY, "CONCURRENTLY" );
         pgsizer->Add( m_concurrently, 0, wxEXPAND, 0 );
-        pgsizer->Add( 5, 5, 0, wxEXPAND, 0 );
-        pgsizer->Add( m_only, 0, wxEXPAND, 0 );
+        if( m_serverVersion >= 11 )
+        {
+            m_only = new wxCheckBox( panel_1, wxID_ANY, "ONLY" );
+            pgsizer->Add( 5, 5, 0, wxEXPAND, 0 );
+            pgsizer->Add( m_only, 0, wxEXPAND, 0 );
+        }
         grid_sizer_1->Add( pgsizer, 0, wxEXPAND, 0 );
     }
     else
@@ -356,11 +360,11 @@ void CreateIndex::GenerateQuery()
             m_command += L"SPATIAL ";
     }*/
     m_command += L"INDEX ";
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_concurrently->GetValue() )
             m_command += L"CONCURRENTLY ";
-    }*/
+    }
     m_command += m_indexName->GetValue() + " ";
     if( ( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" ) ||
           ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
@@ -374,7 +378,13 @@ void CreateIndex::GenerateQuery()
         if( m_indextypeHash->GetValue() )
             m_command += L"USING HASH ";
     }*/
-    m_command += L"ON " + m_dbTable->GetTableName() + L" ";
+    m_command += L"ON ";
+    if( ( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" ) && m_serverVersion >= 11 && m_only->GetValue() )
+    {
+        m_command += L"ONLY ";
+    }
+    m_command += m_dbTable->GetTableName() + L" ";
+
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         if( m_indextypeBtree->GetValue() )

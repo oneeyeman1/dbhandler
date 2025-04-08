@@ -31,6 +31,7 @@ private:
     Database *m_db;
     std::wstring m_schema;
     unsigned int m_fillFactor;
+    unsigned long m_serverVersion = 0;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
     wxString m_where, m_with, m_clustered = "NONCLUSTERED", m_currentField;
@@ -141,6 +142,7 @@ protected:
     wxButton *m_logOnly;
     wxButton *m_advanced;
     wxButton *m_help;
+    wxCheckBox *m_concurrently, *m_only;
     // end wxGlade
 
 }; // wxGlade: end class
