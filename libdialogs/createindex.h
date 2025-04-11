@@ -57,6 +57,7 @@ protected:
     void OnClusteredUnclustered(wxCommandEvent &event);
     void OnDirection(wxCommandEvent &event);
     void OnIndexFieldsMouseUp(wxMouseEvent &event);
+    void OnPostgresFieldSelected(wxPropertyGridEvent &event);
     // begin wxGlade: CreateIndex::attributes
 /*    wxStaticText  *m_label1;
     wxStaticText  *m_tableName;

@@ -23,6 +23,7 @@
 #include "wx/listctrl.h"
 #include "wx/propgrid/manager.h"
 #include "wx/propgrid/propgrid.h"
+#include "wx/propgrid/propgridiface.h"
 #include "wx/grid.h"
 #include "wx/spinctrl.h"
 #include "database.h"
@@ -127,6 +128,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         m_manager = new wxPropertyGridManager( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_NO_INTERNAL_BORDER  );
+        m_manager->SetExtraStyle( wxPG_EX_MULTIPLE_SELECTION );
         m_tablePg = m_manager->GetGrid();
         auto page = m_manager->AddPage( tableName );
         std::vector<TableField *> fields = m_dbTable->GetFields();
@@ -134,12 +136,15 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         {
             page->Append( new wxStringProperty( (*it)->GetFieldName() ) );
         }
+        m_manager->SetColumnCount( 5 );
         m_manager->ShowHeader( true );
-        m_manager->SetColumnTitle( 2, "Expression" );
-        sizer_8->Add( m_tablePg, 0, wxEXPAND, 0 );
+        m_manager->SetColumnTitle( 0, "Fields" );
+        m_manager->SetColumnTitle( 1, "Expression" );
+        m_manager->SetColumnTitle( 2, "Collate" );
+        m_manager->SetColumnTitle( 3, "OpClass" );
+        m_manager->SetColumnTitle( 4, "NULL" );
+        sizer_8->Add( m_manager, 1, wxEXPAND, 0 );
 //        page->Append( new wxStringProperty( "Test", "" ) );
-//        m_table->AppendColumn( "EXPRESSION" );
-//        m_table->AppendColumn( "COLLATE" );
 //        m_table->AppendXolumn();
     }
     else
@@ -209,8 +214,15 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_advanced->Bind( wxEVT_BUTTON, &CreateIndex::OnAdvanced, this );
-    m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelected, this );
-    m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldDeselected, this );
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        m_manager->Bind( wxEVT_PG_SELECTED, &CreateIndex::OnPostgresFieldSelected, this );
+    }
+    else
+    {
+        m_table->Bind( wxEVT_LIST_ITEM_SELECTED, &CreateIndex::OnFieldSelected, this );
+        m_table->Bind( wxEVT_LIST_ITEM_DESELECTED, &CreateIndex::OnFieldDeselected, this );
+    }
     m_OK->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_logOnly->Bind( wxEVT_UPDATE_UI, &CreateIndex::OnOKUpdateUI, this );
     m_direction->Bind( wxEVT_RADIOBOX, &CreateIndex::OnDirection, this );
@@ -763,4 +775,19 @@ void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
         m_direction->SetSelection( 1 );
     else
         m_direction->SetSelection( 0 );
+}
+
+void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
+{
+    auto property = event.GetProperty();
+    if( m_manager->IsPropertySelected( property ) )
+    {
+        m_indexColumns->RemoveField( property->GetName() );
+        m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
+    }
+    else
+    {
+        m_indexColumns->AddField( property->GetName() );
+        m_fields.push_back( property->GetName().ToStdWstring() );
+    }
 }
