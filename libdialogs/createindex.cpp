@@ -134,6 +134,8 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         {
             page->Append( new wxStringProperty( (*it)->GetFieldName() ) );
         }
+        m_manager->ShowHeader( true );
+        m_manager->SetColumnTitle( 2, "Expression" );
         sizer_8->Add( m_tablePg, 0, wxEXPAND, 0 );
 //        page->Append( new wxStringProperty( "Test", "" ) );
 //        m_table->AppendColumn( "EXPRESSION" );
