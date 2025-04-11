@@ -28,6 +28,8 @@
 #include "wx/spinctrl.h"
 #include "wx/bmpcbox.h"
 #include "wx/grid.h"
+#include "wx/propgrid/manager.h"
+#include "wx/propgrid/propgrid.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"

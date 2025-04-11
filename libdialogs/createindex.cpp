@@ -21,6 +21,8 @@
 #include <vector>
 #include <tuple>
 #include "wx/listctrl.h"
+#include "wx/propgrid/manager.h"
+#include "wx/propgrid/propgrid.h"
 #include "wx/grid.h"
 #include "wx/spinctrl.h"
 #include "database.h"
@@ -122,16 +124,35 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer *sizer_8 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
-    m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    m_table->AppendColumn( tableName );
-    std::vector<TableField *> fields = m_dbTable->GetFields();
-    int row = 0;
-    for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        m_table->InsertItem( row++, (*it)->GetFieldName() );
-        m_tableFields.push_back( (*it)->GetFieldName() );
+        m_manager = new wxPropertyGridManager( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_NO_INTERNAL_BORDER  );
+        m_tablePg = m_manager->GetGrid();
+        auto page = m_manager->AddPage( tableName );
+        std::vector<TableField *> fields = m_dbTable->GetFields();
+        for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+        {
+            page->Append( new wxStringProperty( (*it)->GetFieldName() ) );
+        }
+        sizer_8->Add( m_tablePg, 0, wxEXPAND, 0 );
+//        page->Append( new wxStringProperty( "Test", "" ) );
+//        m_table->AppendColumn( "EXPRESSION" );
+//        m_table->AppendColumn( "COLLATE" );
+//        m_table->AppendXolumn();
     }
-    sizer_8->Add( m_table, 0, wxEXPAND, 0 );
+    else
+    {
+        m_table = new wxListCtrl( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+        m_table->AppendColumn( tableName );
+        std::vector<TableField *> fields = m_dbTable->GetFields();
+        int row = 0;
+        for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+        {
+            m_table->InsertItem( row++, (*it)->GetFieldName() );
+            m_tableFields.push_back( (*it)->GetFieldName() );
+        }
+        sizer_8->Add( m_table, 0, wxEXPAND, 0 );
+    }
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_8->AddStretchSpacer();
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxVERTICAL );

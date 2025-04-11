@@ -144,6 +144,8 @@ protected:
     wxButton *m_help;
     wxCheckBox *m_concurrently, *m_only;
     wxComboBox *m_method;
+    wxPropertyGrid *m_tablePg;;
+    wxPropertyGridManager *m_manager;
     // end wxGlade
 
 }; // wxGlade: end class

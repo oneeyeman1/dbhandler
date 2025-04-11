@@ -45,7 +45,7 @@ fi
 
 WX_CPPFLAGS="`$WXCONFIG --cppflags`"
 WX_CXXFLAGS="`$WXCONFIG --cxxflags`"
-WX_LIBS="`$WXCONFIG --libs std,stc`"
+WX_LIBS="`$WXCONFIG --libs std,stc,propgrid`"
 DBTOOLKIT=""
 
 if wx-config --list | grep -i default | grep -i qt ; then
