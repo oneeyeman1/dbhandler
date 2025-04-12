@@ -127,7 +127,7 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        m_manager = new wxPropertyGridManager( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_NO_INTERNAL_BORDER  );
+        m_manager = new wxPropertyGridManager( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_NO_INTERNAL_BORDER | wxPG_SPLITTER_AUTO_CENTER );
         m_manager->SetExtraStyle( wxPG_EX_MULTIPLE_SELECTION );
         m_tablePg = m_manager->GetGrid();
         auto page = m_manager->AddPage( tableName );
@@ -780,14 +780,14 @@ void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
 void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
 {
     auto property = event.GetProperty();
-    if( m_manager->IsPropertySelected( property ) )
-    {
-        m_indexColumns->RemoveField( property->GetName() );
-        m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
-    }
-    else
+    if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
     {
         m_indexColumns->AddField( property->GetName() );
         m_fields.push_back( property->GetName().ToStdWstring() );
+    }
+    else
+    {
+        m_indexColumns->RemoveField( property->GetName() );
+        m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
     }
 }
