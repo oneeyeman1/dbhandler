@@ -45,8 +45,8 @@ CreateIndexSQLServer::CreateIndexSQLServer(wxWindow *parent, wxWindowID id, cons
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
     const wxString m_clustered_choices[] = {
+        "UnClustered",
         "Clustered",
-        "Unclustered",
     };
     m_clustered = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_clustered_choices, 2, wxRA_SPECIFY_COLS );
     m_clustered->SetSelection( 0 );
@@ -258,12 +258,14 @@ void CreateIndexSQLServer::OnClusteredUnclustered(wxCommandEvent &WXUNUSED(event
             m_name->Enable( false );
         else
             m_name->Enable( true );
+        clustered = "UNCLUSTERED";
     }
     else
     {
         m_label1->Enable( false );
         m_filestreamType->Enable( false );
         m_name->Enable( false );
+        clustered = "CLUSTERED";
     }
 }
 

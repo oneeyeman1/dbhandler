@@ -6,14 +6,14 @@ public:
     // end wxGlade
 
     CreateIndexSQLServer(wxWindow *parent, wxWindowID id, const wxString& title, DatabaseTable *table);
-    const wxString &GetWhereCondition() const { return where; }
-    const wxString &GetClusteredChoce() const { if( m_clustered->GetSelection() == 0 ) return "CLUSTERED"; else return "UNCLUSTERED"; }
-    const wxString &GetWithPredicate() const { return with; }
+    wxString &GetWhereCondition() { return where; }
+    const wxString &GetClusteredChoce() const { return clustered; /*if( m_clustered->GetSelection() == 0 ) return "CLUSTERED"; else return "UNCLUSTERED";*/ }
+    wxString &GetWithPredicate() { return with; }
     const std::vector<std::wstring> &GetIncludeVector() const { return m_fields; }
 private:
     std::vector<std::wstring> m_tableFields, m_fields;
     std::vector<std::tuple<wxString, wxString, wxString, wxString> > m_whereData;
-    wxString with = "WITH ", where = "WHERE ";
+    wxString with = "WITH ", where = "WHERE ", clustered = "UNCLUSTERED";
 protected:
     void OnClusteredUnclustered(wxCommandEvent &event);
     void OnFileStreamSelected(wxCommandEvent &event);
