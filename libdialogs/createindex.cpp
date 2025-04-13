@@ -184,8 +184,11 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         }
         sizer_8->Add( m_table, 0, wxEXPAND, 0 );
     }
-    sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_8->AddStretchSpacer();
+    if( ( m_dbType == L"ODBC" && m_dbSubType != L"PostgreSQL" ) || m_dbType != L"PostgreSQL" )
+    {
+        sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_8->AddStretchSpacer();
+    }
     wxBoxSizer *sizer_9 = new wxBoxSizer( wxVERTICAL );
     sizer_8->Add( sizer_9, 0, wxEXPAND, 0 );
     if( m_dbType == L"SQLite" )
@@ -811,6 +814,7 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
     }
     else
     {
+        m_manager->GetPage( 0 )->ClearSelection();
         m_indexColumns->RemoveField( property->GetName() );
         m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
     }
