@@ -76,6 +76,7 @@
 #include "wx/config.h"
 #include "wx/colordlg.h"
 #include "wx/filepicker.h"
+#include "wx/propgrid/propgrid.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"
@@ -1171,6 +1172,7 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
+        ::wxPGInitResourceModule();
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
         result = func( m_frame, dbTable, GetDocument()->GetDatabase(), command, indexName );
         if( result != wxID_OK && result != wxID_CANCEL )
