@@ -77,13 +77,27 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
     sizer_7->Add( 5, 5, 0, 0, 0 );
     m_indexName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
     sizer_7->Add( m_indexName, 1, wxEXPAND, 0 );
-    const wxString m_unique_choices[] = {
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        const wxString m_unique_choices[] = {
+            _( "Unique" ),
+            _( "Fulltext" ),
+            _( "Spatial" ),
+        };
+        m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 3, m_unique_choices, 1, wxRA_SPECIFY_COLS );
+        m_unique->SetSelection( 0 );
+        grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
+    }
+    else
+    {
+        const wxString m_unique_choices[] = {
         _( "Unique" ),
         _( "Duplicate" ),
-    };
-    m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_unique_choices, 1, wxRA_SPECIFY_COLS );
-    m_unique->SetSelection( 0 );
-    grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
+        };
+        m_unique = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_unique_choices, 1, wxRA_SPECIFY_COLS );
+        m_unique->SetSelection( 0 );
+        grid_sizer_1->Add( m_unique, 0, wxALIGN_RIGHT, 0 );
+    }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         wxBoxSizer *pgsizer0 = new wxBoxSizer( wxVERTICAL );
@@ -109,6 +123,16 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         m_method = new wxComboBox( panel_1, wxID_ANY, "btree", wxDefaultPosition, wxDefaultSize, 6, method_choices );
         pgsizer0->Add( m_method, 0, wxEXPAND, 0 );
         grid_sizer_1->Add( pgsizer0, 0, wxEXPAND, 0 );
+    }
+    else if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
+    {
+        const wxString method_choices[] =
+        {
+            "btree",
+            "hash",
+        };
+        m_method = new wxComboBox( panel_1, wxID_ANY, "btree", wxDefaultPosition, wxDefaultSize, 6, method_choices );
+        grid_sizer_1->Add( m_method, 0, wxEXPAND, 0 );
     }
     else
         grid_sizer_1->Add( 5, 5, 0, 0, 0 );
