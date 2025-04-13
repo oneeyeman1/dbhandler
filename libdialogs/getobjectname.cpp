@@ -199,12 +199,12 @@ const wxString &GetObjectName::GetFileName() const
     return m_fileName;
 }
 
-const int GetObjectName::GetSource() const
+int GetObjectName::GetSource() const
 {
     return m_source;
 }
 
-const int GetObjectName::GetPresentation() const
+int GetObjectName::GetPresentation() const
 {
     return m_presentation;
 }
