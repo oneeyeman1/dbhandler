@@ -767,16 +767,13 @@ void CreateIndex::OnDirection(wxCommandEvent &WXUNUSED(event))
 {
     auto sel = m_direction->GetSelection();
     wxString direction = "";
-    int size = 0;
     if( sel == 0 )
     {
         direction = "ASC";
-        size = 4;
     }
     else
     {
         direction = "DESC";
-        size = 5;
     }
     auto label = m_indexColumns->GetCurrentFieldLabel();
     if( !label.IsEmpty() )
@@ -798,7 +795,7 @@ void CreateIndex::OnDirection(wxCommandEvent &WXUNUSED(event))
 void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
 {
     auto label = m_indexColumns->GetCurrentFieldLabel();
-    if( label.Find( "DESC" ) != std::string::npos )
+    if( label.find( "DESC" ) != std::string::npos )
         m_direction->SetSelection( 1 );
     else
         m_direction->SetSelection( 0 );
