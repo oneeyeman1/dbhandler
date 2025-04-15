@@ -22,6 +22,7 @@
 #include <tuple>
 #include "wx/listctrl.h"
 #include "wx/propgrid/manager.h"
+#include "wx/propgrid/props.h"
 #include "wx/propgrid/propgrid.h"
 #include "wx/propgrid/propgridiface.h"
 #include "wx/grid.h"
@@ -158,18 +159,17 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
         std::vector<TableField *> fields = m_dbTable->GetFields();
         for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
         {
-            page->Append( new wxStringProperty( (*it)->GetFieldName() ) );
+            auto property = page->Append( new wxStringProperty( (*it)->GetFieldName(), wxPG_LABEL, "<composed>" ) );
+            page->AppendIn( property, new wxStringProperty( "Expression", wxPG_LABEL, "" ) );
+            page->AppendIn( property, new wxStringProperty( "Collate", wxPG_LABEL, "" ) );
+            page->AppendIn( property, new wxStringProperty( "OpClass", wxPG_LABEL, "" ) );
+            static const wxString null_choices[] = { "FIRST", "LAST" };
+            static long enum_prop_values[] = { 1, 2 };
+            page->AppendIn( property, new wxEnumProperty( "NULL", wxPG_LABEL, 
+                wxArrayString( WXSIZEOF( null_choices ), null_choices ),
+                wxArrayInt( enum_prop_values, enum_prop_values + WXSIZEOF( enum_prop_values ) ), 2 ) );
         }
-        m_manager->SetColumnCount( 5 );
-        m_manager->ShowHeader( true );
-        m_manager->SetColumnTitle( 0, "Fields" );
-        m_manager->SetColumnTitle( 1, "Expression" );
-        m_manager->SetColumnTitle( 2, "Collate" );
-        m_manager->SetColumnTitle( 3, "OpClass" );
-        m_manager->SetColumnTitle( 4, "NULL" );
         sizer_8->Add( m_manager, 1, wxEXPAND, 0 );
-//        page->Append( new wxStringProperty( "Test", "" ) );
-//        m_table->AppendXolumn();
     }
     else
     {
@@ -807,6 +807,7 @@ void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
 void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
 {
     auto property = event.GetProperty();
+    auto size = m_manager->GetBestSize();
     if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
     {
         m_indexColumns->AddField( property->GetName() );
@@ -814,7 +815,7 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
     }
     else
     {
-        m_manager->GetPage( 0 )->ClearSelection();
+        m_tablePg->RemoveFromSelection( property );
         m_indexColumns->RemoveField( property->GetName() );
         m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
     }
