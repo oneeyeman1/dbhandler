@@ -812,18 +812,27 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
 {
     auto property = event.GetProperty();
     auto parent = property->GetParent();
+    auto grid = m_manager->GetGrid();
+    wxString indexField = "";
+    for( auto it = grid->GetIterator( wxPG_ITERATE_FIXED_CHILDREN, property ); !it.AtEnd(); it.Next() )
+    {
+        if( it.GetProperty()->GetName() == "Expression" && it.GetProperty()->GetValue().GetString() != wxEmptyString )
+            indexField = it.GetProperty()->GetValue().GetString();
+        else
+            indexField = property->GetName();
+    }
     if( parent && parent->IsRoot() )
     {
         if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
         {
-            m_indexColumns->AddField( property->GetName() );
-            m_fields.push_back( property->GetName().ToStdWstring() );
+            m_indexColumns->AddField( indexField );
+            m_fields.push_back( indexField.ToStdWstring() );
         }
         else
         {
             m_tablePg->RemoveFromSelection( property );
-            m_indexColumns->RemoveField( property->GetName() );
-            m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
+            m_indexColumns->RemoveField( indexField );
+            m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), indexField ), m_fields.end() );
         }
     }
 }
