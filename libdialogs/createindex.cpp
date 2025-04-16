@@ -237,6 +237,13 @@ CreateIndex::CreateIndex(wxWindow* parent, wxWindowID id, const wxString& title,
 // end wxGlade
 
     set_properties();
+    wxPGVIterator it;
+    auto pg = m_manager->GetGrid();
+
+    for( it = pg->GetVIterator( wxPG_ITERATE_ALL ); !it.AtEnd(); it.Next() )
+        it.GetProperty()->SetExpanded( false );
+
+    pg->RefreshGrid();
     // end wxGlade
     m_OK->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
     m_logOnly->Bind( wxEVT_BUTTON, &CreateIndex::OnOkShowLog, this );
