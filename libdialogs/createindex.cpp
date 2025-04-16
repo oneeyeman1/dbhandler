@@ -804,16 +804,19 @@ void CreateIndex::OnIndexFieldsMouseUp(wxMouseEvent &WXUNUSED(event))
 void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
 {
     auto property = event.GetProperty();
-    auto size = m_manager->GetBestSize();
-    if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
+    auto parent = property->GetParent();
+    if( parent && parent->IsRoot() )
     {
-        m_indexColumns->AddField( property->GetName() );
-        m_fields.push_back( property->GetName().ToStdWstring() );
-    }
-    else
-    {
-        m_tablePg->RemoveFromSelection( property );
-        m_indexColumns->RemoveField( property->GetName() );
-        m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
+        if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
+        {
+            m_indexColumns->AddField( property->GetName() );
+            m_fields.push_back( property->GetName().ToStdWstring() );
+        }
+        else
+        {
+            m_tablePg->RemoveFromSelection( property );
+            m_indexColumns->RemoveField( property->GetName() );
+            m_fields.erase( std::remove( m_fields.begin(), m_fields.end(), property->GetName() ), m_fields.end() );
+        }
     }
 }
