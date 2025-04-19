@@ -33,6 +33,7 @@
 #include "fieldwindow.h"
 #include "createindex.h"
 #include "createindexsqlserver.h"
+#include "createindexpostgres.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -766,6 +767,14 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
             m_where = dlg.GetWhereCondition();
             m_with = dlg.GetWithPredicate();
             m_clustered = dlg.GetClusteredChoce();
+        }
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion );
+        dlg.CenterOnScreen();
+        if( dlg.ShowModal() == wxID_OK )
+        {
         }
     }
 }
