@@ -771,7 +771,7 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable );
+        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion );
         dlg.CenterOnScreen();
         if( dlg.ShowModal() == wxID_OK )
         {
