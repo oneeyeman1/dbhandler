@@ -52,7 +52,9 @@ libdialogs_la_SOURCES =  \
 	neweditvaldation.cpp \
 	neweditvaldation.h \
 	createindexsqlserver.cpp \
-	createindexsqlserver.h
+	createindexsqlserver.h \
+	createindexpostgres.cpp \
+	createindexposygres.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \
