@@ -34,7 +34,7 @@ private:
     unsigned long m_serverVersion = 0;
     // begin wxGlade: CreateIndex::methods
     void set_properties();
-    wxString m_where, m_with, m_clustered = "NONCLUSTERED", m_currentField;
+    wxString m_where, m_with, m_clustered = "NONCLUSTERED", m_currentField, m_nullValue;
     // end wxGlade
 
 protected:

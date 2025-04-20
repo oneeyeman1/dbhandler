@@ -775,6 +775,7 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
         dlg.CenterOnScreen();
         if( dlg.ShowModal() == wxID_OK )
         {
+            m_nullValue = dlg.GetNullValue();
         }
     }
 }
