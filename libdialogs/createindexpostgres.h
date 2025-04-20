@@ -27,14 +27,15 @@ public:
 
     CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long severVersion);
     const wxString &GetNullValue() const;
+    const std::vector<std::wstring> GetIncludeFields() const { return m_includeFields; }
 
 private:
     wxString m_nullsDistinct = "DISTINCT";
-    int m_value = 4000;
-    int m_value1 = 128;
+    std::vector<std::wstring> m_includeFields;
 
 protected:
     void OnNulls(wxCommandEvent &event);
+    void OnIncludeFields(wxCommandEvent &event);
     // begin wxGlade: CreateIndexPostgres::attributes
     wxPanel *m_panel1;
     wxStaticText *m_label1;
@@ -46,17 +47,6 @@ protected:
     wxTextCtrl *m_tablespace;
     wxStaticText *m_label5;
     wxTextCtrl *m_where;
-    wxStaticText *m_label2;
-    wxSpinCtrl *m_fillFactor = nullptr;
-    wxCheckBox *m_deduplcate = nullptr;
-    wxCheckBox *m_buffering = nullptr;
-    wxCheckBox *m_fastUpdate = nullptr;
-    wxTextCtrl *m_pendingList = nullptr;
-    wxStaticText *m_label6;
-    wxStaticText *m_label7;
-    wxStaticText *m_label8;
-    wxTextCtrl *m_pagesRange = nullptr;
-    wxCheckBox *m_autoSummarize = nullptr;
     // end wxGlade
 }; // wxGlade: end class
 

@@ -155,6 +155,7 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     // end wxGlade
     if( m_nulls )
         m_nulls->Bind( wxEVT_CHECKBOX, &CreateIndexPostgres::OnNulls, this );
+    m_include->Bind( wxEVT_LISTBOX, &CreateIndexPostgres::OnIncludeFields, this );
 }
 
 const wxString &CreateIndexPostgres::GetNullValue() const
@@ -170,4 +171,10 @@ void CreateIndexPostgres::OnNulls(wxCommandEvent &WXUNUSED(event))
         m_nullsDistinct = "DISTINCT";
     else
         m_nullsDistinct = "NOT DISTINCT";
+}
+
+void CreateIndexPostgres::OnIncludeFields(wxCommandEvent &event)
+{
+    if( event.IsSelection() )
+        m_includeFields.push_back( m_include->GetString( m_include->GetSelection() ) );
 }
