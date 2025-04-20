@@ -55,8 +55,10 @@ protected:
     wxStaticText *m_label6;
     wxStaticText *m_label7;
     wxStaticText *m_label8;
+    wxStaticText *m_label9;
     wxTextCtrl *m_pagesRange = nullptr;
     wxCheckBox *m_autoSummarize = nullptr;
+    wxSpinCtrlDouble *m_scaleFactor;
     // end wxGlade
 }; // wxGlade: end class
 
