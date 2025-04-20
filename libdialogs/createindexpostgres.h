@@ -47,6 +47,19 @@ protected:
     wxTextCtrl *m_tablespace;
     wxStaticText *m_label5;
     wxTextCtrl *m_where;
+    wxStaticText *m_label2;
+    wxSpinCtrl *m_fillFactor = nullptr;
+    wxCheckBox *m_deduplcate = nullptr;
+    wxCheckBox *m_buffering = nullptr;
+    wxCheckBox *m_fastUpdate = nullptr;
+    wxTextCtrl *m_pendingList = nullptr;
+    wxStaticText *m_label6;
+    wxStaticText *m_label7;
+    wxStaticText *m_label8;
+    wxStaticText *m_label9;
+    wxTextCtrl *m_pagesRange = nullptr;
+    wxCheckBox *m_autoSummarize = nullptr;
+    wxSpinCtrlDouble *m_scaleFactor;
     // end wxGlade
 }; // wxGlade: end class
 

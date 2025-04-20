@@ -22,7 +22,7 @@
 
 
 
-CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long severVersion):
+CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long serverVersion):
     wxDialog(parent, id, title)
 {
     // begin wxGlade: CreateIndexPostgres::CreateIndexPostgres
@@ -59,7 +59,7 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     }
     sizer_11->Add( m_include, 0, wxEXPAND, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( severVersion >= 15 )
+    if( serverVersion >= 15 )
     {
         auto sizer_12 = new wxBoxSizer( wxHORIZONTAL );
         sizer_9->Add( sizer_12, 0, wxEXPAND, 0 );
@@ -82,7 +82,12 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
         sizer_13->Add( m_fillFactor, 0, wxEXPAND, 0 );
         sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
     }
-    if( method == "btree" )
+    if( method == "btree" && ( serverVersion == 11 || serverVersion == 12 ) )
+    {
+        m_scaleFactor = new wxSpinCtrlDouble( m_panel1, wxID_ANY, "VACUM_SCALE_FACTOR", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 10000000000, 0.1 );
+        sizer_13->Add( m_scaleFactor, 0, wxEXPAND, 0 );
+    }
+    if( method == "btree" && serverVersion >= 13 )
     {
         m_deduplcate = new wxCheckBox( m_panel1, wxID_ANY, "DEDUPLICATE_ITEMS" );
         m_deduplcate->SetValue( true );
