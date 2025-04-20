@@ -823,12 +823,18 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
     auto parent = property->GetParent();
     auto grid = m_manager->GetGrid();
     wxString indexField = "";
-    for( auto it = grid->GetIterator( wxPG_ITERATE_FIXED_CHILDREN, property ); !it.AtEnd(); it.Next() )
+    auto found = false;
+    for( auto it = grid->GetIterator( wxPG_ITERATE_FIXED_CHILDREN, property ); !it.AtEnd() && !found; it.Next() )
     {
-        if( it.GetProperty()->GetName() == "Expression" && it.GetProperty()->GetValue().GetString() != wxEmptyString )
-            indexField = it.GetProperty()->GetValue().GetString();
-        else
-            indexField = property->GetName();
+        auto name = it.GetProperty()->GetName();
+        if( it.GetProperty()->GetName().find( "Expression" ) != std::string::npos )
+        {
+            if( it.GetProperty()->GetValue().GetString() != wxEmptyString )
+                indexField = it.GetProperty()->GetValue().GetString();
+            else
+                indexField = property->GetName();
+            found = true;
+        }
     }
     if( parent && parent->IsRoot() )
     {
