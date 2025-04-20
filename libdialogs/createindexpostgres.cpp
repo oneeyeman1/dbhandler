@@ -13,6 +13,8 @@
 #include "database.h"
 #include <wx/wx.h>
 #include <wx/image.h>
+#include "wx/valnum.h"
+#include "wx/spinctrl.h"
 #include "createindexpostgres.h"
 
 // begin wxGlade: ::extracode
@@ -41,6 +43,9 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     sizer_10->Add( m_label1, 0, wxEXPAND, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     m_method = new wxStaticText( m_panel1, wxID_ANY, "B-tree" );
+    auto font = m_method->GetFont();
+    font.MakeBold();
+    m_method->SetFont( font );
     m_method->SetLabel( method );
     sizer_10->Add( m_method, 0, wxEXPAND, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -68,7 +73,55 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     }
     auto sizer_13 = new wxStaticBoxSizer( new wxStaticBox(m_panel1, wxID_ANY, "WITH" ), wxHORIZONTAL );
     sizer_9->Add( sizer_13, 1, wxEXPAND, 0 );
-    sizer_13->Add( 0, 0, 0, 0, 0 );
+    if( method == "btree" || method == "hash" || method == "gist" || method == "spgist" )
+    {
+        m_label2 = new wxStaticText( m_panel1, wxID_ANY, "FILLFACTOR" );
+        sizer_13->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_fillFactor = new wxSpinCtrl( m_panel1, wxID_ANY, "90", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 10, 100, 90 );
+        sizer_13->Add( m_fillFactor, 0, wxEXPAND, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+    }
+    if( method == "btree" )
+    {
+        m_deduplcate = new wxCheckBox( m_panel1, wxID_ANY, "DEDUPLICATE_ITEMS" );
+        m_deduplcate->SetValue( true );
+        sizer_13->Add( m_deduplcate, 0, wxEXPAND, 0 );
+    }
+    if( method == "gist" )
+    {
+        m_buffering = new wxCheckBox( m_panel1, wxID_ANY, "BUFFERING", wxDefaultPosition, wxDefaultSize, wxCHK_3STATE | wxCHK_ALLOW_3RD_STATE_FOR_USER );
+        m_buffering->Set3StateValue( wxCHK_UNDETERMINED );
+        sizer_13->Add( m_buffering, 0, wxEXPAND, 0 );
+    }
+    if( method == "gin" )
+    {
+        m_fastUpdate = new wxCheckBox( m_panel1, wxID_ANY, "FAST_UPDATE" );
+        m_fastUpdate->SetValue( true );
+        sizer_13->Add( m_fastUpdate, 0, wxEXPAND, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_label6 = new wxStaticText( m_panel1, wxID_ANY, "PENDING_LIST_LIMIT" );
+        sizer_13->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        wxIntegerValidator<int> val( &m_value, wxNUM_VAL_THOUSANDS_SEPARATOR );
+        m_pendingList = new wxTextCtrl( m_panel1, wxID_ANY, "4000", wxDefaultPosition, wxDefaultSize, 0L, val );
+        sizer_13->Add( m_pendingList, 0, wxEXPAND, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_label7 = new wxStaticText( m_panel1, wxID_ANY, "KB" );
+        sizer_13->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    }
+    if( method == "brin" )
+    {
+        m_label8 = new wxStaticText( m_panel1, wxID_ANY, "PAGES_PER_RANGE" );
+        sizer_13->Add( m_label8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        wxIntegerValidator<int> val1( &m_value1, wxNUM_VAL_THOUSANDS_SEPARATOR );
+        m_pagesRange = new wxTextCtrl( m_panel1, wxID_ANY, "128", wxDefaultPosition, wxDefaultSize, 0L, val1 );
+        sizer_13->Add( m_pagesRange, 0, wxEXPAND, 0 );
+        sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_autoSummarize = new wxCheckBox( m_panel1, wxID_ANY, "AUTOSUMMARIZE" );
+        sizer_13->Add( m_autoSummarize, 0, wxEXPAND, 0 );
+    }
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_14 = new wxBoxSizer( wxHORIZONTAL );
     sizer_9->Add( sizer_14, 1, wxEXPAND, 0 );
@@ -100,7 +153,8 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     sizer_6->Fit( this );
     Layout();
     // end wxGlade
-    m_nulls->Bind( wxEVT_CHECKBOX, &CreateIndexPostgres::OnNulls, this );
+    if( m_nulls )
+        m_nulls->Bind( wxEVT_CHECKBOX, &CreateIndexPostgres::OnNulls, this );
 }
 
 const wxString &CreateIndexPostgres::GetNullValue() const
@@ -110,7 +164,7 @@ const wxString &CreateIndexPostgres::GetNullValue() const
     return wxEmptyString;
 }
 
-void CreateIndexPostgres::OnNulls(wxCommandEvent &event)
+void CreateIndexPostgres::OnNulls(wxCommandEvent &WXUNUSED(event))
 {
     if( m_nulls && m_nulls->GetValue() )
         m_nullsDistinct = "DISTINCT";
