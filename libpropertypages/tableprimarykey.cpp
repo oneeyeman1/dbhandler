@@ -24,15 +24,17 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
     m_foreignKeyColumnsFields = new FieldWindow( this/*, pt1, width1*/ );
     m_label = new wxStaticText( this, wxID_ANY, _( "Table Columns" ) );
     m_fields = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+    m_fields->AppendColumn( m_table->GetTableName() );
+    int row = 0;
     for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
+        m_fields->InsertItem( row++, (*it)->GetFieldName() );
         if( (*it)->IsPrimaryKey() )
         {
             m_fields->SetItemState( m_fields->FindItem( -1, (*it)->GetFieldName() ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
     }
-    set_properties();
     do_layout();
 }
 
@@ -50,14 +52,4 @@ void TablePrimaryKey::do_layout()
     main->Add( sizer1, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
-}
-
-void TablePrimaryKey::set_properties()
-{
-    m_fields->AppendColumn( m_table->GetTableName() );
-    int row = 0;
-    for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
-    {
-        m_fields->InsertItem( row++, (*it)->GetFieldName() );
-    }
 }
