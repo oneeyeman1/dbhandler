@@ -30,12 +30,13 @@ public:
     const std::vector<std::wstring> GetIncludeFields() const { return m_includeFields; }
 
 private:
-    wxString m_nullsDistinct = "DISTINCT";
+    wxString m_nullsDistinct = "";
+    int m_value, m_value1;
     std::vector<std::wstring> m_includeFields;
 
 protected:
     void OnNulls(wxCommandEvent &event);
-    void OnIncludeFields(wxCommandEvent &event);
+    void OnOk(wxCommandEvent &event);
     // begin wxGlade: CreateIndexPostgres::attributes
     wxPanel *m_panel1;
     wxStaticText *m_label1;
@@ -60,6 +61,7 @@ protected:
     wxTextCtrl *m_pagesRange = nullptr;
     wxCheckBox *m_autoSummarize = nullptr;
     wxSpinCtrlDouble *m_scaleFactor;
+    wxButton *m_Ok;
     // end wxGlade
 }; // wxGlade: end class
 

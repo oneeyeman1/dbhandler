@@ -362,72 +362,6 @@ void CreateIndex::OnOkShowLog(wxCommandEvent &event)
 
 void CreateIndex::GenerateQuery()
 {
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
-    {
-        for( auto i = 0; i < m_where->GetNumberRows(); ++i )
-        {
-            auto name = m_where->GetCellValue( i, 0 );
-            auto sign = m_where->GetCellValue( i, 1 );
-            auto value = m_where->GetCellValue( i, 2 );
-            auto condition = m_where->GetCellValue( i, 3 );
-            if( !name.empty() )
-            {
-                where += ( name + " " + sign + " " + value );
-                if( !condition.empty() )
-                    where += condition;
-            }
-        }
-        if( m_padIndex->GetValue() )
-        {
-            auto fillfactor = m_fillfactor->GetValue();
-            with += "PAD_INDEX = ON ";
-            with += "FILLFACTOR = ";
-            with << fillfactor;
-            with += " ";
-        }
-        if( m_sortTempDB->GetValue() )
-            with += "SORT_IN_TEMPDB = ON ";
-        if( m_ignoreDupKeys->GetValue() )
-            with += "IGNORE_DUP_KEY = ON ";
-        if( m_statisticsNoRecompute->GetValue() )
-            with += "STATISTICS_NORECOMPUTE = ON ";
-        if( m_statisticsIncremental->GetValue() )
-            with += "STATISTICS_INCREMENTAL = ON ";
-        if( m_dropExisting->GetValue() )
-            with += "DROP_EXISTING = ON ";
-        if( m_online->GetValue() )
-        {
-            with += "ONLINE = ON ";
-            if( m_resumable->GetValue() )
-            {
-                with += "RESUMABLE = ON ";
-                auto duration = m_maxDuration->GetValue();
-                with += "MAX_DURATION = ";
-                with << duration;
-                with += " ";
-            }
-        }
-        if( !m_allowRowLocks->GetValue() )
-            with += "ALLOW_ROW_LOCKS = OFF ";
-        if( !m_allowPageLocks->GetValue() )
-            with += "ALLOW_PAGE_LOCKS = OFF ";
-        if( m_optimize->GetValue() )
-            with += "OPTIMIZE_FOR_SEQUENTIAL_KEY = ON ";
-        auto maxdop = m_maxDop->GetValue();
-        if( maxdop > 0 )
-        {
-            with += "MAXDOP = ";
-            with << maxdop;;
-            with += " ";
-        }
-        auto datacompression = m_dataCompression->GetStringSelection();
-        if( datacompression != "OFF" )
-        {
-            with += "DATA_COMPRESSION = ";
-            with += datacompression;
-            with += " ";
-        }
-    }*/
     m_command = L"CREATE ";
     if( m_unique->GetSelection() == 0 )
         m_command += L"UNIQUE ";
@@ -500,7 +434,8 @@ void CreateIndex::GenerateQuery()
         else
             m_command += L",";
     }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
+    if( ( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" ) ||
+        ( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" ) )
     {
         for( std::vector<std::wstring>::iterator it = m_includeFields.begin(); it < m_includeFields.end(); ++it )
         {
@@ -512,9 +447,16 @@ void CreateIndex::GenerateQuery()
             else
                 m_command += L",";
         }
-        if( !m_where.IsEmpty() )
+        if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )        if( !m_where.IsEmpty() )
         {
             m_command += "\n" + m_where;
+        }
+    }
+    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
+    {
+        if( !m_nullValue.IsEmpty() )
+        {
+            m_command += "\n" + m_nullValue;
         }
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
@@ -776,6 +718,7 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
         if( dlg.ShowModal() == wxID_OK )
         {
             m_nullValue = dlg.GetNullValue();
+            m_includeFields = dlg.GetIncludeFields();
         }
     }
 }
@@ -825,22 +768,24 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
     auto grid = m_manager->GetGrid();
     wxString indexField = "";
     auto found = false;
+    indexField = property->GetName();
     for( auto it = grid->GetIterator( wxPG_ITERATE_FIXED_CHILDREN, property ); !it.AtEnd() && !found; it.Next() )
     {
         auto name = it.GetProperty()->GetName();
         if( it.GetProperty()->GetName().find( "Expression" ) != std::string::npos )
         {
             if( it.GetProperty()->GetValue().GetString() != wxEmptyString )
+            {
                 indexField = it.GetProperty()->GetValue().GetString();
-            else
-                indexField = property->GetName();
-            found = true;
+                found = true;
+            }
         }
     }
     if( parent && parent->IsRoot() )
     {
         if( m_manager->GetPage( 0 )->IsPropertySelected( property ) )
         {
+            m_tablePg->AddToSelection( property );
             m_indexColumns->AddField( indexField );
             m_fields.push_back( indexField.ToStdWstring() );
         }

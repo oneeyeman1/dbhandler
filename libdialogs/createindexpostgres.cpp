@@ -68,6 +68,7 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
         sizer_12->Add( 5, 5, 0, wxEXPAND, 0 );
         m_nulls = new wxCheckBox( m_panel1, wxID_ANY, "DISTINCT" );
         m_nulls->SetValue( true );
+        m_nullsDistinct = "DISTINCT";
         sizer_12->Add( m_nulls, 0, wxEXPAND, 0 );
         sizer_9->Add( 5, 5, 0, 0, 0 );
     }
@@ -145,7 +146,8 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     sizer_15->Add( m_where, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     auto m_buttonSizer = new wxStdDialogButtonSizer();
-    m_buttonSizer->AddButton( new wxButton( m_panel1, wxID_OK, "OK" ) );
+    m_Ok = new wxButton( m_panel1, wxID_OK, "OK" );
+    m_buttonSizer->AddButton( m_Ok );
     m_buttonSizer->AddButton( new wxButton( m_panel1, wxID_CANCEL, "Cancel" ) );
     m_buttonSizer->AddButton( new wxButton( m_panel1, wxID_HELP, "Help" ) );
     m_buttonSizer->Realize();
@@ -160,14 +162,12 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     // end wxGlade
     if( m_nulls )
         m_nulls->Bind( wxEVT_CHECKBOX, &CreateIndexPostgres::OnNulls, this );
-    m_include->Bind( wxEVT_LISTBOX, &CreateIndexPostgres::OnIncludeFields, this );
+    m_Ok->Bind( wxEVT_BUTTON, &CreateIndexPostgres::OnOk, this );
 }
 
 const wxString &CreateIndexPostgres::GetNullValue() const
 {
-    if( m_nulls )
-        return m_nullsDistinct;
-    return wxEmptyString;
+    return m_nullsDistinct;
 }
 
 void CreateIndexPostgres::OnNulls(wxCommandEvent &WXUNUSED(event))
@@ -178,8 +178,11 @@ void CreateIndexPostgres::OnNulls(wxCommandEvent &WXUNUSED(event))
         m_nullsDistinct = "NOT DISTINCT";
 }
 
-void CreateIndexPostgres::OnIncludeFields(wxCommandEvent &event)
+void CreateIndexPostgres::OnOk(wxCommandEvent &event)
 {
-    if( event.IsSelection() )
-        m_includeFields.push_back( m_include->GetString( m_include->GetSelection() ) );
+    wxArrayInt selections;
+    m_include->GetSelections( selections );
+    for( auto i : selections )
+        m_includeFields.push_back( m_include->GetString( i ).ToStdWstring() );
+    EndDialog( wxID_OK );
 }
