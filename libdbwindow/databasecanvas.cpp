@@ -780,6 +780,7 @@ void DatabaseCanvas::OnRightDown(wxMouseEvent &event)
             }
             break;
         case wxID_OBJECTNEWINDEX:
+        case wxID_OBJECTNEWFF:
         {
             wxCommandEvent evt( wxEVT_MENU, rc );
             evt.SetEventObject( erdTable );
