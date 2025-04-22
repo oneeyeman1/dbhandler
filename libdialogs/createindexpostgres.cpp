@@ -178,11 +178,29 @@ void CreateIndexPostgres::OnNulls(wxCommandEvent &WXUNUSED(event))
         m_nullsDistinct = "NOT DISTINCT";
 }
 
-void CreateIndexPostgres::OnOk(wxCommandEvent &event)
+void CreateIndexPostgres::OnOk(wxCommandEvent &WXUNUSED(event))
 {
     wxArrayInt selections;
+    auto with = false;
     m_include->GetSelections( selections );
     for( auto i : selections )
         m_includeFields.push_back( m_include->GetString( i ).ToStdWstring() );
+    if( m_fillFactor )
+    {
+        auto value = m_fillFactor->GetValue();
+        if( value != 90 )
+        {
+            m_with = "WITH( fillfactor = " + wxString::Format( "%d", value );
+            with = true;
+        }
+        auto value1 = m_deduplcate->GetValue();
+        if( m_deduplcate && !value1 )
+            if( with )
+                m_with += ", deduplicate = OFF )";
+            else
+                m_with = "WITH( deduplicate = OFF )";
+        else
+            m_with += " )";
+    }
     EndDialog( wxID_OK );
 }

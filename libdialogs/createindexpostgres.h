@@ -28,9 +28,10 @@ public:
     CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long severVersion);
     const wxString &GetNullValue() const;
     const std::vector<std::wstring> GetIncludeFields() const { return m_includeFields; }
+    const wxString &GetWithOptions() { return m_with; }
 
 private:
-    wxString m_nullsDistinct = "";
+    wxString m_nullsDistinct = "", m_with = "";
     int m_value, m_value1;
     std::vector<std::wstring> m_includeFields;
 

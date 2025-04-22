@@ -447,16 +447,22 @@ void CreateIndex::GenerateQuery()
             else
                 m_command += L",";
         }
-        if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )        if( !m_where.IsEmpty() )
+        if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" && m_nullValue != wxEmptyString )
+            m_command += m_nullValue;
+        if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
         {
-            m_command += "\n" + m_where;
+            if( !m_where.IsEmpty() )
+            {
+                m_command += "\n" + m_where;
+            }
         }
-    }
-    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        if( !m_nullValue.IsEmpty() )
+        if( !m_with.IsEmpty() )
         {
-            m_command += "\n" + m_nullValue;
+            m_command += "\n" + m_with;
+        }
+        if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" && m_nullValue != wxEmptyString )
+        {
+
         }
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
@@ -719,6 +725,7 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
         {
             m_nullValue = dlg.GetNullValue();
             m_includeFields = dlg.GetIncludeFields();
+            m_with = dlg.GetWithOptions();
         }
     }
 }
