@@ -48,9 +48,11 @@ protected:
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
+    int PopulateTablespaces(std::vector<std::wstring> &errorMsg);
 private:
     PGconn *m_db;
     PGresult *queryRes;
+    std::vector<std::wstring> m_talespaces;
 };
 
 struct PostgresDatabase::PostgresImpl

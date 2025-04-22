@@ -127,6 +127,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 }
                 if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
+                if( !result && PopulateTablespaces(errorMsg ) )
+                    result = 1;
             }
         }
     }
@@ -2002,6 +2004,30 @@ int PostgresDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring 
         auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Update validation table: " + err );
         result = 1;
+    }
+    PQclear( res );
+    return result;
+}
+
+int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring errorMessage;
+    std::wstring query = L"SELECT * FROM pg_tablespace;";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );      /* ask for binary results */
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Update validation table: " + err );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            m_talespaces.push_back( temp1 );
+        }
     }
     PQclear( res );
     return result;
