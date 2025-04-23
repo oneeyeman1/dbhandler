@@ -25,7 +25,7 @@ public:
     // begin wxGlade: CreateIndexPostgres::ids
     // end wxGlade
 
-    CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long severVersion);
+    CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long severVersion, const std::vector<std::wstring> &tablespaces);
     const wxString &GetNullValue() const;
     const std::vector<std::wstring> GetIncludeFields() const { return m_includeFields; }
     const wxString &GetWithOptions() { return m_with; }
@@ -46,7 +46,7 @@ protected:
     wxStaticText *m_label3;
     wxCheckBox *m_nulls = nullptr;
     wxStaticText *m_label4;
-    wxTextCtrl *m_tablespace;
+    wxComboBox *m_tablespace;
     wxStaticText *m_label5;
     wxTextCtrl *m_where;
     wxStaticText *m_label2;

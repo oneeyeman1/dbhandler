@@ -22,7 +22,7 @@
 
 
 
-CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long serverVersion):
+CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const wxString& title, const wxString &method, const DatabaseTable *table, unsigned long serverVersion, const std::vector<std::wstring> &tablespaces):
     wxDialog(parent, id, title)
 {
     // begin wxGlade: CreateIndexPostgres::CreateIndexPostgres
@@ -134,7 +134,7 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     m_label4 = new wxStaticText( m_panel1, wxID_ANY, "TABLESPACE" );
     sizer_14->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_14->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_tablespace = new wxTextCtrl( m_panel1, wxID_ANY, wxEmptyString );
+    m_tablespace = new wxComboBox( m_panel1, wxID_ANY, wxEmptyString );
     sizer_14->Add( m_tablespace, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_15 = new wxBoxSizer( wxHORIZONTAL );

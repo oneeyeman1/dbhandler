@@ -408,17 +408,6 @@ void CreateIndex::GenerateQuery()
             m_command += "USING " + method;
     }
     m_command += L"\n";
-/*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
-    {
-        if( m_indextypeBtree->GetValue() )
-            m_command += L"USING BTREE ";
-        if( m_indextypeHash->GetValue() )
-            m_command += L"USING HASH ";
-        if( m_indextypeGist->GetValue() )
-            m_command += L"USING GIST ";
-        if( m_indextypeGin->GetValue() )
-            m_command += L"USING GIN ";
-    }*/
     m_command += L"(";
     for( std::vector<std::wstring>::iterator it = m_fields.begin(); it < m_fields.end(); it++ )
     {
@@ -719,7 +708,7 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion );
+        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion, m_db->GetTablespacesList() );
         dlg.CenterOnScreen();
         if( dlg.ShowModal() == wxID_OK )
         {
