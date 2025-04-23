@@ -61,6 +61,7 @@ public:
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int AddUpdateFormat() override;
+    const std::vector<std::wstring> &GetTablespacesList() const override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

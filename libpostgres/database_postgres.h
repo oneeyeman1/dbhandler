@@ -36,6 +36,7 @@ public:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int AddUpdateFormat() override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
+    virtual const std::vector<std::wstring> &GetTablespacesList() const override { return m_tablespaces; }
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;
@@ -52,7 +53,7 @@ protected:
 private:
     PGconn *m_db;
     PGresult *queryRes;
-    std::vector<std::wstring> m_talespaces;
+    std::vector<std::wstring> m_tablespaces;
 };
 
 struct PostgresDatabase::PostgresImpl

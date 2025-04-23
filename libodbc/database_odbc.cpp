@@ -7394,3 +7394,8 @@ int ODBCDatabase::MonitorSchemaChanges(std::vector<std::wstring> &errorMsg)
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     return result;
 }
+
+const std::vector<std::wstring> &ODBCDatabase::GetTablespacesList() const
+{
+    return std::vector<std::wstring>();
+}

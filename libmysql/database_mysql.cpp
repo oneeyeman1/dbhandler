@@ -2688,3 +2688,8 @@ int MySQLDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &na
         query = L"UPDATE \"abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_cntr\" = 0, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
     return result;
 }
+
+const std::vector<std::wstring> &MySQLDatabase::GetTablespacesList() const
+{
+    return std::vector<std::wstring>();
+}

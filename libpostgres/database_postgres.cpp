@@ -2026,7 +2026,7 @@ int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
         for( int i = 0; i < PQntuples( res ); i++ )
         {
             auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-            m_talespaces.push_back( temp1 );
+            m_tablespaces.push_back( temp1 );
         }
     }
     PQclear( res );
