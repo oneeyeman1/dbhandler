@@ -135,6 +135,10 @@ CreateIndexPostgres::CreateIndexPostgres(wxWindow* parent, wxWindowID id, const 
     sizer_14->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_14->Add( 5, 5, 0, wxEXPAND, 0 );
     m_tablespace = new wxComboBox( m_panel1, wxID_ANY, wxEmptyString );
+    for( auto space: tablespaces )
+        m_tablespace->Append( space );
+    auto found = m_tablespace->FindString( "pg_default" );
+    m_tablespace->SetSelection( found == wxNOT_FOUND ? 0 : found );
     sizer_14->Add( m_tablespace, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_15 = new wxBoxSizer( wxHORIZONTAL );
