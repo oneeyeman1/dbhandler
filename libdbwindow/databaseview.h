@@ -144,6 +144,7 @@ protected:
     void OnCustmColors( wxCommandEvent &event );
     void OnDatabasePreferences(wxCommandEvent &event);
     void OnCreateTableSpace(wxCommandEvent &event);
+    void OnEditTableObject(wxCommandEvent &event);
 private:
     bool m_isActive, m_snitialized;
     wxTextCtrl *m_fieldText;

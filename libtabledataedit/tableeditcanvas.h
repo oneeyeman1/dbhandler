@@ -41,6 +41,7 @@
 #define wxID_CUSTOMCOLORS         126
 #define wxID_DATABASEOPTIONS      127
 #define wxID_CREATETABLESPACE     128
+#define wxID_EDITTABLEOBJECT      129
 #define WHEREPAGECOLUMNS          194
 #define WHEREPAGEFUNCTIONS        195
 #define WHEREPAGEARGUMENTS        196

@@ -213,6 +213,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_CUSTOMCOLORS, DrawingView::OnCustmColors)
     EVT_MENU(wxID_DATABASEOPTIONS, DrawingView::OnDatabasePreferences)
     EVT_MENU(wxID_CREATETABLESPACE, DrawingView::OnCreateTableSpace)
+    EVT_MENU(wxID_EDITTABLEOBJECT, DrawingView::OnEditTableObject)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -3320,4 +3321,9 @@ void DrawingView::OnCreateTableSpace(wxCommandEvent &event)
         CREATETABLESPACE func = (CREATETABLESPACE) lib.GetSymbol( "CreateTableSpace" );
         res = func( m_frame );
     }
+}
+
+void DrawingView::OnEditTableObject(wxCommandEvent &event)
+{
+
 }
