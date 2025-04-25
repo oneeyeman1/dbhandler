@@ -65,6 +65,7 @@ public:
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
     wxTextCtrl *m_host, *m_hostAddr, *m_port, *m_userID, *m_password, *m_dbName;
+//    wxMaskedEdit *m_hostAddr;
     wxSpinCtrl *m_timeout;
     wxButton *m_advanced;
     unsigned long m_value;
