@@ -508,6 +508,7 @@
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="createindexpostgres.cpp" />
     <ClCompile Include="createindexsqlserver.cpp" />
+    <ClCompile Include="createtablespace.cpp" />
     <ClCompile Include="createviewoptions.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="datasource.cpp" />
@@ -537,6 +538,7 @@
     <ClInclude Include="createindex.h" />
     <ClInclude Include="createindexpostgres.h" />
     <ClInclude Include="createindexsqlserver.h" />
+    <ClInclude Include="createtablespace.h" />
     <ClInclude Include="createviewoptions.h" />
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="datasource.h" />

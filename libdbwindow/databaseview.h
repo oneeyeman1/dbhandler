@@ -143,6 +143,7 @@ protected:
     void SetDatabaseChildWindow(wxDocMDIChildFrame *frame);
     void OnCustmColors( wxCommandEvent &event );
     void OnDatabasePreferences(wxCommandEvent &event);
+    void OnCreateTableSpace(wxCommandEvent &event);
 private:
     bool m_isActive, m_snitialized;
     wxTextCtrl *m_fieldText;

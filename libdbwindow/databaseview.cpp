@@ -145,6 +145,7 @@ typedef void (*DATAEDITWINDOW)(wxWindow *parent, wxDocManager *docManager, Datab
 typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vector<Profile> &);
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
+typedef int (*CREATETABLESPACE)(wxWindow *);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
@@ -211,6 +212,7 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_UPDATE_UI(wxID_SAVEQUERYAS, DrawingView::OnQuerySaveAsUpdateUI)
     EVT_MENU(wxID_CUSTOMCOLORS, DrawingView::OnCustmColors)
     EVT_MENU(wxID_DATABASEOPTIONS, DrawingView::OnDatabasePreferences)
+    EVT_MENU(wxID_CREATETABLESPACE, DrawingView::OnCreateTableSpace)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -1169,10 +1171,10 @@ void DrawingView::OnNewIndex(wxCommandEvent &WXUNUSED(event))
 #else
     libName = m_libPath + "libdialogs";
 #endif
+    ::wxPGInitResourceModule();
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
-        ::wxPGInitResourceModule();
         CREATEINDEX func = (CREATEINDEX) lib.GetSymbol( "CreateIndexForDatabase" );
         result = func( m_frame, dbTable, GetDocument()->GetDatabase(), command, indexName );
         if( result != wxID_OK && result != wxID_CANCEL )
@@ -2777,6 +2779,8 @@ void DrawingView::OnTableDataEdit(wxCommandEvent &event)
 
 void DrawingView::CreateDBMenu()
 {
+    auto type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
+    auto subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
     auto mbar = new wxMenuBar;
     auto fileMenu = new wxMenu;
     fileMenu->Append( wxID_CLOSE, _( "&Close\tCtrl+W" ), _( "Close Database Window" ) );
@@ -2784,9 +2788,11 @@ void DrawingView::CreateDBMenu()
     fileMenu->Append( wxID_CREATEDATABASE, _( "Create Database..." ), _( "Create Database" ) );
     fileMenu->Append( wxID_ATTACHDATABASE, _( "Attach Database..." ), _( "Attach Database" ) );
     fileMenu->Append( wxID_DELETEDATABASE, _( "Delete Database..." ), _( "Delete Database" ) );
-    if( GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType() == L"SQLite" )
+    if( type  == L"SQLite" )
         fileMenu->Append( wxID_DETACHDATABASE, _( "Detach Database" ), _( "Detach Database" ) );
     fileMenu->AppendSeparator();
+    if( type == L"PostgreSQL" || ( type == L"ODBC" && subtype == L"PostgreSQL" ) )
+        fileMenu->Append( wxID_CREATETABLESPACE, _( "Create Tablespace" ), _( "Create Tablespace" ) );
     fileMenu->Append( wxID_EXIT );
     mbar->Insert( 0, fileMenu, _( "File" ) );
     auto menuObject = new wxMenu();
@@ -3292,5 +3298,26 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     {
         CREATEPROPERTIESDIALOGFRPRJECT func = (CREATEPROPERTIESDIALOGFRPRJECT) lib.GetSymbol( "CreatePropertiesDialogForObject" );
         res = func( m_frame, ptr, title );
+    }
+}
+
+void DrawingView::OnCreateTableSpace(wxCommandEvent &event)
+{
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXMAC__
+    libName = m_libPath + "liblibdialogs.dylib";
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
+    int res = 0;
+    wxString title;
+    if( lib.IsLoaded() )
+    {
+        CREATETABLESPACE func = (CREATETABLESPACE) lib.GetSymbol( "CreateTableSpace" );
+        res = func( m_frame );
     }
 }

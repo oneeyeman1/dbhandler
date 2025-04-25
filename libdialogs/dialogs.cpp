@@ -98,6 +98,7 @@
 #include "neweditvaldation.h"
 #include "createviewoptions.h"
 #include "saveview.h"
+#include "createtablespace.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
@@ -523,4 +524,13 @@ extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wx
     NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule );
     dlg.ShowModal();
     return result;
+}
+
+extern "C" WXEXPORT int CreateTableSpace(wxWindow *parent)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    CreateTablespace dlg( parent );
+    return dlg.ShowModal();
 }
