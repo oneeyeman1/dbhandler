@@ -422,8 +422,8 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
                 err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                 errorMsg.push_back( err );
                 result = 1;
-                PQclear( res );
             }
+            PQclear( res );
         }
     }
     if( !result )
@@ -439,6 +439,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         }
         else
         {
+            PQclear( res );
             result = GetTableListFromDb( errorMsg );
             if( result )
             {
@@ -453,11 +454,11 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         res = PQexec( m_db, "ROLLBACK" );
         if( PQresultStatus( res ) != PGRES_COMMAND_OK )
         {
-            PQclear( res );
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error during ROLLBACK: " + err );
             result = 1;
         }
+        PQclear( res );
     }
     if( result )
         Disconnect( errorMsg );
@@ -527,6 +528,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         else
         {
+            PQclear( res1 );
             res2 = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), 2, NULL );
             if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
             {
@@ -537,18 +539,21 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             else
             {
+                PQclear( res2 );
                 res4 = PQprepare( m_db, "get_indexes", m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), 2, NULL );
                 if( PQresultStatus( res4 ) != PGRES_COMMAND_OK )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                     errorMsg.push_back( L"Error executing query: " + err );
                     PQclear( res2 );
+                    PQclear( res4 );
                     fields.erase( fields.begin(), fields.end() );
                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     result = 1;
                 }
                 else
                 {
+                    PQclear( res4 );
                     res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
                     if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
                     {
@@ -559,6 +564,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     else
                     {
+                        PQclear( res3 );
                         res5 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
                         if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
                         {
@@ -585,6 +591,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                     break;
                                 }*/
                             }
+                            PQclear( res5 );
                         }
                     }
                 }
@@ -1167,6 +1174,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     values[2] = NULL;
     delete[] tname;
     tname = NULL;
+    PQclear( res );
     int type;
     if( field->GetFieldType() == L"date" )
         type = 82;
@@ -1203,6 +1211,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
                 field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( temp1, temp2 ) );
         }
     }
+    PQclear( res );
     return result;
 }
 
@@ -1749,7 +1758,6 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
         result = 1;
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
-        PQclear( res );
     }
     else
     {
@@ -1759,6 +1767,7 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     values[0] = NULL;
     delete values[1];
     values[1] = NULL;
+    PQclear( res );
     return result;
 }
 
