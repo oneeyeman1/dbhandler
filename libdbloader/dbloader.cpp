@@ -136,10 +136,11 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
-        pdb = new ODBCDatabase( osId, desktop.ToStdWstring() );
-        bool res = dynamic_cast<ODBCDatabase *>( pdb )->GetDSNList( dsn, errorMsg );
-        delete pdb;
-        pdb = NULL;
+        bool res;
+        {
+            std::unique_ptr<ODBCDatabase> pdb( new ODBCDatabase( osId, desktop.ToStdWstring() ) );
+            res = pdb->GetDSNList( dsn, errorMsg );
+        }
         if( res )
         {
             for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); it++ )

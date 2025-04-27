@@ -105,9 +105,9 @@ CreateTablespace::CreateTablespace(wxWindow* parent):
     sizer_11->Add( m_Ok, 0, wxEXPAND, 0 );
     sizer_11->Add( new wxButton( m_panel1, wxID_CANCEL, "Cancel" ), 0, wxEXPAND, 0 );
     sizer_11->Add( new wxButton( m_panel1, wxID_HELP, "Help" ), 0, wxEXPAND, 0 );
-    sizer_11->Realize();    
+    sizer_11->Realize();
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    
+
     m_panel1->SetSizer( sizer_2 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
