@@ -268,8 +268,12 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     }
     dynamic_cast<wxWindow *>( gridsizer->GetItem( 1  )->GetWindow() )->SetFocus();
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
+    auto sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer_2->Add( sizer, 0, wxEXPAND, 0 );
     attributes = new TableSettngs( m_panel, wxID_ANY );
-    sizer_2->Add( attributes, 0, wxEXPAND, 0 );
+    sizer->Add( attributes, 0, wxEXPAND, 0 );
+    sizer->AddStretchSpacer();
+//    sizer_2->Add( attributes, 0, wxEXPAND, 0 );
 
     m_grid->SetSizer( gridsizer );
     m_panel->SetSizer( sizer_2 );
