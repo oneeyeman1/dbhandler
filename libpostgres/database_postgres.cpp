@@ -501,7 +501,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, count = 0;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
-    std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = 'leagues') THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
+    std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abt_fhgt, abt_fwgt, abt_fitl, abt_funl, abt_fstr, abt_fchr, abt_fptc, rtrim(abt_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
@@ -690,11 +690,11 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     {
         exists = 1;
     }
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
-    delete values[2];
+    delete[] values[2];
     values[2] = NULL;
     return exists;
 }
@@ -757,9 +757,9 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     }
     PQclear( res );
     table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
     return result;
 }
@@ -1099,9 +1099,9 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
         result = true;
     }
     PQclear( res );
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
     return result;
 }
@@ -1166,11 +1166,11 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
         field->GetFieldProperties().m_display.m_justify = 0;
         fieldFormat = L"";
     }
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
-    delete values[2];
+    delete[] values[2];
     values[2] = NULL;
     delete[] tname;
     tname = NULL;
@@ -1402,8 +1402,8 @@ int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const st
             res = 1;
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( err );
-            PQclear( result );
         }
+        PQclear( result );
     }
     return res;
 }
@@ -1434,17 +1434,17 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
 int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    PGresult *res = nullptr;
     std::wstring query, err;
     query = L"ALTER TABLE ";
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() +L" ";
     query += L"DROP CONSTRAINT " + keyName;
     if( !logOnly )
     {
-        PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
         int status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
-            PQclear( res );
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Adding foreign key failed: " + err );
             result = 1;
@@ -1470,6 +1470,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable 
     }
     else
         command = query;
+    PQclear( res );
     return result;
 }
 
@@ -1484,7 +1485,6 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         int status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
-            PQclear( res );
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Adding foreign key failed: " + err );
             result = 1;
@@ -1494,6 +1494,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             if( PQntuples( res ) == 1 )
             {
                 count = atoi( PQgetvalue( res, 0, 0 ) );
+                PQclear( res );
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
                     std::vector<TableDefinition> temp;
@@ -1502,7 +1503,6 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     status = PQresultStatus( res );
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                     {
-                        PQclear( res );
                         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                         errorMsg.push_back( L"Retrieving new database info failed " + err );
                         result = 1;
@@ -1525,6 +1525,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
+        PQclear( res );
     }
     return result;
 }
@@ -1732,9 +1733,9 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             }
         }
     }
-    delete values1[0];
+    delete[] values1[0];
     values1[0] = NULL;
-    delete values1[1];
+    delete[] values1[1];
     values1[1] = NULL;
     return result;
 }
@@ -1757,15 +1758,15 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     {
         result = 1;
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
+        errorMsg.push_back( L"Error getting table owner: " + err );
     }
     else
     {
         owner = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
     }
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
     PQclear( res );
     return result;
@@ -1793,11 +1794,11 @@ bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, con
 
     }
     PQclear( res );
-    delete values[0];
+    delete[] values[0];
     values[0] = NULL;
-    delete values[1];
+    delete[] values[1];
     values[1] = NULL;
-    delete values[2];
+    delete[] values[2];
     values[2] = NULL;
     return exist;
 }
@@ -1816,9 +1817,9 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
     ExecStatusType status = PQresultStatus( res ); 
     if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
         headerStr = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
-    delete values[0];
+    delete[] values[0];
     values[0] = nullptr;
-    delete values[1];
+    delete[] values[1];
     values[1] = nullptr;
     return result;
 }
