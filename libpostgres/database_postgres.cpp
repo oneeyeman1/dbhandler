@@ -2027,16 +2027,13 @@ int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Update validation table: " + err );
+        errorMsg.push_back( L"Query tablespace table: " + err );
         result = 1;
     }
     else
     {
-        for( int i = 0; i < PQntuples( res ); i++ )
-        {
-            auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-            m_tablespaces.push_back( temp1 );
-        }
+        for( auto i = 0; i < PQntuples( res ); i++ )
+            m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ) );
     }
     PQclear( res );
     return result;

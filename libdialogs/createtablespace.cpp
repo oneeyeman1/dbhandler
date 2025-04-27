@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 
+#include <cfloat>
 #include <wx/wx.h>
 #include <wx/image.h>
 #include "wx/filepicker.h"
@@ -158,7 +159,7 @@ void CreateTablespace::OnOk(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void CreateTablespace::OnLocationChanged(wxCommandEvent &event)
+void CreateTablespace::OnLocationChanged(wxCommandEvent &WXUNUSED(event))
 {
     wxMessageBox( _( "Make sure that directory exist and has proper ownership" ), _( "Create Tablespace" ), wxICON_WARNING );
     if( m_location->GetPath().IsEmpty() || m_name->GetValue().IsEmpty() )
