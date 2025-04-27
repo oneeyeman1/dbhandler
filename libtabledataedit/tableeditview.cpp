@@ -41,7 +41,7 @@
 #include "wx/mstream.h"
 #include "typecombobox.h"
 #include "database.h"
-#include "configuration.h"
+#include "configuration.h"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 #include "tableattributes.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
@@ -97,7 +97,6 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     m_panel = new wxPanel( m_frame );
     sizer_1->Add( m_panel, 1, wxEXPAND, 0 );
     wxPoint ptCanvas;
-    sizer = new wxBoxSizer( wxVERTICAL );
     CreateMenuAndToolbar();
 #ifdef __WXOSX__
     wxRect parentRect = m_parent->GetRect();
@@ -127,7 +126,6 @@ bool TableEditView::OnCreate(wxDocument *doc, long flags)
     frame->SetSize( 0, offset, size.x, size.y - offset );
     m_frame->SetSize( 0, 0, size.x, size.y - offset - 2 );
 #endif*/
-    sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
     return true;
@@ -218,16 +216,16 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     }
     auto sizer_2 = new wxBoxSizer( wxVERTICAL );
     m_grid = new wxScrolled<wxPanel>( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALWAYS_SHOW_SB | wxVSCROLL );
-    sizer_2->Add( m_grid, 0, wxEXPAND, 0 );
+    sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
     auto gridsizer = new wxFlexGridSizer( 6, 0, 0 );
 //    auto gridsizer = new wxGridSizer( 6, 0, 0 );
     gridsizer->AddGrowableRow( 0, 1 );
-    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Name" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Name" ) ), 1, wxEXPAND, 0 );
     gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Type" ) ), 0, wxEXPAND, 0 );
     gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Width" ) ), 0, wxEXPAND, 0 );
     gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Dec" ) ), 0, wxEXPAND, 0 );
     gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Null" ) ), 0, wxEXPAND, 0 );
-    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Default Value" ) ), 0, wxEXPAND, 0 );
+    gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Default Value" ) ), 1, wxEXPAND, 0 );
     const wxString nullChoices[] =
     {
         "Yes",
@@ -249,8 +247,10 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
             m_currentRow++;
-            gridsizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ), 0, wxEXPAND, 0 );
-            gridsizer->Add( new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() ), 0, wxEXPAND, 0 );
+            gridsizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ), 1, wxEXPAND, 0 );
+            auto type = new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() );
+            type->Disable();
+            gridsizer->Add( type, 0, wxEXPAND, 0 );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ), 0, wxEXPAND, 0 );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ), 0, wxEXPAND, 0 );
             gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" ), 0, wxEXPAND, 0 );
