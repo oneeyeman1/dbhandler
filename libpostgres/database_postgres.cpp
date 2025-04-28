@@ -1627,7 +1627,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             fk_names.push_back( origField );
         }
         PQclear( res1 );
-        res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 1 );
+        res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 0 );
         status = PQresultStatus( res2 );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
