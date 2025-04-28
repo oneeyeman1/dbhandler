@@ -8,11 +8,15 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-
+#include <tuple>
+#include <wx/wx.h>
+#include <wx/image.h>
+#include <wx/intl.h>
+#include "database.h"
 #include "tableattributes.h"
 
-TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style):
-    wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
+TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const Database *db):
+    wxPanel(parent, id)
 {
     // begin wxGlade: TableSettngs::TableSettngs
     wxStaticBoxSizer* sizer_1 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( "Extended Attributes" ) ), wxHORIZONTAL );
@@ -23,26 +27,31 @@ TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 4, 2, 5, 5 );
     sizer_3->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Format" ) );
-    grid_sizer_1->Add( m_label1, 0, wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_format = new wxComboBox( this, wxID_ANY, "" );
-    grid_sizer_1->Add( m_format, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_format, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Edit" ) );
-    grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_edit = new wxComboBox( this, wxID_ANY, "" );
-    grid_sizer_1->Add( m_edit, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_edit, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Validation" ) );
-    grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_validation = new wxComboBox( this, wxID_ANY, "" );
-    grid_sizer_1->Add( m_validation, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    auto validators = db->GetTableVector().m_validators;
+    for( auto it = validators.begin(); it < validators.end(); ++it )
+    {
+        m_validation->Append( std::get<0>( *it ) );
+    }
+    grid_sizer_1->Add( m_validation, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_lael4 = new wxStaticText( this, wxID_ANY, _( "Header" ) );
-    grid_sizer_1->Add( m_lael4, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_lael4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_header = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_NO_VSCROLL );
-    grid_sizer_1->Add( m_header, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_1->Add( m_header, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer( 5, 2, 5, 5 );
     sizer_3->Add( grid_sizer_2, 1, 0, 0 );
     m_lael5 = new wxStaticText( this, wxID_ANY, _( "Justify" ) );
-    grid_sizer_2->Add( m_lael5, 0, wxEXPAND, 0 );
+    grid_sizer_2->Add( m_lael5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     const wxString m_justify_choices[] = {
         _( "Left" ),
         _( "Center" ),
@@ -52,7 +61,7 @@ TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     m_justify->SetSelection( 2 );
     grid_sizer_2->Add( m_justify, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label6 = new wxStaticText( this, wxID_ANY, _( "Height" ) );
-    grid_sizer_2->Add( m_label6, 0, wxEXPAND, 0 );
+    grid_sizer_2->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxHORIZONTAL );
     grid_sizer_2->Add( sizer_4, 1, 0, 0 );
     text_ctrl_1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
@@ -68,20 +77,20 @@ TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
     sizer_5->Add( m_width, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label9 = new wxStaticText( this, wxID_ANY, _( "in" ) );
-    sizer_5->Add( m_label9, 0, wxEXPAND, 0 );
+    sizer_5->Add( m_label9, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label10 = new wxStaticText( this, wxID_ANY, _( "Initial" ) );
-    grid_sizer_2->Add( m_label10, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_2->Add( m_label10, 0, wxALIGN_CENTER_VERTICAL, 0 );
     combo_box_1 = new wxComboBox( this, wxID_ANY, "" );
     grid_sizer_2->Add( combo_box_1, 0, 0, 0 );
     label_1 = new wxStaticText( this, wxID_ANY, _( "Label" ) );
-    grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
+    grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     grid_sizer_2->Add( text_ctrl_2, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer_6, 1, 0, 0 );
-    m_label12 = new wxStaticText( this, wxID_ANY, _( "Cmment" ) );
-    sizer_6->Add( m_label12, 0, wxEXPAND, 0 );
+    m_label12 = new wxStaticText( this, wxID_ANY, _( "Comment" ) );
+    sizer_6->Add( m_label12, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_6->Add( 5, 5, 0, wxEXPAND, 0 );
     m_comment = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_NO_VSCROLL );
     sizer_6->Add( m_comment, 1, wxEXPAND, 0 );

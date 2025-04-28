@@ -12,10 +12,6 @@
 #ifndef TABLEATTRIBUTES_H
 #define TABLEATTRIBUTES_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-#include <wx/intl.h>
-
 #ifndef APP_CATALOG
 #define APP_CATALOG "app"  // replace with the appropriate catalog name
 #endif
@@ -23,7 +19,7 @@
 class TableSettngs: public wxPanel
 {
 public:
-    TableSettngs(wxWindow* parent, wxWindowID id, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    TableSettngs(wxWindow* parent, wxWindowID id, const Database *db);
 
 private:
 

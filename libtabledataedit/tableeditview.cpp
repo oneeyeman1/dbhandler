@@ -251,10 +251,114 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             auto type = new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() );
             type->Disable();
             gridsizer->Add( type, 0, wxEXPAND, 0 );
-            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) ), 0, wxEXPAND, 0 );
-            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) ), 0, wxEXPAND, 0 );
-            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" ), 0, wxEXPAND, 0 );
-            gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, (*it)->GetDefaultValue(), wxDefaultPosition, wxDefaultSize, 8, defaultChoices  ), 1, wxEXPAND, 0 );
+            auto size = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) );
+            gridsizer->Add( size, 0, wxEXPAND, 0 );
+            auto precision = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) );
+            gridsizer->Add( precision, 0, wxEXPAND, 0 );
+            auto nullAllowed = new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" );
+            nullAllowed->Disable();
+            gridsizer->Add( nullAllowed, 0, wxEXPAND, 0 );
+            wxString defValue;
+            if( (*it)->GetDefaultValue() == L"" )
+                defValue = "(None)";
+            else
+                defValue = (*it)->GetDefaultValue();
+            auto defaultValue = new wxComboBox( m_grid, wxID_ANY, defValue, wxDefaultPosition, wxDefaultSize, 8, defaultChoices  );
+            gridsizer->Add( defaultValue, 1, wxEXPAND, 0 );
+            auto dbType = type->GetValue();
+            if( db->GetTableVector().m_type == L"PostgreSQL" || db->GetTableVector().m_subtype == L"PostgreSQL" )
+            {
+                if( dbType == L"bigint" ||
+                    dbType == L"bigserial" || 
+                    dbType == L"boolean" ||
+                    dbType == L"box" ||
+                    dbType == L"bytes" ||
+                    dbType == L"cidr" ||
+                    dbType == L"circle" ||
+                    dbType == L"date" ||
+                    dbType == L"double precision" ||
+                    dbType == L"inet" ||
+                    dbType == L"integer" ||
+                    dbType == L"json" ||
+                    dbType == L"jsonb" ||
+                    dbType == L"line" ||
+                    dbType == L"lseg" ||
+                    dbType == L"macaddr" ||
+                    dbType == L"macaddr8" ||
+                    dbType == L"money" ||
+                    dbType == L"path" ||
+                    dbType == L"pg_lsn" ||
+                    dbType == L"pg_snapshot" ||
+                    dbType == L"point" ||
+                    dbType == L"polygon" ||
+                    dbType == L"real" ||
+                    dbType == L"smallint" ||
+                    dbType == L"smallserial" ||
+                    dbType == L"serial" ||
+                    dbType == L"text" ||
+                    dbType == L"tsqery" ||
+                    dbType == L"txid_snapshot" ||
+                    dbType == L"uuid" ||
+                    dbType == L"xml" )
+                {
+                    size->SetValue( "" );
+                    precision->SetValue( "" );
+                    size->Disable();
+                    precision->Disable();
+                }
+                else if( dbType == L"numeric" ||
+                    dbType == L"decimal" )
+                {
+
+                }
+                else
+                {
+                    precision->SetValue( "" );
+                    precision->Disable();
+                }
+            }
+            else if( db->GetTableVector().m_type == L"Microsoft SQL Server" || db->GetTableVector().m_subtype == L"Microsoft SQL Server" )
+            {
+                if( dbType == L"bigint" ||
+                    dbType == L"bit" ||
+                    dbType == L"date" ||
+                    dbType == L"datetime" ||
+                    dbType == L"float" ||
+                    dbType == L"geoography" ||
+                    dbType == L"geometry" ||
+                    dbType == L"herarchyid" ||
+                    dbType == L"image" ||
+                    dbType == L"int" ||
+                    dbType == L"money" ||
+                    dbType == L"ntext" ||
+                    dbType == L"real" ||
+                    dbType == L"smalldatetime" ||
+                    dbType == L"smallint" ||
+                    dbType == L"smallmoney" ||
+                    dbType == L"sql_variant" ||
+                    dbType == L"text" ||
+                    dbType == L"timestamp" ||
+                    dbType == L"tinyint" ||
+                    dbType == L"uniqueidentifier" ||
+                    dbType == L"xml"
+                    )
+                {
+                    size->SetValue( "" );
+                    precision->SetValue( "" );
+                    size->Disable();
+                    precision->Disable();
+                }
+                else if( dbType == L"decimal" ||
+                    dbType == L"numeric" )
+                {
+
+                }
+                else
+                {
+                    precision->SetValue( "" );
+                    precision->Disable();
+                }
+            }
         }
     }
     else
@@ -270,11 +374,11 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer, 0, wxEXPAND, 0 );
-    attributes = new TableSettngs( m_panel, wxID_ANY );
+    attributes = new TableSettngs( m_panel, wxID_ANY, db );
     sizer->Add( attributes, 0, wxEXPAND, 0 );
     sizer->AddStretchSpacer();
 //    sizer_2->Add( attributes, 0, wxEXPAND, 0 );
-
+    dynamic_cast<wxWindow *>( gridsizer->GetItem( 1  )->GetWindow() )->SetFocus();
     m_grid->SetSizer( gridsizer );
     m_panel->SetSizer( sizer_2 );
     m_frame->SetSizer( sizer_1 );
