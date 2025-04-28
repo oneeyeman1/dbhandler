@@ -40,6 +40,7 @@ public:
 protected:
     void CreateMenuAndToolbar();
     void OnClose(wxCommandEvent &event);
+    void OnFieldSetFocus(wxFocusEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;

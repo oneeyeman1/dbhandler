@@ -20,7 +20,8 @@ class TableSettngs: public wxPanel
 {
 public:
     TableSettngs(wxWindow* parent, wxWindowID id, const Database *db);
-
+    wxTextCtrl *GetCommentCtrl() { return m_comment; }
+    wxTextCtrl *GetHeaderCtrl() { return m_header; }
 private:
 
 protected:

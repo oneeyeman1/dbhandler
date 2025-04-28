@@ -247,23 +247,33 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
             m_currentRow++;
-            gridsizer->Add( new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() ), 1, wxEXPAND, 0 );
+            auto name = new wxTextCtrl( m_grid, wxID_ANY, (*it)->GetFieldName() );
+            name->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
+            gridsizer->Add( name, 1, wxEXPAND, 0 );
+            name->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             auto type = new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() );
             type->Disable();
+            type->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             gridsizer->Add( type, 0, wxEXPAND, 0 );
             auto size = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) );
+            size->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             gridsizer->Add( size, 0, wxEXPAND, 0 );
             auto precision = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) );
+            precision->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             gridsizer->Add( precision, 0, wxEXPAND, 0 );
             auto nullAllowed = new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" );
+            nullAllowed->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             nullAllowed->Disable();
             gridsizer->Add( nullAllowed, 0, wxEXPAND, 0 );
             wxString defValue;
             if( (*it)->GetDefaultValue() == L"" )
                 defValue = "(None)";
+            else if( (*it)->IsAutoIncrement() )
+                defValue = "autoincrement";
             else
                 defValue = (*it)->GetDefaultValue();
             auto defaultValue = new wxComboBox( m_grid, wxID_ANY, defValue, wxDefaultPosition, wxDefaultSize, 8, defaultChoices  );
+            defaultValue->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             gridsizer->Add( defaultValue, 1, wxEXPAND, 0 );
             auto dbType = type->GetValue();
             if( db->GetTableVector().m_type == L"PostgreSQL" || db->GetTableVector().m_subtype == L"PostgreSQL" )
@@ -522,4 +532,12 @@ void TableEditView::SetToolbarOption(Configuration *conf)
     m_tbSettings.m_showTooltips = conf->m_tbSettings["ViewBar"].m_showTooltips;
     m_tbSettings.m_showText = conf->m_tbSettings["ViewBar"].m_showText;
     m_tbSettings.m_orientation = conf->m_tbSettings["ViewBar"].m_orientation;
+}
+
+void TableEditView::OnFieldSetFocus(wxFocusEvent &event)
+{
+    auto field = dynamic_cast<wxWindow *>( event.GetEventObject() );
+    FieldProperties *data = reinterpret_cast<FieldProperties *>( field->GetClientObject() );
+    attributes->GetCommentCtrl()->SetValue( data->m_comment );
+    attributes->GetHeaderCtrl()->SetValue( data->m_heading.m_heading );
 }
