@@ -254,16 +254,20 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             auto type = new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() );
             type->Disable();
             type->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
+            type->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( type, 0, wxEXPAND, 0 );
             auto size = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetFieldSize() ) );
             size->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
+            size->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( size, 0, wxEXPAND, 0 );
             auto precision = new wxTextCtrl( m_grid, wxID_ANY, wxString::Format( "%d", (*it)->GetPrecision() ) );
             precision->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
+            precision->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( precision, 0, wxEXPAND, 0 );
             auto nullAllowed = new wxComboBox( m_grid, wxID_ANY, (*it)->IsNullAllowed() ? "Yes" : "No" );
             nullAllowed->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             nullAllowed->Disable();
+            nullAllowed->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( nullAllowed, 0, wxEXPAND, 0 );
             wxString defValue;
             if( (*it)->GetDefaultValue() == L"" )
@@ -274,6 +278,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 defValue = (*it)->GetDefaultValue();
             auto defaultValue = new wxComboBox( m_grid, wxID_ANY, defValue, wxDefaultPosition, wxDefaultSize, 8, defaultChoices  );
             defaultValue->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
+            defaultValue->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( defaultValue, 1, wxEXPAND, 0 );
             auto dbType = type->GetValue();
             if( db->GetTableVector().m_type == L"PostgreSQL" || db->GetTableVector().m_subtype == L"PostgreSQL" )
@@ -540,4 +545,6 @@ void TableEditView::OnFieldSetFocus(wxFocusEvent &event)
     FieldProperties *data = reinterpret_cast<FieldProperties *>( field->GetClientObject() );
     attributes->GetCommentCtrl()->SetValue( data->m_comment );
     attributes->GetHeaderCtrl()->SetValue( data->m_heading.m_heading );
+    attributes->GetLabelCtrl()->SetValue( data->m_heading.m_label );
+    event.Skip();
 }

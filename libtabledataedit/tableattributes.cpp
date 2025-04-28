@@ -84,8 +84,8 @@ TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const Database *db):
     grid_sizer_2->Add( combo_box_1, 0, 0, 0 );
     label_1 = new wxStaticText( this, wxID_ANY, _( "Label" ) );
     grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    text_ctrl_2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    grid_sizer_2->Add( text_ctrl_2, 0, 0, 0 );
+    m_label = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    grid_sizer_2->Add( m_label, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer_6, 1, 0, 0 );

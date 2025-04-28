@@ -22,6 +22,7 @@ public:
     TableSettngs(wxWindow* parent, wxWindowID id, const Database *db);
     wxTextCtrl *GetCommentCtrl() { return m_comment; }
     wxTextCtrl *GetHeaderCtrl() { return m_header; }
+    wxTextCtrl *GetLabelCtrl() { return m_label; }
 private:
 
 protected:
@@ -45,7 +46,7 @@ protected:
     wxStaticText* m_label10;
     wxComboBox* combo_box_1;
     wxStaticText* label_1;
-    wxTextCtrl* text_ctrl_2;
+    wxTextCtrl* m_label;
     wxStaticText* m_label12;
     wxTextCtrl* m_comment;
     // end wxGlade
