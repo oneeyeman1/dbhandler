@@ -14,6 +14,7 @@
 #include <vld.h>
 #endif
 
+#include <list>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/grid.h"

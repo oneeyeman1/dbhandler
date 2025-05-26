@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <map>
+#include <list>
 #include <string>
 #include "wx/except.h"
 #include "wx/scopedptr.h"

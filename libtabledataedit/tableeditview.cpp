@@ -39,6 +39,7 @@
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
 #include "wx/mstream.h"
+#include "wx/grid.h"
 #include "typecombobox.h"
 #include "database.h"
 #include "configuration.h"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
@@ -176,7 +177,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     std::map<wxString, std::vector<TableDefinition> > tables;
     std::vector<std::wstring> tableNames;
     int res = -1;
-    wxString query, documentName = "";
+    wxString query, documentName = "", type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -215,9 +216,138 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             }
     }
     auto sizer_2 = new wxBoxSizer( wxVERTICAL );
-    m_grid = new wxScrolled<wxPanel>( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxALWAYS_SHOW_SB | wxVSCROLL );
+    m_grid = new wxGrid( m_panel, wxID_ANY );
+    auto rows = 1;
+    m_grid->CreateGrid( rows, 6 );
+    m_grid->SetColLabelValue( 0, _( "Name" ) );
+    m_grid->SetColLabelValue( 1, _( "Data Type" ) );
+    m_grid->SetColLabelValue( 2, _( "Width" ) );
+    m_grid->SetColLabelValue( 3, _( "Dec" ) );
+    m_grid->SetColLabelValue( 4, _( "Null" ) );
+    m_grid->SetColLabelValue( 5, _( "Default" ) );
+    m_grid->SetRowLabelValue( 0, "" );
+    wxString selString;
+    wxArrayString choices;
+    if( type == L"SQLite" )
+    {
+        choices.push_back( "NULL" );
+        choices.push_back( "Text" );
+        choices.push_back( "Integer" );
+        choices.push_back( "Real" );
+        choices.push_back( "BLOB" );
+/*        if( argType == L"" )
+            selString = "Integer";
+        else
+            selString = argType;*/
+    }
+    if( ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+    {
+        choices.push_back( "bigint" );
+        choices.push_back( "binary" );
+        choices.push_back( "bit" );
+        choices.push_back( "char" );
+        choices.push_back( "date" );
+        choices.push_back( "datetime" );
+        choices.push_back( "datetime2" );
+        choices.push_back( "datetimeoffset" );
+        choices.push_back( "decimal" );
+        choices.push_back( "float" );
+        choices.push_back( "geography" );
+        choices.push_back( "geometry" );
+        choices.push_back( "hierarchyid" );
+        choices.push_back( "image" );
+        choices.push_back( "int" );
+        choices.push_back( "money" );
+        choices.push_back( "nchar" );
+        choices.push_back( "ntextr" );
+        choices.push_back( "numeric" );
+        choices.push_back( "nvarchar" );
+        choices.push_back( "real" );
+        choices.push_back( "smalldatetime" );
+        choices.push_back( "smallint" );
+        choices.push_back( "smallmoney" );
+        choices.push_back( "sql_variant" );
+        choices.push_back( "text" );
+        choices.push_back( "time" );
+        choices.push_back( "timestamp" );
+        choices.push_back( "tinyint" );
+        choices.push_back( "uniqueidentifier" );
+        choices.push_back( "varbinary" );
+        choices.push_back( "varchar" );
+        choices.push_back( "xml" );
+/*        if( argType == L"" )
+            selString = "numerc";
+        else
+            selString = argType;*/
+    }
+    if( ( type == L"ODBC" && subtype == L"PostgreSQL" ) || type == L"PostgreSQL" )
+    {
+        choices.push_back( "JSON" );
+        choices.push_back( "UUID" );
+        choices.push_back( "XML" );
+        choices.push_back( "bigint" );
+        choices.push_back( "bigserial" );
+        choices.push_back( "bit" );
+        choices.push_back( "boolean" );
+        choices.push_back( "box" );
+        choices.push_back( "bytea" );
+        choices.push_back( "char" );
+        choices.push_back( "character varying" );
+        choices.push_back( "character" );
+        choices.push_back( "cidr" );
+        choices.push_back( "circle" );
+        choices.push_back( "date" );
+        choices.push_back( "daterange" );
+        choices.push_back( "decimal" );
+        choices.push_back( "double precison" );
+        choices.push_back( "enum" );
+        choices.push_back( "inet" );
+        choices.push_back( "int4range" );
+        choices.push_back( "int8range" );
+        choices.push_back( "integer" );
+        choices.push_back( "interval" );
+        choices.push_back( "line" );
+        choices.push_back( "lseg" );
+        choices.push_back( "macaddr" );
+        choices.push_back( "macaddr8" );
+        choices.push_back( "money" );
+        choices.push_back( "numeric" );
+        choices.push_back( "numrange" );
+        choices.push_back( "path" );
+        choices.push_back( "point" );
+        choices.push_back( "polygon" );
+        choices.push_back( "real" );
+        choices.push_back( "serial" );
+        choices.push_back( "smallint" );
+        choices.push_back( "smallserial" );
+        choices.push_back( "text" );
+        choices.push_back( "time" );
+        choices.push_back( "timestamp" );
+        choices.push_back( "tsrange" );
+        choices.push_back( "tstzrange " );
+        choices.push_back( "tsvector" );
+        choices.push_back( "tsquery" );
+        choices.push_back( "varchar" );
+/*        if( argType == L"" )
+            selString = "numerc";
+        else
+            selString = argType;*/
+    }
+    if( table && !table->GetFields().empty() )
+    {
+        for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
+        {
+            m_grid->SetCellValue( rows - 1, 0, (*it)->GetFieldName() );
+            m_grid->SetCellValue( rows - 1, 1, (*it)->GetFieldType() );
+            m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
+            m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
+            rows++;
+            m_grid->AppendRows();
+            m_grid->SetRowLabelValue( rows - 1, "" );
+        }
+    }
     sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
-    auto gridsizer = new wxFlexGridSizer( 6, 0, 0 );
+/*    auto gridsizer = new wxFlexGridSizer( 6, 0, 0 );
 //    auto gridsizer = new wxGridSizer( 6, 0, 0 );
     gridsizer->AddGrowableRow( 0, 1 );
     gridsizer->Add( new wxStaticText( m_grid, wxID_ANY, _( "Field Name" ) ), 1, wxEXPAND, 0 );
@@ -242,6 +372,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         "null",
         "user"
     };
+    m_grid->Freeze();
     if( table && !table->GetFields().empty() )
     {
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
@@ -251,6 +382,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             name->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
             gridsizer->Add( name, 1, wxEXPAND, 0 );
             name->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
+            name->Bind( wxEVT_KEY_DOWN, &TableEditView::OnKeyDown, this );
             auto type = new TypeComboBox( m_grid, db->GetTableVector().m_type, db->GetTableVector().m_type, (*it)->GetFieldType() );
             type->Disable();
             type->SetClientObject( (wxClientData *) &(*it)->GetFieldProperties() );
@@ -281,6 +413,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             defaultValue->Bind( wxEVT_SET_FOCUS, &TableEditView::OnFieldSetFocus, this );
             gridsizer->Add( defaultValue, 1, wxEXPAND, 0 );
             auto dbType = type->GetValue();
+            m_lines.push_back( TableDefinitionLine( name, type, size, precision, nullAllowed, defaultValue ) );
             if( db->GetTableVector().m_type == L"PostgreSQL" || db->GetTableVector().m_subtype == L"PostgreSQL" )
             {
                 if( dbType == L"bigint" ||
@@ -385,7 +518,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "Yes" ), 1, wxEXPAND, 0 );
         gridsizer->Add( new wxComboBox( m_grid, wxID_ANY, "" ), 1, wxEXPAND, 0 );
     }
-    dynamic_cast<wxWindow *>( gridsizer->GetItem( 1  )->GetWindow() )->SetFocus();
+    m_grid->Thaw();*/
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer, 0, wxEXPAND, 0 );
@@ -393,8 +526,9 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     sizer->Add( attributes, 0, wxEXPAND, 0 );
     sizer->AddStretchSpacer();
 //    sizer_2->Add( attributes, 0, wxEXPAND, 0 );
-    dynamic_cast<wxWindow *>( gridsizer->GetItem( 1  )->GetWindow() )->SetFocus();
-    m_grid->SetSizer( gridsizer );
+//    m_lines.front().m_name->SetFocus();
+//    m_lines.front().m_name->SetSelection( -1, -1 );
+//    m_grid->SetSizer( gridsizer );
     m_panel->SetSizer( sizer_2 );
     m_frame->SetSizer( sizer_1 );
     m_frame->Layout();
@@ -548,3 +682,34 @@ void TableEditView::OnFieldSetFocus(wxFocusEvent &event)
     attributes->GetLabelCtrl()->SetValue( data->m_heading.m_label );
     event.Skip();
 }
+
+void TableEditView::OnKeyDown(wxKeyEvent &event)
+{
+    if( event.GetKeyCode() == WXK_UP )
+    {
+        // range check happens inside method anyway
+        SetActiveLine( m_currentRow - 1 );
+    }
+    else if( event.GetKeyCode() == WXK_DOWN )
+    {
+        // range check happens inside method anyway
+        SetActiveLine( m_currentRow + 1 );
+    }
+    event.Skip();
+}
+
+void TableEditView::SetActiveLine(int line)
+{
+/*    size_t index;
+    if( line == 1 )
+        index = 9;
+    else
+        index = line - 1;
+    if( index >= m_lines.size() )
+        return;
+
+    // just set focus to the first control in that line
+    // focus handler will do the rest
+    std::list<TableDefinitionLine>::iterator it = std::next( m_lines.begin(), index );
+    (*it).m_name->SetFocus();
+*/}
