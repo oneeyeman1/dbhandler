@@ -341,6 +341,14 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             m_grid->SetCellValue( rows - 1, 1, (*it)->GetFieldType() );
             m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
+            auto width = (*it)->GetFieldSize();
+            auto precision = (*it)->GetPrecision();
+            if( width > 0 )
+                m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
+            else
+                m_grid->SetCellValue( rows - 1, 2, "" );
+            if( precision > 0 )
+                m_grid->SetCellValue( rows - 1, 3, wxString::Format( "%d", precision ) );
             rows++;
             m_grid->AppendRows();
             m_grid->SetRowLabelValue( rows - 1, "" );
