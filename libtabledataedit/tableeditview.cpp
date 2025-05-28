@@ -333,18 +333,41 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         else
             selString = argType;*/
     }
+    m_grid->Freeze();
     if( table && !table->GetFields().empty() )
     {
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
+            std::wstring size, tempWidth, tempPrecision;
             m_grid->SetCellValue( rows - 1, 0, (*it)->GetFieldName() );
-            m_grid->SetCellValue( rows - 1, 1, (*it)->GetFieldType() );
+            auto type = (*it)->GetFieldType();
+            auto pos = type.find( '(' ); 
+            if( pos != std::wstring::npos )
+            {
+                auto gridtype = type.substr( 0, pos );
+                size = type.substr( pos + 1 );
+                auto pos = size.find( ',' );
+                if( pos != std::wstring::npos )
+                {
+                    tempWidth = size.substr( 0, pos );
+                    tempPrecision = size.substr( pos + 1, size.length() - 1 );
+                }
+                else
+                {
+                    tempWidth = size.substr( 0, size.length() - 1 );
+                    tempPrecision = L"";
+                }
+                type = gridtype;
+            }
+            m_grid->SetCellValue( rows - 1, 1, type );
             m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
             auto width = (*it)->GetFieldSize();
             auto precision = (*it)->GetPrecision();
             if( width > 0 )
                 m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
+            if( !tempWidth.empty() )
+                m_grid->SetCellValue( rows - 1, 2, tempWidth );                
             else
                 m_grid->SetCellValue( rows - 1, 2, "" );
             if( precision > 0 )
@@ -361,6 +384,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             m_grid->SetRowLabelValue( rows - 1, "" );
         }
     }
+    m_grid->Thaw();
     sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
 /*    auto gridsizer = new wxFlexGridSizer( 6, 0, 0 );
 //    auto gridsizer = new wxGridSizer( 6, 0, 0 );
