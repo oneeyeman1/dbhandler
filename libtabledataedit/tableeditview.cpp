@@ -349,6 +349,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 m_grid->SetCellValue( rows - 1, 2, "" );
             if( precision > 0 )
                 m_grid->SetCellValue( rows - 1, 3, wxString::Format( "%d", precision ) );
+            m_grid->SetCellRenderer( rows - 1, 4, new wxGridCellChoiceRenderer( "Yes,No" ) );
+            m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
             rows++;
             m_grid->AppendRows();
             m_grid->SetRowLabelValue( rows - 1, "" );
