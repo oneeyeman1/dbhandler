@@ -33,6 +33,12 @@
     <ClInclude Include="guiobjectsproperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mycombocellrenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mycombocelleditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
@@ -47,5 +53,7 @@
     <ClCompile Include="ablbaseview.cpp">
       <Filter>Source Fles</Filter>
     </ClCompile>
+    <ClCompile Include="mycombocellrenderer.cpp" />
+    <ClCompile Include="mycombocelleditor.cpp" />
   </ItemGroup>
 </Project>
