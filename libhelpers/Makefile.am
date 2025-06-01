@@ -11,9 +11,13 @@ libhelpers_a_SOURCES =  \
 	colorcombobox.cpp \
 	colorcombobox.h \
 	ablbaseview.cpp \
-	ablbaseview.h
+	ablbaseview.h \
+	mycombocelleditor.cpp \
+	mycombocelleditor.h \
+	mycombocellrenderer.cpp \
+	mycombocellrenderer.h
 
 libhelpers_a_CXXFLAGS = -fPIC \
-	@WX_CXXFLAGS@
+	-ggdb3 @WX_CXXFLAGS@
 
 libhelpers_a_LDFLAGS = @WX_LDFLAGS@
