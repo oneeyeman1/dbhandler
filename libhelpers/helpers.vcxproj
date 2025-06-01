@@ -40,6 +40,8 @@
     <ClInclude Include="configuration.h" />
     <ClInclude Include="guiobjectsproperties.h" />
     <ClInclude Include="maskededit.h" />
+    <ClInclude Include="mycombocelleditor.h" />
+    <ClInclude Include="mycombocellrenderer.h" />
     <ClInclude Include="painterobjects.h" />
     <ClInclude Include="propertieshandlerbase.h" />
     <ClInclude Include="typecombobox.h" />
@@ -48,6 +50,8 @@
     <ClCompile Include="ablbaseview.cpp" />
     <ClCompile Include="colorcombobox.cpp" />
     <ClCompile Include="maskededit.cpp" />
+    <ClCompile Include="mycombocelleditor.cpp" />
+    <ClCompile Include="mycombocellrenderer.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
