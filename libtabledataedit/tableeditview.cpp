@@ -360,6 +360,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 }
                 type = gridtype;
             }
+            else if( pos = type.find( L' ' ) )
+                type = type.substr( 0, pos );
             m_grid->SetCellValue( rows - 1, 1, type );
             m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
