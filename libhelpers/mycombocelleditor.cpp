@@ -13,7 +13,7 @@ wxGridActivationResult MyComboCellEditor::TryActivate(int row, int col, wxGrid* 
         break;
 
     case wxGridActivationSource::Mouse:
-        dynamic_cast<wxComboBox *>( this->wxGridCellEditor::GetControl() )->Popup();
+        dynamic_cast<wxComboBox *>( this->wxGridCellChoiceEditor::GetControl() )->Popup();
         // Ideally we should use the mouse event position to determine
         // on which star the user clicked, but for now keep it simple
         // and just cycle through the star value.
