@@ -24,8 +24,10 @@ wxGridCellRenderer *MyComboCellRenderer::Clone() const
 
 void MyComboCellRenderer::Draw(wxGrid& grid, wxGridCellAttr& attr, wxDC& dc, const wxRect& rect, int row, int col, bool isSelected)
 {
+    auto value = grid.GetTable()->GetValue( row, col );
     wxGridCellRenderer::Draw( grid, attr, dc, rect, row, col, isSelected );
     wxRendererNative::Get().DrawChoice( &grid, dc, rect );
+    dc.DrawText( value, rect.GetLeft() + 5, rect.GetTop() );
 }
 
 wxSize MyComboCellRenderer::GetBestSize(wxGrid &grid, wxGridCellAttr& attr, wxDC& dc, int row, int col)
