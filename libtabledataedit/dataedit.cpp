@@ -22,6 +22,7 @@
 #include "database.h"
 #include "configuration.h"
 #include "tableattributes.h"
+#include "mytabledefgrid.h"
 #include "tableeditview.h"
 #include "dataeditdoctemplate.h"
 #include "tableeditdocument.h"

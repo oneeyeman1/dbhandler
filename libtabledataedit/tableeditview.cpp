@@ -43,6 +43,7 @@
 #include "typecombobox.h"
 #include "database.h"
 #include "configuration.h"
+#include "mytabledefgrid.h"
 #include "mycombocellrenderer.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
@@ -217,7 +218,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             }
     }
     auto sizer_2 = new wxBoxSizer( wxVERTICAL );
-    m_grid = new wxGrid( m_panel, wxID_ANY );
+    m_grid = new MyTableDefGrid( m_panel, wxID_ANY );
     auto rows = 1;
     m_grid->CreateGrid( rows, 6 );
     m_grid->SetColLabelValue( 0, _( "Name" ) );
@@ -341,28 +342,28 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         {
             std::wstring size, tempWidth, tempPrecision;
             m_grid->SetCellValue( rows - 1, 0, (*it)->GetFieldName() );
-            auto type = (*it)->GetFieldType();
-            auto pos = type.find( '(' ); 
-            if( pos != std::wstring::npos )
+            auto fieldType = (*it)->GetFieldType();
+            auto pos1 = fieldType.find( '(' ); 
+            if( pos1 != std::wstring::npos )
             {
-                auto gridtype = type.substr( 0, pos );
-                size = type.substr( pos + 1 );
-                auto pos = size.find( ',' );
-                if( pos != std::wstring::npos )
+                auto gridtype = fieldType.substr( 0, pos1 );
+                size = fieldType.substr( pos1 + 1 );
+                auto pos2 = size.find( ',' );
+                if( pos2 != std::wstring::npos )
                 {
-                    tempWidth = size.substr( 0, pos );
-                    tempPrecision = size.substr( pos + 1, size.length() - 1 );
+                    tempWidth = size.substr( 0, pos2 );
+                    tempPrecision = size.substr( pos2 + 1, size.length() - 1 );
                 }
                 else
                 {
                     tempWidth = size.substr( 0, size.length() - 1 );
                     tempPrecision = L"";
                 }
-                type = gridtype;
+                fieldType = gridtype;
             }
-            else if( pos = type.find( L' ' ) )
-                type = type.substr( 0, pos );
-            m_grid->SetCellValue( rows - 1, 1, type );
+            else if( pos1 = fieldType.find( L' ' ) != std::string::npos )
+                fieldType = fieldType.substr( 0, pos1 );
+            m_grid->SetCellValue( rows - 1, 1, fieldType );
             m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
             auto width = (*it)->GetFieldSize();

@@ -67,7 +67,7 @@ protected:
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
-    wxGrid *m_grid;
+    MyTableDefGrid *m_grid;
     Database *m_db;
     wxBoxSizer *sizer;
     wxDocMDIParentFrame *m_parent;
