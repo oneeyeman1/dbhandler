@@ -342,13 +342,14 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         {
             std::wstring size, tempWidth, tempPrecision;
             m_grid->SetCellValue( rows - 1, 0, (*it)->GetFieldName() );
+            size_t pos1, pos2;
             auto fieldType = (*it)->GetFieldType();
-            auto pos1 = fieldType.find( '(' ); 
+            pos1 = fieldType.find( '(' ); 
             if( pos1 != std::wstring::npos )
             {
                 auto gridtype = fieldType.substr( 0, pos1 );
                 size = fieldType.substr( pos1 + 1 );
-                auto pos2 = size.find( ',' );
+                pos2 = size.find( ',' );
                 if( pos2 != std::wstring::npos )
                 {
                     tempWidth = size.substr( 0, pos2 );
@@ -361,8 +362,12 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 }
                 fieldType = gridtype;
             }
-            else if( pos1 = fieldType.find( L' ' ) != std::string::npos )
-                fieldType = fieldType.substr( 0, pos1 );
+            else
+            {
+                pos1 = fieldType.find( L' ' );
+                if( pos1 != std::string::npos )
+                    fieldType = fieldType.substr( 0, pos1 );
+            }
             m_grid->SetCellValue( rows - 1, 1, fieldType );
             m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
