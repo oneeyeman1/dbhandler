@@ -15,7 +15,9 @@ libtableedit_la_SOURCES =  \
 	imagecellrenderer.cpp \
 	imagecellrenderer.h \
 	tableattributes.cpp \
-	tableattributes.h
+	tableattributes.h \
+	mytabledefgrid.cpp \
+	mytabledefgrid.h
 
 libtableedit_la_CXXFLAGS = `wx-config \
 	--cxxflags` \
