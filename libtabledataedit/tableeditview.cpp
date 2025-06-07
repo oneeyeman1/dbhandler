@@ -338,6 +338,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->Freeze();
     if( table && !table->GetFields().empty() )
     {
+        m_frame->SetTitle( "Alter Table - " + table->GetSchemaName() + "." + table->GetTableName() );
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
             std::wstring size, tempWidth, tempPrecision;
@@ -390,7 +391,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
             m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
             rows++;
-            m_grid->AppendRows();
+            if( it < table->GetFields().end() - 1 )
+                m_grid->AppendRows();
             m_grid->SetRowLabelValue( rows - 1, "" );
         }
     }
