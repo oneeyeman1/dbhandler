@@ -9,4 +9,5 @@ protected:
     void OnCellClicked(wxGridEvent &event);
 private:
     int m_newRow, m_oldRow;
+    wxBitmapBundle m_pointer;
 };

@@ -45,6 +45,7 @@
 #include "configuration.h"
 #include "mytabledefgrid.h"
 #include "mycombocellrenderer.h"
+#include "mycombocelleditor.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
 #include "tableeditview.h"
@@ -230,6 +231,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->SetRowLabelValue( 0, "" );
     wxString selString;
     wxArrayString choices;
+    int count;
     if( type == L"SQLite" )
     {
         choices.push_back( "NULL" );
@@ -237,10 +239,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         choices.push_back( "Integer" );
         choices.push_back( "Real" );
         choices.push_back( "BLOB" );
-/*        if( argType == L"" )
-            selString = "Integer";
-        else
-            selString = argType;*/
+        count = 5;
+        selString = "Integer";
     }
     if( ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
     {
@@ -277,10 +277,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         choices.push_back( "varbinary" );
         choices.push_back( "varchar" );
         choices.push_back( "xml" );
-/*        if( argType == L"" )
-            selString = "numerc";
-        else
-            selString = argType;*/
+        count = 33;
+        selString = "numerc";
     }
     if( ( type == L"ODBC" && subtype == L"PostgreSQL" ) || type == L"PostgreSQL" )
     {
@@ -330,10 +328,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         choices.push_back( "tsvector" );
         choices.push_back( "tsquery" );
         choices.push_back( "varchar" );
-/*        if( argType == L"" )
-            selString = "numerc";
-        else
-            selString = argType;*/
+        count = 46;
+        selString = "numerc";
     }
     m_grid->Freeze();
     if( table && !table->GetFields().empty() )
@@ -370,7 +366,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                     fieldType = fieldType.substr( 0, pos1 );
             }
             m_grid->SetCellValue( rows - 1, 1, fieldType );
-            m_grid->SetCellRenderer( rows - 1, 1, new wxGridCellChoiceRenderer( (*it)->GetFieldType() ) );
+            m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
             m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
             auto width = (*it)->GetFieldSize();
             auto precision = (*it)->GetPrecision();
@@ -407,6 +403,11 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_panel->SetSizer( sizer_2 );
     m_frame->SetSizer( sizer_1 );
     m_frame->Layout();
+    auto width = m_frame->GetSize().GetWidth();
+    auto columns = m_grid->GetColSize( 1 ) + m_grid->GetColSize( 2 ) + m_grid->GetColSize( 3 ) + m_grid->GetColSize( 4 ) + m_grid->GetRowLabelSize();
+    auto halfSize = ( width - columns ) / 2;
+    m_grid->SetColSize( 0, halfSize );
+    m_grid->SetColSize( 5, halfSize );
     m_grid->SetFocus();
 }
 
