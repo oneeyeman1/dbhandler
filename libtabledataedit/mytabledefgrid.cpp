@@ -1,3 +1,15 @@
+#ifdef __GNUC__
+#pragma implementation "dialogs.h"
+#endif
+
+#ifdef __BORLANDC__
+#pragma hdrstop
+#endif
+
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 #include "wx/grid.h"
 #include "wx/bmpbndl.h"
 #include "wx/dynlib.h"
@@ -36,11 +48,20 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
 void MyTableDefGrid::DrawRowLabel(wxDC &dc, int row)
 {
     wxGrid::DrawRowLabel( dc, row );
-//    if( row == m_newRow )
-//        dc.DrawBitmap( m_pointer.GetBitmapFor( this ), );
+    wxGridCellAttrProvider *const  attrProvider = m_table ? m_table->GetAttrProvider() : nullptr;
+//    const wxGridRowHeaderRenderer &rend = attrProvider ? attrProvider->GetRowHeaderRenderer( row ) : static_cast<const wxGridRowHeaderRenderer &>( gs_defaultHeaderRenderers.rowRenderer );
+    attrProvider->GetRowHeaderRenderer( row );
+    if( row == m_newRow )
+        dc.DrawBitmap( m_pointer.GetBitmapFor( this ), wxPoint( 0, GetRowTop( row ) ) );
 }
 
 void MyTableDefGrid::OnCellClicked(wxGridEvent &event)
 {
     auto row = event.GetRow();
+    if( row != m_newRow )
+    {
+        m_oldRow = m_newRow;
+        m_newRow = row;
+        GetGridRowLabelWindow()->Refresh();
+    }
 }
