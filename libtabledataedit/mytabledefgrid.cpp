@@ -10,6 +10,10 @@
 #include "wx/wx.h"
 #endif
 
+#if defined( __WXGTK__ ) || defined( __WXQT__ )
+#include "pointer.h"
+#endif
+
 #include "wx/grid.h"
 #include "wx/bmpbndl.h"
 #include "wx/dynlib.h"
@@ -35,7 +39,7 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
 #elif __WXOSX__
     m_pointer = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
 #else
-    m_pointer = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
+    m_pointer = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
 #endif
     SetRowLabelSize( m_pointer.GetBitmapFor( this ).GetWidth() );
 //    Bind( wxEVT_GRID_CELL_LEFT_CLICK, &MyTableDefGrid::OnCellClicked, this );

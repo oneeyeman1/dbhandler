@@ -3,7 +3,7 @@
 //  libpropertypages
 //
 //  Created by Igor Korot on 9/17/20.
-//  Copyright © 2020 Igor Korot. All rights reserved.
+//  Copyright Â© 2020 Igor Korot. All rights reserved.
 //
 #ifdef __BORLANDC__
 #pragma hdrstop
