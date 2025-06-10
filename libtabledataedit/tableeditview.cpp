@@ -409,6 +409,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->SetColSize( 0, halfSize );
     m_grid->SetColSize( 5, halfSize );
     m_grid->SetFocus();
+    m_grid->Bind( wxEVT_GRID_SELECT_CELL, &TableEditView::OnCellClicked, this );
 }
 
 void TableEditView::CreateMenuAndToolbar()
@@ -562,7 +563,7 @@ void TableEditView::OnFieldSetFocus(wxFocusEvent &event)
 
 void TableEditView::OnKeyDown(wxKeyEvent &event)
 {
-    if( event.GetKeyCode() == WXK_UP )
+/*    if( event.GetKeyCode() == WXK_UP )
     {
         // range check happens inside method anyway
         SetActiveLine( m_currentRow - 1 );
@@ -571,22 +572,18 @@ void TableEditView::OnKeyDown(wxKeyEvent &event)
     {
         // range check happens inside method anyway
         SetActiveLine( m_currentRow + 1 );
-    }
+    }*/
     event.Skip();
 }
 
-void TableEditView::SetActiveLine(int line)
+void TableEditView::OnCellClicked(wxGridEvent &event)
 {
-/*    size_t index;
-    if( line == 1 )
-        index = 9;
-    else
-        index = line - 1;
-    if( index >= m_lines.size() )
-        return;
+    auto row = event.GetRow();
+    if( row != m_grid->GetNewRow() )
+    {
+        m_grid->SetOldRow( m_grid->GetNewRow() );
+        m_grid->SetNewRow( row );
+        m_grid->GetGridRowLabelWindow()->Refresh();
+    }
+}
 
-    // just set focus to the first control in that line
-    // focus handler will do the rest
-    std::list<TableDefinitionLine>::iterator it = std::next( m_lines.begin(), index );
-    (*it).m_name->SetFocus();
-*/}

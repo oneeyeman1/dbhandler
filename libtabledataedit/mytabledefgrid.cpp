@@ -46,26 +46,13 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
 //    Bind( wxEVT_GRID_CELL_LEFT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
 //    Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &MyTableDefGrid::OnCellClicked, this );
 //    Bind( wxEVT_GRID_CELL_RIGHT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
-    Bind( wxEVT_GRID_SELECT_CELL, &MyTableDefGrid::OnCellClicked, this );
 }
 
 void MyTableDefGrid::DrawRowLabel(wxDC &dc, int row)
 {
     wxGrid::DrawRowLabel( dc, row );
-    wxGridCellAttrProvider *const  attrProvider = m_table ? m_table->GetAttrProvider() : nullptr;
-//    const wxGridRowHeaderRenderer &rend = attrProvider ? attrProvider->GetRowHeaderRenderer( row ) : static_cast<const wxGridRowHeaderRenderer &>( gs_defaultHeaderRenderers.rowRenderer );
-    attrProvider->GetRowHeaderRenderer( row );
     if( row == m_newRow )
         dc.DrawBitmap( m_pointer.GetBitmapFor( this ), wxPoint( 0, GetRowTop( row ) ) );
 }
 
-void MyTableDefGrid::OnCellClicked(wxGridEvent &event)
-{
-    auto row = event.GetRow();
-    if( row != m_newRow )
-    {
-        m_oldRow = m_newRow;
-        m_newRow = row;
-        GetGridRowLabelWindow()->Refresh();
-    }
-}
+
