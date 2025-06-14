@@ -60,10 +60,10 @@ public:
     void SetViewType(ViewType type) { m_type = type; }
 protected:
     void CreateMenuAndToolbar();
-    void SetActiveLine(int line);
     void OnClose(wxCommandEvent &event);
     void OnFieldSetFocus(wxFocusEvent &event);
     void OnKeyDown(wxKeyEvent &event);
+    void OnCellClicked(wxGridEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
