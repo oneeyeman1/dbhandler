@@ -45,6 +45,7 @@
 #include "configuration.h"
 #include "mytabledefgrid.h"
 #include "mycombocellrenderer.h"
+#include "mytabletypeeditor.h"
 #include "mycombocelleditor.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"
@@ -367,7 +368,9 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             }
             m_grid->SetCellValue( rows - 1, 1, fieldType );
             m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
-            m_grid->SetCellEditor( rows - 1, 1, new wxGridCellChoiceEditor( choices ) );
+            auto editor = new MyTableTypeEditor( type, subtype, fieldType );
+            editor->Create( m_grid, wxID_ANY, nullptr );
+            m_grid->SetCellEditor( rows - 1, 1, editor );
             auto width = (*it)->GetFieldSize();
             auto precision = (*it)->GetPrecision();
             if( width > 0 )
@@ -383,7 +386,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 "Yes",
                 "No"
             };
-            m_grid->SetCellEditor( rows - 1, 4, new wxGridCellChoiceEditor( 2, nullChoices ) );
+            m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
             m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
             m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
             rows++;
