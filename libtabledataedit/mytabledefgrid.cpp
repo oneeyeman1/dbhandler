@@ -42,10 +42,6 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
     m_pointer = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
 #endif
     SetRowLabelSize( m_pointer.GetBitmapFor( this ).GetWidth() );
-//    Bind( wxEVT_GRID_CELL_LEFT_CLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_LEFT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_RIGHT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
 }
 
 void MyTableDefGrid::DrawRowLabel(wxDC &dc, int row)
@@ -54,5 +50,4 @@ void MyTableDefGrid::DrawRowLabel(wxDC &dc, int row)
     if( row == m_newRow )
         dc.DrawBitmap( m_pointer.GetBitmapFor( this ), wxPoint( 0, GetRowTop( row ) ) );
 }
-
 
