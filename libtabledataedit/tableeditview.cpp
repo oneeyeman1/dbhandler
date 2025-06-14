@@ -409,6 +409,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->SetColSize( 0, halfSize );
     m_grid->SetColSize( 5, halfSize );
     m_grid->SetFocus();
+    m_grid->Bind( wxEVT_KEY_DOWN, &TableEditView::OnKeyDown, this );
 }
 
 void TableEditView::CreateMenuAndToolbar()
@@ -562,15 +563,14 @@ void TableEditView::OnFieldSetFocus(wxFocusEvent &event)
 
 void TableEditView::OnKeyDown(wxKeyEvent &event)
 {
-    if( event.GetKeyCode() == WXK_UP )
+    if( event.GetKeyCode() == WXK_DOWN )
     {
+        if( m_grid->GetGridCursorRow() + 1 == m_grid->GetNumberRows() )
+        {
         // range check happens inside method anyway
-        SetActiveLine( m_currentRow - 1 );
-    }
-    else if( event.GetKeyCode() == WXK_DOWN )
-    {
-        // range check happens inside method anyway
-        SetActiveLine( m_currentRow + 1 );
+            m_grid->AppendRows();
+            m_grid->MoveCursorDown( false );
+        }
     }
     event.Skip();
 }
