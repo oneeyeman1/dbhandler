@@ -15,7 +15,9 @@ libhelpers_a_SOURCES =  \
 	mycombocelleditor.cpp \
 	mycombocelleditor.h \
 	mycombocellrenderer.cpp \
-	mycombocellrenderer.h
+	mycombocellrenderer.h \
+	mytabletypeeditor.cpp \
+	mytabletypeeditor.h
 
 libhelpers_a_CXXFLAGS = -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
