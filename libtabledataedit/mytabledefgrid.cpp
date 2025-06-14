@@ -38,10 +38,6 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
     m_pointer = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
 #endif
     SetRowLabelSize( m_pointer.GetBitmapFor( this ).GetWidth() );
-//    Bind( wxEVT_GRID_CELL_LEFT_CLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_LEFT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_RIGHT_CLICK, &MyTableDefGrid::OnCellClicked, this );
-//    Bind( wxEVT_GRID_CELL_RIGHT_DCLICK, &MyTableDefGrid::OnCellClicked, this );
     Bind( wxEVT_GRID_SELECT_CELL, &MyTableDefGrid::OnCellClicked, this );
 }
 
@@ -65,3 +61,4 @@ void MyTableDefGrid::OnCellClicked(wxGridEvent &event)
         GetGridRowLabelWindow()->Refresh();
     }
 }
+
