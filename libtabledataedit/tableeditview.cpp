@@ -389,6 +389,9 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
             m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
             m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
+            m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor );
+            m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
+            m_grid->SetCellValue( rows - 1, 5, "[None]" );
             rows++;
             if( it < table->GetFields().end() - 1 )
                 m_grid->AppendRows();
