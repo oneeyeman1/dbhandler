@@ -1,5 +1,5 @@
 #pragma once
-class MyComboCellEditor : public wxGridCellChoiceEditor
+class WXEXPORT MyComboCellEditor : public wxGridCellChoiceEditor
 {
 public:
     MyComboCellEditor(int count = 0, const wxString choices[] = nullptr)  : wxGridCellChoiceEditor( count, choices) { };
