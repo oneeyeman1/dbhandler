@@ -2,7 +2,7 @@
 #include <wx/combobox.h>
 #include "mycombocelleditor.h"
 
-wxGridActivationResult MyComboCellEditor::TryActivate(int row, int col, wxGrid* grid, const wxGridActivationSource& actSource)
+wxGridActivationResult MyComboCellEditor::TryActivate(int WXUNUSED(row), int WXUNUSED(col), wxGrid *WXUNUSED(grid), const wxGridActivationSource& actSource)
 {
     switch ( actSource.GetOrigin() )
     {
@@ -21,9 +21,4 @@ wxGridActivationResult MyComboCellEditor::TryActivate(int row, int col, wxGrid* 
     }
 
     return wxGridActivationResult::DoChange(m_value);
-}
-
-wxGridCellChoiceEditor *MyComboCellEditor::Clone() const
-{
-    return new MyComboCellEditor();
 }
