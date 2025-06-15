@@ -389,7 +389,12 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
             m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
             m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
-            m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor );
+            const wxString defValues[] = 
+            {
+                "[None]",
+                "autoincrement"
+            };
+            m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor( 2, defValues ) );
             m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
             m_grid->SetCellValue( rows - 1, 5, "[None]" );
             rows++;
