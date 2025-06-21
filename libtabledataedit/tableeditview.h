@@ -74,7 +74,6 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
-//    wxScrolled<wxPanel> *m_grid;
     DatabaseTable *m_table;
     int m_processed;
     bool m_queryexecuting;
@@ -84,7 +83,6 @@ private:
     TableSettngs *attributes;
     int m_currentRow = 0;
     wxString m_dbType, m_dbSubtype;
-//    std::list<TableDefinitionLine> m_lines;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
     wxDECLARE_EVENT_TABLE();
 };
