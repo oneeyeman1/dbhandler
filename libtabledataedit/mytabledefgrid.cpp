@@ -27,7 +27,7 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "tabledataedit", &gs_wxMainThread );
     const void* data = nullptr;
     size_t sizeSave = 0;
-    if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
+    if( !wxLoadUserResource( &data, &sizeSave, "pointer", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
         wxMessageBox( wxString::Format( "Error: %d!!", err ) );
