@@ -61,6 +61,8 @@ wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
 wxBEGIN_EVENT_TABLE(TableEditView, wxView)
     EVT_MENU(wxID_CLOSE, TableEditView::OnClose)
+    EVT_MENU(wxID_INSERTCOLUMN, TableEditView::OnInsertColumn)
+    EVT_MENU(wxID_DELETECOLUMN, TableEditView::OnDeleteColumn)
 wxEND_EVENT_TABLE()
 
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
@@ -607,4 +609,20 @@ void TableEditView::AppendOrInsertField(int rows, TableField *it)
     m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
     m_grid->SetCellValue( rows - 1, 5, "[None]" );
     m_grid->SetRowLabelValue( rows - 1, "" );
+}
+
+void TableEditView::OnInsertColumn(wxCommandEvent &event)
+{
+    AppendOrInsertField( m_grid->GetNumberRows(), nullptr );
+    GetDocument()->Modify( true );
+}
+
+void TableEditView::OnDeleteColumn(wxCommandEvent &event)
+{
+    auto value = m_grid->GetCellValue( m_grid->GetGridCursorRow(), 0 );
+    int answer = wxMessageBox( _( "You are about to drop column " ) + value + _( ". OK to continue?" ), _( "Create/Alter Table" ), wxOK | wxCANCEL | wxCANCEL_DEFAULT | wxICON_INFORMATION );
+    if( answer == wxID_OK )
+    {
+        GetDocument()->Modify( true );
+    }
 }

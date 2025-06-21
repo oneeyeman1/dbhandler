@@ -65,6 +65,8 @@ protected:
     void OnFieldSetFocus(wxFocusEvent &event);
     void OnKeyDown(wxKeyEvent &event);
     void OnCellClicked(wxGridEvent &event);
+    void OnInsertColumn(wxCommandEvent &event);
+    void OnDeleteColumn(wxCommandEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
