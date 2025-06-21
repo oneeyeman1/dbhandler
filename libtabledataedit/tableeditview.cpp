@@ -181,7 +181,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     std::map<wxString, std::vector<TableDefinition> > tables;
     std::vector<std::wstring> tableNames;
     int res = -1;
-    wxString query, documentName = "", type = db->GetTableVector().m_type, subtype = db->GetTableVector().m_subtype;
+    wxString query, documentName = "", m_dbType = db->GetTableVector().m_type, m_dbSubtype = db->GetTableVector().m_subtype;
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -233,7 +233,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     wxString selString;
     wxArrayString choices;
     int count;
-    if( type == L"SQLite" )
+    if( m_dbType == L"SQLite" )
     {
         choices.push_back( "NULL" );
         choices.push_back( "Text" );
@@ -243,7 +243,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         count = 5;
         selString = "Integer";
     }
-    if( ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+    if( ( m_dbType == L"ODBC" && m_dbSubtype == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
         choices.push_back( "bigint" );
         choices.push_back( "binary" );
@@ -281,7 +281,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         count = 33;
         selString = "numerc";
     }
-    if( ( type == L"ODBC" && subtype == L"PostgreSQL" ) || type == L"PostgreSQL" )
+    if( ( m_dbType == L"ODBC" && m_dbSubtype == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
         choices.push_back( "JSON" );
         choices.push_back( "UUID" );
@@ -338,69 +338,11 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         m_frame->SetTitle( "Alter Table - " + table->GetSchemaName() + "." + table->GetTableName() );
         for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
         {
-            std::wstring size, tempWidth, tempPrecision;
-            m_grid->SetCellValue( rows - 1, 0, (*it)->GetFieldName() );
-            size_t pos1, pos2;
-            auto fieldType = (*it)->GetFieldType();
-            pos1 = fieldType.find( '(' ); 
-            if( pos1 != std::wstring::npos )
+//            if( it < table->GetFields().end() - 1 )
             {
-                auto gridtype = fieldType.substr( 0, pos1 );
-                size = fieldType.substr( pos1 + 1 );
-                pos2 = size.find( ',' );
-                if( pos2 != std::wstring::npos )
-                {
-                    tempWidth = size.substr( 0, pos2 );
-                    tempPrecision = size.substr( pos2 + 1, size.length() - 1 );
-                }
-                else
-                {
-                    tempWidth = size.substr( 0, size.length() - 1 );
-                    tempPrecision = L"";
-                }
-                fieldType = gridtype;
+                AppendOrInsertField( rows, *it );
+                rows++;
             }
-            else
-            {
-                pos1 = fieldType.find( L' ' );
-                if( pos1 != std::string::npos )
-                    fieldType = fieldType.substr( 0, pos1 );
-            }
-            m_grid->SetCellValue( rows - 1, 1, fieldType );
-            m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
-            auto editor = new MyTableTypeEditor( type, subtype, fieldType );
-            editor->Create( m_grid, wxID_ANY, nullptr );
-            m_grid->SetCellEditor( rows - 1, 1, editor );
-            auto width = (*it)->GetFieldSize();
-            auto precision = (*it)->GetPrecision();
-            if( width > 0 )
-                m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
-            else if( !tempWidth.empty() )
-                m_grid->SetCellValue( rows - 1, 2, tempWidth );                
-            if( precision > 0 )
-                m_grid->SetCellValue( rows - 1, 3, wxString::Format( "%d", precision ) );
-            else if( !tempPrecision.empty() )
-                m_grid->SetCellValue( rows - 1, 2, tempPrecision );
-            const wxString nullChoices[] =
-            {
-                "Yes",
-                "No"
-            };
-            m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
-            m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
-            m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
-            const wxString defValues[] = 
-            {
-                "[None]",
-                "autoincrement"
-            };
-            m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor( 2, defValues ) );
-            m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
-            m_grid->SetCellValue( rows - 1, 5, "[None]" );
-            rows++;
-            if( it < table->GetFields().end() - 1 )
-                m_grid->AppendRows();
-            m_grid->SetRowLabelValue( rows - 1, "" );
         }
     }
     m_grid->Thaw();
@@ -598,3 +540,65 @@ void TableEditView::OnCellClicked(wxGridEvent &event)
     }
 }
 
+void TableEditView::AppendOrInsertField(int rows, TableField *it)
+{
+    std::wstring size, tempWidth, tempPrecision;
+    m_grid->SetCellValue( rows - 1, 0, it->GetFieldName() );
+    size_t pos1, pos2;
+    auto fieldType = it->GetFieldType();
+    pos1 = fieldType.find( '(' ); 
+    if( pos1 != std::wstring::npos )
+    {
+        auto gridtype = fieldType.substr( 0, pos1 );
+        size = fieldType.substr( pos1 + 1 );
+        pos2 = size.find( ',' );
+        if( pos2 != std::wstring::npos )
+        {
+            tempWidth = size.substr( 0, pos2 );
+            tempPrecision = size.substr( pos2 + 1, size.length() - 1 );
+        }
+        else
+        {
+            tempWidth = size.substr( 0, size.length() - 1 );
+            tempPrecision = L"";
+        }
+        fieldType = gridtype;
+    }
+    else
+    {
+        pos1 = fieldType.find( L' ' );
+        if( pos1 != std::string::npos )
+            fieldType = fieldType.substr( 0, pos1 );
+    }
+    m_grid->SetCellValue( rows - 1, 1, fieldType );
+    m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
+    m_grid->SetCellEditor( rows - 1, 1, new MyTableTypeEditor( m_dbType, m_dbSubtype, fieldType ) );
+    auto width = it->GetFieldSize();
+    auto precision = it->GetPrecision();
+    if( width > 0 )
+        m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
+    else if( !tempWidth.empty() )
+        m_grid->SetCellValue( rows - 1, 2, tempWidth );                
+    if( precision > 0 )
+        m_grid->SetCellValue( rows - 1, 3, wxString::Format( "%d", precision ) );
+    else if( !tempPrecision.empty() )
+        m_grid->SetCellValue( rows - 1, 2, tempPrecision );
+    const wxString nullChoices[] =
+    {
+        "Yes",
+        "No"
+    };
+    m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
+    m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
+    m_grid->SetCellValue( rows - 1, 4, it->IsNullAllowed() ? "Yes" : "No" );
+    const wxString defValues[] = 
+    {
+        "[None]",
+        "autoincrement"
+    };
+    m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor( 2, defValues ) );
+    m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
+    m_grid->SetCellValue( rows - 1, 5, "[None]" );
+    m_grid->AppendRows();
+    m_grid->SetRowLabelValue( rows - 1, "" );
+}

@@ -59,6 +59,7 @@ public:
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
 protected:
+    void AppendOrInsertField(int rows, TableField *it);
     void CreateMenuAndToolbar();
     void OnClose(wxCommandEvent &event);
     void OnFieldSetFocus(wxFocusEvent &event);
@@ -82,6 +83,7 @@ private:
     ViewType m_type;
     TableSettngs *attributes;
     int m_currentRow = 0;
+    wxString m_dbType, m_dbSubtype;
 //    std::list<TableDefinitionLine> m_lines;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
     wxDECLARE_EVENT_TABLE();
