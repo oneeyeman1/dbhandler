@@ -368,9 +368,15 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             }
             m_grid->SetCellValue( rows - 1, 1, fieldType );
             m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
+            int cell_rows, cell_cols;
             auto editor = new MyTableTypeEditor( type, subtype, fieldType );
             editor->Create( m_grid, wxID_ANY, nullptr );
-            m_grid->SetCellEditor( rows - 1, 1, editor );
+            m_grid->SetCellEditor( rows - 1, 1, new MyTableTypeEditor( type, subtype, fieldType ) );
+            
+            auto rect = m_grid->CellToRect( rows - 1, 1 );
+            m_grid->GetCellSize( rows - 1, 1, &cell_rows, &cell_cols );
+            m_grid->CalcGridWindowScrolledPosition( rect.x, rect.y, &rect.x, &rect.y, m_grid->CellToGridWindow( rows - 1, 1 ) );
+            
             auto width = (*it)->GetFieldSize();
             auto precision = (*it)->GetPrecision();
             if( width > 0 )
