@@ -615,6 +615,7 @@ void TableEditView::AppendOrInsertField(TableField *it)
 void TableEditView::OnInsertColumn(wxCommandEvent &event)
 {
     AppendOrInsertField( nullptr );
+    m_grid->GoToCell( m_grid->GetNumberRows() - 1, 0 );
     GetDocument()->Modify( true );
 }
 
