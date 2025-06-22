@@ -59,11 +59,14 @@ public:
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
 protected:
+    void AppendOrInsertField(TableField *it);
     void CreateMenuAndToolbar();
     void OnClose(wxCommandEvent &event);
     void OnFieldSetFocus(wxFocusEvent &event);
     void OnKeyDown(wxKeyEvent &event);
     void OnCellClicked(wxGridEvent &event);
+    void OnInsertColumn(wxCommandEvent &event);
+    void OnDeleteColumn(wxCommandEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
@@ -73,7 +76,6 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
-//    wxScrolled<wxPanel> *m_grid;
     DatabaseTable *m_table;
     int m_processed;
     bool m_queryexecuting;
@@ -82,7 +84,7 @@ private:
     ViewType m_type;
     TableSettngs *attributes;
     int m_currentRow = 0;
-//    std::list<TableDefinitionLine> m_lines;
+    wxString m_dbType, m_dbSubtype;
     wxDECLARE_DYNAMIC_CLASS(TableEditView);
     wxDECLARE_EVENT_TABLE();
 };

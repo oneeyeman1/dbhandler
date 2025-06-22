@@ -10,6 +10,9 @@ public:
     {
         grid->SetCellValue(row, col, m_value);
     }
-    virtual wxGridCellChoiceEditor *Clone() const wxOVERRIDE;
+    virtual MyComboCellEditor *Clone() const wxOVERRIDE
+    {
+        return new MyComboCellEditor();
+    }
 };
 
