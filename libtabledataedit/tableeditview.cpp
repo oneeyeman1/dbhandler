@@ -223,7 +223,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     }
     auto sizer_2 = new wxBoxSizer( wxVERTICAL );
     m_grid = new MyTableDefGrid( m_panel, wxID_ANY );
-    auto rows = 1;
+    auto rows = 0;
     m_grid->CreateGrid( rows, 6 );
     m_grid->SetColLabelValue( 0, _( "Name" ) );
     m_grid->SetColLabelValue( 1, _( "Data Type" ) );
@@ -342,7 +342,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         {
 //            if( it < table->GetFields().end() - 1 )
             {
-                AppendOrInsertField( rows, *it );
+                AppendOrInsertField( *it );
                 rows++;
             }
         }
@@ -524,7 +524,7 @@ void TableEditView::OnKeyDown(wxKeyEvent &event)
         if( m_grid->GetGridCursorRow() + 1 == m_grid->GetNumberRows() )
         {
         // range check happens inside method anyway
-            AppendOrInsertField( m_grid->GetNumberRows(), nullptr );
+            AppendOrInsertField( nullptr );
         }
     }
     event.Skip();
@@ -541,7 +541,7 @@ void TableEditView::OnCellClicked(wxGridEvent &event)
     }
 }
 
-void TableEditView::AppendOrInsertField(int rows, TableField *it)
+void TableEditView::AppendOrInsertField(TableField *it)
 {
     std::wstring size, tempWidth, tempPrecision;
     wxString name = "", fieldType = "", nullAllowed = "No";
@@ -580,6 +580,7 @@ void TableEditView::AppendOrInsertField(int rows, TableField *it)
         nullAllowed = it->IsNullAllowed() ? "Yes" : "No";
     }
     m_grid->AppendRows();
+    int rows = m_grid->GetNumberRows();
     m_grid->SetCellValue( rows - 1, 0, name );
     m_grid->SetCellValue( rows - 1, 1, fieldType );
     m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
@@ -613,7 +614,7 @@ void TableEditView::AppendOrInsertField(int rows, TableField *it)
 
 void TableEditView::OnInsertColumn(wxCommandEvent &event)
 {
-    AppendOrInsertField( m_grid->GetNumberRows(), nullptr );
+    AppendOrInsertField( nullptr );
     GetDocument()->Modify( true );
 }
 

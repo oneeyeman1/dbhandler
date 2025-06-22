@@ -59,7 +59,7 @@ public:
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
 protected:
-    void AppendOrInsertField(int rows, TableField *it);
+    void AppendOrInsertField(TableField *it);
     void CreateMenuAndToolbar();
     void OnClose(wxCommandEvent &event);
     void OnFieldSetFocus(wxFocusEvent &event);
