@@ -63,6 +63,7 @@ wxBEGIN_EVENT_TABLE(TableEditView, wxView)
     EVT_MENU(wxID_CLOSE, TableEditView::OnClose)
     EVT_MENU(wxID_INSERTCOLUMN, TableEditView::OnInsertColumn)
     EVT_MENU(wxID_DELETECOLUMN, TableEditView::OnDeleteColumn)
+    EVT_MENU(wxID_TABLEPROPERTIES, TableEditView::OnTableProperties)
 wxEND_EVENT_TABLE()
 
 bool TableEditView::OnCreate(wxDocument *doc, long flags)
@@ -437,25 +438,36 @@ void TableEditView::CreateMenuAndToolbar()
     helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
     mbar->Append( helpMenu, _( "Help" ) );
     m_frame->SetMenuBar( mbar );
-    wxBitmapBundle save;
+    wxBitmapBundle save, properties;
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "tabledataedit", &gs_wxMainThread );
-    const void* data = nullptr;
-    size_t sizeSave = 0;
-    if( !wxLoadUserResource( &data, &sizeSave, "save", RT_RCDATA, inst ) )
+    const void *data1 = nullptr, *data2 = nullptr;
+    size_t sizeSave = 0, sizeProperties = 0;
+    if( !wxLoadUserResource( &data1, &sizeSave, "save", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
         wxMessageBox( wxString::Format( "Error: %d!!", err ) );
     }
     else
     {
-        save = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
+        save = wxBitmapBundle::FromSVG( (const char *) data1, wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &data2, &sizeProperties, "properties", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+}
+    else
+    {
+        properties = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
     }
 #elif __WXOSX__
     save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
+    properties = wxBitmapBundle::FromSVGResource( "properties", wxSize( 16, 16 ) );
 #else
     save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
+    properties = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
 #endif
     m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
     m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
@@ -465,6 +477,8 @@ void TableEditView::CreateMenuAndToolbar()
     m_tb->AddTool( wxID_COPYCOLUMN, _( "Copy" ), wxArtProvider::GetBitmapBundle( wxART_COPY ), wxArtProvider::GetBitmapBundle( wxART_COPY ), wxITEM_NORMAL, _( "Copy" ), _( "Copy Column" ) );
     m_tb->AddTool( wxID_PASTECOLUMN, _( "Paste" ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxITEM_NORMAL, _( "Paste" ), _( "Paste Column" ) );
     m_tb->AddTool( wxID_DELETECOLUMN, _( "Delete Column" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Delete Column" ), _( "Delete Column" ) );
+    m_tb->AddSeparator();
+    m_tb->AddTool( wxID_TABLEPROPERTIES, _( "Properties" ), properties, properties, wxITEM_NORMAL, _( "Properties" ), _( "Properties" ) );
     m_tb->Realize();
     switch( m_tbSettings.m_orientation )
     {
@@ -627,4 +641,9 @@ void TableEditView::OnDeleteColumn(wxCommandEvent &event)
     {
         GetDocument()->Modify( true );
     }
+}
+
+void TableEditView::OnTableProperties(wxCommandEvent &event)
+{
+    wxMessageBox( "Properties" );
 }
