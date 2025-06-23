@@ -67,6 +67,7 @@ protected:
     void OnCellClicked(wxGridEvent &event);
     void OnInsertColumn(wxCommandEvent &event);
     void OnDeleteColumn(wxCommandEvent &event);
+    void OnTableProperties(wxCommandEvent &event);
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
