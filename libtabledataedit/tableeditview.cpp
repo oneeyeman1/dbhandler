@@ -31,6 +31,10 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
+#ifdef __WXGTK__
+#include "properties.h"
+#endif
+
 #include <map>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
@@ -346,55 +350,8 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                 AppendOrInsertField( *it );
                 rows++;
             }
-            else
-            {
-                pos1 = fieldType.find( L' ' );
-                if( pos1 != std::string::npos )
-                    fieldType = fieldType.substr( 0, pos1 );
-            }
-            m_grid->SetCellValue( rows - 1, 1, fieldType );
-            m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
-            int cell_rows, cell_cols;
-            auto editor = new MyTableTypeEditor( type, subtype, fieldType );
-            editor->Create( m_grid, wxID_ANY, nullptr );
-            m_grid->SetCellEditor( rows - 1, 1, new MyTableTypeEditor( type, subtype, fieldType ) );
-            
-            auto rect = m_grid->CellToRect( rows - 1, 1 );
-            m_grid->GetCellSize( rows - 1, 1, &cell_rows, &cell_cols );
-            m_grid->CalcGridWindowScrolledPosition( rect.x, rect.y, &rect.x, &rect.y, m_grid->CellToGridWindow( rows - 1, 1 ) );
-            
-            auto width = (*it)->GetFieldSize();
-            auto precision = (*it)->GetPrecision();
-            if( width > 0 )
-                m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
-            else if( !tempWidth.empty() )
-                m_grid->SetCellValue( rows - 1, 2, tempWidth );                
-            if( precision > 0 )
-                m_grid->SetCellValue( rows - 1, 3, wxString::Format( "%d", precision ) );
-            else if( !tempPrecision.empty() )
-                m_grid->SetCellValue( rows - 1, 2, tempPrecision );
-            const wxString nullChoices[] =
-            {
-                "Yes",
-                "No"
-            };
-            m_grid->SetCellEditor( rows - 1, 4, new MyComboCellEditor( 2, nullChoices ) );
-            m_grid->SetCellRenderer( rows - 1, 4, new MyComboCellRenderer );
-            m_grid->SetCellValue( rows - 1, 4, (*it)->IsNullAllowed() ? "Yes" : "No" );
-            const wxString defValues[] = 
-            {
-                "[None]",
-                "autoincrement"
-            };
-            m_grid->SetCellEditor( rows - 1, 5, new MyComboCellEditor( 2, defValues ) );
-            m_grid->SetCellRenderer( rows - 1, 5, new MyComboCellRenderer );
-            m_grid->SetCellValue( rows - 1, 5, "[None]" );
-            rows++;
-            if( it < table->GetFields().end() - 1 )
-                m_grid->AppendRows();
-            m_grid->SetRowLabelValue( rows - 1, "" );
         }
-    }
+   }
     m_grid->Thaw();
     sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
@@ -514,7 +471,7 @@ void TableEditView::CreateMenuAndToolbar()
     properties = wxBitmapBundle::FromSVGResource( "properties", wxSize( 16, 16 ) );
 #else
     save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
-    properties = wxBitmapBundle::FromSVG( table, wxSize( 16, 16 ) );
+    properties = wxBitmapBundle::FromSVG( properties, wxSize( 16, 16 ) );
 #endif
     m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
     m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
