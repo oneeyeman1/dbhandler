@@ -645,5 +645,14 @@ void TableEditView::OnDeleteColumn(wxCommandEvent &event)
 
 void TableEditView::OnTableProperties(wxCommandEvent &event)
 {
-    wxMessageBox( "Properties" );
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXMAC__
+    libName = m_libPath + "liblibdialogs.dylib";
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
 }
