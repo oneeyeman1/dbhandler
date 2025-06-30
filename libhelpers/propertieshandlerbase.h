@@ -24,7 +24,8 @@ enum
     QueryPropertiesType,
     LibraryPropertiesType,
     LibraryObjectsProperties,
-    LibraryPainterPropertiesType
+    LibraryPainterPropertiesType,
+    TablePrpertiesType
 };
 
 class
