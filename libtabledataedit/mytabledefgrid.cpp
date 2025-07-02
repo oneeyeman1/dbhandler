@@ -37,7 +37,7 @@ MyTableDefGrid::MyTableDefGrid(wxWindow *parent, wxWindowID id) : wxGrid( parent
         m_pointer = wxBitmapBundle::FromSVG( (const char *) data, wxSize( 16, 16 ) );
     }
 #elif __WXOSX__
-    m_pointer = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
+    m_pointer = wxBitmapBundle::FromSVGResource( "pointer", wxSize( 16, 16 ) );
 #else
     m_pointer = wxBitmapBundle::FromSVG( pointer, wxSize( 16, 16 ) );
 #endif

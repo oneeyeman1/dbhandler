@@ -445,7 +445,7 @@ void TableEditView::CreateMenuAndToolbar()
     helpMenu->Append( wxID_HELP, _( "Help" ), _( "Help" ) );
     mbar->Append( helpMenu, _( "Help" ) );
     m_frame->SetMenuBar( mbar );
-    wxBitmapBundle save, properties;
+    wxBitmapBundle save, props;
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
     const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "tabledataedit", &gs_wxMainThread );
@@ -467,14 +467,14 @@ void TableEditView::CreateMenuAndToolbar()
 }
     else
     {
-        properties = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
+        props = wxBitmapBundle::FromSVG( (const char *) data2, wxSize( 16, 16 ) );
     }
 #elif __WXOSX__
     save = wxBitmapBundle::FromSVGResource( "save", wxSize( 16, 16 ) );
-    properties = wxBitmapBundle::FromSVGResource( "properties", wxSize( 16, 16 ) );
+    props = wxBitmapBundle::FromSVGResource( "properties", wxSize( 16, 16 ) );
 #else
     save = wxArtProvider::GetBitmapBundle( wxART_FLOPPY, wxART_TOOLBAR );
-    properties = wxBitmapBundle::FromSVG( properties, wxSize( 16, 16 ) );
+    props = wxBitmapBundle::FromSVG( properties, wxSize( 16, 16 ) );
 #endif
     m_tb->AddTool( wxID_NEW, _( "New" ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_NEW, wxART_TOOLBAR ), wxITEM_NORMAL, _( "New" ), _( "New Query" ) );
     m_tb->AddTool( wxID_OPEN, _( "Open" ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxArtProvider::GetBitmapBundle( wxART_FILE_OPEN, wxART_TOOLBAR ), wxITEM_NORMAL, _( "Open" ), _( "Open Query" ) );
@@ -485,7 +485,7 @@ void TableEditView::CreateMenuAndToolbar()
     m_tb->AddTool( wxID_PASTECOLUMN, _( "Paste" ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxArtProvider::GetBitmapBundle( wxART_PASTE ), wxITEM_NORMAL, _( "Paste" ), _( "Paste Column" ) );
     m_tb->AddTool( wxID_DELETECOLUMN, _( "Delete Column" ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxArtProvider::GetBitmapBundle( wxART_DELETE ), wxITEM_NORMAL, _( "Delete Column" ), _( "Delete Column" ) );
     m_tb->AddSeparator();
-    m_tb->AddTool( wxID_TABLEPROPERTIES, _( "Properties" ), properties, properties, wxITEM_NORMAL, _( "Properties" ), _( "Properties" ) );
+    m_tb->AddTool( wxID_TABLEPROPERTIES, _( "Properties" ), props, props, wxITEM_NORMAL, _( "Properties" ), _( "Properties" ) );
     m_tb->Realize();
     switch( m_tbSettings.m_orientation )
     {
