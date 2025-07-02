@@ -192,6 +192,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     int res = -1;
     wxString query, documentName = "";
     m_dbType = db->GetTableVector().m_type, m_dbSubtype = db->GetTableVector().m_subtype;
+    m_db = db;
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -663,6 +664,7 @@ void TableEditView::OnTableProperties(wxCommandEvent &event)
     lib.Load( libName );
     PropertiesHandler *handler = this;
     handler->SetType( TablePrpertiesType );
+    handler->SetDatabase( m_db );
     wxString title = _( "Table Propertes" );;
     if( lib.IsLoaded() )
     {
