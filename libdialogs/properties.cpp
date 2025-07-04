@@ -46,6 +46,7 @@
 #include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
+#include "indexproperties.h"
 #include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"
 #include "databaseoptioncolours.h"

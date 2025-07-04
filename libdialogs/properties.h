@@ -37,6 +37,7 @@ private:
     LibraryPainterOptionsMgmtPage *m_page16;
     FieldStyles *m_page17;
     FieldValidation *m_page18;
+    TableIndex **m_page19, *m_page20;
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
