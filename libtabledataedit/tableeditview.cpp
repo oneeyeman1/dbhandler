@@ -664,6 +664,7 @@ void TableEditView::OnTableProperties(wxCommandEvent &event)
     lib.Load( libName );
     PropertiesHandler *handler = this;
     handler->SetType( TablePrpertiesType );
+    handler->SetTable( m_table );
     handler->SetDatabase( m_db );
     wxString title = _( "Table Propertes" );;
     if( lib.IsLoaded() )

@@ -19,13 +19,13 @@
 // end wxGlade
 
 
-class WXEXPORT TableIndex: public wxPanel
+class WXEXPORT TableIndex: public PropertyPageBase
 {
 public:
     // begin wxGlade: TableIndex::ids
     // end wxGlade
 
-    TableIndex(wxWindow* parent, wxWindowID id, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=0);
+    TableIndex(wxWindow* parent, wxWindowID id);
 
 private:
 

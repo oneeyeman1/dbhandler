@@ -46,8 +46,8 @@
 #include "field.h"
 #include "fieldwindow.h"
 #include "colorcombobox.h"
-#include "indexproperties.h"
 #include "propertypagebase.h"
+#include "indexproperties.h"
 #include "databaseoptionsgeneral.h"
 #include "databaseoptioncolours.h"
 #include "tablegeneral.h"
@@ -93,8 +93,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             TableProperties prop;
             if( handler->GetType() == DatabaseTablePropertiesType ) 
                 prop = ( handler )->GetProperties().As<TableProperties>();
-//            else
-//                prop = ( hander )-> 
+            else
+                prop = ( handler )-> GetTable()->GetTableProperties();
             wxFont data_font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, prop.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_dataFontUnderline, prop.m_dataFontName );
             if( prop.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
@@ -126,6 +126,13 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
             m_properties->AddPage( m_page5, _( "Primary Key" ) );
+            if( handler->GetType() == TablePrpertiesType )
+            {
+                m_page19 = new TableIndex( m_properties, wxID_ANY );
+                m_properties->InsertPage( 5, m_page19, _( "Indexes" ) );
+                m_page20 = new TableIndex( m_properties, wxID_ANY );
+                m_properties->AddPage( m_page2, _( "Indexes" ) );
+            }
         }
         break;
         case DatabaseFieldPropertiesType:

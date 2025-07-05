@@ -9,13 +9,14 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
+#include "propertypagebase.h"
 #include "indexproperties.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-TableIndex::TableIndex(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style):
-    wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL)
+TableIndex::TableIndex(wxWindow* parent, wxWindowID id):
+    PropertyPageBase(parent, id)
 {
     // begin wxGlade: TableIndex::TableIndex
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
