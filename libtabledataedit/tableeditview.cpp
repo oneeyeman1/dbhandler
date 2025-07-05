@@ -31,7 +31,7 @@
     #error You must set wxUSE_DOC_VIEW_ARCHITECTURE to 1 in setup.h!
 #endif
 
-#ifdef __WXGTK__
+#if defined( __WXGTK__) || defined( __WXQT__)
 #include "properties.h"
 #endif
 
