@@ -53,7 +53,9 @@ libpropertypages_la_SOURCES =  \
 	fieldstyles.cpp \
 	fieldstyles.h \
 	fieldvalidation.cpp \
-	fieldvalidation.h
+	fieldvalidation.h \
+	indexproperties.cpp \
+	indexproperties.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
