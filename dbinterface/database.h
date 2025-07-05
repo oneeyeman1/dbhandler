@@ -329,6 +329,7 @@ private:
 class DatabaseTable
 {
 public:
+    DatabaseTable() { };
     DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<TableField *> &tableFields, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
     {
         m_objectId = 0;

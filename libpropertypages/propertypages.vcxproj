@@ -47,6 +47,7 @@
     <ClInclude Include="fieldstyles.h" />
     <ClInclude Include="fieldvalidation.h" />
     <ClInclude Include="fontpropertypagebase.h" />
+    <ClInclude Include="indexproperties.h" />
     <ClInclude Include="libraryobjectpropertypage.h" />
     <ClInclude Include="librarypainteroptionsgeneral.h" />
     <ClInclude Include="librarypainteroptionsinclude.h" />
@@ -75,6 +76,7 @@
     <ClCompile Include="fieldstyles.cpp" />
     <ClCompile Include="fieldvalidation.cpp" />
     <ClCompile Include="fontpropertypagebase.cpp" />
+    <ClCompile Include="indexproperties.cpp" />
     <ClCompile Include="libraryobjectpropertypage.cpp" />
     <ClCompile Include="librarypainteroptionsgeneral.cpp" />
     <ClCompile Include="librarypainteroptionsinclude.cpp" />

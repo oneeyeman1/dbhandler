@@ -47,6 +47,7 @@
 #include "typecombobox.h"
 #include "database.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "mytabledefgrid.h"
 #include "mycombocellrenderer.h"
 #include "mytabletypeeditor.h"
@@ -60,6 +61,7 @@
 #include "res/querycancel.xpm"
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &);
 
 wxIMPLEMENT_DYNAMIC_CLASS(TableEditView, wxView);
 
@@ -188,7 +190,9 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     std::map<wxString, std::vector<TableDefinition> > tables;
     std::vector<std::wstring> tableNames;
     int res = -1;
-    wxString query, documentName = "", m_dbType = db->GetTableVector().m_type, m_dbSubtype = db->GetTableVector().m_subtype;
+    wxString query, documentName = "";
+    m_dbType = db->GetTableVector().m_type, m_dbSubtype = db->GetTableVector().m_subtype;
+    m_db = db;
     wxString libName;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -210,7 +214,6 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         }
     }
     auto found = false;
-    DatabaseTable *table = nullptr;
     for( std::map<wxString, std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end() && !found; ++it )
     {
         for( auto it1 = db->GetTableVector().m_tables.begin(); it1 != db->GetTableVector().m_tables.end() && !found; ++ it1 )
@@ -221,7 +224,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
                     (*it).second.at( 0 ).tableName == (*it2)->GetTableName() )
                 {
                     dynamic_cast<TableEditDocument *>( GetDocument() )->SetTable( (*it2) );
-                    table = (*it2);
+                    m_table = (*it2);
                     found = true;
                 }
             }
@@ -340,12 +343,12 @@ void TableEditView::GetTablesForView(Database *db, bool init)
         selString = "numerc";
     }
     m_grid->Freeze();
-    if( table && !table->GetFields().empty() )
+    if( m_table && !m_table->GetFields().empty() )
     {
-        m_frame->SetTitle( "Alter Table - " + table->GetSchemaName() + "." + table->GetTableName() );
-        for( std::vector<TableField *>::const_iterator it = table->GetFields().begin(); it < table->GetFields().end(); ++it )
+        m_frame->SetTitle( "Alter Table - " + m_table->GetSchemaName() + "." + m_table->GetTableName() );
+        for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); ++it )
         {
-//            if( it < table->GetFields().end() - 1 )
+//            if( it < m_table->GetFields().end() - 1 )
             {
                 AppendOrInsertField( *it );
                 rows++;
@@ -355,7 +358,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->Thaw();
     sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
-    auto sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer, 0, wxEXPAND, 0 );
     attributes = new TableSettngs( m_panel, wxID_ANY, db );
     sizer->Add( attributes, 0, wxEXPAND, 0 );
@@ -693,4 +696,29 @@ void TableEditView::OnTableProperties(wxCommandEvent &event)
     libName = m_libPath + "libdialogs";
 #endif
     lib.Load( libName );
+    PropertiesHandler *handler = this;
+    handler->SetType( TablePrpertiesType );
+    handler->SetTable( m_table );
+    handler->SetDatabase( m_db );
+    wxString title = _( "Table Propertes" );;
+    if( lib.IsLoaded() )
+    {
+        wxString command;
+        bool logOnly;
+        CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
+        int res = func( m_frame, handler, title, command, m_table, logOnly );
+        if( logOnly )
+        {
+        }
+    }
+}
+
+int TableEditView::ApplyProperties( const wxAny &, bool, std::wstring & )
+{
+    return 0;
+}
+
+wxAny &TableEditView::GetProperties()
+{
+    return m_any;
 }

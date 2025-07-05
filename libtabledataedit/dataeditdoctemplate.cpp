@@ -29,6 +29,7 @@
 #include "wx/grid.h"
 #include "database.h"
 #include "configuration.h"
+#include "propertieshandlerbase.h"
 #include "mytabledefgrid.h"
 #include "tableattributes.h"
 #include "tableeditdocument.h"

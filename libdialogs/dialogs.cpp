@@ -56,6 +56,7 @@
 #include "painterobjects.h"
 #include "dialogs.h"
 #include "colorcombobox.h"
+#include "indexproperties.h"
 #include "databasetype.h"
 #include "field.h"
 #include "fieldwindow.h"

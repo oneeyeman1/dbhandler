@@ -24,7 +24,8 @@ enum
     QueryPropertiesType,
     LibraryPropertiesType,
     LibraryObjectsProperties,
-    LibraryPainterPropertiesType
+    LibraryPainterPropertiesType,
+    TablePrpertiesType
 };
 
 class
@@ -44,13 +45,16 @@ public:
     void SetType(int type) { m_object = type; };
     int GetType() const { return m_object; };
     void SetDatabase(const Database *db) { m_db = const_cast<Database *>( db ); }
+    void SetTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
     Database *GetDatabase() const { return m_db; }
+    DatabaseTable *GetTable() const { return m_table; }
     void SetFieldType(const wxString type) { m_type = type; }
     const wxString &GetFieldType() const { return m_type; }
 protected:
     int m_object;
     wxAny m_any;
     Database *m_db;
+    DatabaseTable *m_table;
     wxString m_type, m_objectName;
 };
 

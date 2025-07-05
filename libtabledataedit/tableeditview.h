@@ -27,6 +27,7 @@
 #define TYPECOLUMN                1
 
 class DBTableEdit;
+
 /*
 struct TableDefinitionLine
 {
@@ -49,7 +50,7 @@ struct TableDefinitionLine
     }
 };
 */
-class TableEditView: public wxView
+class TableEditView: public wxView, public PropertiesHandler
 {
 public:
     TableEditView() : wxView() {}
@@ -60,6 +61,8 @@ public:
     void GetTablesForView(Database *db, bool init);
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
+    virtual int ApplyProperties(const wxAny &, bool, std::wstring &) override;
+    virtual wxAny &GetProperties() override;
 protected:
     void AppendOrInsertField(TableField *it);
     void CreateMenuAndToolbar();
@@ -79,7 +82,7 @@ private:
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;
     wxToolBar *m_tb, *m_styleBar;
-    DatabaseTable *m_table;
+    DatabaseTable *m_table = nullptr;
     int m_processed;
     bool m_queryexecuting;
     wxString m_libPath;
