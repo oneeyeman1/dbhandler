@@ -23,6 +23,8 @@
 #define wxID_QUERYCANCEL          400
 #define wxID_TOP                  402
 #define wxID_BACK                 403
+#define NAMECOLUMN                0
+#define TYPECOLUMN                1
 
 class DBTableEdit;
 /*
