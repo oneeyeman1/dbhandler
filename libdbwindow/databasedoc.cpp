@@ -119,7 +119,7 @@ DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
                 table = name.substr( name.rfind( '.' ) );
             }
             m_tableNames.push_back( table.ToStdWstring() );
-            if( m_db->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), table.ToStdWstring(), errors ) )
+            if( m_db->AddDropTable( catalog.ToStdWstring(), schema.ToStdWstring(), table.ToStdWstring(), true, errors ) )
                 for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); ++it )
                     wxMessageBox( (*it) );
         }

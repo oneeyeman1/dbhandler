@@ -172,7 +172,7 @@ extern "C" WXEXPORT int SelectTablesForView(wxWindow *parent, Database *db, std:
         {
             for( auto def : cat.second )
             {
-                db->AddDropTable( cat.first.ToStdWstring(), def.schemaName, def.tableName, errors );
+                db->AddDropTable( cat.first.ToStdWstring(), def.schemaName, def.tableName, true, errors );
             }
         }
     }

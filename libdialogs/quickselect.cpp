@@ -231,7 +231,7 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             data.schema = dataItem->schema;
             {
                 wxBusyCursor wait;
-                m_db->AddDropTable( dataItem->catalog, dataItem->schema, selectedTable.ToStdWstring(), errors );
+                m_db->AddDropTable( dataItem->catalog, dataItem->schema, selectedTable.ToStdWstring(), true, errors );
             }
             wxString name;
             auto pos = selectedTable.Find( '.', true );
