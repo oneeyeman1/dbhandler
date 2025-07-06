@@ -355,7 +355,6 @@ void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
 {
     code = sqlite3_errcode( m_db );
     auto stmt = sqlite3_next_stmt( m_db, nullptr );
-    auto sql = sqlite3_sql( stmt );
     switch( code )
     {
     case 1:
@@ -1589,7 +1588,103 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-//    result = DropForeignKey( tableName, , command, )
+    std::wstring errorMessage;
+    auto res = sqlite3_exec( m_db, "PRAGMA foreign_keys = OFF", NULL, NULL, NULL );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMessage );
+        errorMsg.push_back( errorMessage );
+    }
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_exec( m_db, "BEGN", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_schema WHERE tbl_name=?", -1, &m_stmt1, NULL );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_step( m_stmt1 );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    std::wstring old_sql, sql, temp;
+    if( res == SQLITE_OK )
+    {
+        sql = sqlite3_column_text( m_stmt1, 1 );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( res == SQLITE_OK )
+    {
+        auto pos = sql.find( L"CONSTRAINT" );
+        if( pos != std::wstring::npos )
+            old_sql = sql.substr( 0, pos );
+        else
+            old_sql = sql;
+    }
+    if( res == SQLITE_OK )
+    {
+        res = sqlite3_exec( m_db, "COMMIT", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    else
+    {
+        res = sqlite3_exec( m_db, "ROLLBACK", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
+    if( res == SQLITE_OK )
+    {
+        auto res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMessage );
+            errorMsg.push_back( errorMessage );
+        }
+    }
     return result;
 }
 
