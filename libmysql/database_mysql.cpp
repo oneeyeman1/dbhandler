@@ -2275,10 +2275,9 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &tableOwner, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &UNUSED(tableOwner), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
-    return result;
+    return AddDropTable( catalog, schemaName, tableName, errorMsg );
 }
 
 bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
