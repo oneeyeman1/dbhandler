@@ -431,7 +431,7 @@ protected:
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
+//    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
 public:
     Database(const int osId, const std::wstring &desktop) : pimpl{ desktop }, m_osId( osId ) { }
@@ -456,7 +456,7 @@ public:
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) = 0;
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors) = 0;
+    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors) = 0;
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;

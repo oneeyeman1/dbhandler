@@ -2275,9 +2275,20 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &UNUSED(tableOwner), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
-    return AddDropTable( catalog, schemaName, tableName, errorMsg );
+    int result = 0;
+    long tableId;
+    std::wstring owner;
+    if( GetTableId( catalog, schemaName, tableName, tableId, errorMsg ) )
+        result = 1;
+    else
+    {
+/*        if( GetOwner( catalog, schemaName, tableName ) )
+        {
+        }}*/
+    }
+    return result;
 }
 
 bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
@@ -2468,31 +2479,6 @@ int MySQLDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 int MySQLDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    return result;
-}
-
-int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
-{
-    int result = 0;
-    long tableId;
-    std::wstring owner;
-    if( GetTableId( catalog, schemaName, tableName, tableId, errors ) )
-        result = 1;
-    else
-    {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
-        {
-            if( (*it).first == catalog &&
-               std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
-                            {
-                                return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
-                            } ) != (*it).second.end() )
-                result = 0;
-            else
-                return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
-        }
-        return AddDropTable( catalog, schemaName, tableName, L"", tableId, true, errors );
-    }
     return result;
 }
 

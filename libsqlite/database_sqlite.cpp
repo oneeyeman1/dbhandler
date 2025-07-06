@@ -1618,7 +1618,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
     }
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.GetTableName() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -1639,7 +1639,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
     std::wstring old_sql, sql, temp;
     if( res == SQLITE_OK )
     {
-        sql = sqlite3_column_text( m_stmt1, 1 );
+        sql = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt1, 1 ) ) );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -1975,7 +1975,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaNamme, const std::wstring &tableName, const std::wstring &, long, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors)
 {
     int result = 0;
     if( tableAdded )
@@ -2001,16 +2001,16 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             {
                 result = 1;
                 GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                errors.push_back( errorMessage );
             }
             else
             {
-                res3 = sqlite3_bind_text( stmt3, 2, sqlite_pimpl->m_myconv.to_bytes( schemaNamme ).c_str(), -1, SQLITE_TRANSIENT );
+                res3 = sqlite3_bind_text( stmt3, 2, sqlite_pimpl->m_myconv.to_bytes( schemaName ).c_str(), -1, SQLITE_TRANSIENT );
                 if( res3 != SQLITE_OK )
                 {
                     result = 1;
                     GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    errors.push_back( errorMessage );
                 }
                 else
                 {
@@ -2031,7 +2031,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         {
                             result = 1;
                             GetErrorMessage( res3, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            errors.push_back( errorMessage );
                             break;
                         }
                     }
@@ -2081,7 +2081,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         {
                             result = 1;
                             GetErrorMessage( res3, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            errors.push_back( errorMessage );
                             break;
                         }
                     }
@@ -2098,16 +2098,16 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 {
                     result = 1;
                     GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    errors.push_back( errorMessage );
                 }
                 else
                 {
-                    res1 = sqlite3_bind_text( stmt2, 2, sqlite_pimpl->m_myconv.to_bytes( schemaNamme.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                    res1 = sqlite3_bind_text( stmt2, 2, sqlite_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                     if( res1 != SQLITE_OK )
                     {
                         result = 1;
                         GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        errors.push_back( errorMessage );
                     }
                     else
                     {
@@ -2133,21 +2133,21 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                                 {
                                     result = 1;
                                     GetErrorMessage( res, errorMessage );
-                                    errorMsg.push_back( errorMessage );
+                                    errors.push_back( errorMessage );
                                     break;
                                 }
                                 std::wstring fieldComment = L"";
 //                            GetColumnComment( sqlite_pimpl->m_myconv.from_bytes( (const char *) tableName ), sqlite_pimpl->m_myconv.from_bytes( fieldName ), fieldComment, errorMsg );
-                                if( errorMsg.empty() )
+                                if( errors.empty() )
                                 {
                                     std::wstring type = sqlite_pimpl->m_myconv.from_bytes( fieldType );
                                     std::wstring name = sqlite_pimpl->m_myconv.from_bytes( fieldName );
-                                    TableField *field = new TableField( name, type, 0, 0, schemaNamme + L"." + tableName + L"." + name, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
-                                    if( GetFieldProperties( tableName, L"", L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errorMsg ) )
+                                    TableField *field = new TableField( name, type, 0, 0, schemaName + L"." + tableName + L"." + name, sqlite_pimpl->m_myconv.from_bytes( fieldDefaultValue ), fieldIsNull == 0 ? false: true, autoinc == 1 ? true : false, fieldPK >= 1 ? true : false, std::find( fk_names.begin(), fk_names.end(), sqlite_pimpl->m_myconv.from_bytes( fieldName ) ) != fk_names.end() );
+                                    if( GetFieldProperties( tableName, L"", L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errors ) )
                                     {
                                         result = 1;
                                         GetErrorMessage( res, errorMessage );
-                                        errorMsg.push_back( errorMessage );
+                                        errors.push_back( errorMessage );
                                         sqlite3_finalize( stmt2 );
                                         break;
                                     }
@@ -2162,7 +2162,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                             {
                                 result = 1;
                                 GetErrorMessage( res, errorMessage );
-                                errorMsg.push_back( errorMessage );
+                                errors.push_back( errorMessage );
                                 break;
                             }
                         }
@@ -2173,7 +2173,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             {
                 result = 1;
                 GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                errors.push_back( errorMessage );
             }
             sqlite3_finalize( stmt2 );
         }
@@ -2186,7 +2186,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 {
                     result = 1;
                     GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    errors.push_back( errorMessage );
                 }
                 else
                 {
@@ -2204,7 +2204,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         {
                             result = 1;
                             GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            errors.push_back( errorMessage );
                             break;
                         }
                     }
@@ -2214,14 +2214,14 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             {
                 result = 1;
                 GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                errors.push_back( errorMessage );
             }
         }
         sqlite3_finalize( stmt4 );
         if( !result )
         {
             std::wstring comment = L"";
-            DatabaseTable *table = new DatabaseTable( tableName, schemaNamme, fields, foreign_keys );
+            DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
             table->SetCatalog( catalog );
             for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
             {
@@ -2231,7 +2231,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             table->SetNumberOfFields( count1 );
             table->SetNumberOfIndexes( count2 );
             table->SetTableId( 0 );
-            if( GetTableProperties( table, errorMsg ) )
+            if( GetTableProperties( table, errors ) )
             {
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
@@ -2527,27 +2527,6 @@ int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::ws
         }
     }
     return result;
-}
-
-int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
-{
-    std::wstring name;
-    if( tableName.find( L"." ) != std::wstring::npos )
-        name = tableName.substr( tableName.find( L"." ) + 1 );
-    else
-        name = tableName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
-    {
-        if( (*it).first == catalog &&
-           std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
-                    {
-                        return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
-                    } ) != (*it).second.end() )
-            return 0;
-        else
-            return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );
-    }
-    return AddDropTable( catalog, schemaName, name, L"", 0, true, errors );;
 }
 
 int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg)

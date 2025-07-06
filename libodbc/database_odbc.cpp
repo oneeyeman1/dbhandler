@@ -5130,7 +5130,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &UNUSED(ownerName), long UNUSED(tableId), bool tableAdded, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors)
 {
     SQLRETURN ret;
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
@@ -5183,7 +5183,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     uc_to_str_cpy( catalog_name, catalog );
     if( tableAdded )
     {
-        if( GetTableOwner( catalog, schemaName, tableName, owner, errorMsg ) )
+        if( GetTableOwner( catalog, schemaName, tableName, owner, errors ) )
         {
             result = 1;
             ret = SQL_ERROR;
@@ -5195,7 +5195,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    GetErrorMessage( errors, STMT_ERROR );
                     result = 1;
                 }
                 if( !result )
@@ -5226,7 +5226,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     szTableName = nullptr;
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        GetErrorMessage( errors, STMT_ERROR );
                         result = 1;
                     }
                     if( !result )
@@ -5236,7 +5236,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLNumResultCols( m_hstmt, &numCols );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             result = 1;
                         }
                         if( !result )
@@ -5250,7 +5250,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 ret = SQLColAttribute( m_hstmt, i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
+                                    GetErrorMessage( errors, STMT_ERROR );
                                     result = 1;
                                     autoinc_fields.clear();
                                     break;
@@ -5260,7 +5260,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 ret = SQLColAttribute( m_hstmt, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
+                                    GetErrorMessage( errors, STMT_ERROR );
                                     result = 1;
                                     autoinc_fields.clear();
                                     break;
@@ -5284,13 +5284,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, CONN_ERROR );
+                                GetErrorMessage( errors, CONN_ERROR );
                                 result = 1;
                             }
                             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 result = 1;
                                 autoinc_fields.clear();
                             }
@@ -5304,7 +5304,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     autoinc_fields.clear();
                     result = 1;
                 }
@@ -5313,7 +5313,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, szPkSchema, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        GetErrorMessage( errors, STMT_ERROR );
                         autoinc_fields.clear();
                         result = 1;
                     }
@@ -5322,7 +5322,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, szPkTable, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5332,7 +5332,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, szPkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5342,7 +5342,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 5, SQL_C_WCHAR, szFkCatalog, SQL_MAX_CATALOG_NAME_LEN + 1, &cbFkCatalog );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5352,7 +5352,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, szFkTableSchema, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkSchemaName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5362,7 +5362,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 7, SQL_C_WCHAR, szFkTable, SQL_MAX_TABLE_NAME_LEN + 1, &cbFkTable );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5372,7 +5372,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 8, SQL_C_WCHAR, szFkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5382,7 +5382,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 9, SQL_C_SSHORT, &keySequence, SQL_MAX_TABLE_NAME_LEN + 1, &cbKeySequence );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5392,7 +5392,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 10, SQL_C_SSHORT, &updateRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbUpdateRule );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5402,7 +5402,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 11, SQL_C_SSHORT, &deleteRule, SQL_MAX_COLUMN_NAME_LEN + 1, &cbDeleteRule );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5412,7 +5412,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 12, SQL_C_WCHAR, szFkName, fkNameLength, &cbFkName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5425,7 +5425,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             ret = SQLForeignKeys( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5446,7 +5446,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 origFields.clear();
                                 refFields.clear();
@@ -5457,7 +5457,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 ret = SQLCloseCursor( m_hstmt );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
+                                    GetErrorMessage( errors, STMT_ERROR );
                                     autoinc_fields.clear();
                                     origFields.clear();
                                     refFields.clear();
@@ -5471,7 +5471,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                         ret = SQLForeignKeys( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                     {
-                                        GetErrorMessage( errorMsg, STMT_ERROR );
+                                        GetErrorMessage( errors, STMT_ERROR );
                                         autoinc_fields.clear();
                                         origFields.clear();
                                         refFields.clear();
@@ -5549,7 +5549,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     }
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                     {
-                                        GetErrorMessage( errorMsg, STMT_ERROR );
+                                        GetErrorMessage( errors, STMT_ERROR );
                                         autoinc_fields.clear();
                                         origFields.clear();
                                         refFields.clear();
@@ -5568,13 +5568,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
+                            GetErrorMessage( errors, CONN_ERROR );
                             result = 1;
                         }
                         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
+                            GetErrorMessage( errors, CONN_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5586,7 +5586,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     autoinc_fields.clear();
                     result = 1;
                 }
@@ -5595,7 +5595,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, pkName, SQL_MAX_COLUMN_NAME_LEN + 1, &pkLength );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        GetErrorMessage( errors, STMT_ERROR );
                         autoinc_fields.clear();
                         result = 1;
                     }
@@ -5607,7 +5607,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             ret = SQLPrimaryKeys( m_hstmt, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             result = 1;
                         }
@@ -5621,7 +5621,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 pk_fields.clear();
                                 result = 1;
@@ -5636,13 +5636,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, CONN_ERROR );
+                                GetErrorMessage( errors, CONN_ERROR );
                                 result = 1;
                             }
                             ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 pk_fields.clear();
                                 result = 1;
@@ -5660,7 +5660,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     autoinc_fields.clear();
                     pk_fields.clear();
                     result = 1;
@@ -5674,7 +5674,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLColumns( m_hstmt, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0 );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        GetErrorMessage( errors, STMT_ERROR );
                         autoinc_fields.clear();
                         pk_fields.clear();
                         result = 1;
@@ -5684,7 +5684,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLNumResultCols( m_hstmt, &numColumns );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5695,7 +5695,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, szColumnName, 256, &cbColumnName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5706,7 +5706,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 5, SQL_C_SSHORT, &DataType, 0, &cbDataType );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5717,7 +5717,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, szTypeName, 256, &cbTypeName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5728,7 +5728,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 7, SQL_C_SLONG, &ColumnSize, 0, &cbColumnSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5739,7 +5739,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 8, SQL_C_SLONG, &BufferLength, 0, &cbBufferLength );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5750,7 +5750,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 9, SQL_C_SSHORT, &DecimalDigits, 0, &cbDecimalDigits );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5761,7 +5761,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 10, SQL_C_SSHORT, &NumPrecRadix, 0, &cbNumPrecRadix );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5772,7 +5772,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 11, SQL_C_SSHORT, &Nullable, 0, &cbNullable );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5783,7 +5783,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 12, SQL_C_WCHAR, szRemarks, 256, &cbRemarks );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             result = 1;
                         }
                     }
@@ -5792,7 +5792,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 13, SQL_C_WCHAR, szColumnDefault, 256, &cbColumnDefault );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5803,7 +5803,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 14, SQL_C_SSHORT, &SQLDataType, 0, &cbSQLDataType );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5814,7 +5814,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 15, SQL_C_SSHORT, &DatetimeSubtypeCode, 0, &cbDatetimeSubtypeCode );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5825,7 +5825,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 16, SQL_C_SLONG, &CharOctetLength, 0, &cbCharOctetLength );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5836,7 +5836,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 17, SQL_C_SLONG, &OrdinalPosition, 0, &cbOrdinalPosition );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5847,7 +5847,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindCol( m_hstmt, 18, SQL_C_WCHAR, szIsNullable, 256, &cbIsNullable );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             result = 1;
@@ -5878,7 +5878,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             fields.clear();
@@ -5896,13 +5896,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     result = 1;
                 }
                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    GetErrorMessage( errors, STMT_ERROR );
                     autoinc_fields.clear();
                     pk_fields.clear();
                     fields.clear();
@@ -5918,7 +5918,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     autoinc_fields.clear();
                     pk_fields.clear();
                     fields.clear();
@@ -5933,7 +5933,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    GetErrorMessage( errors, STMT_ERROR );
                     autoinc_fields.clear();
                     pk_fields.clear();
                     fields.clear();
@@ -5946,7 +5946,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     ret = SQLDescribeParam( m_hstmt, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        GetErrorMessage( errors, STMT_ERROR );
                         autoinc_fields.clear();
                         pk_fields.clear();
                         fields.clear();
@@ -5957,7 +5957,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbSchemaName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errors, STMT_ERROR );
                             autoinc_fields.clear();
                             pk_fields.clear();
                             fields.clear();
@@ -5971,7 +5971,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                              ret = SQLDescribeParam( m_hstmt, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 pk_fields.clear();
                                 fields.clear();
@@ -5983,7 +5983,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schema_name, 0, &cbTableName );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 pk_fields.clear();
                                 fields.clear();
@@ -5995,7 +5995,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             ret = SQLExecute( m_hstmt );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errors, STMT_ERROR );
                                 autoinc_fields.clear();
                                 pk_fields.clear();
                                 fields.clear();
@@ -6008,7 +6008,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
+                                    GetErrorMessage( errors, STMT_ERROR );
                                     autoinc_fields.clear();
                                     pk_fields.clear();
                                     fields.clear();
@@ -6024,7 +6024,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     }
                                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                                     {
-                                        GetErrorMessage( errorMsg, STMT_ERROR );
+                                        GetErrorMessage( errors, STMT_ERROR );
                                         autoinc_fields.clear();
                                         pk_fields.clear();
                                         fields.clear();
@@ -6046,13 +6046,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, CONN_ERROR );
+                    GetErrorMessage( errors, CONN_ERROR );
                     result = 1;
                 }
                 ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    GetErrorMessage( errors, STMT_ERROR );
                     autoinc_fields.clear();
                     pk_fields.clear();
                     fields.clear();
@@ -6087,7 +6087,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 else*/
                 {
-                    if( GetTableProperties( new_table, errorMsg ) )
+                    if( GetTableProperties( new_table, errors ) )
                     {
                         result = 1;
                     }
@@ -6870,38 +6870,6 @@ int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstr
     }
     delete[] qry;
     qry = NULL;
-    return result;
-}
-
-int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
-{
-    int result = 0;
-    long tableId;
-    std::wstring owner;
-    if( GetTableId( catalog, schemaName, tableName, tableId, errors ) )
-    {
-        result = 1;
-    }
-    else
-    {
-        if( GetTableOwner( catalog, schemaName, tableName, owner, errors ) )
-            result = 1;
-        else
-        {
-            for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
-            {
-                if( (*it).first == catalog &&
-                   std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
-                                {
-                                    return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
-                                } ) != (*it).second.end() )
-                    result = 0;
-                else
-                    result = AddDropTable( catalog, schemaName, tableName, owner, tableId, true, errors );
-            }
-            result = AddDropTable( catalog, schemaName, tableName, owner, tableId, true, errors );
-        }
-    }
     return result;
 }
 

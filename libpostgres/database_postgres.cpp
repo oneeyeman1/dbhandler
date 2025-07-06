@@ -1532,7 +1532,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long table_idd, bool tableAdded, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors)
 {
     PGresult *res1, *res2, *res4;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId, fkMatch;
@@ -1544,14 +1544,12 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
-    std::string cat = m_pimpl->m_myconv.to_bytes( catalog.c_str() );
-    std::string sch = m_pimpl->m_myconv.to_bytes( schemaName.c_str() );
-    std::string tbl = m_pimpl->m_myconv.to_bytes( tableName.c_str() );
-    std::string own = m_pimpl->m_myconv.to_bytes( ownerName.c_str() );
-    const char *catalog_name = cat.c_str();
-    const char *schema_name = sch.c_str();
-    const char *table_name = tbl.c_str();
-    const char *table_owner = own.c_str();
+    const char *catalog_name = m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str();
+    const char *schema_name = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
+    const char *table_name = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+    std::wstring own = L"";
+    GetTableOwner( schemaName, tableName, own, errors );
+    const char *table_owner = m_pimpl->m_myconv.to_bytes( own.c_str() ).c_str();
     values1[0] = new char[strlen( schema_name ) + 1];
     values1[1] = new char[strlen( table_name ) + 1];
     strcpy( values1[0], schema_name );
@@ -1566,7 +1564,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
+        errors.push_back( L"Error executing query: " + err );
         PQclear( res1 );
         fields.erase( fields.begin(), fields.end() );
         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
@@ -1634,7 +1632,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Error executing query: " + err );
+            errors.push_back( L"Error executing query: " + err );
             PQclear( res2 );
             fields.erase( fields.begin(), fields.end() );
             foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
@@ -1670,10 +1668,10 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     autoinc = true;
                 std::wstring tableName = m_pimpl->m_myconv.from_bytes( table_name );
                 TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errorMsg ) )
+                if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                    errorMsg.push_back( err );
+                    errors.push_back( err );
                     fields.erase( fields.begin(), fields.end() );
                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     result = 1;
@@ -1694,10 +1692,10 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                         table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
                 }
                 table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
-                if( GetTableProperties( table, errorMsg ) )
+                if( GetTableProperties( table, errors ) )
                 {
                     char *err = PQerrorMessage( m_db );
-                    errorMsg.push_back( m_pimpl->m_myconv.from_bytes( err ) );
+                    errors.push_back( m_pimpl->m_myconv.from_bytes( err ) );
                     fields.erase( fields.begin(), fields.end() );
                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                     result = 1;
@@ -1710,7 +1708,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                        errorMsg.push_back( L"Error executing query: " + err );
+                        errors.push_back( L"Error executing query: " + err );
                         PQclear( res4 );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
@@ -1875,31 +1873,6 @@ int PostgresDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 int PostgresDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    return result;
-}
-
-int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errors)
-{
-    int result = 0;
-    std::wstring table_owner;
-    long table_id = 0;
-    if( GetTableOwner( schemaName, tableName, table_owner, errors ) )
-        result = 1;
-    else
-    {
-        for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
-        {
-            if( (*it).first == catalog &&
-                std::find_if( (*it).second.begin(), (*it).second.end(), [schemaName, tableName](DatabaseTable *table)
-                        {
-                            return table->GetSchemaName() == schemaName && table->GetTableName() == tableName;
-                        } ) != (*it).second.end() )
-                result = 0;
-            else
-                result = AddDropTable( catalog, schemaName, tableName, table_owner, table_id, true, errors );
-        }
-        result = AddDropTable( catalog, schemaName, tableName, table_owner, table_id, true, errors );
-    }
     return result;
 }
 
