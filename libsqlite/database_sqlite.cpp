@@ -197,7 +197,6 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
     queries.push_back( "INSERT OR IGNORE INTO \"sys.abcatedt\" VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
-    std::wstring errorMessage;
     pimpl.m_type = L"SQLite";
     pimpl.m_subtype = L"";
     pimpl.m_connectedUser = L"";
@@ -245,7 +244,6 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             {
                 GetErrorMessage( res, errorMsg );
                 res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
-                errorMsg.push_back( errorMessage );
                 result = 1;
                 sqlite3_free( err );
             }
@@ -319,7 +317,6 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     const char *query = NULL;
     if( !m_isConnected )
         return 0;
-    std::wstring errorMessage;
     if( m_stmt1 )
         res = sqlite3_finalize( m_stmt1 );
     if( m_stmt2 )
@@ -440,7 +437,6 @@ void SQLiteDatabase::GetErrorMessage(int code, std::vector<std::wstring> &errorM
 int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     char *err = nullptr;
-    std::wstring errorMessage;
     sqlite3_stmt *stmt = nullptr, *stmt1 = nullptr;
     int result = 0, res = SQLITE_OK, count = 0;
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = \'table\' OR type = \'view\';";
@@ -551,7 +547,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 
 int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring errorMessage, query;
+    std::wstring query;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
     res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, 0 );
@@ -610,7 +606,7 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
     bool exists = false;
     int res = SQLITE_OK, result = 0;
     sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage, dbIndexName;
+    std::wstring dbIndexName;
     std::wstring query = L"PRAGMA " + schemaName;
     query += L".index_list( \"%w\" );";
     char *z = sqlite3_mprintf( sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), tableName.c_str() );
@@ -665,7 +661,6 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
 #endif // __DBGTK__
     }
     sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
     int result = 0;
     std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND abt_os = ?;";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
@@ -784,7 +779,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
 #endif // __DBGTK__
     }
     char *error;
-    std::wstring errorMessage, query;
+    std::wstring query;
     std::wostringstream istr;
     bool exist;
     sqlite3_stmt *stmt = NULL;
@@ -1107,7 +1102,6 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     }
     bool result = false;
     sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage;
     std::wstring name = const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
     std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND abt_os = ?;";
@@ -1159,7 +1153,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     field->GetFieldProperties().m_display.m_format.clear();
     const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
-    std::wstring errorMessage;
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
     int labelAlignment = 0;
@@ -1300,7 +1293,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
 int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &UNUSED(foreignKeyFields), const std::wstring &refTableName, const std::vector<std::wstring> &UNUSED(refKeyFields), int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = NULL;
-    std::wstring errorMessage, sql;
+    std::wstring sql;
     char *error;
     std::vector<std::wstring> references, origFields, refFields;
     std::wstring query0 = L"PRAGMA writable_schema=true", query1 = L"PRAGMA writable_schema=false", query2 = L"BEGIN", query3;
@@ -1535,7 +1528,6 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring errorMessage;
     auto res = sqlite3_exec( m_db, "PRAGMA foreign_keys = OFF", NULL, NULL, NULL );
     if( res != SQLITE_OK )
     {
@@ -1730,7 +1722,6 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
 {
     int res = 0;
     char *error;
-    std::wstring err;
     std::wstring query = L"DROP TABLE ";
     query += tableName;
     int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query ).c_str(), 0, 0, &error );
@@ -1747,7 +1738,6 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
 {
     int res = 0;
     char *error;
-    std::wstring err;
     int result = 0;
     result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
     if( result != SQLITE_OK )
@@ -1827,7 +1817,6 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res, schema;
     unsigned int count;
-    std::wstring errorMessage;
     std::vector<std::wstring> tableNames = pimpl.GetTableNames();
     std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
     std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
@@ -1872,7 +1861,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         pimpl.m_tableDefinitions[pimpl.m_dbName] = temp;
                     }
                     m_numOfTables = count;
-                } 
+                }
                 else
                 {
                     result = 1;
@@ -1887,7 +1876,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( res, errorMsg );
             }
             sqlite3_finalize( m_stmt3 );
-            m_stmt3 = nullptr; 
+            m_stmt3 = nullptr;
         }
         else
         {
@@ -1913,7 +1902,6 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         std::vector<TableField *> fields;
         std::vector<std::wstring> fk_names, indexes;
         std::map<unsigned long,std::vector<FKField *> > foreign_keys;
-        std::wstring errorMessage;
         sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
         int res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
@@ -2212,7 +2200,6 @@ int SQLiteDatabase::GetFieldProperties (const std::wstring &table, TableField *f
 bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
-    std::wstring errorMessage;
     std::wstring query = L"SELECT 1 FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt1, NULL );
     if( res == SQLITE_OK )
@@ -2304,7 +2291,6 @@ int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::v
 {
     int result = 0, res;
     sqlite3_stmt *stmt;
-    std::wstring errorMessage;
     std::wstring query = L"SELECT * FROM pragma_database_list;";
     if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == 0 )
     {
@@ -2329,7 +2315,7 @@ int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::v
 int SQLiteDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
-    std::wstring errorMessage, query = L"SELECT * FROM " + schemaName + L"." + tableName;
+    std::wstring query = L"SELECT * FROM " + schemaName + L"." + tableName;
     if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt, NULL ) ) != 0 )
     {
         GetErrorMessage( res, errorMsg );
@@ -2341,7 +2327,6 @@ int SQLiteDatabase::PrepareStatement(const std::wstring &schemaName, const std::
 int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
-    std::wstring errorMessage;
     if( m_fieldsInRecordSet == 0 )
         m_fieldsInRecordSet = sqlite3_column_count( m_stmt );
     res = sqlite3_step( m_stmt );
@@ -2380,7 +2365,6 @@ int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<
 int SQLiteDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;
-    std::wstring errorMessage;
     if( ( res = sqlite3_finalize( m_stmt ) ) != 0 )
     {
         GetErrorMessage( res, errorMsg );
@@ -2393,7 +2377,6 @@ int SQLiteDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
 {
     std::string query = "SELECT sql FROM sqlite_master WHERE type = 'table' OR type = 'view' AND name = ?;";
-    std::wstring errorMessage;
     int result = 0, res;
     if( ( res = sqlite3_prepare_v2( m_db, query.c_str(), -1, &m_stmt, NULL ) ) != 0 )
     {
@@ -2437,7 +2420,6 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
     int result = 0;
     char *err;
     sqlite3_stmt *stmt;
-    std::wstring errorMessage;
     auto query = sqlite3_mprintf( "ATTACH %Q AS %w", sqlite_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str(), sqlite_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() );
     auto res = sqlite3_exec( m_db, query, NULL, NULL, &err );
     if( res != SQLITE_OK )
@@ -2501,7 +2483,6 @@ int SQLiteDatabase::AddUpdateFormat()
 int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
 {
     auto result = 0;
-    std::wstring errorMessage;
     std::wstring query = L"SELECT * FROM \"sys.abcatvld\";";
     auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, nullptr );
     if( res != SQLITE_OK )
@@ -2541,7 +2522,6 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
 int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring errorMessage;
     std::wstring query = L"";
     if( isNew )
         query = L"INSERT INTO \"sys.abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( ?, ?, ?, 0, ?)";
