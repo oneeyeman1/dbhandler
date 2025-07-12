@@ -5,6 +5,7 @@
 
 wxGridActivationResult MyTableTypeEditor::TryActivate(int row, int col, wxGrid* grid, const wxGridActivationSource& actSource)
 {
+//    m_control = new TypeComboBox( parent, m_dbType.ToStdWstring(), m_dbSubType.ToStdWstring(), m_initial.ToStdWstring() );
     switch ( actSource.GetOrigin() )
     {
     case wxGridActivationSource::Program:
@@ -28,10 +29,9 @@ wxGridCellChoiceEditor *MyTableTypeEditor::Clone() const
 {
     return new MyTableTypeEditor();
 }
-/*
-void MyTableTypeEditor::Create(wxWindow *parent, wxWindowID id, wxEvtHandler *handler)
+
+void MyTableTypeEditor::StartingClick()
 {
-    m_control = new TypeComboBox( parent, m_dbType.ToStdWstring(), m_dbSubType.ToStdWstring(), m_initial.ToStdWstring() );
-    wxGridCellEditor::Create( parent, wxID_ANY, handler );
+    wxGridCellEditor::StartingClick();
+    dynamic_cast<wxComboBox *>( GetWindow() )->Popup();
 }
-*/

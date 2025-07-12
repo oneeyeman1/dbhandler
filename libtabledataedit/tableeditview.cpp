@@ -605,41 +605,10 @@ void TableEditView::AppendOrInsertField(TableField *it)
     m_grid->SetCellValue( rows - 1, 0, name );
     m_grid->SetCellValue( rows - 1, 1, fieldType );
     m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
-    
-    auto editor = new MyTableTypeEditor( m_dbType, m_dbSubtype, fieldType );
-    editor->Create( m_grid, wxID_ANY, nullptr );
-    auto rect = m_grid->CellToRect( rows - 1, 1 );
-    wxGridWindow *gridWindow = m_grid->CellToGridWindow( rows - 1, 1 );
-    // convert to scrolled coords
-    m_grid->CalcGridWindowScrolledPosition( rect.x, rect.y, &rect.x, &rect.y, gridWindow );
-#ifdef __WXQT__
-    // Substract 1 pixel in every dimension to fit in the cell area.
-    // If not, Qt will draw the control outside the cell.
-    // TODO: Check offsets under Qt.
-    rect.Deflate(1, 1);
-#endif
-    if ( editor->GetWindow() && editor->GetWindow()->GetParent() != gridWindow )
-    {
-     	editor->GetWindow()->Reparent( gridWindow );
-    }
-    editor->SetSize( rect );
-    rect = editor->GetWindow()->GetRect();
-    const wxSize sizeMax = gridWindow->GetClientSize();
-    if( !wxRect( sizeMax ).Contains( rect ) )
-    {
-        if( rect.x < 0 )
-            rect.x = 0;
-        if( rect.y < 0 )
-            rect.y = 0;
-        if( rect.x > sizeMax.x - rect.width )
-            rect.x = sizeMax.x - rect.width;
-        if( rect.y > sizeMax.y - rect.height )
-            rect.y = sizeMax.y - rect.height;
 
-        editor->GetWindow()->Move( rect.x, rect.y );
-    }
+    m_grid->SetCellEditor( rows - 1, 1, new MyTableTypeEditor( m_dbType, m_dbSubtype, fieldType ) );
+    m_grid->GetCellEditor( rows - 1, 1 )->SetControl( new TypeComboBox( m_grid, m_dbType.ToStdWstring(), m_dbSubtype.ToStdWstring(), fieldType.ToStdWstring() ) );
 
-    m_grid->SetCellEditor( rows - 1, 1, editor );
     if( width > 0 )
         m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
     else if( !tempWidth.empty() )
