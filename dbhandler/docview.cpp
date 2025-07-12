@@ -37,6 +37,7 @@
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
 #include "wx/xml/xml.h"
+#include "wx/uilocale.h"
 #include "wx/fswatcher.h"
 #include "database.h"
 #include "configuration.h"
@@ -99,6 +100,7 @@ bool MyApp::OnInit()
         return false;
 
     ::wxInitAllImageHandlers();
+    wxUILocale::UseDefault();
 
     // Fill in the application information fields before creating wxConfig.
     SetVendorName( "wxWidgets" );
