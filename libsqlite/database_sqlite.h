@@ -40,7 +40,7 @@ public:
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
-    void GetErrorMessage(int code, std::wstring &errorMsg);
+    void GetErrorMessage(int code, std::vector<std::wstring> &errorMsg);
     void SetFullType(TableField *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
