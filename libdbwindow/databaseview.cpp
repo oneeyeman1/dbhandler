@@ -355,11 +355,11 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
         m_edit = new wxStyledTextCtrl( m_frame );
         std::wstring type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
         std::wstring subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
-        if( type == "MySQL" || ( type == "ODBC" && subtype == "MySQL" ) )
+        if( type == L"MySQL" || ( type == L"ODBC" && subtype == L"MySQL" ) )
             m_edit->SetLexer( wxSTC_LEX_MYSQL );
-        if( type == "Microsoft SQL Server" || ( type == "ODBC" && subtype == "Microsoft SQL Server" ) )
+        if( type == L"Microsoft SQL Server" || ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) )
             m_edit->SetLexer( wxSTC_LEX_MSSQL );
-        if( type == "SQLite" )
+        if( type == L"SQLite" )
             m_edit->SetLexer( wxSTC_LEX_SQL );
         sizer->Add( m_edit, 1, wxEXPAND, 0 );
         m_edit->Show( false );

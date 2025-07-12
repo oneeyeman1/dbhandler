@@ -1370,12 +1370,12 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
     {
         if( root->GetDbType() != m_dbType )
         {
-            wxMessageBox( _( wxString::Format( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s", m_dbType, root->GetDbType() ) ) );
+            wxMessageBox( wxString::Format(  _( "The database type you are connected to does not match the database type of the qery you are loading. Connected to %s, loading %s" ), m_dbType, root->GetDbType() ) );
             success = false;
         }
         else if( root->GetDbName() != m_dbName )
         {
-            wxMessageBox( _( wxString::Format( "The name of the database you are connected to does not match the name of the database of the query you are loading. Connected to %s, loading %s", m_dbName, root->GetDbName() ) ) );
+            wxMessageBox( wxString::Format( _( "The name of the database you are connected to does not match the name of the database of the query you are loading. Connected to %s, loading %s"  ), m_dbName, root->GetDbName() ) );
             success = false;
         }
         else
