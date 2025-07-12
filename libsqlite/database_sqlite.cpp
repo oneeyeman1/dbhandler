@@ -209,8 +209,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     int res = sqlite3_open( sqlite_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str(), &m_db );
     if( res != SQLITE_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     else
@@ -218,8 +217,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &err );
         if( res != SQLITE_OK )
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
             result = 1;
             sqlite3_free( err );
         }
@@ -237,8 +235,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                 res = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &err );
                 if( res != SQLITE_OK )
                 {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                     res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
                     result = 1;
                     sqlite3_free( err );
@@ -246,7 +243,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             }
             else
             {
-                GetErrorMessage( res, errorMessage );
+                GetErrorMessage( res, errorMsg );
                 res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
                 errorMsg.push_back( errorMessage );
                 result = 1;
@@ -255,8 +252,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         }
         if( res != SQLITE_OK )
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
             res = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, NULL );
             result = 1;
             sqlite3_free( err );
@@ -271,8 +267,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                 if( res != SQLITE_OK )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
                 else
                 {
@@ -286,15 +281,13 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                         else
                         {
                             result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            GetErrorMessage( res, errorMsg );
                         }
                     }
                     else
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                     }
                     sqlite3_finalize( stmt );
                 }
@@ -306,8 +299,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         if( res )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
         else
             GetServerVersion( errorMsg );
@@ -337,8 +329,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     res = sqlite3_close( m_db );
     if( res != SQLITE_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
 //  For debugging purposes - helps find non-closed statements
         sqlite3_stmt *statement = sqlite3_next_stmt( m_db, NULL );
@@ -351,95 +342,97 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-void SQLiteDatabase::GetErrorMessage(int code, std::wstring &errorMsg)
+void SQLiteDatabase::GetErrorMessage(int code, std::vector<std::wstring> &errorMsg)
 {
     code = sqlite3_errcode( m_db );
     auto stmt = sqlite3_next_stmt( m_db, nullptr );
+    if( stmt )
+        errorMsg.push_back( sqlite_pimpl->m_myconv.from_bytes( sqlite3_sql( stmt ) ) );
     switch( code )
     {
     case 1:
-        errorMsg = L"SQL error";
+        errorMsg.push_back( L"SQL error" );
         break;
     case 2:
-        errorMsg = L"Internal logic error";
+        errorMsg.push_back( L"Internal logic error" );
         break;
     case 3:
-        errorMsg = L"Access permission denied";
+        errorMsg.push_back( L"Access permission denied" );
         break;
     case 4:
-        errorMsg = L"Callback routine requested an abort";
+        errorMsg.push_back( L"Callback routine requested an abort" );
         break;
     case 5:
-        errorMsg = L"The database is locked";
+        errorMsg.push_back( L"The database is locked" );
         break;
     case 6:
-        errorMsg = L"The table is locked";
+        errorMsg.push_back( L"The table is locked" );
         break;
     case 7:
-        errorMsg = L"No more memory";
+        errorMsg.push_back( L"No more memory" );
         break;
     case 8:
-        errorMsg = L"Database is read-only. No write permited";
+        errorMsg.push_back( L"Database is read-only. No write permited" );
         break;
     case 9:
-        errorMsg = L"Operation terminated.";
+        errorMsg.push_back( L"Operation terminated." );
         break;
     case 10:
-        errorMsg = L"Disk I/O error occured";
+        errorMsg.push_back( L"Disk I/O error occured" );
         break;
     case 11:
-        errorMsg = L"The database is malformed";
+        errorMsg.push_back( L"The database is malformed" );
         break;
     case 12:
-        errorMsg = L"Unknown opcode in sqlite3_file_control";
+        errorMsg.push_back( L"Unknown opcode in sqlite3_file_control" );
         break;
     case 13:
-        errorMsg = L"Insertion failed because the database is full";
+        errorMsg.push_back( L"Insertion failed because the database is full" );
         break;
     case 14:
-        errorMsg = L"Unable to open the database";
+        errorMsg.push_back( L"Unable to open the database" );
         break;
     case 15:
-        errorMsg = L"Database lock protocol error";
+        errorMsg.push_back( L"Database lock protocol error" );
         break;
     case 16:
-        errorMsg = L"Database is empty";
+        errorMsg.push_back( L"Database is empty" );
         break;
     case 17:
-        errorMsg = L"The database schema changed";
+        errorMsg.push_back( L"The database schema changed" );
         break;
     case 18:
-        errorMsg = L"String or BLOB exceeds size limit";
+        errorMsg.push_back( L"String or BLOB exceeds size limit" );
         break;
     case 19:
-        errorMsg = L"Abort due to constraint violation";
+        errorMsg.push_back( L"Abort due to constraint violation" );
         break;
     case 20:
-        errorMsg = L"Data type mismatch";
+        errorMsg.push_back( L"Data type mismatch" );
         break;
     case 21:
-        errorMsg = L"Library used incorrectly";
+        errorMsg.push_back( L"Library used incorrectly" );
         break;
     case 22:
-        errorMsg = L"Feature is not supported by OS host";
+        errorMsg.push_back( L"Feature is not supported by OS host" );
         break;
     case 23:
-        errorMsg = L"Authorization denied";
+        errorMsg .push_back( L"Authorization denied" );
         break;
     case 24:
-        errorMsg = L"Auxiliary database format error";
+        errorMsg.push_back( L"Auxiliary database format error" );
         break;
     case 25:
-        errorMsg = L"Bind parameter out of range";
+        errorMsg.push_back( L"Bind parameter out of range" );
         break;
     case 26:
-        errorMsg = L"Not SQLite database";
+        errorMsg.push_back( L"Not SQLite database" );
         break;
     case 27:
-        errorMsg = L"Notification from the log function";
+        errorMsg.push_back( L"Notification from the log function" );
         break;
     case 28:
-        errorMsg = L"Warning from the log function";
+        errorMsg.push_back( L"Warning from the log function" );
         break;
     }
 }
@@ -468,15 +461,13 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     res = sqlite3_busy_timeout( m_db, 6000 );
     if( res != SQLITE_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &err );
     if( res != SQLITE_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     sqlite3_free( err );
@@ -485,8 +476,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt1, 0 );
         if( res != SQLITE_OK )
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
             result = 1;
         }
         if( !result )
@@ -502,8 +492,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         res = sqlite3_bind_text( stmt1, 1, tableName, -1, SQLITE_STATIC );
                         if( res != SQLITE_OK )
                         {
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            GetErrorMessage( res, errorMsg );
                             result = 1;
                         }
                         else
@@ -511,8 +500,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             res = sqlite3_step( stmt1 );
                             if( res != SQLITE_DONE )
                             {
-                                GetErrorMessage( res, errorMessage );
-                                errorMsg.push_back( errorMessage );
+                                GetErrorMessage( res, errorMsg );
                                 result = 1;
                             }
                         }
@@ -525,8 +513,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     else
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                         break;
                     }
                 }
@@ -534,8 +521,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
     }
@@ -548,8 +534,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
@@ -558,8 +543,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     return result;
@@ -592,15 +576,13 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
                 if( res != SQLITE_DONE )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
             }
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
             sqlite3_finalize( stmt );
             if( result == 1 )
@@ -611,16 +593,14 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
             if( res != SQLITE_OK )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
     }
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     return result;
 }
@@ -655,8 +635,7 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
                 break;
             }
         }
@@ -664,8 +643,7 @@ bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wst
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
     return exists;
@@ -763,8 +741,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         else
                         {
                             result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            GetErrorMessage( res, errorMsg );
                         }
                     }
                 }
@@ -772,22 +749,19 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         else
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
     table->GetTableProperties().fullName = table->GetSchemaName() + L"." + table->GetTableName();
@@ -1078,8 +1052,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 int res = sqlite3_exec( m_db, "BEGIN EXCLUSIVE TRANSACTION", NULL, NULL, &error );
                 if( res != SQLITE_OK )
                 {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                     result = 1;
                 }
                 else
@@ -1091,15 +1064,13 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                         if( res != SQLITE_DONE )
                         {
                             result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            GetErrorMessage( res, errorMsg );
                         }
                     }
                     else
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                     }
                     sqlite3_finalize( stmt );
                     if( result == 0 )
@@ -1109,8 +1080,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                     res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), NULL, NULL, 0 );
                     if( res != SQLITE_OK )
                     {
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                         result = 1;
                     }
                 }
@@ -1158,32 +1128,27 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
                         result = true;
                     else if( res != SQLITE_DONE )
                     {
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                     }
                 }
                 else
                 {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
             }
             else
             {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         else
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
     return result;
@@ -1239,8 +1204,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                     else if( res != SQLITE_DONE )
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                     }
                     else
                     {
@@ -1256,29 +1220,25 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 else
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
             }
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         else
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
     res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
@@ -1318,23 +1278,20 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 else if( res != SQLITE_DONE )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
             }
         }
         else
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
     return result;
@@ -1361,8 +1318,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
             sqlite3_free( error );
         }
     }
@@ -1373,8 +1329,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
             sqlite3_free( error );
         }
     }
@@ -1385,8 +1340,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
         else
         {
@@ -1400,8 +1354,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                 else
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                     break;
                 }
             }
@@ -1504,8 +1457,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                     if( res != SQLITE_OK )
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                     }
                     else
                     {
@@ -1513,8 +1465,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                         if( res != SQLITE_OK )
                         {
                             result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errorMsg.push_back( errorMessage );
+                            GetErrorMessage( res, errorMsg );
                         }
                         else
                         {
@@ -1522,8 +1473,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                             if( res != SQLITE_OK )
                             {
                                 result = 1;
-                                GetErrorMessage( res, errorMessage );
-                                errorMsg.push_back( errorMessage );
+                                GetErrorMessage( res, errorMsg );
                             }
                             else
                             {
@@ -1531,8 +1481,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                                 if( res != SQLITE_DONE )
                                 {
                                     result = 1;
-                                    GetErrorMessage( res, errorMessage );
-                                    errorMsg.push_back( errorMessage );
+                                    GetErrorMessage( res, errorMsg );
                                 }
                             }
                         }
@@ -1547,8 +1496,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                     if( res != SQLITE_OK )
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                         sqlite3_free( error );
                     }
                 }
@@ -1564,8 +1512,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                     if( res != SQLITE_OK )
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errorMsg.push_back( errorMessage );
+                        GetErrorMessage( res, errorMsg );
                         sqlite3_free( error );
                     }
                     else
@@ -1593,8 +1540,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
     if( res != SQLITE_OK )
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     if( res == SQLITE_OK )
     {
@@ -1602,8 +1548,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( res == SQLITE_OK )
@@ -1612,8 +1557,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( res == SQLITE_OK )
@@ -1622,8 +1566,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( res == SQLITE_OK )
@@ -1632,8 +1575,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     std::wstring old_sql, sql, temp;
@@ -1643,8 +1585,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( res == SQLITE_OK )
@@ -1661,8 +1602,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
@@ -1671,18 +1611,16 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( res == SQLITE_OK )
     {
-        auto res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
+        res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", NULL, NULL, NULL );
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     return result;
@@ -1798,8 +1736,7 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     int result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query ).c_str(), 0, 0, &error );
     if( result != SQLITE_OK )
     {
-        GetErrorMessage( result, err );
-        errorMsg.push_back( err );
+        GetErrorMessage( result, errorMsg );
         res = 1;
         sqlite3_free( error );
     }
@@ -1815,8 +1752,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
     if( result != SQLITE_OK )
     {
-        GetErrorMessage( result, err );
-        errorMsg.push_back( err );
+        GetErrorMessage( result, errorMsg );
         res = 1;
         sqlite3_free( error );
     }
@@ -1852,8 +1788,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), NULL, NULL, &error );
             if( result != SQLITE_OK )
             {
-                GetErrorMessage( result, err );
-                errorMsg.push_back( err );
+                GetErrorMessage( result, errorMsg );
                 res = 1;
                 sqlite3_free( error );
             }
@@ -1864,8 +1799,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
             result = sqlite3_exec( m_db, "COMMIT", NULL, NULL, &error );
         if( result != SQLITE_OK )
         {
-            GetErrorMessage( result, err );
-            errorMsg.push_back( err );
+            GetErrorMessage( result, errorMsg );
             res = 1;
             sqlite3_free( error );
         }
@@ -1942,8 +1876,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 else
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
                 sqlite3_finalize( m_stmt3 );
                 m_stmt3 = NULL;
@@ -1951,8 +1884,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
             sqlite3_finalize( m_stmt3 );
             m_stmt3 = nullptr; 
@@ -1960,15 +1892,13 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         else
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( m_stmt1 );
     m_stmt1 = NULL;
@@ -2000,8 +1930,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             if( res3 != SQLITE_OK )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errors.push_back( errorMessage );
+                GetErrorMessage( res, errors );
             }
             else
             {
@@ -2009,8 +1938,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 if( res3 != SQLITE_OK )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errors.push_back( errorMessage );
+                    GetErrorMessage( res, errors );
                 }
                 else
                 {
@@ -2030,8 +1958,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         else
                         {
                             result = 1;
-                            GetErrorMessage( res3, errorMessage );
-                            errors.push_back( errorMessage );
+                            GetErrorMessage( res3, errors );
                             break;
                         }
                     }
@@ -2080,8 +2007,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         else
                         {
                             result = 1;
-                            GetErrorMessage( res3, errorMessage );
-                            errors.push_back( errorMessage );
+                            GetErrorMessage( res3, errors );
                             break;
                         }
                     }
@@ -2097,8 +2023,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 if( res1 != SQLITE_OK )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errors.push_back( errorMessage );
+                    GetErrorMessage( res, errors );
                 }
                 else
                 {
@@ -2106,8 +2031,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                     if( res1 != SQLITE_OK )
                     {
                         result = 1;
-                        GetErrorMessage( res, errorMessage );
-                        errors.push_back( errorMessage );
+                        GetErrorMessage( res, errors );
                     }
                     else
                     {
@@ -2132,8 +2056,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                                 if( res != SQLITE_OK )
                                 {
                                     result = 1;
-                                    GetErrorMessage( res, errorMessage );
-                                    errors.push_back( errorMessage );
+                                    GetErrorMessage( res, errors );
                                     break;
                                 }
                                 std::wstring fieldComment = L"";
@@ -2146,8 +2069,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                                     if( GetFieldProperties( tableName, L"", L"", sqlite_pimpl->m_myconv.from_bytes( fieldName ), field, errors ) )
                                     {
                                         result = 1;
-                                        GetErrorMessage( res, errorMessage );
-                                        errors.push_back( errorMessage );
+                                        GetErrorMessage( res, errors );
                                         sqlite3_finalize( stmt2 );
                                         break;
                                     }
@@ -2161,8 +2083,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                             else
                             {
                                 result = 1;
-                                GetErrorMessage( res, errorMessage );
-                                errors.push_back( errorMessage );
+                                GetErrorMessage( res, errors );
                                 break;
                             }
                         }
@@ -2172,8 +2093,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errors.push_back( errorMessage );
+                GetErrorMessage( res, errors );
             }
             sqlite3_finalize( stmt2 );
         }
@@ -2185,8 +2105,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 if( res4 != SQLITE_OK )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errors.push_back( errorMessage );
+                    GetErrorMessage( res, errors );
                 }
                 else
                 {
@@ -2203,8 +2122,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         else
                         {
                             result = 1;
-                            GetErrorMessage( res, errorMessage );
-                            errors.push_back( errorMessage );
+                            GetErrorMessage( res, errors );
                             break;
                         }
                     }
@@ -2213,8 +2131,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errors.push_back( errorMessage );
+                GetErrorMessage( res, errors );
             }
         }
         sqlite3_finalize( stmt4 );
@@ -2315,26 +2232,22 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
                 }
                 else
                 {
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                 }
             }
             else
             {
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         else
         {
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     else
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( m_stmt1 );
     return exist;
@@ -2365,8 +2278,7 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
                     }
                     else
                     {
-                        GetErrorMessage( res, error );
-                        errorMsg.push_back( error );
+                        GetErrorMessage( res, errorMsg );
                         result = 1;
                         break;
                     }
@@ -2375,15 +2287,13 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
         }
         else
         {
-            GetErrorMessage( res, error );
-            errorMsg.push_back( error );
+            GetErrorMessage( res, errorMsg );
             result = 1;
         }
     }
     else
     {
-        GetErrorMessage( res, error );
-        errorMsg.push_back( error );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     sqlite3_finalize( stmt );
@@ -2410,8 +2320,7 @@ int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::v
     }
     else
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     return result;
@@ -2423,8 +2332,7 @@ int SQLiteDatabase::PrepareStatement(const std::wstring &schemaName, const std::
     std::wstring errorMessage, query = L"SELECT * FROM " + schemaName + L"." + tableName;
     if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt, NULL ) ) != 0 )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     return result;
@@ -2463,8 +2371,7 @@ int SQLiteDatabase::EditTableData(std::vector<DataEditFiield> &row, std::vector<
         result = NO_MORE_ROWS;
     else
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     return result;
@@ -2476,8 +2383,7 @@ int SQLiteDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     if( ( res = sqlite3_finalize( m_stmt ) ) != 0 )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     m_fieldsInRecordSet = 0;
@@ -2491,8 +2397,7 @@ int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::ws
     int result = 0, res;
     if( ( res = sqlite3_prepare_v2( m_db, query.c_str(), -1, &m_stmt, NULL ) ) != 0 )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
     }
     else
@@ -2501,8 +2406,7 @@ int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::ws
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
         else
         {
@@ -2513,8 +2417,7 @@ int SQLiteDatabase::GetTableCreationSyntax(const std::wstring tableName, std::ws
                 if( res != SQLITE_ROW )
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                     found = true;
                 }
                 else
@@ -2539,8 +2442,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
     auto res = sqlite3_exec( m_db, query, NULL, NULL, &err );
     if( res != SQLITE_OK )
     {
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
         result = 1;
         sqlite3_free( err );
     }
@@ -2565,8 +2467,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
                 else
                 {
                     result = 1;
-                    GetErrorMessage( res, errorMessage );
-                    errorMsg.push_back( errorMessage );
+                    GetErrorMessage( res, errorMsg );
                     break;
                 }
             }
@@ -2574,8 +2475,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
         else
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
         sqlite3_finalize( stmt );
     }
@@ -2607,8 +2507,7 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
     if( res != SQLITE_OK )
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     else
     {
@@ -2631,8 +2530,7 @@ int SQLiteDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
             else
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
     }
@@ -2653,8 +2551,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
     if( res != SQLITE_OK )
     {
         result = 1;
-        GetErrorMessage( res, errorMessage );
-        errorMsg.push_back( errorMessage );
+        GetErrorMessage( res, errorMsg );
     }
     else
     {
@@ -2662,8 +2559,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
         if( !result )
         {
@@ -2671,8 +2567,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
             if( res != SQLITE_OK )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         if( !result )
@@ -2681,8 +2576,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
             if( res != SQLITE_OK )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         if( !result )
@@ -2691,8 +2585,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
             if( res != SQLITE_OK )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         if( !result )
@@ -2701,16 +2594,14 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
             if( res != SQLITE_DONE )
             {
                 result = 1;
-                GetErrorMessage( res, errorMessage );
-                errorMsg.push_back( errorMessage );
+                GetErrorMessage( res, errorMsg );
             }
         }
         sqlite3_finalize( m_stmt );
         if( res != SQLITE_OK )
         {
             result = 1;
-            GetErrorMessage( res, errorMessage );
-            errorMsg.push_back( errorMessage );
+            GetErrorMessage( res, errorMsg );
         }
     }
     return result;
