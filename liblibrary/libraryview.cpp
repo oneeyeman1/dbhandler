@@ -753,7 +753,7 @@ void LibraryViewPainter::OnLibraryCreate(wxCommandEvent &WXUNUSED(event))
 void LibraryViewPainter::OnLibraryDelete(wxCommandEvent &WXUNUSED(event))
 {
     wxDirItemData *name = (wxDirItemData *)m_tree->GetItemData( m_tree->GetSelection() );
-    auto res = wxMessageBox( _( "Delete library " + name->m_path + "?" ), _( "Delete Library" ), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT );
+    auto res = wxMessageBox( _( "Delete library " ) + name->m_path + _( "?" ), _( "Delete Library" ), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT );
     if( res == wxYES )
         wxMessageBox( "Deleting" );
 }

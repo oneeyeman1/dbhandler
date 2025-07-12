@@ -380,7 +380,7 @@ void RetrievalArguments::OnOkVerify(wxCommandEvent &WXUNUSED(event))
     {
         if( it->m_name->GetValue().IsEmpty() )
         {
-            wxMessageBox( _( wxString::Format( "Line %d has an invalid name and/or length", line ) ), _( "Query" ), wxICON_ERROR );
+            wxMessageBox( wxString::Format( _( "Line %d has an invalid name and/or length" ), line ), _( "Query" ), wxICON_ERROR );
             success = false;
             break;
         }

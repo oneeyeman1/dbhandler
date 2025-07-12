@@ -35,7 +35,7 @@ JointType::JointType(wxWindow* parent, wxWindowID id, const wxString& title, con
     m_refField = refField;
     // begin wxGlade: MyDialog::MyDialog
     m_panel = new wxPanel( this, wxID_ANY );
-    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " + m_refTable + " and " + m_origTable + " where") );
+    m_label = new wxStaticText( m_panel, wxID_ANY, _( "Join rows in " ) + m_refTable + _( " and " ) + m_origTable + _( " where" ) );
     m_OK = new wxButton( m_panel, wxID_OK, _( "OK" ) );
     m_joinType = new wxListCtrl( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER | wxLC_SINGLE_SEL );
     m_Cancel = new wxButton( m_panel, wxID_CANCEL, _( "Cancel" ) );
