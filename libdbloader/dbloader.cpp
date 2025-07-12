@@ -21,6 +21,7 @@
 #include <map>
 #include <vector>
 #include <locale>
+#include <memory>
 #include <codecvt>
 #include <algorithm>
 #ifdef _IODBCUNIX_FRAMEWORK
