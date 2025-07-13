@@ -4800,7 +4800,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC dbc;
     SQLWCHAR outConnect[1024];
-    SQLWCHAR *command = nullptr;
+    SQLWCHAR *command = new SQLWCHAR[1024];
     int result = 0, ret;
     if( !m_isConnected )
         return result;
@@ -4883,27 +4883,17 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             if( !result && ret != SQL_NO_DATA )
             {
                 SQLLEN indicator;
-                if( SQLGetData( stmt, 1, SQL_C_WCHAR, command, 0, &indicator ) == SQL_SUCCESS_WITH_INFO )
+                ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, 1024, &indicator );
+                while( ret == SQL_SUCCESS_WITH_INFO )
                 {
+                    str_to_uc_cpy( strCommand, command );
                     if( indicator == SQL_NO_TOTAL )
                         indicator = 1024;
-                    command = new SQLWCHAR[indicator];
-                    ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, indicator, &indicator );
-                    while( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        str_to_uc_cpy( strCommand, command );
-                        if( indicator == SQL_NO_TOTAL )
-                            indicator = 1024;
-                        ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, indicator, &indicator );
-                        count++;
-                    }
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-                        result = 1;
-                    }
+                    memset( command, '\0', 1024 );
+                    ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, 1024, &indicator );
+                    count++;
                 }
-                else
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                     result = 1;
