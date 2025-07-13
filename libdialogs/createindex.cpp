@@ -367,7 +367,7 @@ void CreateIndex::GenerateQuery()
         m_command += L"UNIQUE ";
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"Microsoft SQL Server" ) || m_dbType == L"Microsoft SQL Server" )
     {
-        m_command += m_clustered.ToStdWstring() + " ";
+        m_command += m_clustered.ToStdWstring() + L" ";
     }
 /*    if( ( m_dbType == L"ODBC" && m_dbSubType == L"MySQL" ) || m_dbType == L"MySQL" )
     {
@@ -793,3 +793,4 @@ void CreateIndex::OnPostgresFieldSelected(wxPropertyGridEvent &event)
         }
     }
 }
+
