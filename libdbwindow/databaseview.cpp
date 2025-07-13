@@ -268,7 +268,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     else
     {
-        title = "Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
+        title = L"Database - " + wxDynamicCast( GetDocument(), DrawingDocument )->GetDatabase()->GetTableVector().m_dbName;
     }
     wxPoint pos;
 #ifdef __WXOSX__
@@ -1092,9 +1092,9 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     const DatabaseTable *dbTable = (*it)->GetTable();
                     for( std::vector<TableField *>::const_iterator it1 = dbTable->GetFields().begin(); it1 < dbTable->GetFields().end(); ++it1 )
                     {
-                        long item = m_page3->GetSourceList()->InsertItem( i++, "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"" );
+                        long item = m_page3->GetSourceList()->InsertItem( i++, L"\"" + dbTable->GetTableName() + L"\".\"" + (*it1)->GetFieldName() + L"\"" );
                         m_page3->GetSourceList()->SetItemData( item, item );
-                        GetDocument()->AddGroupByAvailableField( "\"" + dbTable->GetTableName() + "\".\"" + (*it1)->GetFieldName() + "\"", item );
+                        GetDocument()->AddGroupByAvailableField( L"\"" + dbTable->GetTableName() + L"\".\"" + (*it1)->GetFieldName() + L"\"", item );
                     }
                 }
                 m_page3->GetSourceList()->SetColumnWidth( 0, m_page3->GetSourceList()->GetSize().GetWidth() );
@@ -1358,7 +1358,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     {
         if( GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType() == L"SQLite" )
         {
-            wxString name = m_selectTableName[0]->GetSchemaName() + "." + m_selectTableName[0]->GetTableName();
+            wxString name = m_selectTableName[0]->GetSchemaName() + L"." + m_selectTableName[0]->GetTableName();
             tables[m_selectTableName[0]->GetSchemaName()].push_back( TableDefinition( L"", m_selectTableName[0]->GetSchemaName(), m_selectTableName[0]->GetTableName() ) );
         }
         else
@@ -1798,7 +1798,7 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName)
 {
     TableField *fld = const_cast<FieldShape &>( field ).GetField();
-    wxString name = tableName + "." + fld->GetFieldName();
+    wxString name = tableName + L"." + fld->GetFieldName();
     name = "\"" + name;
     name = name + "\"";
     wxString query = m_page6->GetSyntaxCtrl()->GetValue();
@@ -1824,11 +1824,11 @@ void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAd
             if( queryFields.size() == 1 )
             {
                 query.Replace( "<not specified>", name + " " );
-                query.Replace( "\n", "(" + fld->GetFieldName() + ")\n", false );
+                query.Replace( L"\n", L"(" + fld->GetFieldName() + L")\n", false );
             }
             else
             {
-                query.Replace( ")\n", ", " + fld->GetFieldName() + ")\n", false );
+                query.Replace( L")\n", L", " + fld->GetFieldName() + L")\n", false );
                 query.Replace( "\nFROM", ",\n          " + name + "\nFROM" );
             }
         }
@@ -1995,7 +1995,7 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const l
         query = query.substr( query.find( "\n" ) + 1 );
         result += "FROM ";
         if( sign == 1 )
-            result += const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " LEFT OUTER JOIN " + type->GetRefTable() + " ON " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() + " = " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn();
+            result += const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + L" LEFT OUTER JOIN " + type->GetRefTable() + L" ON " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + L"." + type->GetLocalColumn() + L" = " + type->GetRefTable() + L"." + const_cast<QueryConstraint *>( type )->GetRefColumn();
         else
             result += type->GetRefTable() + " LEFT OUTER JOIN " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + " ON " + type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() + " = " + const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn();
         query = query.substr( query.find( "WHERE" ) );
@@ -2038,8 +2038,8 @@ void DrawingView::UpdateQueryFromSignChange(const QueryConstraint *type, const l
         while( res )
         {
             auto temp1 = query.substr( 0, query.find( ' ' ) );
-            res = ( temp1 == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + "." + type->GetLocalColumn() ) ||
-                  ( temp1 == type->GetRefTable() + "." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
+            res = ( temp1 == const_cast<DatabaseTable *>( type->GetFKTable() )->GetTableName() + L"." + type->GetLocalColumn() ) ||
+                  ( temp1 == type->GetRefTable() + L"." + const_cast<QueryConstraint *>( type )->GetRefColumn() );
             if( res )
             {
                 result += temp1;

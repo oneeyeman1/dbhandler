@@ -345,7 +345,7 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_grid->Freeze();
     if( m_table && !m_table->GetFields().empty() )
     {
-        m_frame->SetTitle( "Alter Table - " + m_table->GetSchemaName() + "." + m_table->GetTableName() );
+        m_frame->SetTitle( L"Alter Table - " + m_table->GetSchemaName() + L"." + m_table->GetTableName() );
         for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); ++it )
         {
 //            if( it < m_table->GetFields().end() - 1 )
