@@ -277,7 +277,7 @@ MainFrame::~MainFrame()
         m_config->Write( "Engine", temp1 );
         wxString temp2 = m_db->GetTableVector().m_subtype;
         m_config->Write( "Subtype", temp2 );
-        if( temp2 == "PostgreSQL" )
+        if( temp1 == "PostgreSQL" || temp2 == "PostgreSQL" )
         {
             wxString temp3( m_db->GetTableVector().GetPostgreLogFile() );
             m_config->Write( "Logfile", temp3 );
