@@ -4396,7 +4396,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     }
     else
     {
-        result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     }
     if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
     {
@@ -4900,7 +4900,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                     result = 1;
                 }
-                delete command;
+                delete[] command;
+                command = nullptr;
             }
             if( !result )
             {
@@ -6073,6 +6074,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         pk.push_back( (*it)->GetFieldName() );
                 }
                 DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, pk, foreign_keys );
+                new_table->SetTableOwner( owner );
                 new_table->SetCatalog( catalog );
                 new_table->SetNumberOfFields( fields.size() );
 /*                if( GetTableId( new_table, errorMsg ) )
