@@ -1769,7 +1769,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     FK_ONUPDATE update_constraint;
     FK_ONDELETE delete_constraint;
 #if MYSQL_VERSION_ID > 80001
-    bool isNull1[8], err1[8], isNull2[[10], err2[10];
+    bool isNull1[8], err1[8], isNull2[10], err2[10];
 #else
     char isNull1[8], err1[8], isNull2[10], err2[10];
 #endif
