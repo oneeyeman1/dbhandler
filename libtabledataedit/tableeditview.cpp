@@ -355,12 +355,14 @@ void TableEditView::GetTablesForView(Database *db, bool init)
             }
         }
    }
+    m_currentField = m_table->GetFields().begin();
     m_grid->Thaw();
     sizer_2->Add( m_grid, 1, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 1, wxEXPAND, 0 );
     sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer_2->Add( sizer, 0, wxEXPAND, 0 );
     attributes = new TableSettngs( m_panel, wxID_ANY, db );
+    SetFeldAttrbutes();
     sizer->Add( attributes, 0, wxEXPAND, 0 );
     sizer->AddStretchSpacer();
     m_panel->SetSizer( sizer_2 );
@@ -554,11 +556,21 @@ void TableEditView::OnKeyDown(wxKeyEvent &event)
 void TableEditView::OnCellClicked(wxGridEvent &event)
 {
     auto row = event.GetRow();
+    auto found = false;
     if( row != m_grid->GetNewRow() )
     {
+        for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end() && !found; ++it )
+        {
+            if( (*it)->GetFieldName() == m_grid->GetCellValue( row, 0 ) )
+            {
+                m_currentField = it;
+                found = true;
+            }
+        }
         m_grid->SetOldRow( m_grid->GetNewRow() );
         m_grid->SetNewRow( row );
         m_grid->GetGridRowLabelWindow()->Refresh();
+        SetFeldAttrbutes();
     }
 }
 
@@ -690,4 +702,10 @@ int TableEditView::ApplyProperties( const wxAny &, bool, std::wstring & )
 wxAny &TableEditView::GetProperties()
 {
     return m_any;
+}
+
+void TableEditView::SetFeldAttrbutes()
+{
+    attributes->GetCommentCtrl()->SetValue( (*m_currentField)->GetFieldProperties().m_comment );
+//    attributes->Get
 }
