@@ -728,35 +728,36 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
-            table->GetTableProperties().m_dataFontSize = atoi( PQgetvalue( res, i, 3 ) );
-            table->GetTableProperties().m_dataFontWeight = atoi( PQgetvalue( res, i, 4 ) );
-            table->GetTableProperties().m_dataFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 5 ) ) == L"Y" ? true : false;
-            table->GetTableProperties().m_dataFontUnderline = atoi( PQgetvalue( res, i, 6 ) );
-            table->GetTableProperties().m_dataFontStrikethrough = atoi( PQgetvalue( res, i, 7 ) );
-            table->GetTableProperties().m_dataFontCharacterSet = atoi( PQgetvalue( res, i, 8 ) );
-            table->GetTableProperties().m_dataFontPixelSize = atoi( PQgetvalue( res, i, 9 ) );
-            table->GetTableProperties().m_dataFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) );
-            table->GetTableProperties().m_headingFontSize = atoi( PQgetvalue( res, i, 11 ) );
-            table->GetTableProperties().m_headingFontWeight = atoi( PQgetvalue( res, i, 12 ) );
-            table->GetTableProperties().m_headingFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false;
-            table->GetTableProperties().m_headingFontUnderline = atoi( PQgetvalue( res, i, 14 ) );
-            table->GetTableProperties().m_headingFontStrikethrough = atoi( PQgetvalue( res, i, 15 ) );
-            table->GetTableProperties().m_headingFontCharacterSet = atoi( PQgetvalue( res, i, 16 ) );
-            table->GetTableProperties().m_headingFontPixelSize = atoi( PQgetvalue( res, i, 17 ) );
-            table->GetTableProperties().m_headingFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 18 ) );
-            table->GetTableProperties().m_labelFontSize = atoi( PQgetvalue( res, i, 19 ) );
-            table->GetTableProperties().m_labelFontWeight = atoi( PQgetvalue( res, i, 20 ) );
-            table->GetTableProperties().m_labelFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false;
-            table->GetTableProperties().m_labelFontUnderline = atoi( PQgetvalue( res, i, 22 ) );
-            table->GetTableProperties().m_labelFontStrikethrough = atoi( PQgetvalue( res, i, 23 ) );
-            table->GetTableProperties().m_labelFontCharacterSer = atoi( PQgetvalue( res, i, 24 ) );
-            table->GetTableProperties().m_labelFontPixelSize = atoi( PQgetvalue( res, i, 25 ) );
-            table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) );
-            table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) );
+            TableProperties prop;
+            prop.m_dataFontSize = atoi( PQgetvalue( res, i, 3 ) );
+            prop.m_dataFontWeight = atoi( PQgetvalue( res, i, 4 ) );
+            prop.m_dataFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 5 ) ) == L"Y" ? true : false;
+            prop.m_dataFontUnderline = atoi( PQgetvalue( res, i, 6 ) );
+            prop.m_dataFontStrikethrough = atoi( PQgetvalue( res, i, 7 ) );
+            prop.m_dataFontCharacterSet = atoi( PQgetvalue( res, i, 8 ) );
+            prop.m_dataFontPixelSize = atoi( PQgetvalue( res, i, 9 ) );
+            prop.m_dataFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) );
+            prop.m_headingFontSize = atoi( PQgetvalue( res, i, 11 ) );
+            prop.m_headingFontWeight = atoi( PQgetvalue( res, i, 12 ) );
+            prop.m_headingFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false;
+            prop.m_headingFontUnderline = atoi( PQgetvalue( res, i, 14 ) );
+            prop.m_headingFontStrikethrough = atoi( PQgetvalue( res, i, 15 ) );
+            prop.m_headingFontCharacterSet = atoi( PQgetvalue( res, i, 16 ) );
+            prop.m_headingFontPixelSize = atoi( PQgetvalue( res, i, 17 ) );
+            prop.m_headingFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 18 ) );
+            prop.m_labelFontSize = atoi( PQgetvalue( res, i, 19 ) );
+            prop.m_labelFontWeight = atoi( PQgetvalue( res, i, 20 ) );
+            prop.m_labelFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false;
+            prop.m_labelFontUnderline = atoi( PQgetvalue( res, i, 22 ) );
+            prop.m_labelFontStrikethrough = atoi( PQgetvalue( res, i, 23 ) );
+            prop.m_labelFontCharacterSer = atoi( PQgetvalue( res, i, 24 ) );
+            prop.m_labelFontPixelSize = atoi( PQgetvalue( res, i, 25 ) );
+            prop.m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) );
+            prop.m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) );
         }
     }
     PQclear( res );
-    table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
+    table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     delete[] values[0];
     values[0] = NULL;
     delete[] values[1];
@@ -1666,7 +1667,6 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 }
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
-                std::wstring tableName = m_pimpl->m_myconv.from_bytes( table_name );
                 TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
                 if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
                 {
@@ -1683,14 +1683,15 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             PQclear( res2 );
             if( !result )
             {
-                DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, foreign_keys );
-                table->SetCatalog( m_pimpl->m_myconv.from_bytes( catalog_name ) );
-                table->SetNumberOfFields( numFields );
+                std::vector<std::wstring> pk;
                 for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
-                        table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
+                        pk.push_back( (*it)->GetFieldName() );
                 }
+                DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, pk, foreign_keys );
+                table->SetCatalog( m_pimpl->m_myconv.from_bytes( catalog_name ) );
+                table->SetNumberOfFields( numFields );
                 table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
                 if( GetTableProperties( table, errors ) )
                 {
@@ -1999,7 +2000,7 @@ int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
     int result = 0;
     std::wstring errorMessage;
     std::wstring query = L"SELECT * FROM pg_tablespace;";
-    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );      /* ask for binary results */
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );       // ask for binary results 
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );

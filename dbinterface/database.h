@@ -203,13 +203,12 @@ public:
         }
         return *this;
     }
-    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName, table_name, m_owner, schema_name, catalog, fullName;
+    std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
     int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
-    std::vector<std::wstring> m_pkFields;
 };
 
 struct FieldTableHeadingProperties
@@ -330,55 +329,42 @@ class DatabaseTable
 {
 public:
     DatabaseTable() { };
-    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<TableField *> &tableFields, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
+    DatabaseTable(const std::wstring &tableName, const std::wstring &schemaName, const std::vector<TableField *> &tableFields, const std::vector<std::wstring> &pkFelds, const std::map<unsigned long,std::vector<FKField *> > &foreignKeys)
     {
-        m_objectId = 0;
-        m_props.m_owner = L"";
-        m_props.table_name = tableName;
-        m_props.schema_name = schemaName;
+        m_tableName = tableName;
+        m_schemaName = schemaName;
         table_fields = tableFields;
         foreign_keys = foreignKeys;
+        m_pkFelds = pkFelds;
+        m_objectId = 0;
     }
 
     ~DatabaseTable()
     {
-        for( std::vector<TableField *>::iterator it = table_fields.begin(); it < table_fields.end(); ++it )
-        {
-            delete (*it);
-            (*it) = nullptr;
-        }
-        table_fields.clear();
-        for( std::map<unsigned long, std::vector< FKField *> >::iterator it1 = foreign_keys.begin(); it1 != foreign_keys.end(); ++it1 )
-        {
-            for( std::vector<FKField *>::iterator it2 = (*it1).second.begin(); it2 < (*it1).second.end(); ++it2 )
-            {
-                delete (*it2);
-                (*it2) = NULL;
-            }
-            (*it1).second.clear();
-        }
-        foreign_keys.clear();
     }
-    const std::wstring &GetFullName() {return m_props.fullName; }
-    const std::wstring &GetTableName() const { return m_props.table_name; }
-    const std::wstring &GetSchemaName() const { return m_props.schema_name; }
-    const std::wstring &GetCatalog() const { return m_props.catalog; }
-    void SetCatalog(const std::wstring &catalog) { m_props.catalog = catalog; }
-    TableProperties &GetTableProperties() { return m_props; }
-    void SetTableProperties(const TableProperties &props) { m_props = props; }
+    const std::wstring &GetFullName() {return m_fullName; }
+    const std::wstring &GetTableName() const { return m_tableName; }
+    const std::wstring &GetSchemaName() const { return m_schemaName; }
+    const std::wstring &GetCatalog() const { return m_catalogName; }
+    void SetCatalog(const std::wstring &catalog) { m_catalogName = catalog; }
+    const TableProperties &GetTableProperties() const { return m_props; }
+    void SetTableProperties(const TableProperties &prop) { m_props = prop; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }
     std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
     unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
-    const std::wstring &GetTableOwner() const { return m_props.m_owner; }
-    void SetTableOwner(const std::wstring &owner) { m_props.m_owner = owner; }
+    const std::wstring &GetTableOwner() const { return m_owner; }
+    void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
     void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
     const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
     void SetNumberOfFields(size_t count) { m_numFields = count; }
     size_t GetNumberOfFields() const { return m_numFields; }
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
     int GetNumberOfIndexes() const { return m_numIndex; }
+    void SetFullName(const std::wstring &fullName) { m_fullName = fullName; }
+    const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
 private:
+    std::wstring m_tableName, m_owner, m_schemaName, m_catalogName, m_fullName;
     std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     size_t m_numFields;
@@ -386,6 +372,7 @@ private:
     unsigned long m_objectId;
     std::vector<std::wstring> m_indexes;
     TableProperties m_props;
+    std::vector<std::wstring> m_pkFelds;
 };
 
 struct /*Database::*/Impl

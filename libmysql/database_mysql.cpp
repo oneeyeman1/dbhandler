@@ -354,17 +354,12 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int res, result = 0, count = 0;
-    MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
-    char *str_data1 = NULL, *str_data2 = NULL, *str_data3 = NULL;
     std::vector<TableField *> fields;
     std::vector<std::wstring> fk_names, indexes;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
-    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
-    std::wstring query3 = L"SELECT kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
-    std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
     {
@@ -383,545 +378,17 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            res1 = mysql_stmt_init( m_db );
-            if( !res1 )
+            MYSQL_ROW row;
+            while( ( row = mysql_fetch_row( results ) ) != NULL )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                errorMsg.push_back( err );
-                result = 1;
-            }
-            else
-            {
-                if( mysql_stmt_prepare( res1, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), query3.length() ) )
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                    errorMsg.push_back( err );
-                    result = 1;
-                }
-                else
-                {
-                    res2 = mysql_stmt_init( m_db );
-                    if( !res2 )
-                    {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                        errorMsg.push_back( err );
-                        result = 1;
-                    }
-                    else
-                    {
-                        if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
-                        {
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                            errorMsg.push_back( err );
-                            result = 1;
-                        }
-                        else
-                        {
-                            res3 = mysql_stmt_init( m_db );
-                            if( !res3 )
-                            {
-                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                errorMsg.push_back( err );
-                                result = 1;
-                            }
-                            else
-                            {
-                                if( mysql_stmt_prepare( res3, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), query4.length() ) )
-                                {
-                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                    errorMsg.push_back( err );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    MYSQL_ROW row;
-                                    while( ( row = mysql_fetch_row( results ) ) != NULL )
-                                    {
-                                        char *catalog_name = row[0] ? row[0] : NULL;
-                                        char *schema_name = row[1] ? row[1] : NULL;
-                                        char *table_name = row[2] ? row[2] : NULL;
-                                        pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
-                                        count++;
-/*                                        long table_id = row[4] ? strtol( row[4], &end, 10 ) : 0;
-                                        MYSQL_BIND params[3];
-                                        unsigned long str_length1, str_length2, str_length3;
-                                        str_length1 = strlen( catalog_name ) * 2;
-                                        str_length2 = strlen( schema_name ) * 2;
-                                        str_length3 = strlen( table_name ) * 2;
-                                        str_data1 = new char[str_length1], str_data2 = new char[str_length2], str_data3 = new char[str_length3];
-                                        memset( str_data1, '\0', str_length1 );
-                                        memset( str_data2, '\0', str_length2 );
-                                        memset( str_data3, '\0', str_length3 );
-                                        memset( params, 0, sizeof( params ) );
-                                        strncpy( str_data1, catalog_name, str_length1 );
-                                        strncpy( str_data2, schema_name, str_length2 );
-                                        strncpy( str_data3, table_name, str_length3 );
-                                        params[0].buffer_type = MYSQL_TYPE_STRING;
-                                        params[0].buffer = (char *) str_data1;
-                                        params[0].buffer_length = strlen( str_data1 );
-                                        params[0].is_null = 0;
-                                        params[0].length = &str_length1;
-                                        params[1].buffer_type = MYSQL_TYPE_STRING;
-                                        params[1].buffer = (char *) str_data2;
-                                        params[1].buffer_length = strlen( str_data2 );
-                                        params[1].is_null = 0;
-                                        params[1].length = &str_length2;
-                                        params[2].buffer_type = MYSQL_TYPE_STRING;
-                                        params[2].buffer = (char *) str_data3;
-                                        params[2].buffer_length = strlen( str_data3 );
-                                        params[2].is_null = 0;
-                                        params[2].length = &str_length3;
-                                        if( mysql_stmt_bind_param( res1, params ) )
-                                        {
-                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                                            errorMsg.push_back( err );
-                                            result = 1;
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            prepare_meta_result = mysql_stmt_result_metadata( res1 );
-                                            if( !prepare_meta_result )
-                                            {
-                                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                                                errorMsg.push_back( err );
-                                                result = 1;
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                if( mysql_stmt_execute( res1 ) )
-                                                {
-                                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                                                    errorMsg.push_back( err );
-                                                    result = 1;
-                                                    break;
-                                                }
-                                                else
-                                                {
-                                                    MYSQL_BIND results1[7];
-#if !defined __WXMSW__ && !defined __WXOSX__ 
-                                                    bool is_null[7], error[7];
-#else
-                                                    char is_null[7], error[7];
-#endif
-                                                    unsigned long length[7];
-                                                    memset( results1, 0, sizeof( results1 ) );
-                                                    results1[0].buffer_type = results1[2].buffer_type = results1[3].buffer_type = results1[4].buffer_type = results1[5].buffer_type = results1[6].buffer_type = MYSQL_TYPE_STRING;
-                                                    results1[1].buffer_type = MYSQL_TYPE_LONG;
-
-                                                    results1[1].buffer = (char *) &fkId;
-                                                    results1[1].is_null = &is_null[1];
-                                                    results1[1].error = &error[1];
-                                                    results1[1].length = &length[1];
-
-                                                    length[0] = 64;
-                                                    results1[0].buffer = fkField;
-                                                    results1[0].buffer_length = length[0];
-                                                    results1[0].is_null = &is_null[0];
-                                                    results1[0].length = &length[0];
-                                                    results1[0].error = &error[1];
-
-                                                    length[2] = 64;
-                                                    results1[2].buffer = refTableSchema;
-                                                    results1[2].buffer_length = length[2];
-                                                    results1[2].is_null = &is_null[2];
-                                                    results1[2].length = &length[2];
-                                                    results1[2].error = &error[2];
-
-                                                    length[3] = 64;
-                                                    results1[3].buffer = refTableName;
-                                                    results1[3].buffer_length = length[3];
-                                                    results1[3].is_null = &is_null[3];
-                                                    results1[3].length = &length[3];
-                                                    results1[3].error = &error[3];
-
-                                                    length[4] = 64;
-                                                    results1[4].buffer = refTableField;
-                                                    results1[4].buffer_length = length[4];
-                                                    results1[4].is_null = &is_null[4];
-                                                    results1[4].length = &length[4];
-                                                    results1[4].error = &error[4];
-
-                                                    length[5] = 64;
-                                                    results1[5].buffer = updateCon;
-                                                    results1[5].buffer_length = length[5];
-                                                    results1[5].is_null = &is_null[5];
-                                                    results1[5].length = &length[5];
-                                                    results1[5].error = &error[5];
-
-                                                    length[6] = 64;
-                                                    results1[6].buffer = deleteCon;
-                                                    results1[6].buffer_length = length[6];
-                                                    results1[6].is_null = &is_null[6];
-                                                    results1[6].length = &length[6];
-                                                    results1[6].error = &error[6];
-                                                    std::vector<std::wstring> origFields, refFields;
-                                                    if( mysql_stmt_bind_result( res1, results1 ) )
-                                                    {
-                                                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                                                        errorMsg.push_back( err );
-                                                        result = 1;
-                                                        break;
-                                                    }
-                                                    else
-                                                    {
-                                                        while( !mysql_stmt_fetch( res1 ) )
-                                                        {
-                                                            fkFld = m_pimpl->m_myconv.from_bytes( fkField );
-                                                            fkTableField = m_pimpl->m_myconv.from_bytes( refTableField );
-                                                            origFields.push_back( fkFld );
-                                                            refFields.push_back( fkTableField );
-                                                        }
-                                                        if( mysql_stmt_reset( res1 ) )
-                                                        {
-                                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                                                            errorMsg.push_back( err );
-                                                            result = 1;
-                                                            break;
-                                                        }
-														else
-                                                        {
-                                                            fkFld = m_pimpl->m_myconv.from_bytes( fkField );
-                                                            fkSchema = m_pimpl->m_myconv.from_bytes( refTableSchema );
-                                                            fkTable = m_pimpl->m_myconv.from_bytes( refTableName );
-                                                            fkTableField = m_pimpl->m_myconv.from_bytes( refTableField );
-                                                            if( !strcmp( updateCon, "CASCADE" ) )
-                                                                update_constraint = CASCADE_UPDATE;
-                                                            if( !strcmp( updateCon, "SET NULL" ) )
-                                                                update_constraint = SET_NULL_UPDATE;
-                                                            if( !strcmp( updateCon, "SET DEFAULT" ) )
-                                                                update_constraint = SET_DEFAULT_UPDATE;
-                                                            if( !strcmp( updateCon, "RESTRICT" ) )
-                                                                update_constraint = RESTRICT_UPDATE;
-                                                            if( !strcmp( deleteCon, "CASCADE" ) )
-                                                                delete_constraint = CASCADE_DELETE;
-                                                            if( !strcmp( deleteCon, "SET NULL" ) )
-                                                                delete_constraint = SET_NULL_DELETE;
-                                                            if( !strcmp( deleteCon, "SET DEFAULT" ) )
-                                                                delete_constraint = SET_DEFAULT_DELETE;
-                                                            if( !strcmp( deleteCon, "RESTRICT" ) )
-                                                                delete_constraint = RESTRICT_DELETE;
-//                                        foreign_keys[].push_back( new FKField( , fkTable, fkFld, fkTableField, fkSchema, update_constraint, delete_constraint ) );
-                                                            fk_names.push_back( fkFld );
-                                                        }
-                                                        if( mysql_stmt_free_result( res1 ) )
-                                                        {
-                                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                                                            errorMsg.push_back( err );
-                                                            result = 1;
-                                                            break;
-                                                        }
-                                                        else
-                                                        {
-                                                            if( mysql_stmt_bind_param( res2, params ) )
-                                                            {
-                                                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                errorMsg.push_back( err );
-                                                                result = 1;
-                                                                break;
-                                                            }
-                                                            else
-                                                            {
-                                                                prepare_meta_result = mysql_stmt_result_metadata( res2 );
-                                                                if( !prepare_meta_result )
-                                                                {
-                                                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                    errorMsg.push_back( err );
-                                                                    result = 1;
-                                                                    break;
-                                                                }
-                                                                else
-                                                                {
-                                                                    if( mysql_stmt_execute( res2 ) )
-                                                                    {
-                                                                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                        errorMsg.push_back( err );
-                                                                        result = 1;
-                                                                        break;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        MYSQL_BIND results2[10];
-#if !defined __WXMSW__ && !defined __WXOSX__
-                                                                        bool is_null1[10], error1[10];
-#else
-                                                                        char is_null1[10], error1[10];
-#endif
-                                                                        long unsigned int length1[10];
-     
-                                                                        length1[0] = 64;
-                                                                        results2[0].buffer = colName;
-                                                                        results2[0].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results2[0].buffer_length = length1[0];
-                                                                        results2[0].is_null = &is_null1[0];
-                                                                        results2[0].length = &length1[0];
-                                                                        results2[0].error = &error1[0];
-
-                                                                        length1[1] = 64;
-                                                                        results2[1].buffer = colType;
-                                                                        results2[1].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results2[1].buffer_length = length1[1];
-                                                                        results2[1].is_null = &is_null1[1];
-                                                                        results2[1].length = &length1[1];
-                                                                        results2[1].error = &error1[1];
-
-                                                                        results2[2].buffer = (char *) &charLen;
-                                                                        results2[2].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results2[2].is_null = &is_null1[2];
-                                                                        results2[2].length = &length1[2];
-                                                                        results2[2].error = &error1[2];
-
-                                                                        results2[3].buffer = (char *) &charOctet;
-                                                                        results2[3].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results2[3].is_null = &is_null1[3];
-                                                                        results2[3].length = &length1[3];
-                                                                        results2[3].error = &error1[3];
-
-                                                                        results2[4].buffer = (char *) &numLen;
-                                                                        results2[4].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results2[4].is_null = &is_null1[4];
-                                                                        results2[4].length = &length1[4];
-                                                                        results2[4].error = &error1[4];
-
-                                                                        results2[5].buffer = (char *) &numPrec;
-                                                                        results2[5].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results2[5].is_null = &is_null1[5];
-                                                                        results2[5].length = &length1[5];
-                                                                        results2[5].error = &error1[5];
-
-                                                                        length1[6] = 64;
-                                                                        results2[6].buffer = defValue;
-                                                                        results2[6].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results2[6].buffer_length = length1[6];
-                                                                        results2[6].is_null = &is_null1[6];
-                                                                        results2[6].length = &length1[6];
-                                                                        results2[6].error = &error[6];
-
-                                                                        length1[7] = 3;
-                                                                        results2[7].buffer = nullable;
-                                                                        results2[7].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results2[7].buffer_length = length1[7];
-                                                                        results2[7].is_null = &is_null1[7];
-                                                                        results2[7].length = &length1[7];
-                                                                        results2[7].error = &error[7];
- 
-                                                                        length1[8] = 30;
-                                                                        results2[8].buffer = autoInc;
-                                                                        results2[8].buffer_type = MYSQL_TYPE_STRING;
-                                                                        results2[8].buffer_length = length1[8];
-                                                                        results2[8].is_null = &is_null1[8];
-                                                                        results2[8].length = &length1[8];
-                                                                        results2[8].error = &error1[8];
-
-                                                                        results2[9].buffer = (char *) &pk;
-                                                                        results2[9].buffer_type = MYSQL_TYPE_LONG;
-                                                                        results2[9].is_null = &is_null1[9];
-                                                                        results2[9].length = &length1[9];
-                                                                        results2[9].error = &error1[9];
-
-                                                                        if( mysql_stmt_bind_result( res2, results2 ) )
-                                                                        {
-                                                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                            errorMsg.push_back( err );
-                                                                            result = 1;
-                                                                            break;
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            if( mysql_stmt_store_result( res2 ) )
-                                                                            {
-                                                                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                                errorMsg.push_back( err );
-                                                                                result = 1;
-                                                                                break;
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                int fieldSize = 0, fieldPrec = 0;
-                                                                                while( !mysql_stmt_fetch( res2 ) )
-                                                                                {
-                                                                                    fieldName = m_pimpl->m_myconv.from_bytes( colName );
-                                                                                    fieldType = m_pimpl->m_myconv.from_bytes( colType );
-                                                                                    if( !is_null1[6] )
-                                                                                        fieldDefaultValue = m_pimpl->m_myconv.from_bytes( defValue );
-                                                                                    else
-                                                                                        fieldDefaultValue = L"";
-                                                                                    if( !is_null1[3] )
-                                                                                    {
-                                                                                        fieldSize = charLen;
-                                                                                        fieldPrec = 0;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        fieldSize = numLen;
-                                                                                        fieldPrec = numPrec;
-                                                                                    }
-                                                                                    if( !is_null1[7] )
-                                                                                    {
-                                                                                        if( !strcmp( nullable, "YES" ) )
-                                                                                            is_nullable = true;
-                                                                                        else
-                                                                                            is_nullable = false;
-                                                                                    }
-                                                                                    else
-                                                                                        is_nullable = false;
-                                                                                    if( !strcmp( autoInc, "autoincrement" ) )
-                                                                                        autoincrement = true;
-                                                                                    else
-                                                                                        autoincrement = false;
-                                                                                    is_pk = pk == 1 ? true : false;
-                                                                                    TableField *field = new TableField( fieldName, fieldType, fieldSize, fieldPrec, m_pimpl->m_myconv.from_bytes( (const char *) table_name ) + L"." + fieldName, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                                                                                    if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), L"", m_pimpl->m_myconv.from_bytes( colName ), field, errorMsg ) )
-                                                                                    {
-                                                                                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                                                                                        errorMsg.push_back( err );
-                                                                                        result = 1;
-                                                                                        break;
-                                                                                    }
-                                                                                    std::wstring type = fieldType;
-                                                                                    if( fieldSize > 0 )
-                                                                                    {
-                                                                                        std::wostringstream ss;
-                                                                                        ss << fieldSize;
-                                                                                        type += L"(";
-                                                                                        type += ss.str();
-                                                                                    }
-                                                                                    if( fieldPrec > 0 )
-                                                                                    {
-                                                                                        std::wostringstream ss;
-                                                                                        ss << fieldPrec;
-                                                                                        type += L",";
-                                                                                        type += ss.str();
-                                                                                        type += L")";
-                                                                                    }
-                                                                                    else
-                                                                                        type += L")";
-                                                                                    field->SetFullType( type );
-                                                                                }
-                                                                                if( result )
-                                                                                    break;
-                                                                                else
-                                                                                {
-                                                                                    mysql_free_result( prepare_meta_result );
-                                                                                    if( mysql_stmt_free_result( res2 ) )
-                                                                                    {
-                                                                                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-                                                                                        errorMsg.push_back( err );
-                                                                                        result = 1;
-                                                                                        break;
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
-                                                                                        std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
-                                                                                        DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
-                                                                                        table->SetCatalog();
-                                                                                        for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
-                                                                                        {
-                                                                                            if( (*it)->IsPrimaryKey() )
-                                                                                                table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
-                                                                                        }
-                                                                                        table->SetTableId( table_id );
-                                                                                        if( mysql_stmt_bind_param( res3, params ) )
-                                                                                        {
-                                                                                            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                                                                            errorMsg.push_back( err );
-                                                                                            result = 1;
-                                                                                            break;
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            prepare_meta_result = mysql_stmt_result_metadata( res3 );
-                                                                                            if( !prepare_meta_result )
-                                                                                            {
-                                                                                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                                                                                errorMsg.push_back( err );
-                                                                                                result = 1;
-                                                                                                break;
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                if( mysql_stmt_execute( res3 ) )
-                                                                                                {
-                                                                                                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                                                                                    errorMsg.push_back( err );
-                                                                                                    result = 1;
-                                                                                                    break;
-                                                                                                }
-                                                                                                else
-                                                                                                {
-                                                                                                    MYSQL_BIND results3[1];
-#if !defined __WXMSW__ && !defined __WXOSX__
-                                                                                                    bool is_null3[1], error3[1];
-#else
-                                                                                                    char is_null3[1], error3[1];
-#endif
-                                                                                                    unsigned long length3[1];
-                                                                                                    memset( results3, 0, sizeof( results ) );
-                                                                                                    results3[0].buffer_type = MYSQL_TYPE_STRING;
-                                                                                                    length[0] = 64;
-                                                                                                    results3[0].buffer = indexName;
-                                                                                                    results3[0].buffer_length = length3[0];
-                                                                                                    results3[0].is_null = &is_null3[0];
-                                                                                                    results3[0].length = &length[0];
-                                                                                                    results3[0].error = &error3[0];
-                                                                                                    if( mysql_stmt_bind_result( res3, results3 ) )
-                                                                                                    {
-                                                                                                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-                                                                                                        errorMsg.push_back( err );
-                                                                                                        result = 1;
-                                                                                                        break;
-                                                                                                    }
-                                                                                                    else
-                                                                                                    {
-                                                                                                        while( !mysql_stmt_fetch( res3 ) )
-                                                                                                            indexes.push_back( m_pimpl->m_myconv.from_bytes( indexName ) );
-                                                                                                        table->SetIndexNames( indexes );
-                                                                                                        mysql_stmt_free_result( res3 );
-                                                                                                        if( GetTableProperties( table, errorMsg ) )
-                                                                                                        {
-                                                                                                            result = 1;
-                                                                                                            break;
-                                                                                                        }
-                                                                                                        pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
-                                                                                                        fields.clear();
-                                                                                                        foreign_keys.clear();
-                                                                                                        fk_names.clear();
-                                                                                                    }
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }*/
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                char *catalog_name = row[0] ? row[0] : NULL;
+                char *schema_name = row[1] ? row[1] : NULL;
+                char *table_name = row[2] ? row[2] : NULL;
+                pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
+                count++;
             }
         }
     }
-    m_numOfTables = count;
-    delete str_data1;
-    str_data1 = NULL;
-    delete str_data2;
-    str_data2 = NULL;
-    delete str_data3;
-    str_data3 = NULL;
-    if( result )
-        Disconnect( errorMsg );
     return result;
 }
 
@@ -1362,28 +829,30 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                         {
                             while( !mysql_stmt_fetch( stmt ) )
                             {
-                                table->GetTableProperties().m_dataFontSize = datafontheight;
-                                table->GetTableProperties().m_dataFontWeight = datafontweight;
-                                table->GetTableProperties().m_dataFontItalic = datafontitalic;
-                                table->GetTableProperties().m_dataFontUnderline = datafontunderline;
-                                table->GetTableProperties().m_dataFontCharacterSet = datafontset;
-                                table->GetTableProperties().m_dataFontPixelSize = datafontptc;
-                                table->GetTableProperties().m_dataFontName = m_pimpl->m_myconv.from_bytes( datafontname );
-                                table->GetTableProperties().m_headingFontSize = headingfontheight;
-                                table->GetTableProperties().m_headingFontWeight = headingfontweight;
-                                table->GetTableProperties().m_headingFontItalic = headingfontitalic;
-                                table->GetTableProperties().m_headingFontUnderline = headingfontunderline;
-                                table->GetTableProperties().m_headingFontCharacterSet = headingfontset;
-                                table->GetTableProperties().m_headingFontPixelSize = headingfontptc;
-                                table->GetTableProperties().m_headingFontName = m_pimpl->m_myconv.from_bytes( headingfontname );
-                                table->GetTableProperties().m_labelFontSize = labelfontheight;
-                                table->GetTableProperties().m_labelFontWeight = labelfontweight;
-                                table->GetTableProperties().m_labelFontItalic = labelfontitalic;
-                                table->GetTableProperties().m_labelFontUnderline = labelfontunderline;
-                                table->GetTableProperties().m_labelFontCharacterSer = labelfontset;
-                                table->GetTableProperties().m_labelFontPixelSize = labelfontptc;
-                                table->GetTableProperties().m_labelFontName = m_pimpl->m_myconv.from_bytes( labelfontname );
-                                table->GetTableProperties().m_comment = m_pimpl->m_myconv.from_bytes( comments );
+                                TableProperties prop;
+                                prop.m_dataFontSize = datafontheight;
+                                prop.m_dataFontWeight = datafontweight;
+                                prop.m_dataFontItalic = datafontitalic;
+                                prop.m_dataFontUnderline = datafontunderline;
+                                prop.m_dataFontCharacterSet = datafontset;
+                                prop.m_dataFontPixelSize = datafontptc;
+                                prop.m_dataFontName = m_pimpl->m_myconv.from_bytes( datafontname );
+                                prop.m_headingFontSize = headingfontheight;
+                                prop.m_headingFontWeight = headingfontweight;
+                                prop.m_headingFontItalic = headingfontitalic;
+                                prop.m_headingFontUnderline = headingfontunderline;
+                                prop.m_headingFontCharacterSet = headingfontset;
+                                prop.m_headingFontPixelSize = headingfontptc;
+                                prop.m_headingFontName = m_pimpl->m_myconv.from_bytes( headingfontname );
+                                prop.m_labelFontSize = labelfontheight;
+                                prop.m_labelFontWeight = labelfontweight;
+                                prop.m_labelFontItalic = labelfontitalic;
+                                prop.m_labelFontUnderline = labelfontunderline;
+                                prop.m_labelFontCharacterSer = labelfontset;
+                                prop.m_labelFontPixelSize = labelfontptc;
+                                prop.m_labelFontName = m_pimpl->m_myconv.from_bytes( labelfontname );
+                                prop.m_comment = m_pimpl->m_myconv.from_bytes( comments );
+                                table->SetTableProperties( prop );
                             }
                         }
                     }
@@ -1400,7 +869,9 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             result = 1;
         }
     }
-    table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
+    auto prop = table->GetTableProperties();
+    table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
+    table->SetTableProperties( prop );
     delete str_data1;
     delete str_data2;
     str_data1 = NULL;
@@ -2241,6 +1712,7 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     std::map<std::wstring, std::vector<TableDefinition> > defs;
     int count = 0;
     int result = 0;
+    MYSQL_RES *results = nullptr;
     std::wstring query = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
     auto res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     if( res )
@@ -2251,7 +1723,7 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     }
     else
     {
-        MYSQL_RES *results = mysql_store_result( m_db );
+        results = mysql_use_result( m_db );
         if( !results )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -2270,8 +1742,15 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 count++;
                 row =  mysql_fetch_row( results );
             }
+            if( !row && mysql_errno( m_db ) != 0 )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
     }
+    mysql_free_result( results );
     return result;
 }
 
@@ -2279,15 +1758,580 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 {
     int result = 0;
     long tableId;
-    std::wstring owner;
+    MYSQL_BIND params[3], results1[8], results2[10];
+    unsigned long len[3], length1[8];
+    MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
+    MYSQL_RES *meta1, *meta2;
+    char cnstraintName[64], fieldName[64], refTableSchema[64], refTableField[64], refTableName[64], updateCon[64], deleteCon[64], fieldType[64];
+    short ordinal;
+    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
+    std::vector<std::wstring> origFields, refFelds;
+    FK_ONUPDATE update_constraint;
+    FK_ONDELETE delete_constraint;
+#if MYSQL_VERSION_ID > 80001
+    bool isNull1[8], err1[8], isNull2[[10], err2[10];
+#else
+    char isNull1[8], err1[8], isNull2[10], err2[10];
+#endif
+    std::wstring owner = L"";
+    std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
+    std::wstring query3 = L"SELECT kcu.constraint_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
+    std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
+    memset( params, 0, sizeof( params ) );
     if( GetTableId( catalog, schemaName, tableName, tableId, errorMsg ) )
         result = 1;
     else
     {
-/*        if( GetOwner( catalog, schemaName, tableName ) )
+        res1 = mysql_stmt_init( m_db );
+        if( !res1 )
         {
-        }}*/
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
     }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( res1, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), query3.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        params[0].buffer_type = MYSQL_TYPE_STRING;
+        params[0].buffer = (char*) m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str();
+        params[0].buffer_length = catalog.length();
+        params[0].is_null = 0;
+        params[0].length = &len[0];
+
+        params[1].buffer_type = MYSQL_TYPE_STRING;
+        params[1].buffer = (char*) m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
+        params[1].buffer_length = schemaName.length();
+        params[1].is_null = 0;
+        params[1].length = &len[1];
+
+        params[2].buffer_type = MYSQL_TYPE_STRING;
+        params[2].buffer = (char*) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+        params[2].buffer_length = tableName.length();
+        params[2].is_null = 0;
+        params[2].length = &len[2];
+
+        if( mysql_stmt_bind_param( res1, params ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_execute( res1 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        meta1 = mysql_stmt_result_metadata( res1 );
+        if( !meta1 )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        memset( results1, 0, sizeof( results1 ) );
+        length1[0] = 64;
+        results1[0].buffer_type = MYSQL_TYPE_STRING;
+        results1[0].buffer = &cnstraintName;
+        results1[0].buffer_length = 64;
+        results1[0].is_null = &isNull1[0];
+        results1[0].error = &err1[0];
+        results1[0].length = &length1[0];
+
+        length1[1] = 64;
+        results1[1].buffer_type = MYSQL_TYPE_STRING;
+        results1[1].buffer_length = 64;
+        results1[1].buffer = &fieldName;
+        results1[1].is_null = &isNull1[1];
+        results1[1].error = &err1[1];
+        results1[1].length = &length1[1];
+
+        length1[2] = 64;
+        results1[2].buffer_type = MYSQL_TYPE_SHORT;
+        results1[2].buffer_length = 64;
+        results1[2].buffer = &ordinal;
+        results1[2].is_null = &isNull1[2];
+        results1[2].error = &err1[2];
+        results1[2].length = &length1[2];
+
+        length1[3] = 64;
+        results1[3].buffer_type = MYSQL_TYPE_STRING;
+        results1[3].buffer = &refTableSchema;
+        results1[3].buffer_length = 64;
+        results1[3].is_null = &isNull1[3];
+        results1[3].error = &err1[3];
+        results1[3].length = &length1[3];
+
+        length1[4] = 64;
+        results1[4].buffer_type = MYSQL_TYPE_STRING;
+        results1[4].buffer = &refTableName;
+        results1[0].buffer_length = 64;
+        results1[4].is_null = &isNull1[4];
+        results1[4].error = &err1[4];
+        results1[4].length = &length1[4];
+
+        length1[5] = 64;
+        results1[5].buffer_type = MYSQL_TYPE_STRING;
+        results1[5].buffer = &refTableField;
+        results1[5].buffer_length = 64;
+        results1[5].is_null = &isNull1[5];
+        results1[5].error = &err1[5];
+        results1[5].length = &length1[5];
+
+        length1[6] = 64;
+        results1[6].buffer = &updateCon;
+        results1[6].buffer_length = 64;
+        results1[6].is_null = &isNull1[6];
+        results1[6].length = &length1[6];
+        results1[6].error = &err1[6];
+
+        length1[7] = 64;
+        results1[7].buffer = &deleteCon;
+        results1[7].buffer_length = 64;
+        results1[7].is_null = &isNull1[7];
+        results1[7].length = &length1[7];
+        results1[7].error = &err1[6];
+
+        if( mysql_stmt_bind_result( res1, results1 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( !mysql_stmt_fetch( res1 ) )
+        {
+            if( !strcmp( updateCon, "SET NULL" ) )
+                update_constraint = SET_NULL_UPDATE;
+            if( !strcmp( updateCon, "SET DEFAULT" ) )
+                update_constraint = SET_DEFAULT_UPDATE;
+            if( !strcmp( updateCon, "RESTRICT" ) )
+                update_constraint = RESTRICT_UPDATE;
+            if( !strcmp( deleteCon, "CASCADE" ) )
+                delete_constraint = CASCADE_DELETE;
+            if( !strcmp( deleteCon, "SET NULL" ) )
+                delete_constraint = SET_NULL_DELETE;
+            if( !strcmp( deleteCon, "SET DEFAULT" ) )
+                delete_constraint = SET_DEFAULT_DELETE;
+            if( !strcmp( deleteCon, "RESTRICT" ) )
+                delete_constraint = RESTRICT_DELETE;
+//            id, name, orig_schema, table_name, original_field, ref_schema, ref_table, referenced_field, origFields, refFields, update_constraint, delete_constraint, match = -1
+            foreign_keys[ordinal].push_back( new FKField( ordinal, m_pimpl->m_myconv.from_bytes( cnstraintName ), schemaName, tableName, m_pimpl->m_myconv.from_bytes( fieldName ),
+                                                           m_pimpl->m_myconv.from_bytes( refTableSchema ),
+                                                           m_pimpl->m_myconv.from_bytes( refTableName ),
+                                                           m_pimpl->m_myconv.from_bytes( refTableField ), 
+                                                           origFields, refFelds, 
+                                                           update_constraint, delete_constraint ) );
+        }
+        mysql_free_result( meta1 );
+        if( mysql_stmt_close( res1 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        res2 = mysql_stmt_init( m_db );
+        if( !res2 )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( res2, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_bind_param( res2, params ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_execute( res2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        meta2 = mysql_stmt_result_metadata( res2 );
+        if( !meta2 )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        res3 = mysql_stmt_init( m_db );
+        if( !res3 )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( res3, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), query4.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_bind_param( res3, params ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_execute( res3 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        memset( results2, '\0', sizeof( results2 ) );
+
+        results2[0].buffer_type = MYSQL_TYPE_STRING; 
+        results2[0].buffer = fieldName;
+        results2[0].buffer_length = 64;;
+        results2[0].is_null = &isNull2[0];
+        results2[0].error = &err2[0];
+
+        results2[1].buffer_type = MYSQL_TYPE_STRING; 
+        results2[1].buffer = fieldType;
+        results2[1].buffer_length = 64;
+        results2[1].is_null = &isNull2[1];
+        results2[1].error = &err2[1];
+
+        results2[9].buffer_type = MYSQL_TYPE_SHORT;
+        results2[9].buffer_length = 1;
+
+        if( mysql_stmt_bind_result( res3, results2 ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( !mysql_stmt_fetch( res3 ) )
+        {
+        }
+    }
+/*            {
+        MYSQL_BIND results2[10];
+        #if !defined __WXMSW__ && !defined __WXOSX__
+        bool is_null1[10], error1[10];
+        #else
+        char is_null1[10], error1[10];
+        #endif
+        long unsigned int length1[10];
+
+        length1[0] = 64;
+        results2[0].buffer = colName;
+        results2[0].buffer_type = MYSQL_TYPE_STRING;
+        results2[0].buffer_length = length1[0];
+        results2[0].is_null = &is_null1[0];
+        results2[0].length = &length1[0];
+        results2[0].error = &error1[0];
+
+        length1[1] = 64;
+        results2[1].buffer = colType;
+        results2[1].buffer_type = MYSQL_TYPE_STRING;
+        results2[1].buffer_length = length1[1];
+        results2[1].is_null = &is_null1[1];
+        results2[1].length = &length1[1];
+        results2[1].error = &error1[1];
+
+        results2[2].buffer = (char *) &charLen;
+        results2[2].buffer_type = MYSQL_TYPE_LONG;
+        results2[2].is_null = &is_null1[2];
+        results2[2].length = &length1[2];
+        results2[2].error = &error1[2];
+
+        results2[3].buffer = (char *) &charOctet;
+        results2[3].buffer_type = MYSQL_TYPE_LONG;
+        results2[3].is_null = &is_null1[3];
+        results2[3].length = &length1[3];
+        results2[3].error = &error1[3];
+
+        results2[4].buffer = (char *) &numLen;
+        results2[4].buffer_type = MYSQL_TYPE_LONG;
+        results2[4].is_null = &is_null1[4];
+        results2[4].length = &length1[4];
+        results2[4].error = &error1[4];
+
+        results2[5].buffer = (char *) &numPrec;
+        results2[5].buffer_type = MYSQL_TYPE_LONG;
+        results2[5].is_null = &is_null1[5];
+        results2[5].length = &length1[5];
+        results2[5].error = &error1[5];
+
+        length1[6] = 64;
+        results2[6].buffer = defValue;
+        results2[6].buffer_type = MYSQL_TYPE_STRING;
+        results2[6].buffer_length = length1[6];
+        results2[6].is_null = &is_null1[6];
+        results2[6].length = &length1[6];
+        results2[6].error = &error[6];
+
+        length1[7] = 3;
+        results2[7].buffer = nullable;
+        results2[7].buffer_type = MYSQL_TYPE_STRING;
+        results2[7].buffer_length = length1[7];
+        results2[7].is_null = &is_null1[7];
+        results2[7].length = &length1[7];
+        results2[7].error = &error[7];
+
+        length1[8] = 30;
+        results2[8].buffer = autoInc;
+        results2[8].buffer_type = MYSQL_TYPE_STRING;
+        results2[8].buffer_length = length1[8];
+        results2[8].is_null = &is_null1[8];
+        results2[8].length = &length1[8];
+        results2[8].error = &error1[8];
+
+        results2[9].buffer = (char *) &pk;
+        results2[9].buffer_type = MYSQL_TYPE_LONG;
+        results2[9].is_null = &is_null1[9];
+        results2[9].length = &length1[9];
+        results2[9].error = &error1[9];
+
+        if( mysql_stmt_bind_result( res2, results2 ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        if( mysql_stmt_store_result( res2 ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        int fieldSize = 0, fieldPrec = 0;
+        while( !mysql_stmt_fetch( res2 ) )
+        {
+        fieldName = m_pimpl->m_myconv.from_bytes( colName );
+        fieldType = m_pimpl->m_myconv.from_bytes( colType );
+        if( !is_null1[6] )
+        fieldDefaultValue = m_pimpl->m_myconv.from_bytes( defValue );
+        else
+        fieldDefaultValue = L"";
+        if( !is_null1[3] )
+        {
+        fieldSize = charLen;
+        fieldPrec = 0;
+        }
+        else
+        {
+        fieldSize = numLen;
+        fieldPrec = numPrec;
+        }
+        if( !is_null1[7] )
+        {
+        if( !strcmp( nullable, "YES" ) )
+        is_nullable = true;
+        else
+        is_nullable = false;
+        }
+        else
+        is_nullable = false;
+        if( !strcmp( autoInc, "autoincrement" ) )
+        autoincrement = true;
+        else
+        autoincrement = false;
+        is_pk = pk == 1 ? true : false;
+        TableField *field = new TableField( fieldName, fieldType, fieldSize, fieldPrec, m_pimpl->m_myconv.from_bytes( (const char *) table_name ) + L"." + fieldName, fieldDefaultValue, is_nullable, autoincrement, is_pk, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+        if( GetFieldProperties( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), L"", m_pimpl->m_myconv.from_bytes( colName ), field, errorMsg ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        std::wstring type = fieldType;
+        if( fieldSize > 0 )
+        {
+        std::wostringstream ss;
+        ss << fieldSize;
+        type += L"(";
+        type += ss.str();
+        }
+        if( fieldPrec > 0 )
+        {
+        std::wostringstream ss;
+        ss << fieldPrec;
+        type += L",";
+        type += ss.str();
+        type += L")";
+        }
+        else
+        type += L")";
+        field->SetFullType( type );
+        }
+        if( result )
+        break;
+        else
+        {
+        mysql_free_result( prepare_meta_result );
+        if( mysql_stmt_free_result( res2 ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        std::wstring tableName = m_pimpl->m_myconv.from_bytes( (const char *) table_name );
+        std::wstring schemaName = m_pimpl->m_myconv.from_bytes( (const char *) schema_name );
+        std::vector<std::wstrng> pk;
+        for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
+        {
+        if( (*it)->IsPrimaryKey() )
+        pk.push_back( (*it)->GetFieldName() );
+        }
+        DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, pk, foreign_keys );
+        table->SetCatalog();
+        table->SetTableId( table_id );
+        if( mysql_stmt_bind_param( res3, params ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        prepare_meta_result = mysql_stmt_result_metadata( res3 );
+        if( !prepare_meta_result )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        if( mysql_stmt_execute( res3 ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        MYSQL_BIND results3[1];
+        #if !defined __WXMSW__ && !defined __WXOSX__
+        bool is_null3[1], error3[1];
+        #else
+        char is_null3[1], error3[1];
+        #endif
+        unsigned long length3[1];
+        memset( results3, 0, sizeof( results ) );
+        results3[0].buffer_type = MYSQL_TYPE_STRING;
+        length[0] = 64;
+        results3[0].buffer = indexName;
+        results3[0].buffer_length = length3[0];
+        results3[0].is_null = &is_null3[0];
+        results3[0].length = &length[0];
+        results3[0].error = &error3[0];
+        if( mysql_stmt_bind_result( res3, results3 ) )
+        {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+        errorMsg.push_back( err );
+        result = 1;
+        break;
+        }
+        else
+        {
+        while( !mysql_stmt_fetch( res3 ) )
+        indexes.push_back( m_pimpl->m_myconv.from_bytes( indexName ) );
+        table->SetIndexNames( indexes );
+        mysql_stmt_free_result( res3 );
+        if( GetTableProperties( table, errorMsg ) )
+        {
+        result = 1;
+        break;
+        }
+        pimpl->m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
+        fields.clear();
+        foreign_keys.clear();
+        fk_names.clear();
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+    }*/
     return result;
 }
 

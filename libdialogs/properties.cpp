@@ -84,7 +84,10 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_isApplied = false;
     m_handler = handler;
     // begin wxGlade: PropertiesDialog::PropertiesDialog
-    m_properties = new wxNotebook( this, wxID_ANY );
+    long style = 0;
+    if( handler->GetType() == TablePrpertiesType )
+        style = wxNB_MULTILINE;
+    m_properties = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style );
     switch( handler->GetType() )
     {
         case DatabaseTablePropertiesType:
@@ -94,7 +97,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             if( handler->GetType() == DatabaseTablePropertiesType ) 
                 prop = ( handler )->GetProperties().As<TableProperties>();
             else
-                prop = ( handler )-> GetTable()->GetTableProperties();
+                prop = table->GetTableProperties();
             wxFont data_font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, prop.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_dataFontUnderline, prop.m_dataFontName );
             if( prop.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
@@ -116,7 +119,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             labelFont.font = label_font;
             labelFont.text = wxColour( *wxBLACK );
             labelFont.back = wxColour( *wxWHITE );
-            m_page1 = new TableGeneralProperty( m_properties, prop.table_name, prop.m_owner, prop.m_comment, true );
+            m_page1 = new TableGeneralProperty( m_properties, table->GetTableName(), table->GetTableOwner(), prop.m_comment, true );
             m_properties->AddPage( m_page1, _( "General" ) );
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );

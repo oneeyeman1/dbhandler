@@ -681,55 +681,58 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         res = sqlite3_step( stmt );
                         if( res == SQLITE_ROW )
                         {
-                            table->GetTableProperties().m_dataFontSize = sqlite3_column_int( stmt, 4 );
-                            table->GetTableProperties().m_dataFontWeight = sqlite3_column_int( stmt, 5 );
+                            TableProperties prop;
+                            prop.m_dataFontSize = sqlite3_column_int( stmt, 4 );
+                            prop.m_dataFontWeight = sqlite3_column_int( stmt, 5 );
                             char *italic = (char *) sqlite3_column_text( stmt, 6 );
                             if( italic )
-                                table->GetTableProperties().m_dataFontItalic = italic[0] == 'Y';
+                                prop.m_dataFontItalic = italic[0] == 'Y';
                             int underline = sqlite3_column_int( stmt, 7 );
                             if( underline > 0 )
-                                table->GetTableProperties().m_dataFontUnderline = true;
+                                prop.m_dataFontUnderline = true;
                             int strikethrough = sqlite3_column_int( stmt, 8 );
                             if( strikethrough > 0 )
-                                table->GetTableProperties().m_dataFontStrikethrough = true;
-                            table->GetTableProperties().m_dataFontCharacterSet = sqlite3_column_int( stmt, 9 );
-                            table->GetTableProperties().m_dataFontPixelSize = sqlite3_column_int( stmt, 10 );
+                                prop.m_dataFontStrikethrough = true;
+                            prop.m_dataFontCharacterSet = sqlite3_column_int( stmt, 9 );
+                            prop.m_dataFontPixelSize = sqlite3_column_int( stmt, 10 );
                             dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 11 );
                             if( dataFontName )
-                                table->GetTableProperties().m_dataFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName );
-                            table->GetTableProperties().m_headingFontSize = sqlite3_column_int( stmt, 12 );
-                            table->GetTableProperties().m_headingFontWeight = sqlite3_column_int( stmt, 13 );
+                                prop.m_dataFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName );
+                            prop.m_headingFontSize = sqlite3_column_int( stmt, 12 );
+                            prop.m_headingFontWeight = sqlite3_column_int( stmt, 13 );
                             italic = (char *) sqlite3_column_text( stmt, 14 );
                             if( italic )
-                                table->GetTableProperties().m_headingFontItalic = italic[0] == 'Y';
+                                prop.m_headingFontItalic = italic[0] == 'Y';
                             underline = sqlite3_column_int( stmt, 15 );
                             if( underline > 0 )
-                                table->GetTableProperties().m_headingFontUnderline = true;
+                                prop.m_headingFontUnderline = true;
                             strikethrough = sqlite3_column_int( stmt, 16 );
                             if( strikethrough > 0 )
-                                table->GetTableProperties().m_headingFontStrikethrough = true;
-                            table->GetTableProperties().m_headingFontCharacterSet = sqlite3_column_int( stmt, 17 );
-                            table->GetTableProperties().m_headingFontPixelSize = sqlite3_column_int( stmt, 18 );
+                                prop.m_headingFontStrikethrough = true;
+                            prop.m_headingFontCharacterSet = sqlite3_column_int( stmt, 17 );
+                            prop.m_headingFontPixelSize = sqlite3_column_int( stmt, 18 );
                             headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 19 );
                             if( headingFontName )
-                                table->GetTableProperties().m_headingFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName );
-                            table->GetTableProperties().m_labelFontSize = sqlite3_column_int( stmt, 20 );
-                            table->GetTableProperties().m_labelFontWeight = sqlite3_column_int( stmt, 21 );
+                                prop.m_headingFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName );
+                            prop.m_labelFontSize = sqlite3_column_int( stmt, 20 );
+                            prop.m_labelFontWeight = sqlite3_column_int( stmt, 21 );
                             italic = (char *) sqlite3_column_text( stmt, 22 );
                             if( italic )
-                                table->GetTableProperties().m_labelFontItalic = italic[0] == 'Y';
+                                prop.m_labelFontItalic = italic[0] == 'Y';
                             underline = sqlite3_column_int( stmt, 23 );
                             if( underline > 0 )
-                                table->GetTableProperties().m_labelFontUnderline = true;
+                                prop.m_labelFontUnderline = true;
                             strikethrough = sqlite3_column_int( stmt, 24 );
                             if( strikethrough > 0 )
-                                table->GetTableProperties().m_labelFontStrikethrough = true;
-                            table->GetTableProperties().m_labelFontCharacterSer = sqlite3_column_int( stmt, 25 );
-                            table->GetTableProperties().m_labelFontPixelSize = sqlite3_column_int( stmt, 26 );
+                                prop.m_labelFontStrikethrough = true;
+                            prop.m_labelFontCharacterSer = sqlite3_column_int( stmt, 25 );
+                            prop.m_labelFontPixelSize = sqlite3_column_int( stmt, 26 );
                             labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 27 );
                             if( labelFontName )
-                                table->GetTableProperties().m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
-                            table->GetTableProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
+                                prop.m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
+                            prop.m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
+                            table->SetFullName( table->GetSchemaName() + L"." + table->GetTableName() );
+                            table->SetTableProperties( prop );
                         }
                         else if( res == SQLITE_DONE )
                             break;
@@ -759,7 +762,6 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
         GetErrorMessage( res, errorMsg );
     }
     sqlite3_finalize( stmt );
-    table->GetTableProperties().fullName = table->GetSchemaName() + L"." + table->GetTableName();
     return result;
 }
 
@@ -2126,13 +2128,16 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         if( !result )
         {
             std::wstring comment = L"";
-            DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, foreign_keys );
-            table->SetCatalog( catalog );
+            std::vector<std::wstring> pk;
             for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
             {
                 if( (*it)->IsPrimaryKey() )
-                    table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
+                {
+                    pk.push_back( (*it)->GetFieldName() );
+                }
             }
+            DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, pk, foreign_keys );
+            table->SetCatalog( catalog );
             table->SetNumberOfFields( count1 );
             table->SetNumberOfIndexes( count2 );
             table->SetTableId( 0 );

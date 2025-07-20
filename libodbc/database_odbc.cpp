@@ -2232,7 +2232,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
-                    auto qry1 = new SQLWCHAR[50];
+                    qry1 = new SQLWCHAR[50];
                     memset( qry1, '\0', 50 );
                     uc_to_str_cpy( qry1, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
                     ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
@@ -2953,39 +2953,41 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         ret = SQLFetch( m_hstmt );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
+            TableProperties prop;
             std::wstring name;
-            table->GetTableProperties().m_dataFontSize = dataFontSize;
-            table->GetTableProperties().m_dataFontWeight = dataFontWeight;
-            table->GetTableProperties().m_dataFontItalic = dataFontItalic[0] == 'Y';
-            table->GetTableProperties().m_dataFontUnderline = dataFontUnderline == 1;
-            table->GetTableProperties().m_dataFontStrikethrough = dataFontStriken == 1;
-            table->GetTableProperties().m_dataFontCharacterSet = dataFontCharacterSet;
-            table->GetTableProperties().m_dataFontPixelSize = dataFontPixelSize;
+            prop.m_dataFontSize = dataFontSize;
+            prop.m_dataFontWeight = dataFontWeight;
+            prop.m_dataFontItalic = dataFontItalic[0] == 'Y';
+            prop.m_dataFontUnderline = dataFontUnderline == 1;
+            prop.m_dataFontStrikethrough = dataFontStriken == 1;
+            prop.m_dataFontCharacterSet = dataFontCharacterSet;
+            prop.m_dataFontPixelSize = dataFontPixelSize;
             str_to_uc_cpy( name, dataFontName );
-            table->GetTableProperties().m_dataFontName = name;
+            prop.m_dataFontName = name;
             name = L"";
-            table->GetTableProperties().m_headingFontSize = headingFontSize;
-            table->GetTableProperties().m_headingFontWeight = headingFontWeight;
-            table->GetTableProperties().m_headingFontItalic = headingFontItalic[0] == 'Y';
-            table->GetTableProperties().m_headingFontUnderline = headingFontUnderline == 1;
-            table->GetTableProperties().m_headingFontStrikethrough = headingFontStriken == 1 ? true : false;
-            table->GetTableProperties().m_headingFontCharacterSet = headingFontCharacterSet;
-            table->GetTableProperties().m_headingFontPixelSize = headingFontPixelSize;
+            prop.m_headingFontSize = headingFontSize;
+            prop.m_headingFontWeight = headingFontWeight;
+            prop.m_headingFontItalic = headingFontItalic[0] == 'Y';
+            prop.m_headingFontUnderline = headingFontUnderline == 1;
+            prop.m_headingFontStrikethrough = headingFontStriken == 1 ? true : false;
+            prop.m_headingFontCharacterSet = headingFontCharacterSet;
+            prop.m_headingFontPixelSize = headingFontPixelSize;
             str_to_uc_cpy( name, headingFontName );
-            table->GetTableProperties().m_headingFontName = name;
+            prop.m_headingFontName = name;
             name = L"";
-            table->GetTableProperties().m_labelFontSize = labelFontSize;
-            table->GetTableProperties().m_labelFontWeight = labelFontWeight;
-            table->GetTableProperties().m_labelFontItalic = labelFontItalic[0] == 'Y';
-            table->GetTableProperties().m_labelFontUnderline = labelFontUnderline == 1;
-            table->GetTableProperties().m_labelFontStrikethrough = labelFontStriken == 1;
-            table->GetTableProperties().m_labelFontCharacterSer = labelFontCharacterSet;
-            table->GetTableProperties().m_labelFontPixelSize = labelFontPixelSize;
+            prop.m_labelFontSize = labelFontSize;
+            prop.m_labelFontWeight = labelFontWeight;
+            prop.m_labelFontItalic = labelFontItalic[0] == 'Y';
+            prop.m_labelFontUnderline = labelFontUnderline == 1;
+            prop.m_labelFontStrikethrough = labelFontStriken == 1;
+            prop.m_labelFontCharacterSer = labelFontCharacterSet;
+            prop.m_labelFontPixelSize = labelFontPixelSize;
             str_to_uc_cpy( name, labelFontName );
-            table->GetTableProperties().m_labelFontName = name;
+            prop.m_labelFontName = name;
             name = L"";
             str_to_uc_cpy( name, comments );
-            table->GetTableProperties().m_comment = name;
+            prop.m_comment = name;
+            table->SetTableProperties( prop );
             name = L"";
         }
         else if( ret != SQL_NO_DATA )
@@ -3016,7 +3018,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     delete[] qry;
     qry = nullptr;
-    table->GetTableProperties().fullName = table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName();
+    table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;
 }
 
@@ -4898,6 +4900,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                     result = 1;
                 }
+                delete command;
             }
             if( !result )
             {
@@ -6063,14 +6066,15 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 str_to_uc_cpy( tempTableName, table_name );
                 if( pimpl.m_subtype == L"Microsoft SQL Server" && tempSchemaName == L"sys" )
                     tempTableName = tempSchemaName + L"." + tempTableName;
-                DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, foreign_keys );
-                new_table->SetCatalog( catalog );
-                new_table->SetNumberOfFields( fields.size() );
+                std::vector<std::wstring> pk;
                 for( std::vector<TableField *>::iterator it = fields.begin (); it < fields.end (); ++it )
                 {
                     if( (*it)->IsPrimaryKey() )
-                        new_table->GetTableProperties().m_pkFields.push_back( (*it)->GetFieldName() );
+                        pk.push_back( (*it)->GetFieldName() );
                 }
+                DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, pk, foreign_keys );
+                new_table->SetCatalog( catalog );
+                new_table->SetNumberOfFields( fields.size() );
 /*                if( GetTableId( new_table, errorMsg ) )
                 {
                     result = 1;

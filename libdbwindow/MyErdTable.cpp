@@ -157,6 +157,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
         {
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
+            m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
             m_pLabel->GetFont().SetPointSize( 8 );
             m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_pLabel->SetText( m_table->GetTableName() );
@@ -167,6 +168,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+            m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
             m_comment->GetFont().SetPointSize( 8 );
             m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
             m_comment->SetText( m_table->GetTableProperties().m_comment );
@@ -250,6 +252,7 @@ void MyErdTable::UpdateTable()
     if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
+        m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
         m_pLabel->GetFont().SetPointSize( 8 );
         m_pLabel->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
         m_pLabel->SetText( m_table->GetTableName() );
@@ -260,6 +263,7 @@ void MyErdTable::UpdateTable()
     if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
     {
         m_comment->SetVAlign( wxSFShapeBase::valignTOP );
+        m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
         m_comment->GetFont().SetPointSize( 8 );
         m_comment->GetFont().SetWeight( wxFONTWEIGHT_BOLD );
         m_comment->SetText( m_table->GetTableProperties().m_comment );
@@ -280,7 +284,8 @@ void MyErdTable::UpdateTable()
 
 void MyErdTable::SetTableComment(const wxString &comment)
 {
-    m_table->GetTableProperties().m_comment = comment.ToStdWstring();
+    auto prop = m_table->GetTableProperties();
+    prop.m_comment = comment.ToStdWstring();
     m_comment->SetText( m_table->GetTableProperties().m_comment );
 }
 
