@@ -5121,6 +5121,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( errorMsg, CONN_ERROR, dbc );
         result = 1;
     }
+    delete[] command;
+    command = nullptr;
     return result;
 }
 

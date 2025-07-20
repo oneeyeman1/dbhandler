@@ -341,6 +341,11 @@ public:
 
     ~DatabaseTable()
     {
+        for( auto iter = table_fields.begin(); iter < table_fields.end(); ++iter )
+        {
+            delete (*iter);
+            (*iter) = nullptr;
+        }
     }
     const std::wstring &GetFullName() {return m_fullName; }
     const std::wstring &GetTableName() const { return m_tableName; }
