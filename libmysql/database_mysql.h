@@ -52,6 +52,7 @@ protected:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
 private:
+    MYSQL_STMT *stmt;
     MYSQL *m_db;
     int m_port, m_flags;
 };

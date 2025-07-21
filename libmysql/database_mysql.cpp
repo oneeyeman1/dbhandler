@@ -1773,6 +1773,8 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 #else
     char isNull1[8], err1[8], isNull2[10], err2[10];
 #endif
+    if( tableAdded )
+    {
     std::wstring owner = L"";
     std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
     std::wstring query3 = L"SELECT kcu.constraint_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
@@ -2332,6 +2334,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         }
         }
     }*/
+    }
     return result;
 }
 
@@ -2503,6 +2506,23 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
 int MySQLDatabase::PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query = L"SELECT * FROM ?.?";
+    stmt = mysql_stmt_init( m_db );
+    if( !stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
     return result;
 }
 
