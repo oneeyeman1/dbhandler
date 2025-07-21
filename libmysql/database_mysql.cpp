@@ -2507,18 +2507,18 @@ int MySQLDatabase::PrepareStatement(const std::wstring &schemaName, const std::w
 {
     int result = 0;
     std::wstring query = L"SELECT * FROM ?.?";
-    stmt = mysql_stmt_init( m_db );
-    if( !stmt )
+    m_stmt = mysql_stmt_init( m_db );
+    if( !m_stmt )
     {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_stmt ) );
         errorMsg.push_back( err );
         result = 1;
     }
     if( !result )
     {
-        if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        if( mysql_stmt_prepare( m_stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_stmt ) );
             errorMsg.push_back( err );
             result = 1;
         }
