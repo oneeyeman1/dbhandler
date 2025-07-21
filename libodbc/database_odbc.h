@@ -61,7 +61,6 @@ public:
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int AddUpdateFormat() override;
-    const std::vector<std::wstring> &GetTablespacesList() const override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
@@ -78,6 +77,7 @@ protected:
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schema_name, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
     int GetTableId(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg);
     int GetTableOwner(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg);
     void SetFullType(TableField *field);

@@ -418,6 +418,7 @@ protected:
     void rtrim(std::wstring &str) { str.erase( std::find_if( str.rbegin(), str.rend(), [](int ch) { return !std::isspace( ch ); } ).base(), str.end() ); };
     void trim(std::wstring str) { ltrim( str ); rtrim( str ); };
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) = 0;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) = 0;
@@ -455,7 +456,6 @@ public:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;
     virtual int AddUpdateFormat() = 0;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) = 0;
-    virtual const std::vector<std::wstring> &GetTablespacesList() const = 0;
 };
 
 #endif

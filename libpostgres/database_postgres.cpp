@@ -127,7 +127,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 }
                 if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
-                if( !result && PopulateTablespaces(errorMsg ) )
+                if( !result && GetTablespacesList( m_tablespaces, errorMsg ) )
                     result = 1;
             }
         }
@@ -1995,7 +1995,7 @@ int PostgresDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring 
     return result;
 }
 
-int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring errorMessage;
@@ -2015,3 +2015,4 @@ int PostgresDatabase::PopulateTablespaces(std::vector<std::wstring> &errorMsg)
     PQclear( res );
     return result;
 }
+

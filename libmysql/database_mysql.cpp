@@ -2718,7 +2718,7 @@ int MySQLDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &na
     return result;
 }
 
-const std::vector<std::wstring> &MySQLDatabase::GetTablespacesList() const
+int MySQLDatabase::GetTablespacesList(std::vector<std::wstring> &UNUSED(list), std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    return std::vector<std::wstring>();
+    return 0;
 }
