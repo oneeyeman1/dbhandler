@@ -427,6 +427,7 @@ protected:
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
 public:
     Database(const int osId, const std::wstring &desktop) : pimpl{ desktop }, m_osId( osId ) { }
+    virtual ~Database() { }
     const Impl &GetTableVector() const { return pimpl; };
     bool IsConnected() { return m_isConnected; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
