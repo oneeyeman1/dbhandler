@@ -708,7 +708,10 @@ void CreateIndex::OnAdvanced( wxCommandEvent &WXUNUSED(event ))
     }
     if( ( m_dbType == L"ODBC" && m_dbSubType == L"PostgreSQL" ) || m_dbType == L"PostgreSQL" )
     {
-        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion, m_db->GetTablespacesList() );
+        std::vector<std::wstring> list, errors;
+        if( m_db->GetTablespacesList( list, errors ) )
+            return;
+        CreateIndexPostgres dlg( nullptr, wxID_ANY, "Advanced options for PostgreSQL", m_method->GetValue(), m_dbTable, m_serverVersion, list );
         dlg.CenterOnScreen();
         if( dlg.ShowModal() == wxID_OK )
         {

@@ -36,6 +36,7 @@ public:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int AddUpdateFormat() override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)  override;
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
@@ -43,7 +44,6 @@ protected:
     void SetFullType(TableField *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
-    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)  override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;

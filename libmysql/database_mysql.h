@@ -36,6 +36,7 @@ public:
     virtual int AddUpdateFormat() override;
     int GetTableId(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, long &id, std::vector<std::wstring> &errors);
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;
@@ -50,7 +51,6 @@ protected:
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
-    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
 private:
     MYSQL *m_db;
     int m_port, m_flags;
