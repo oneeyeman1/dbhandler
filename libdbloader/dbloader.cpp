@@ -117,7 +117,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     std::vector<std::wstring> errorMsg, dsn;
     int result = wxID_OK;
     bool ask = false;
-    Database *pdb = NULL;
+    Database *pdb = nullptr;
     wxDynamicLibrary lib;
     wxString libName;
     auto stdPath = wxStandardPaths::Get();
@@ -139,8 +139,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
     {
         bool res;
         {
-            std::unique_ptr<ODBCDatabase> pdb( new ODBCDatabase( osId, desktop.ToStdWstring() ) );
-            res = pdb->GetDSNList( dsn, errorMsg );
+            std::unique_ptr<ODBCDatabase> odbcdb( new ODBCDatabase( osId, desktop.ToStdWstring() ) );
+            res = odbcdb->GetDSNList( dsn, errorMsg );
         }
         if( res )
         {
