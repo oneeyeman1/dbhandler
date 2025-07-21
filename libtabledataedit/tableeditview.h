@@ -73,11 +73,14 @@ protected:
     void OnInsertColumn(wxCommandEvent &event);
     void OnDeleteColumn(wxCommandEvent &event);
     void OnTableProperties(wxCommandEvent &event);
+
+    void SetFeldAttrbutes();
 private:
     wxBoxSizer *sizer_1;
     wxPanel *m_panel;
     MyTableDefGrid *m_grid;
     Database *m_db;
+    std::vector<TableField *>::const_iterator m_currentField;
     wxBoxSizer *sizer;
     wxDocMDIParentFrame *m_parent;
     wxDocMDIChildFrame *m_frame;

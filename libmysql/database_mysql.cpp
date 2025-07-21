@@ -1761,15 +1761,15 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     MYSQL_BIND params[3], results1[8], results2[10];
     unsigned long len[3], length1[8];
     MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
-    MYSQL_RES *meta1, *meta2;
+    MYSQL_RES *meta1 = nullptr, *meta2 = nullptr;
     char cnstraintName[64], fieldName[64], refTableSchema[64], refTableField[64], refTableName[64], updateCon[64], deleteCon[64], fieldType[64];
-    short ordinal;
+    short ordinal = 0;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::vector<std::wstring> origFields, refFelds;
-    FK_ONUPDATE update_constraint;
-    FK_ONDELETE delete_constraint;
+    FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
+    FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
 #if MYSQL_VERSION_ID > 80001
-    bool isNull1[8], err1[8], isNull2[[10], err2[10];
+    bool isNull1[8], err1[8], isNull2[10], err2[10];
 #else
     char isNull1[8], err1[8], isNull2[10], err2[10];
 #endif
