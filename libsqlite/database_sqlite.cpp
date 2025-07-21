@@ -2592,7 +2592,9 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
     return result;
 }
 
-const std::vector<std::wstring> &SQLiteDatabase::GetTablespacesList() const
+int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)
 {
-    return std::vector<std::wstring>();
+    UNUSED(list);
+    UNUSED(errorMsg);
+    return 0;
 }

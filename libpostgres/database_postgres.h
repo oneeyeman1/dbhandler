@@ -36,7 +36,7 @@ public:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int AddUpdateFormat() override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
-    virtual const std::vector<std::wstring> &GetTablespacesList() const override { return m_tablespaces; }
+    virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)  override;
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;
@@ -48,7 +48,6 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
-    int PopulateTablespaces(std::vector<std::wstring> &errorMsg);
 private:
     PGconn *m_db;
     PGresult *queryRes;

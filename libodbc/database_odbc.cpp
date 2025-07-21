@@ -7361,7 +7361,38 @@ int ODBCDatabase::MonitorSchemaChanges(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-const std::vector<std::wstring> &ODBCDatabase::GetTablespacesList() const
+int ODBCDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)
 {
-    return std::vector<std::wstring>();
+    int result = 0;
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        std::wstring query = L"SELECT * FROM pg_tablespaces;";
+        auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+        if( !result )
+        {
+            auto qry = new SQLWCHAR[query.size() + 2];
+            memset( qry, '\0', query.size() + 2 );
+            uc_to_str_cpy( qry, query );
+            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            delete[] qry;
+            qry = nullptr;
+        }
+    }
+    else
+    {
+        UNUSED( list );
+        UNUSED( errorMsg );
+    }
+    return result;
 }
+

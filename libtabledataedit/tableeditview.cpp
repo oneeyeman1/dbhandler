@@ -456,7 +456,7 @@ void TableEditView::CreateMenuAndToolbar()
     if( !wxLoadUserResource( &data1, &sizeSave, "save", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        wxMessageBox( wxString::0( "Error: %d!!", err ) );
     }
     else
     {
