@@ -132,7 +132,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             if( handler->GetType() == TablePrpertiesType )
             {
                 m_page19 = new TableIndex( m_properties, wxID_ANY );
-                m_properties->InsertPage( 5, m_page19, _( "Indexes" ) );
+                m_properties->InsertPage( 4, m_page19, _( "Foregn Key" ) );
                 m_page20 = new TableIndex( m_properties, wxID_ANY );
                 m_properties->AddPage( m_page20, _( "Indexes" ) );
             }
