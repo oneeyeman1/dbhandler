@@ -370,12 +370,16 @@ void TableEditView::GetTablesForView(Database *db, bool init)
     m_frame->Layout();
     auto width = m_frame->GetSize().GetWidth();
     auto columns = m_grid->GetColSize( 1 ) + m_grid->GetColSize( 2 ) + m_grid->GetColSize( 3 ) + m_grid->GetColSize( 4 ) + m_grid->GetRowLabelSize();
+#ifdef __WXMSW__
+    columns += ::GetSystemMetrics( SM_CXVSCROLL );
+#endif // __WXMSW__
     auto halfSize = ( width - columns ) / 2;
     m_grid->SetColSize( 0, halfSize );
     m_grid->SetColSize( 5, halfSize );
     m_grid->SetFocus();
     m_grid->Bind( wxEVT_KEY_DOWN, &TableEditView::OnKeyDown, this );
-    m_grid->Bind( wxEVT_GRID_SELECT_CELL, &TableEditView::OnCellClicked, this );
+    m_grid->Bind( wxEVT_GRID_SELECT_CELL, &TableEditView::OnCellSelected, this );
+    m_grid->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &TableEditView::OnCellClicked, this );
 }
 
 void TableEditView::CreateMenuAndToolbar()
@@ -456,7 +460,7 @@ void TableEditView::CreateMenuAndToolbar()
     if( !wxLoadUserResource( &data1, &sizeSave, "save", RT_RCDATA, inst ) )
     {
         auto err = ::GetLastError();
-        wxMessageBox( wxString::0( "Error: %d!!", err ) );
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
     }
     else
     {
@@ -553,7 +557,7 @@ void TableEditView::OnKeyDown(wxKeyEvent &event)
     event.Skip();
 }
 
-void TableEditView::OnCellClicked(wxGridEvent &event)
+void TableEditView::OnCellSelected(wxGridEvent &event)
 {
     auto row = event.GetRow();
     auto found = false;
@@ -572,6 +576,7 @@ void TableEditView::OnCellClicked(wxGridEvent &event)
         m_grid->GetGridRowLabelWindow()->Refresh();
         SetFeldAttrbutes();
     }
+    event.Skip();
 }
 
 void TableEditView::AppendOrInsertField(TableField *it)
@@ -619,7 +624,6 @@ void TableEditView::AppendOrInsertField(TableField *it)
     m_grid->SetCellRenderer( rows - 1, 1, new MyComboCellRenderer );
 
     m_grid->SetCellEditor( rows - 1, 1, new MyTableTypeEditor( m_dbType, m_dbSubtype, fieldType ) );
-    m_grid->GetCellEditor( rows - 1, 1 )->SetControl( new TypeComboBox( m_grid, m_dbType.ToStdWstring(), m_dbSubtype.ToStdWstring(), fieldType.ToStdWstring() ) );
 
     if( width > 0 )
         m_grid->SetCellValue( rows - 1, 2, wxString::Format( "%d", width ) );
@@ -648,14 +652,14 @@ void TableEditView::AppendOrInsertField(TableField *it)
     m_grid->SetRowLabelValue( rows - 1, "" );
 }
 
-void TableEditView::OnInsertColumn(wxCommandEvent &event)
+void TableEditView::OnInsertColumn(wxCommandEvent &WXUNUSED(event))
 {
     AppendOrInsertField( nullptr );
     m_grid->GoToCell( m_grid->GetNumberRows() - 1, 0 );
     GetDocument()->Modify( true );
 }
 
-void TableEditView::OnDeleteColumn(wxCommandEvent &event)
+void TableEditView::OnDeleteColumn(wxCommandEvent &WXUNUSED(event))
 {
     auto value = m_grid->GetCellValue( m_grid->GetGridCursorRow(), 0 );
     int answer = wxMessageBox( _( "You are about to drop column " ) + value + _( ". OK to continue?" ), _( "Create/Alter Table" ), wxOK | wxCANCEL | wxCANCEL_DEFAULT | wxICON_INFORMATION );
@@ -665,7 +669,7 @@ void TableEditView::OnDeleteColumn(wxCommandEvent &event)
     }
 }
 
-void TableEditView::OnTableProperties(wxCommandEvent &event)
+void TableEditView::OnTableProperties(wxCommandEvent &WXUNUSED(event))
 {
     wxString libName;
     wxDynamicLibrary lib;
@@ -688,13 +692,16 @@ void TableEditView::OnTableProperties(wxCommandEvent &event)
         bool logOnly;
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
         int res = func( m_frame, handler, title, command, m_table, logOnly );
-        if( logOnly )
+        if( res == wxID_OK )
         {
+            if( logOnly )
+            {
+            }
         }
     }
 }
 
-int TableEditView::ApplyProperties( const wxAny &, bool, std::wstring & )
+int TableEditView::ApplyProperties(const wxAny &, bool, std::wstring &)
 {
     return 0;
 }
@@ -708,4 +715,17 @@ void TableEditView::SetFeldAttrbutes()
 {
     attributes->GetCommentCtrl()->SetValue( (*m_currentField)->GetFieldProperties().m_comment );
 //    attributes->Get
+}
+
+void TableEditView::OnCellClicked(wxGridEvent &event)
+{
+    auto value = m_grid->GetCellValue( event.GetRow(), event.GetCol() );
+    if( event.GetCol() == 1 )
+    {
+        m_grid->GetCellEditor( event.GetRow(), 1 )->SetControl( new TypeComboBox( m_grid, m_dbType.ToStdWstring(), m_dbSubtype.ToStdWstring(), value.ToStdWstring() ) );
+        m_grid->SelectBlock( event.GetRow(), 1, event.GetRow(), 1 );
+        m_grid->EnableCellEditControl();
+        dynamic_cast<wxComboBox *>( m_grid->GetCellEditor( event.GetRow(), 1 )->GetControl() ) ->Popup();
+    }
+    event.Skip();
 }
