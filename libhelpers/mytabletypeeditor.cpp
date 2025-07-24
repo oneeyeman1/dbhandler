@@ -35,3 +35,10 @@ void MyTableTypeEditor::StartingClick()
     wxGridCellEditor::StartingClick();
     dynamic_cast<wxComboBox *>( GetWindow() )->Popup();
 }
+
+MyTableTypeEditor::~MyTableTypeEditor()
+{
+    auto control = GetControl();
+    delete control;
+    control = nullptr;
+}
