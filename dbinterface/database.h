@@ -347,7 +347,7 @@ public:
             (*iter) = nullptr;
         }
     }
-    const std::wstring &GetFullName() {return m_fullName; }
+    const std::wstring &GetFullName() const {return m_fullName; }
     const std::wstring &GetTableName() const { return m_tableName; }
     const std::wstring &GetSchemaName() const { return m_schemaName; }
     const std::wstring &GetCatalog() const { return m_catalogName; }
@@ -355,7 +355,7 @@ public:
     const TableProperties &GetTableProperties() const { return m_props; }
     void SetTableProperties(const TableProperties &prop) { m_props = prop; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }
-    std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() { return foreign_keys; }
+    const std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() const { return foreign_keys; }
     unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }

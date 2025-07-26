@@ -1340,7 +1340,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         }
         else
         {
-            std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
             unsigned long size = fKeys.size();
             size++;
             for( int i = 0; i < foreignKeyFields.size(); i++ )
@@ -1455,7 +1455,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable 
         else
         {
             bool found = false;
-            std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
                 {

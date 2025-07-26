@@ -51,11 +51,11 @@ protected:
 private:
     PGconn *m_db;
     PGresult *queryRes;
-    std::vector<std::wstring> m_tablespaces;
 };
 
 struct PostgresDatabase::PostgresImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
+    std::vector<std::wstring> m_tablespaces;
 };
 #endif

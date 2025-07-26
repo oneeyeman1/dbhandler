@@ -21,6 +21,7 @@
 #endif
 
 #include <memory>
+#include <map>
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"
@@ -131,9 +132,9 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page5, _( "Primary Key" ) );
             if( handler->GetType() == TablePrpertiesType )
             {
-                m_page19 = new TableIndex( m_properties, wxID_ANY );
+                m_page19 = new TableIndex( m_properties, wxID_ANY, table->GetForeignKeyVector(), false );
                 m_properties->InsertPage( 4, m_page19, _( "Foregn Key" ) );
-                m_page20 = new TableIndex( m_properties, wxID_ANY );
+                m_page20 = new TableIndex( m_properties, wxID_ANY, table->GetIndexNames(), true );
                 m_properties->AddPage( m_page20, _( "Indexes" ) );
             }
         }
