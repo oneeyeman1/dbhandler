@@ -70,6 +70,7 @@ protected:
     void OnFieldSetFocus(wxFocusEvent &event);
     void OnKeyDown(wxKeyEvent &event);
     void OnCellClicked(wxGridEvent &event);
+    void OnCellSelected(wxGridEvent &event);
     void OnInsertColumn(wxCommandEvent &event);
     void OnDeleteColumn(wxCommandEvent &event);
     void OnTableProperties(wxCommandEvent &event);
