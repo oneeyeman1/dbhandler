@@ -127,7 +127,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 }
                 if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
-                if( !result && GetTablespacesList( m_tablespaces, errorMsg ) )
+                if( !result && GetTablespacesList( m_pimpl->m_tablespaces, errorMsg ) )
                     result = 1;
             }
         }
@@ -2010,7 +2010,7 @@ int PostgresDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::v
     else
     {
         for( auto i = 0; i < PQntuples( res ); i++ )
-            m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ) );
+            m_pimpl->m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ) );
     }
     PQclear( res );
     return result;
