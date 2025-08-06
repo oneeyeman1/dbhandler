@@ -360,8 +360,8 @@ public:
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }
     void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
-    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
-    const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
+    void SetIndexNames(const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &indexes) { m_indexes = indexes; }
+    const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &GetIndexNames() const { return m_indexes; }
     void SetNumberOfFields(size_t count) { m_numFields = count; }
     size_t GetNumberOfFields() const { return m_numFields; }
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
@@ -372,10 +372,10 @@ private:
     std::wstring m_tableName, m_owner, m_schemaName, m_catalogName, m_fullName;
     std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
+    std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > m_indexes;
     size_t m_numFields;
     int m_numIndex;
     unsigned long m_objectId;
-    std::vector<std::wstring> m_indexes;
     TableProperties m_props;
     std::vector<std::wstring> m_pkFelds;
 };
