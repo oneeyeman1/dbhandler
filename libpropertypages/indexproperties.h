@@ -26,7 +26,7 @@ public:
     // end wxGlade
 
     TableIndex(wxWindow *parent, wxWindowID id, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex);
-    TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex);
+    TableIndex(wxWindow *parent, wxWindowID id, const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &indexes, bool isIndex);
 
 private:
     bool m_isIndex;

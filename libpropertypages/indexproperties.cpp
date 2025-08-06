@@ -31,7 +31,7 @@ void TableIndex::OnIndexSelected(wxCommandEvent &event)
     m_delete->Enable( true );
 }
 
-TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex) :
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &indexes, bool isIndex) :
   PropertyPageBase(parent, id)
 {
     m_isIndex = isIndex;
