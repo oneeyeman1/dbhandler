@@ -18,23 +18,42 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
 {
+    auto counter = 1;
     m_isIndex = isIndex;
+    m_db = db;
+    m_tableName = tableName;
     InitGui();
+    for( std::map<unsigned long, std::vector<FKField *> >::const_iterator it = fKeys.begin(); it != fKeys.end(); ++it )
+    {
+        for( std::vector<FKField *>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
+        {
+            auto name =  (*it1)->GetFKName();
+            if( name.empty() )
+                name = L"fk_" + std::to_wstring( counter );
+            list_box_1->Append( name );
+            counter++;
+        }
+    }
+    m_currentFK = fKeys.at( 0 );
+    if( list_box_1->GetCount() > 0 )
+        list_box_1->SetSelection( 0 );
 }
 
-void TableIndex::OnIndexSelected(wxCommandEvent &event)
+void TableIndex::OnIndexSelected(wxCommandEvent &WXUNUSED(event))
 {
     m_edit->Enable( true );
     m_delete->Enable( true );
 }
 
-TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex) :
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::vector<std::wstring> &indexes, bool isIndex) :
   PropertyPageBase(parent, id)
 {
     m_isIndex = isIndex;
+    m_tableName = tableName;
+    m_db = db;
     InitGui();
 }
 
@@ -69,5 +88,45 @@ void TableIndex::InitGui()
     sizer_1->Fit( this );
     // end wxGlade
     list_box_1->Bind( wxEVT_LISTBOX, &TableIndex::OnIndexSelected, this );
+    m_edit->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
+    m_delete->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
+    m_delete->Bind( wxEVT_BUTTON, &TableIndex::OnDelete, this );
+}
 
+void TableIndex::OnButtonUpdateUI( wxUpdateUIEvent &event )
+{
+    if( list_box_1->GetSelection() == wxNOT_FOUND )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+
+void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
+{
+    wxString fkName = list_box_1->GetString( list_box_1->GetSelection() );
+    wxString message = _( "The " );
+    if( m_isIndex )
+        message += _( "index " );
+    else
+        message += _( "foreign key " );
+    message += fkName;
+    message += _( " will be deleted. This can't be undone. Want to prceed?" );
+    auto responce = wxMessageBox( message, _( "Warning" ), wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
+    if( responce == wxYES )
+    {
+        std::vector<std::wstring> errors;
+        std::wstring command;
+        if( m_db->GetTableVector().m_type == L"SQLite" )
+        {
+            fkName = "(\\s+FOREGN\\s+kEY\\s+(\\s+";
+//            fkName = "(?i)\s+FOREGN/i\s+kEY/i\s+(\s+";
+            for( std::vector<FKField *>::iterator it = m_currentFK.begin(); it < m_currentFK.end(); ++it )
+            {
+
+            }
+        }
+//        m_db->DropForeignKey( command, m_tableName., fkName.ToStdWstring(), false, errors  );
+        for( auto error : errors )
+            wxMessageBox( error, _( "Error" ), wxOK | wxICON_EXCLAMATION );
+    }
 }

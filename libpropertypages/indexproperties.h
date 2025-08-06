@@ -25,14 +25,18 @@ public:
     // begin wxGlade: TableIndex::ids
     // end wxGlade
 
-    TableIndex(wxWindow *parent, wxWindowID id, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex);
-    TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex);
+    TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex);
+    TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::vector<std::wstring> &indexes, bool isIndex);
 
 private:
     bool m_isIndex;
+    Database *m_db;
+    std::wstring m_tableName;
+    std::vector<FKField *> m_currentFK;
 protected:
     void OnIndexSelected(wxCommandEvent &event);
-
+    void OnButtonUpdateUI(wxUpdateUIEvent &event);
+    void OnDelete(wxCommandEvent &event);
     void InitGui();
     // begin wxGlade: TableIndex::attributes
     wxListBox* list_box_1;
