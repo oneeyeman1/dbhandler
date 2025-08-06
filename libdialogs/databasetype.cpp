@@ -24,6 +24,7 @@
 #include "wx/statline.h"
 #include "database.h"
 #include "dialogs.h"
+//#include "maskededit.h"
 #include "databasetype.h"
 
 //typedef void (*CONNECTTODB)(const wxString &, const wxString &, void *&db, wxString &, WXHWND);
@@ -428,6 +429,7 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
+//    m_hostAddr = new wxMaskEdit( this, wxID_ANY, "127.0.0.1" );
     m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
     m_port = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );

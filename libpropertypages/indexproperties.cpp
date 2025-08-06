@@ -9,14 +9,36 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
+#include <map>
+#include <vector>
+#include "database.h"
 #include "propertypagebase.h"
 #include "indexproperties.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-TableIndex::TableIndex(wxWindow* parent, wxWindowID id):
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
+{
+    m_isIndex = isIndex;
+    InitGui();
+}
+
+void TableIndex::OnIndexSelected(wxCommandEvent &event)
+{
+    m_edit->Enable( true );
+    m_delete->Enable( true );
+}
+
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex) :
+  PropertyPageBase(parent, id)
+{
+    m_isIndex = isIndex;
+    InitGui();
+}
+
+void TableIndex::InitGui()
 {
     // begin wxGlade: TableIndex::TableIndex
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -42,15 +64,10 @@ TableIndex::TableIndex(wxWindow* parent, wxWindowID id):
     sizer_3->Add( m_delete, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    
+
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
     list_box_1->Bind( wxEVT_LISTBOX, &TableIndex::OnIndexSelected, this );
-}
 
-void TableIndex::OnIndexSelected(wxCommandEvent &event)
-{
-    m_edit->Enable( true );
-    m_delete->Enable( true );
 }

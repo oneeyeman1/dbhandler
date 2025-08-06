@@ -1514,7 +1514,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
                     {
                         if( newFK.size() > 0 )
                         {
-                            std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                            std::map<unsigned long, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
                             unsigned long size = fKeys.size();
                             for( unsigned int i = 0; i < newFK.size(); i++ )
                                 fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), newFK.at( i )->GetOriginalFieldName(), L"", newFK.at( i )->GetReferencedTableName(), newFK.at( i )->GetReferencedFieldName(), origFields, refFields, newFK.at( i )->GetOnUpdateConstraint(), newFK.at( i )->GetOnDeleteConstraint() ) );
@@ -1623,7 +1623,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &t
 int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
-    std::map<unsigned long, std::vector<FKField *> > &fkFields = ( tableName ).GetForeignKeyVector();
+    std::map<unsigned long, std::vector<FKField *> > fkFields = ( tableName ).GetForeignKeyVector();
     bool isFK = false, isConstraint = false;
     refTableOrig = refTableName;
     std::wistringstream str( sql );

@@ -7373,4 +7373,3 @@ int ODBCDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vecto
     return result;
 }
 
-

@@ -25,12 +25,15 @@ public:
     // begin wxGlade: TableIndex::ids
     // end wxGlade
 
-    TableIndex(wxWindow* parent, wxWindowID id);
+    TableIndex(wxWindow *parent, wxWindowID id, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex);
+    TableIndex(wxWindow *parent, wxWindowID id, const std::vector<std::wstring> &indexes, bool isIndex);
 
 private:
-
+    bool m_isIndex;
 protected:
     void OnIndexSelected(wxCommandEvent &event);
+
+    void InitGui();
     // begin wxGlade: TableIndex::attributes
     wxListBox* list_box_1;
     wxButton* m_edit;
