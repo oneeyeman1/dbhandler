@@ -347,7 +347,7 @@ public:
             (*iter) = nullptr;
         }
     }
-    const std::wstring &GetFullName() const {return m_fullName; }
+    const std::wstring &GetFullName() {return m_fullName; }
     const std::wstring &GetTableName() const { return m_tableName; }
     const std::wstring &GetSchemaName() const { return m_schemaName; }
     const std::wstring &GetCatalog() const { return m_catalogName; }
@@ -360,8 +360,8 @@ public:
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }
     void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
-    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
-    const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
+    void SetIndexNames(const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &indexes) { m_indexes = indexes; }
+    const std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > &GetIndexNames() const { return m_indexes; }
     void SetNumberOfFields(size_t count) { m_numFields = count; }
     size_t GetNumberOfFields() const { return m_numFields; }
     void SetNumberOfIndexes(int count) { m_numIndex = count; }
@@ -372,10 +372,10 @@ private:
     std::wstring m_tableName, m_owner, m_schemaName, m_catalogName, m_fullName;
     std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
+    std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > m_indexes;
     size_t m_numFields;
     int m_numIndex;
     unsigned long m_objectId;
-    std::vector<std::wstring> m_indexes;
     TableProperties m_props;
     std::vector<std::wstring> m_pkFelds;
 };
@@ -457,5 +457,5 @@ public:
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) = 0;
 };
-
 #endif
+
