@@ -3945,7 +3945,7 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
             }
             if( !result )
             {
-                std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                std::map<unsigned long, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
                 unsigned long size = fKeys.size();
                 for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
                     fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
@@ -4753,7 +4753,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
         if( !result )
         {
             bool found = false;
-            std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
                 {
