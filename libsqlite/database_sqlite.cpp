@@ -2081,13 +2081,11 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
     if( tableAdded )
     {
         std::vector<TableField *> fields;
-        std::vector<std::wstring> fk_names;
-        std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > indexes;
-        std::vector<std::tuple<std::wstring, int> > indexFields;
+        std::vector<std::wstring> fk_names, indexes;
         std::map<unsigned long,std::vector<FKField *> > foreign_keys;
-        sqlite3_stmt *stmt = nullptr, *stmt2 = nullptr, *stmt3 = nullptr, *stmt4 = nullptr, *stmt5 = nullptr, *stmt6 = nullptr;
+        sqlite3_stmt *stmt = NULL, *stmt2 = NULL, *stmt3 = NULL, *stmt4 = NULL;
         std::string fieldName, fieldType, fieldDefaultValue, fkTable, fkField, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-        int res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, res5 = SQLITE_OK, res6 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
+        int res = SQLITE_OK, res1 = SQLITE_OK, res3 = SQLITE_OK, res4 = SQLITE_OK, fieldIsNull, fieldPK, fkReference, autoinc, fkId;
         int count1 = 0, count2 = 0;
         FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
         FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -2095,8 +2093,6 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
         std::string query2 = "SELECT * FROM pragma_table_info(?, ?)";
         std::string query3 = "SELECT * FROM pragma_foreign_key_list(?, ?)";
         std::string query4 = "SELECT * FROM pragma_index_list(?, ?)";
-        std::string query5 = "SELECT * FROM pragme_index_xinfo(?)";
-        std::string query6 = "SELECT * FROM sqlite_master WHERE type = 'index' AND tbl_name = ? AND sql LIKE 'CREATE INDEX %'";
         if( ( res3 = sqlite3_prepare_v2( m_db, query3.c_str(), (int) query3.length(), &stmt3, 0 ) ) == SQLITE_OK )
         {
             res3 = sqlite3_bind_text( stmt3, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
@@ -2287,62 +2283,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                         res4 = sqlite3_step( stmt4 );
                         if( res4 == SQLITE_ROW )
                         {
-                            if( strcmp( reinterpret_cast<const char*>( sqlite3_column_text( stmt4, 4 ) ), "c" ) )
-                            {
-                                if( ( res5 = sqlite3_prepare_v2( m_db, query5.c_str(), -1, &stmt5, 0  ) ) == SQLITE_OK )
-                                {
-                                    res5 = sqlite3_bind_text( stmt5, 1, (const char *) sqlite3_column_text( stmt4, 2 ), -1, SQLITE_TRANSIENT );
-                                    if( res5 != SQLITE_OK )
-                                    {
-                                        result = 1;
-                                        GetErrorMessage( res, errors );
-                                    }
-                                    else
-                                    {
-                                        for( ; ; )
-                                        {
-                                            res5 = sqlite3_step( stmt5 );
-                                            if( res5 == SQLITE_ROW )
-                                            {
-                                                indexFields.push_back( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt5, 3 ) ) ), sqlite3_column_int( stmt5, 4 ) ) );
-                                            }
-                                            else if( res5 == SQLITE_DONE )
-                                                break;
-                                            else
-                                            {
-                                                result = 1;
-                                                GetErrorMessage( res, errors );
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if( result )
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                result = 1;
-                                GetErrorMessage( res, errors );
-                            }
-                            int type = 1;
-                            if( !strcmp( (const char *) sqlite3_column_text( stmt4, 4 ), "u" ) )
-                                type = 2;
-                            if( !strcmp( (const char *) sqlite3_column_text( stmt4, 4 ), "pk" ) )
-                                type = 3;
-                            bool isPartial = (const char *) sqlite3_column_text( stmt4, 5 ) == "1";
-                            if( isPartial )
-                            {
-                                if( ( res6 = sqlite3_prepare_v2( m_db, query6.c_str(), (int) query6.length(), &stmt6, 0 ) ) != SQLITE_OK )
-                                {
-                                }
-                                else
-                                {
-                                    result = 1;
-                                    GetErrorMessage( res, errors );
-                                }
-                            }
-                            indexes[std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 2 ) ) ), sqlite3_column_int( stmt4, 3 ), type, isPartial, L"" )] = indexFields;
+                            indexes.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 2 ) ) ) );
                             count2++;
                         }
                         else if( res4 == SQLITE_DONE )

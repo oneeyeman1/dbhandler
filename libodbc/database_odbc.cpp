@@ -2544,7 +2544,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
     bool exists = false;
     std::wstring query1;
     SQLWCHAR *index_name = nullptr, *table_name = nullptr, *schema_name = nullptr;
-    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbIsUnique = SQL_NTS, cbType = SQL_NTS;
+    SQLLEN cbIndexName = SQL_NTS, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query1 = L"SELECT 1 FROM " + catalogName + L".sys.indexes WHERE name = ? AND object_id = OBJECT_ID( ? ) );";
     if( pimpl.m_subtype == L"MySQL" )
@@ -3697,8 +3697,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         int type;
         if( field->GetFieldType() == L"date" )
             type = 82;
-        if( field->GetFieldType() == L"datetime" || 
-            field->GetFieldType() == L"datwtime2" || 
+        if( field->GetFieldType() == L"datetime" ||
+            field->GetFieldType() == L"datwtime2" ||
             field->GetFieldType() == L"smalldatetime" ||
             field->GetFieldType() == L"timestamp" )
             type = 84;
@@ -3945,11 +3945,10 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
             }
             if( !result )
             {
-                // TODO
-/*                std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+                std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
                 unsigned long size = fKeys.size();
                 for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
-                    fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );*/
+                    fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
             }
             if( result == 1 )
             {
@@ -4724,8 +4723,8 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
 
 int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
-   int result = 0;
-/*    std::wstring query;
+    int result = 0;
+    std::wstring query;
     query = L"ALTER TABLE ";
     query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
     query += L"DROP CONSTRAINT " + keyName + L" ";
@@ -4754,8 +4753,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
         if( !result )
         {
             bool found = false;
-            // TODO
-            std::map<unsigned long, std::vector<FKField *> > &fKeys = tableName.GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > &fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
                 {
@@ -4796,7 +4794,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tab
     else
     {
         command = query;
-    }*/
+    }
     return result;
 }
 
@@ -5133,27 +5131,36 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLRETURN ret;
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
     std::wstring owner;
-    std::vector<std::wstring> autoinc_fields;
-    std::map<std::tuple<std::wstring, int, int, int, std::wstring>, std::vector<std::tuple<std::wstring, int> > > indexes;
+    std::vector<std::wstring> autoinc_fields, indexes;
     SQLWCHAR **columnNames = nullptr;
     std::wstring query4;
     SQLWCHAR *qry = nullptr;
     int result = 0;
-    SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN], indexFieldName[SQL_MAX_COLUMN_NAME_LEN], sortOrder[5];
     std::vector<TableField *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, origSchema, origTable, origCol, refSchema, refTable, refCol, indexCondition;
+    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1];
     SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
     SQLSMALLINT updateRule = 0, deleteRule = 0, keySequence = 0;
     SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog, fkNameLength = 256;
-    SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength, cbIndexName, cbIsUnique, cbType;
-    SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable, cbSortOrder, cbIndexCondition;
+    SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
+    SQLLEN cbNullable, cbRemarks, cbColumnDefault, cbSQLDataType, cbDatetimeSubtypeCode, cbCharOctetLength, cbOrdinalPosition, cbIsNullable;
     SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
+    if( pimpl.m_subtype == L"PostgreSQL" )
+        query4 = L"SELECT indexname FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
+    if( pimpl.m_subtype == L"MySQL" )
+        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ? AND table_catalog = ?;";
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+        query4 = L"SELECT i.name FROM " + catalog + L".sys.indexes i, " + catalog + L".sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+        query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
+        query4 = L"SELECT iname FROM sysindexes WHERE tname = ?";
+    if( pimpl.m_subtype == L"Oracle" )
+        query4 = L"SELECT index_name FROM all_indexes WHERE table_name = UPPER(?)";
     std::wstring schema, table;
-    int isUnique, type;
     auto pos = schemaName.rfind( '.' );
     if( pos != std::wstring::npos )
         schema = schemaName.substr( pos + 1 );
@@ -5916,10 +5923,23 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
             }
             if( !result )
             {
-                ret = SQLStatistics( m_hstmt, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, SQL_INDEX_ALL, SQL_QUICK );
+                qry = new SQLWCHAR[query4.length() + 2];
+                memset( qry, '\0', query4.length() + 2 );
+                uc_to_str_cpy( qry, query4 );
+                ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errors, STMT_ERROR );
+                    autoinc_fields.clear();
+                    pk_fields.clear();
+                    fields.clear();
+                    result = 1;
+                }
                 if( !result )
                 {
-                    ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                    SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
+                    SQLULEN ParamSize;
+                    ret = SQLDescribeParam( m_hstmt, 1, &DataType, &ParamSize, &DecimalDigits, &Nullable);
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errors, STMT_ERROR );
@@ -5930,7 +5950,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &isUnique, 0, &cbIsUnique );
+                        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, table_name, 0, &cbSchemaName );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -5940,75 +5960,76 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             result = 1;
                         }
                     }
-                    if( !result )
+                    if( pimpl.m_subtype != L"Oracle" )
                     {
-                        ret = SQLBindCol( m_hstmt, 7, SQL_C_SSHORT, &type, 2, &cbType );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        if( !result )
                         {
-                            GetErrorMessage( errors, STMT_ERROR );
-                            autoinc_fields.clear();
-                            pk_fields.clear();
-                            fields.clear();
-                            result = 1;
+                             ret = SQLDescribeParam( m_hstmt, 2, &DataType, &ParamSize, &DecimalDigits, &Nullable);
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errors, STMT_ERROR );
+                                autoinc_fields.clear();
+                                pk_fields.clear();
+                                fields.clear();
+                                result = 1;
+                            }
                         }
-                    }
-                    ret = SQLBindCol( m_hstmt, 9, SQL_C_WCHAR, &indexFieldName, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errors, STMT_ERROR );
-                        autoinc_fields.clear();
-                        pk_fields.clear();
-                        fields.clear();
-                        result = 1;
-                    }
-                    ret = SQLBindCol( m_hstmt, 9, SQL_C_WCHAR, &sortOrder, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errors, STMT_ERROR );
-                        autoinc_fields.clear();
-                        pk_fields.clear();
-                        fields.clear();
-                        result = 1;
-                    }
-/*                    ret = SQLBindCol( m_hstmt, 13, SQL_C_WCHAR, &indexCondition, 1024, &cbIndexCondition );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errors, STMT_ERROR );
-                        autoinc_fields.clear();
-                        pk_fields.clear();
-                        fields.clear();
-                        result = 1;
-                    }*/
-                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
-                    {
-                        SQLWCHAR cond[1024];
-                        SQLLEN indicator;
-                        auto isPartial = false;
-                        std::wstring temp, temp1, temp2;
-                        str_to_uc_cpy( temp, name );
-                        str_to_uc_cpy( temp1, indexFieldName );
-                        str_to_uc_cpy( temp2, sortOrder );
-                        int sortOrderResult = 0;
-                        if( temp2[0] == L'D' )
-                            sortOrderResult = 1;
-                        SQLRETURN res = SQLGetData( m_hstmt, 13, SQL_C_WCHAR, cond, 1024, &indicator );
-                        while( res != SQL_SUCCESS )
+                        if( !result )
                         {
-                            str_to_uc_cpy( indexCondition, cond );
-                            res = SQLGetData( m_hstmt, 13, SQL_C_WCHAR, cond, 1024, &indicator );
+                            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, DataType, ParamSize, DecimalDigits, schema_name, 0, &cbTableName );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errors, STMT_ERROR );
+                                autoinc_fields.clear();
+                                pk_fields.clear();
+                                fields.clear();
+                                result = 1;
+                            }
                         }
-                        if( cond[0] != '\0' )
-                            isPartial = true;
-                        indexes[std::make_tuple( temp, isUnique, type, isPartial, indexCondition)].push_back( std::make_tuple( temp1, sortOrderResult ) );
-                    }
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errors, STMT_ERROR );
-                        autoinc_fields.clear();
-                        pk_fields.clear();
-                        fields.clear();
-                        indexes.clear();
-                        result = 1;
+                        if( !result )
+                        {
+                            ret = SQLExecute( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errors, STMT_ERROR );
+                                autoinc_fields.clear();
+                                pk_fields.clear();
+                                fields.clear();
+                                result = 1;
+                            }
+                            if( !result )
+                            {
+                                SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
+                                SQLLEN cbIndexName;
+                                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, SQL_MAX_COLUMN_NAME_LEN, &cbIndexName );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errors, STMT_ERROR );
+                                    autoinc_fields.clear();
+                                    pk_fields.clear();
+                                    fields.clear();
+                                    result = 1;
+                                }
+                                if( !result )
+                                {
+                                    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+                                    {
+                                        std::wstring temp;
+                                        str_to_uc_cpy( temp, name );
+                                        indexes.push_back( temp );
+                                    }
+                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                                    {
+                                        GetErrorMessage( errors, STMT_ERROR );
+                                        autoinc_fields.clear();
+                                        pk_fields.clear();
+                                        fields.clear();
+                                        indexes.clear();
+                                        result = 1;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 if( result == 1 )
