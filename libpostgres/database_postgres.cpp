@@ -1327,7 +1327,7 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         break;
     }
     if( !isNew )
-        result = DropForeignKey( command, tableName, keyName, logOnly, errorMsg );
+        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
     if( !logOnly && !result && isNew )
     {
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -1434,13 +1434,13 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     PGresult *res = nullptr;
     std::wstring query, err;
     query = L"ALTER TABLE ";
-    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() +L" ";
+    query += table->GetSchemaName() + L"." + table->GetTableName() +L" ";
     query += L"DROP CONSTRAINT " + keyName;
     if( !logOnly )
     {
@@ -1455,7 +1455,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, const DatabaseTable 
         else
         {
             bool found = false;
-            std::map<unsigned long, std::vector<FKField *> > fKeys = const_cast<DatabaseTable &>( tableName ).GetForeignKeyVector();
+            std::map<unsigned long, std::vector<FKField *> > fKeys = table->GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
                 {

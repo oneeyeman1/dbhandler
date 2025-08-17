@@ -48,7 +48,7 @@ protected:
     int TokenizeConnectionString(const std::wstring &connectStr, std::vector<std::wstring> &errorMsg);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
-    virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
+    virtual int DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
 private:

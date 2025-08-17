@@ -15,7 +15,7 @@
 class PropertiesDialog: public wxDialog
 {
 public:
-    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, const DatabaseTable *table);
+    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table);
     const std::wstring &GetCommand();
     void GetTableProperties();
     bool IsLogOnly() const;

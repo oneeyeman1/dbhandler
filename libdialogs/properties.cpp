@@ -76,7 +76,7 @@ std::mutex Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, const DatabaseTable *table):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table):
     wxDialog(parent, id, title)
 {
     m_page1 = nullptr;
@@ -132,9 +132,9 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page5, _( "Primary Key" ) );
             if( handler->GetType() == TablePrpertiesType )
             {
-                m_page19 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), L"", table->GetForeignKeyVector(), false );
+                m_page19 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetForeignKeyVector(), false );
                 m_properties->InsertPage( 4, m_page19, _( "Foregn Key" ) );
-                m_page20 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), L"", table->GetIndexNames(), true );
+                m_page20 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetIndexNames(), true );
                 m_properties->AddPage( m_page20, _( "Indexes" ) );
             }
         }

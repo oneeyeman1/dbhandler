@@ -18,13 +18,13 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
 {
     auto counter = 1;
     m_isIndex = isIndex;
     m_db = db;
-    m_tableName = tableName;
+    m_table = table;
     InitGui();
     for( std::map<unsigned long, std::vector<FKField *> >::const_iterator it = fKeys.begin(); it != fKeys.end(); ++it )
     {
@@ -48,11 +48,11 @@ void TableIndex::OnIndexSelected(wxCommandEvent &WXUNUSED(event))
     m_delete->Enable( true );
 }
 
-TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, const std::wstring &tableName, const std::vector<std::wstring> &indexes, bool isIndex) :
+TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::vector<std::wstring> &indexes, bool isIndex) :
   PropertyPageBase(parent, id)
 {
     m_isIndex = isIndex;
-    m_tableName = tableName;
+    m_table = table;
     m_db = db;
     InitGui();
 }
@@ -104,6 +104,8 @@ void TableIndex::OnButtonUpdateUI( wxUpdateUIEvent &event )
 void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
 {
     wxString fkName = list_box_1->GetString( list_box_1->GetSelection() );
+    std::wstring command;
+    std::vector<std::wstring> errors;
     wxString message = _( "The " );
     if( m_isIndex )
         message += _( "index " );
@@ -114,7 +116,7 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
     auto responce = wxMessageBox( message, _( "Warning" ), wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
     if( responce == wxYES )
     {
-        std::vector<std::wstring> errors;
+/*        std::vector<std::wstring> errors;
         std::wstring command;
         if( m_db->GetTableVector().m_type == L"SQLite" )
         {
@@ -124,8 +126,8 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
             {
 
             }
-        }
-//        m_db->DropForeignKey( command, m_tableName., fkName.ToStdWstring(), false, errors  );
+        }*/
+        auto reult = m_db->DropForeignKey( command, m_table, fkName.ToStdWstring(), false, errors  );
         for( auto error : errors )
             wxMessageBox( error, _( "Error" ), wxOK | wxICON_EXCLAMATION );
     }

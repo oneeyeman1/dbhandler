@@ -46,7 +46,7 @@ protected:
     virtual bool IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
-    virtual int DropForeignKey(std::wstring &command, const DatabaseTable &tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
+    virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
 private:
     PGconn *m_db;

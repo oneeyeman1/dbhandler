@@ -196,7 +196,7 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, const DatabaseTable *table, bool &logOnly)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, DatabaseTable *table, bool &logOnly)
 {
     int res = 0;
 #ifdef __WXMSW__
