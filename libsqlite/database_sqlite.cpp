@@ -1548,7 +1548,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             command += L"BEGIN\n\r";
         else
         {
-            res = sqlite3_exec( m_db, "BEGN", nullptr, nullptr, nullptr );
+            res = sqlite3_exec( m_db, "BEGIN", nullptr, nullptr, nullptr );
             if( res != SQLITE_OK )
             {
                 result = 1;
