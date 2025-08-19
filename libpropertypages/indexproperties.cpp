@@ -116,17 +116,38 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
     auto responce = wxMessageBox( message, _( "Warning" ), wxYES_NO | wxNO_DEFAULT | wxICON_EXCLAMATION );
     if( responce == wxYES )
     {
-/*        std::vector<std::wstring> errors;
-        std::wstring command;
         if( m_db->GetTableVector().m_type == L"SQLite" )
         {
-            fkName = "(\\s+FOREGN\\s+kEY\\s+(\\s+";
-//            fkName = "(?i)\s+FOREGN/i\s+kEY/i\s+(\s+";
-            for( std::vector<FKField *>::iterator it = m_currentFK.begin(); it < m_currentFK.end(); ++it )
+            fkName = ",\\s*(CONSTRAINT\\s+\\w+\\s+)?FOREIGN\\s+kEY\\s*\\(\\s*";
+            auto it = m_currentFK.begin();
+            while( it < m_currentFK.end() )
             {
-
+                fkName += L"(\\')?";
+                fkName += (*it)->GetOriginalFieldName();
+                fkName += L"(\\')?";
+                fkName += L"\\s*";
+                it++;
+                if( it != m_currentFK.end() )
+                    fkName += L",\\s*";
+                else
+                    fkName += L"\\)\\s*";
             }
-        }*/
+            fkName += L"REFERENCES\\s+";
+            fkName += L"(\\')?" + m_currentFK[0]->GetReferencedTableName() + L"(\\')?" + L"\\s*\\(\\s*";
+            it = m_currentFK.begin();
+            while( it < m_currentFK.end() )
+            {
+                fkName += L"(\\')?";
+                fkName += (*it)->GetReferencedFieldName();
+                fkName += L"(\\')?";
+                fkName += L"\\s*";
+                it++;
+                if( it != m_currentFK.end() )
+                    fkName += L",\\s*";
+                else
+                    fkName += L"\\)\\s*";
+            }
+        }
         auto reult = m_db->DropForeignKey( command, m_table, fkName.ToStdWstring(), false, errors  );
         for( auto error : errors )
             wxMessageBox( error, _( "Error" ), wxOK | wxICON_EXCLAMATION );

@@ -13,6 +13,7 @@
 #include <string.h>
 #include <string>
 #include <locale>
+#include <regex>
 #include <codecvt>
 #include <sstream>
 #include <algorithm>
@@ -341,7 +342,8 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 void SQLiteDatabase::GetErrorMessage(int code, std::vector<std::wstring> &errorMsg)
 {
-    code = sqlite3_errcode( m_db );
+    auto errorCode = sqlite3_errcode( m_db );
+    auto extendedErrorCode = sqlite3_extended_errcode( m_db );
     auto stmt = sqlite3_next_stmt( m_db, nullptr );
     if( stmt )
         errorMsg.push_back( sqlite_pimpl->m_myconv.from_bytes( sqlite3_sql( stmt ) ) );
@@ -1529,8 +1531,11 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 
 int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
 {
+    sqlite3_stmt *stmt = nullptr;
     int result = 0, res;
     std::vector<std::wstring> createCommands;
+    auto name = tableName->GetTableName();
+    // 1. Turn off foreign keys
     if( logOnly )
         command = L"PRAGMA foregn_key = OFF;\n\r";
     else
@@ -1542,6 +1547,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             GetErrorMessage( res, errorMsg );
         }
     }
+    // 2. Start transaction
     if( !result )
     {
         if( logOnly )
@@ -1556,13 +1562,14 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    // 3. Retrieve all commands to create the table
     if( !result )
     {
         if( logOnly )
             command += L"SELECT type, sql FROM sqlite_schema WHERE tbl_name=" + tableName->GetTableName() + L"\n\r";
         else
         {
-            res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_schema WHERE tbl_name=?", -1, &m_stmt1, NULL );
+            res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_master WHERE tbl_name=?", -1, &stmt, NULL );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -1574,7 +1581,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     {
         if( !logOnly )
         {
-            res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( tableName->GetTableName() ).c_str(), -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( name ).c_str(), -1, SQLITE_TRANSIENT );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -1582,16 +1589,24 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    std::wstring createCommand;
     if( !result )
     {
         if( !logOnly )
         {
             while( true )
             {
-                res = sqlite3_step( m_stmt1 );
+                res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
-                    createCommands.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt1, 1 ) ) ) );
-                else if( res != SQLITE_DONE )
+                {
+                    auto temp = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 1 ) ) );
+                    auto temp1 = temp;
+                    std::transform( temp.begin(), temp.end(), temp.begin(), ::toupper );
+                    if( temp.find( L"TABLE" ) != std::wstring::npos && temp.find( L"CREATE" ) != std::wstring::npos )
+                        createCommand = temp1;
+                    createCommands.push_back( temp );
+                }
+                else if( res == SQLITE_DONE )
                     break;
                 else
                 {
@@ -1605,7 +1620,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     {
         if( !logOnly )
         {
-            res = sqlite3_finalize( m_stmt1 );
+            res = sqlite3_finalize( stmt );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -1613,61 +1628,29 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
-    std::wstring temp, temp1;
-    std::wstring resultCommand;
-    if( !result )
+    // 4. Remove foreign key constraint from CREATE TABLE command
+    std::wstring resultCommand, temp;
+    std::wregex pattern( keyName, std::regex_constants::icase );
+    std::wsmatch findings;
+    if( std::regex_search( createCommand, findings, pattern ) )
     {
-        auto found = false;
-        for( std::vector<std::wstring>::iterator it = createCommands.begin(); it < createCommands.end(); ++it )
-        {
-            if( ( *it ).find( L"" ) != std::wstring::npos )
-            {
-                temp = (*it);
-                found = true;
-            }
-        }
-        size_t startingPos, endngPos;
-        size_t pos = temp.find( L"CONSTRAINT " ), pos1;
-        if( pos != std::wstring::npos )
-        {
-            resultCommand = temp.substr( 0, pos );
-            temp1 = temp.substr( pos + 11 );
-            if( temp1.substr( 0, temp1.find( L' ' ) ) == keyName )
-            {
-                 size_t pos2 = temp1.find( L',');;
-                 startingPos == pos;
-                 if( pos2 == std::wstring::npos )
-                     endngPos = temp.length();
-                 else
-                 {
-                     endngPos = pos2;
-                     resultCommand += temp.substr( endngPos );
-                 }
-             }
-             else
-                resultCommand += temp1.substr( 0, temp1.find( L',' ) );
-        }
-        else if( pos == temp.find( L"FOREIGN KEY " ) )
-        {
-            resultCommand = temp.substr( 0, pos );
-            startingPos = pos;
-            temp1 = temp.substr( pos + 12 );
-            temp1.find( L"REFERENCES " );
-            temp1 = temp.substr( pos + 23 );
-            pos += 23;
-            if( temp.substr( pos, temp.find( L' ' ) ) == tableName->GetTableName() )
-            {
-//                if(  )
-            }
-        }
+        auto start = findings[0].first - createCommand.begin();
+        auto end = findings[0].second - createCommand.begin();
+        auto temp = createCommand.substr( 0, start );
+        temp += createCommand.substr( end );
+        createCommand = temp;
     }
+    // 5. Create new table with revised format
+    auto pos = createCommand.find( name );
+    if( pos != std::wstring::npos )
+        createCommand.replace( pos, name.length(), L"new_" + name );
     if( !result )
     {
         if( logOnly )
-            command += resultCommand + L"\n\r";
+            command += createCommand + L"\n\r";
         else
         {
-            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( resultCommand.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( createCommand.c_str() ).c_str(), nullptr, nullptr, nullptr );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -1675,24 +1658,10 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    // 6. Populate data in a new table from the old one
     if( !result )
     {
-        temp = L"INSERT INTO new_" + tableName->GetTableName() + L" SELECT * FROM " + tableName->GetTableName();
-        if( logOnly ) 
-            command += temp + L"\n\r";
-        else
-        {
-            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }
-    }
-    if( !result )
-    {
-        temp = L"DROP TABLE " + tableName->GetTableName();
+        temp = L"INSERT INTO new_" + name + L" SELECT * FROM " + name;
         if( logOnly )
             command += temp + L"\n\r";
         else
@@ -1705,9 +1674,26 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    // 7. Drop the old table
     if( !result )
     {
-        temp = L"ALTER TABLE new_" + tableName->GetTableName() + L" RENAME TO " + tableName->GetTableName();
+        temp = L"DROP TABLE " + name;
+        if( logOnly )
+            command += temp + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 8. Rename the new table
+    if( !result )
+    {
+        temp = L"ALTER TABLE new_" + name + L" RENAME TO " + name;
         if( logOnly )
             command += temp + L"\r\n";
         else
@@ -1720,14 +1706,16 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    // 9. Run all additional commands on the table
     if( !result )
     {
         for( std::vector<std::wstring>::iterator it = createCommands.begin(); it < createCommands.end(); ++it )
         {
             if( logOnly )
-                command + (*it) + L"\r\n";
+                command = (*it) + L"\r\n";
             else
             {
+//                if( (*it). )
                 sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), nullptr, nullptr, nullptr );
                 if( res != SQLITE_OK )
                 {
@@ -1757,7 +1745,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     {
         if( logOnly )
         {
-            command + L"COMMIT;";
+            command += L"COMMIT;";
             command += L"\n\r";
         }
         else
