@@ -90,14 +90,37 @@ static void font_name_change(GtkFontChooser *view, CFontPropertyPage *page)
 }*/
 #endif
 
+#if GTK_CHECK_VERSION(4, 10, 0)
+static void on_font_dialog_button_font_desc_notify(GtkFontDialogButton *button, GParamSpec *pspec, gpointer user_data)
+{
+    // Get the selected font description
+    PangoFontDescription *font_desc = gtk_font_dialog_button_get_font_desc( button );
+
+    // You can now use font_desc to update the font of other widgets or
+    // perform actions based on the selected font
+    g_print( "Selected Font: %s\n", pango_font_description_to_string( font_desc ) );
+
+    // Don't forget to free the font description
+    pango_font_description_free( font_desc );
+}
+#endif
+
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
  : CFontPropertyPageBase(parent, font)
 {
     m_font = font;
     m_isUnderlined = m_font.font.GetUnderlined();
     m_isStriken = m_font.font.GetStrikethrough();
+    auto fontDesc = font.font.GetNativeFontInfo()->description;
+#if GTK_CHECK_VERSION(4, 10, 0)
+    GtkFontDialog *dlg = gtk_font_dialog_new();
+    m_fontPanel = gtk_font_dialog_button_new( dlg );
+    gtk_font_dialog_button_set_font_desc( GTK_FONT_DIALOG_BUTTON( m_fontPanel ), fontDesc );
+    g_signal_connect( m_fontPanel, "notify::font-desc", G_CALLBACK( on_font_dialog_button_font_desc_notify ), NULL );
+#endif
 #if GTK_CHECK_VERSION(3, 2, 0 )
     m_fontPanel = gtk_font_chooser_widget_new();
+    gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, fontDesc );
     gtk_font_chooser_set_show_preview_entry( (GtkFontChooser *) m_fontPanel, false );
 #else
     m_fontPanel = gtk_font_selection_new();
@@ -164,6 +187,9 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
 
 CFontPropertyPage::~CFontPropertyPage()
 {
+#if GTK_CHECK_VERSION(4, 10, 0)
+    g_object_unref( dlg );
+#endif
     m_holder->Disown();
 }
 

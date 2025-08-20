@@ -34,6 +34,9 @@ protected:
 private:
     wxNativeWindow *m_holder;
     GtkWidget *m_fontPanel;
+//#if GTK_CHECK_VERSION(4, 10, 0)
+//    GtkFontDialog *dlg = nullptr;
+//#endif
     wxCheckBox *m_underline, *m_strikethrough;
     bool m_isUnderlined, m_isStriken;
     wxStaticBox *itemStaticBox1, *itemStaticBox2;
