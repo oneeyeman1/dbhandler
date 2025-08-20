@@ -143,16 +143,6 @@ public:
     TableProperties()
     {
         m_comment = L"";
-#ifdef WIN32
-        m_dataFontName = L"MS Sans Serif";
-        m_headingFontName = L"MS Sans Serif";
-        m_labelFontName = L"MS Sans Serif";
-#endif
-#ifdef __APPLE__
-        m_dataFontName = L"Microsoft Sans Serif";
-        m_headingFontName = L"Microsoft Sans Serif";
-        m_labelFontName = L"Microsoft Sans Serif";
-#endif
         m_dataFontWeight = 0;
         m_headingFontWeight = 1;
         m_labelFontWeight = 1;
@@ -172,13 +162,39 @@ public:
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
     }
+    void Init(const int id)
+    {
+        switch( id )
+        {
+        case WINDOWS:
+            m_dataFontName = L"MS Sans Serif";
+            m_headingFontName = L"MS Sans Serif";
+            m_labelFontName = L"MS Sans Serif";
+            break;
+        case GTK:
+            m_dataFontName = L"Serif";
+            m_headingFontName = L"Serif";
+            m_labelFontName = L"Serif";
+            break;
+        case QT:
+            m_dataFontName = L"Cantrell";
+            m_headingFontName = L"Cantrell";
+            m_labelFontName = L"Cantrell";
+            break;
+        case OSX:
+            m_dataFontName = L"Microsoft Sans Serif";
+            m_headingFontName = L"Microsoft Sans Serif";
+            m_labelFontName = L"Microsoft Sans Serif";
+            break;
+        }
+    }
     TableProperties &operator=( const TableProperties &right )
     {
         if( this == &right )
             return *this;
         else
         {
-            this->m_comment = right.m_comment;;;
+            this->m_comment = right.m_comment;
             this->m_dataFontName = right.m_dataFontName;
             this->m_headingFontName = right.m_headingFontName;
             this->m_labelFontName = right.m_labelFontName;
@@ -205,7 +221,7 @@ public:
     }
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
     int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
-    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize;
+    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize, m_osId;
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
@@ -430,6 +446,8 @@ public:
     virtual ~Database() { }
     const Impl &GetTableVector() const { return pimpl; };
     bool IsConnected() { return m_isConnected; }
+    int GetOSId() const { return m_osId; }
+    const std::wstring &GetDesktopEnv() const { return pimpl.m_desktop; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;

@@ -95,6 +95,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case TablePrpertiesType:
         {
             TableProperties prop;
+            prop.Init( handler->GetDatabase()->GetOSId() );
             if( handler->GetType() == DatabaseTablePropertiesType ) 
                 prop = ( handler )->GetProperties().As<TableProperties>();
             else
