@@ -1715,7 +1715,12 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
                 command = (*it) + L"\r\n";
             else
             {
-//                if( (*it). )
+                pattern.assign( L"CREATE\\s+TABLE", std::regex::icase );
+                if( std::regex_search( (*it), findings, pattern ) )
+                {
+                    printf( "Hello" );
+                    continue;
+                }
                 sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), nullptr, nullptr, nullptr );
                 if( res != SQLITE_OK )
                 {
@@ -1984,82 +1989,106 @@ int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg)
 
 int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, res, schema;
-    unsigned int count;
-    std::vector<std::wstring> tableNames = pimpl.GetTableNames();
-    std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
-    std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
-    std::vector<TableDefinition> temp;
-    if( ( res = sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) ) == SQLITE_OK )
+    sqlite3 *db = nullptr;
+    int result = 0, schema;
+    int res = sqlite3_open( sqlite_pimpl->m_myconv.to_bytes( sqlite_pimpl->m_catalog.c_str() ).c_str(), &db );
+    if( res != SQLITE_OK )
     {
-        if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
+        GetErrorMessage( res, errorMsg );
+        result = 1;
+    }
+    if( !result )
+    {
+        unsigned int count;
+        std::vector<std::wstring> tableNames = pimpl.GetTableNames();
+        std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
+        std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
+        std::vector<TableDefinition> temp;
+        if( ( res = sqlite3_prepare_v2( db, "PRAGMA schema_version", -1, &m_stmt1, NULL ) ) == SQLITE_OK )
         {
-            schema = sqlite3_column_int( m_stmt1, 0 );
-            if( schema == m_schema )
+            if( ( res = sqlite3_step( m_stmt1 ) ) == SQLITE_ROW )
             {
-                sqlite3_finalize( m_stmt1 );
-                m_stmt1 = nullptr;
-                return result;
-            }
-            if( sqlite3_prepare_v2( m_db, query2.c_str(), -1, &m_stmt3, NULL ) == SQLITE_OK )
-            {
-                if( ( res = sqlite3_step( m_stmt3 ) ) == SQLITE_ROW )
+                schema = sqlite3_column_int( m_stmt1, 0 );
+                if( schema == m_schema )
                 {
-                    count = sqlite3_column_int( m_stmt3, 0 );
-                    if( count == m_numOfTables  )
-                    {
-                        sqlite3_finalize( m_stmt3 );
-                        m_stmt3 = nullptr;
-                        return result;
-                    }
-                    if( sqlite3_prepare_v2( m_db, query1.c_str(), -1, &m_stmt2, NULL ) == SQLITE_OK )
-                    {
-                        for( ; ; )
-                        {
-                            if( ( res = sqlite3_step( m_stmt2 ) ) == SQLITE_ROW )
-                            {
-                                temp.push_back( TableDefinition( sqlite_pimpl->m_catalog, L"Main", sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) );
-                            }
-                            else if( res != SQLITE_DONE )
-                                result = 1;
-                        }
-                    }
-                    sqlite3_finalize( m_stmt2 );
-                    {
-                        std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
-                        pimpl.m_tableDefinitions[pimpl.m_dbName] = temp;
-                    }
-                    m_numOfTables = count;
+                    sqlite3_finalize( m_stmt1 );
+                    m_stmt1 = nullptr;
+                    return result;
                 }
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMsg );
-                }
-                sqlite3_finalize( m_stmt3 );
-                m_stmt3 = NULL;
             }
             else
             {
-                result = 1;
+               GetErrorMessage( res, errorMsg );
+               result = 1;
+            }
+        }
+        else
+        {
+            GetErrorMessage( res, errorMsg );
+            result = 1;
+        }
+        sqlite3_finalize( m_stmt1 );
+        m_stmt1 = nullptr;
+        if( !result )
+        {
+            if( ( res = sqlite3_prepare_v2( db, query2.c_str(), -1, &m_stmt3, NULL ) ) != SQLITE_OK )
+            {
                 GetErrorMessage( res, errorMsg );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            if( ( res = sqlite3_step( m_stmt3 ) ) == SQLITE_ROW )
+            {
+                count = sqlite3_column_int( m_stmt3, 0 );
+            }
+            else if( res != SQLITE_DONE)
+            {
+                GetErrorMessage( res, errorMsg );
+                result = 1;
             }
             sqlite3_finalize( m_stmt3 );
             m_stmt3 = nullptr;
         }
-        else
+        if( !result )
         {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
+            if( count != m_numOfTables  )
+            {
+                if( ( res = sqlite3_prepare_v2( db, query1.c_str(), -1, &m_stmt2, NULL ) ) == SQLITE_OK )
+                {
+                    GetErrorMessage( res, errorMsg );
+                    result = 1;
+                }
+                if( !result )
+                {
+                    for( ; ; )
+                    {
+                        res = sqlite3_step( m_stmt2 );
+                        if( res == SQLITE_ROW )
+                        {
+                            temp.push_back( TableDefinition( sqlite_pimpl->m_catalog, L"Main", sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt2, 0 ) ) ) );
+                        }
+                        else if( res == SQLITE_DONE )
+                            break;
+                        else
+                        {
+                            result = 1;
+                            GetErrorMessage( res, errorMsg );
+                        }
+                    }
+                    if( !result )
+                    {
+                        std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
+                        pimpl.m_tableDefinitions[pimpl.m_dbName] = temp;
+                        m_numOfTables = count;
+                    }
+                }
+                sqlite3_finalize( m_stmt3 );
+                m_stmt3 = nullptr;
+            }
         }
     }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMsg );
-    }
-    sqlite3_finalize( m_stmt1 );
-    m_stmt1 = NULL;
     return result;
 }
 
