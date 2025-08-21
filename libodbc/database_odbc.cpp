@@ -4729,7 +4729,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName
     query += tableName->GetSchemaName() + L"." + tableName->GetTableName() + L" ";
     if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"PostgreSQL" || pimpl.m_subtype == L"Oracle" )
         query += L"DROP CONSTRAINT ";
-    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype = L"ASE" )
+    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query += L"DROP FOREIGN KEY ";
     query += keyName;
     if( !logOnly )

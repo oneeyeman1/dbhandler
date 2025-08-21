@@ -1449,7 +1449,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-            errorMsg.push_back( L"Adding foreign key failed: " + err );
+            errorMsg.push_back( L"Dropping foreign key failed: " + err );
             result = 1;
         }
         else
