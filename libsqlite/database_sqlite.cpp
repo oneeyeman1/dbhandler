@@ -1698,7 +1698,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             command += temp + L"\r\n";
         else
         {
-            sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -1721,7 +1721,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
                     printf( "Hello" );
                     continue;
                 }
-                sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), nullptr, nullptr, nullptr );
+                res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str(), nullptr, nullptr, nullptr );
                 if( res != SQLITE_OK )
                 {
                     result = 1;
@@ -1734,12 +1734,13 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     {
         if( logOnly )
         {
-            command += L"PRAGMA schema.foreign_key_check;";
+            command += L"PRAGMA foreign_key_check;";
             command += L"\n\r";
         }
         else
         {
-            res = sqlite3_exec( m_db, "PRAGMA schema.foreign_key_check", nullptr, nullptr, nullptr );
+            res = sqlite3_exec( m_db, "PRAGMA foreign_key_check", nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
             {
                 result = 1;
                 GetErrorMessage( res, errorMsg );
