@@ -2537,6 +2537,121 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     return result;
 }
 
+int ODBCDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOptions &options, std::vector<std::wstring> &errorMsg)
+{
+    SQLWCHAR *qry = nullptr;
+    std::wstring query = L"";
+    int result = 0;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        std::wstring withOptions = L"WITH ";
+        if( options.m_maxdop > 0 )
+            withOptions += L"MAXDOP = " + std::to_wstring( options.m_maxdop );
+        if( options.m_online )
+            withOptions += L" ONLINE = ON";
+        if( options.m_moveto != L"default" )
+            withOptions += L" MOVE TO " + options.m_moveto;
+        if( options.m_filestream != L"default" )
+            withOptions += L" FILESTREAM_ON " + options.m_filestream;
+        query = L"DROP INDEX " + indexName + L" ON " + fullTableName;
+        if( withOptions.length() > 5 )
+            query += L" " + withOptions;
+    }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        query = L"DROP INDEX ";
+        if( options.m_concurrent )
+            query += L"CONCURRENTLY ";
+        query += indexName;
+        if( options.m_cascade )
+            query += L" CASCADE";
+    }
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+        query = L"DROP INDEX " + indexName + L" ON " + fullTableName;
+        switch( options.m_algorythm )
+        {
+        case 1:
+            query += L" ALGORITHM = INPLACE";
+            break;
+        case 2:
+            query += L" ALGORITHM = COPY";
+            break;
+        }
+        switch( options.m_locks )
+        {
+        case 1:
+            query += L" LOCK = NONE";
+            break;
+        case 2:
+            query += L" LOCK = SHARED";
+            break;
+        case 3:
+            query += L" LOCK = EXCLUSIVE";
+            break;
+        }
+    }
+    if( pimpl.m_subtype == L"Oeacle" )
+    {
+        query = L"DROP INDEX " + indexName;
+        if( options.m_online )
+            query += L" ONLINE";
+        if( options.m_force )
+            query += L" FORCE";
+        if( options.m_immediate )
+            query += L" IMMEDIATE INVALIDATION";
+        else
+            query += L" DEFERRED INVALIDATION";
+    }
+    qry = new SQLWCHAR[query.length() + 2];
+    memset( qry, '\0', query.length() + 2 );
+    uc_to_str_cpy( qry, query );
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        result = 1;
+        GetErrorMessage( errorMsg, STMT_ERROR );
+    }
+    if( !result )
+    {
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    else
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, 1, m_hstmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        m_hstmt = 0;
+    }
+    return result;
+}
+
 bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     SQLRETURN ret;

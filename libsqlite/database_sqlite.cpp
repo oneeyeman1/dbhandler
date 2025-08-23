@@ -603,6 +603,19 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     return result;
 }
 
+int SQLiteDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOptions &options, std::vector<std::wstring> &errorMsg)
+{
+    auto result = 0;
+    std::wstring query = L"DROP INDEX " + indexName;
+    auto res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), nullptr, nullptr, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    return result;
+}
+
 bool SQLiteDatabase::IsIndexExists(const std::wstring &indexName, const std::wstring &UNUSED(catalogName), const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;
