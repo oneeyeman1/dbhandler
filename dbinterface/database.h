@@ -321,6 +321,21 @@ public:
         this->refFields = refFields;
         this->match = match;
     }
+    bool operator==(const FKField &field)
+    {
+        auto result = false;
+        if( field.GetFKName().empty() && origSchema == field.origSchema && tableName == field.tableName &&
+            origFields == field.origFields && refFields == field.refFields )
+            result = true;
+        return result;
+    }
+    bool operator==(const std::wstring &name)
+    {
+        auto result = false;
+        if( GetFKName() == name )
+            result = true;
+        return result;
+    }
     int GetForeignKeyId() const { return fkId; }
     const std::wstring &GetFKName() const { return fkName; }
     const std::wstring &GetReferencedTableName() const { return refTable; }
@@ -372,6 +387,7 @@ public:
     void SetTableProperties(const TableProperties &prop) { m_props = prop; }
     const std::vector<TableField *> &GetFields() const { return table_fields; }
     const std::map<unsigned long,std::vector<FKField *> > &GetForeignKeyVector() const { return foreign_keys; }
+    void SetForeignKeyVector(std::map<unsigned long,std::vector<FKField *> > &fkVec) { foreign_keys = fkVec;}
     unsigned long GetTableId() const { return m_objectId; }
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }
@@ -384,6 +400,38 @@ public:
     int GetNumberOfIndexes() const { return m_numIndex; }
     void SetFullName(const std::wstring &fullName) { m_fullName = fullName; }
     const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
+    void DropForeignKey(const std::vector<FKField *> &fieldToRemove)
+    {
+        for( auto elem = foreign_keys.begin(); elem != foreign_keys.end(); ++elem )
+        {
+            auto it = std::equal( elem->second.begin(), elem->second.end(), fieldToRemove.begin() );
+            if( it )
+            {
+                for( auto it1 : elem->second )
+                    delete (it1);
+                foreign_keys.erase( elem );
+                break;
+            }
+        }
+    }
+    void DropForeignKey(const std::wstring &name)
+    {
+        for( auto elem : foreign_keys )
+        {
+            auto it = std::find_if( elem.second.begin(), elem.second.end(),
+                      [&name](FKField *f)
+                      {
+                          return f->operator==( name );
+                      } );
+            if( it != elem.second.end() )
+            {
+                delete (*it);
+                elem.second.erase( it );
+                break;
+            }
+        }
+
+    }
 private:
     std::wstring m_tableName, m_owner, m_schemaName, m_catalogName, m_fullName;
     std::vector<TableField *> table_fields;
@@ -461,7 +509,7 @@ public:
     virtual int ApplyForeignKey(std::wstring &command, const std::wstring &keyName, DatabaseTable &tableName, const std::vector<std::wstring> &foreignKeyFields, const std::wstring &refTableName, const std::vector<std::wstring> &refKeyFields, int deleteProp, int updateProp, bool logOnly, std::vector<FKField *> &newFK, bool isNew, int match, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) = 0;

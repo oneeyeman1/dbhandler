@@ -148,8 +148,50 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
                     fkName += L"\\)\\s*";
             }
         }
-        auto reult = m_db->DropForeignKey( command, m_table, fkName.ToStdWstring(), false, errors  );
-        for( auto error : errors )
-            wxMessageBox( error, _( "Error" ), wxOK | wxICON_EXCLAMATION );
+        auto result = m_db->DropForeignKey( command, m_table, fkName.ToStdWstring(), false, m_currentFK, errors  );
+        if( result )
+            for( auto error : errors )
+                wxMessageBox( error, _( "Error" ), wxOK | wxICON_EXCLAMATION );
+        else
+/*        {
+            if( m_db->GetTableVector().m_type == L"SQLite" )
+            {
+/*                auto found = false;
+                std::map<unsigned long, std::vector<FKField *> > fKeys = m_table->GetForeignKeyVector();
+                for( auto it = fKeys.begin(); it != fKeys.end() && !found; ++it )
+                    for( auto it1 = 0; it1 < (*it).second.size() && !found; ++it1 )
+                    {
+                        if( (*it).second[it1]->GetReferencedTableName() == m_currentFK[0]->GetReferencedTableName() &&
+                            (*it).second[it1]->GetOriginalFields() == m_currentFK[0]->GetOriginalFields() &&
+                            (*it).second[it1]->GetReferencedFields() == m_currentFK[0]->GetReferencedFields() )
+                        {
+                            found = true;
+                            delete (*it).second[it1];
+                            (*it).second[it1] = nullptr;
+                            fKeys.erase( it );
+                            m_table->SetForeignKeyVector( fKeys );
+                        }
+                        else
+                            ++it1;
+                    }*/
+/*                for( auto elem : m_table->GetForeignKeyVector() )
+                {
+                    auto it = std::find_if( elem.second.begin(), elem.second.end(),
+                              [m_currentFK](FKField *f)
+                              {
+                                  return (*it).second[it1]->GetReferencedTableName() == f->GetReferencedTableName() &&
+                                         (*it).second[it1]->GetOriginalFields() == f->GetOriginalFields() &&
+                                         (*it).second[it1]->GetReferencedFields() == f->GetReferencedFields() );
+                              });
+                    if( it != elem.second.end() )
+                    {
+                        delete (*it);
+                        elem.second.erase( it );
+                        break;
+                    }
+                }
+            }
+        }*/
+        list_box_1->Delete( list_box_1->GetSelection() );
     }
 }

@@ -1486,8 +1486,9 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( !isNew )
-        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
+    // TODO This will need to be reimplemented
+//    if( !isNew )
+//        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
     if( !logOnly && !result )
     {
         if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
@@ -1668,7 +1669,7 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     return result;
 }
 
-int MySQLDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query, err;
@@ -1685,7 +1686,8 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, c
         }
         else
         {
-            bool found = false;
+            table->DropForeignKey( keyName );
+/*            bool found = false;
             std::map<unsigned long, std::vector<FKField *> > fKeys = table->GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
@@ -1699,7 +1701,7 @@ int MySQLDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, c
                     }
                     else
                         ++it1;
-                }
+                }*/
         }
     }
     else

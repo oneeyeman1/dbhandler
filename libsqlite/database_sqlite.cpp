@@ -1358,12 +1358,13 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
             sqlite3_finalize( stmt );
             if( !result )
             {
+                // TODO Will meed to be reimplemented
                 std::wstring newSQL;
-                if( !isNew )
+/*                if( !isNew )
                 {
                     DropForeignKey( tableName, newFK, sql, newSQL, refTableName );
                     sql = newSQL;
-                }
+                }*/
                 if( newFK.size() > 0 )
                 {
                     std::wstring fk;
@@ -1529,7 +1530,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
     return result;
 }
 
-int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = nullptr;
     int result = 0, res;
@@ -1635,8 +1636,10 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     if( std::regex_search( createCommand, findings, pattern ) )
     {
         auto start = findings[0].first - createCommand.begin();
-        auto end = findings[0].second - createCommand.begin();
         auto temp = createCommand.substr( 0, start );
+        auto end = temp.find( L"," );
+        if( end == std::wstring::npos )
+            end = temp.length() - 1;
         temp += createCommand.substr( end );
         createCommand = temp;
     }
@@ -1790,9 +1793,15 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
             }
         }
     }
+    if( res == SQLITE_OK )
+    {
+        tableName->DropForeignKey( foreignKey );
+    }
     return result;
 }
 
+/*
+// TODO Will need to be reimplemented0
 int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName)
 {
     std::wstring s, sUpper, keyTemp, constraintTemp, refTableOrig;
@@ -1892,7 +1901,7 @@ int SQLiteDatabase::DropForeignKey(DatabaseTable &tableName, std::vector<FKField
     }
     return 0;
 }
-
+*/
 int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;

@@ -1326,8 +1326,9 @@ int PostgresDatabase::ApplyForeignKey(std::wstring &command, const std::wstring 
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( !isNew )
-        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
+    // TODO This will need to be reimplemented
+//    if( !isNew )
+//        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
     if( !logOnly && !result && isNew )
     {
         PGresult *res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
@@ -1434,7 +1435,7 @@ int PostgresDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     PGresult *res = nullptr;
@@ -1454,7 +1455,8 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table
         }
         else
         {
-            bool found = false;
+            table->DropForeignKey( keyName );
+/*            bool found = false;
             std::map<unsigned long, std::vector<FKField *> > fKeys = table->GetForeignKeyVector();
             for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
                 for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found; )
@@ -1468,7 +1470,7 @@ int PostgresDatabase::DropForeignKey(std::wstring &command, DatabaseTable *table
                     }
                     else
                         ++it1;
-                }
+                }*/
         }
     }
     else

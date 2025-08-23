@@ -3917,8 +3917,9 @@ int ODBCDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &key
         updProp = SET_DEFAULT_UPDATE;
         break;
     }
-    if( !isNew )
-        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
+    // TODO Will need to be reimplemented later
+//    if( !isNew )
+//        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
     if( !result )
     {
         if( !logOnly && !newFK.empty() )
@@ -4721,7 +4722,7 @@ int ODBCDatabase::CreateIndexesOnPostgreConnection(std::vector<std::wstring> &er
 */    return result;
 }
 
-int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query;
@@ -4754,24 +4755,6 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName
                 result = 1;
             }
         }
-        if( !result )
-        {
-            bool found = false;
-            std::map<unsigned long, std::vector<FKField *> > fKeys = tableName->GetForeignKeyVector();
-            for( std::map<unsigned long, std::vector<FKField *> >::iterator it = fKeys.begin(); it != fKeys.end() && !found; ++it )
-                for( std::vector<FKField *>::iterator it1 = (*it).second.begin(); it1 != (*it).second.end() && !found;  )
-                {
-                    if( (*it1)->GetFKName() == keyName )
-                    {
-                        found = true;
-                        delete (*it1);
-                        (*it1) = nullptr;
-                        it1 = (*it).second.erase( it1 );
-                    }
-                    else
-                        ++it1;
-                }
-        }
         if( result == 1 )
         {
             result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
@@ -4798,6 +4781,10 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName
     else
     {
         command = query;
+    }
+    if( !result )
+    {
+        tableName->DropForeignKey( keyName );
     }
     return result;
 }
