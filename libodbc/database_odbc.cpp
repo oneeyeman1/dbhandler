@@ -2621,6 +2621,8 @@ int ODBCDatabase::DropIndex(const std::wstring &fullTableName, const std::wstrin
             result = 1;
         }
     }
+    delete[] qry;
+    qry = nullptr;
     if( !result )
     {
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
