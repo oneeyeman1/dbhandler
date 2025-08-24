@@ -26,26 +26,26 @@ TableSettngs::TableSettngs(wxWindow* parent, wxWindowID id, const Database *db):
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
     wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer( 4, 2, 5, 5 );
     sizer_3->Add( grid_sizer_1, 0, wxEXPAND, 0 );
-    m_label1 = new wxStaticText( this, wxID_ANY, _( "Format" ) );
+    m_label1 = new wxStaticText( sizer_1->GetStaticBox(), wxID_ANY, _( "Format" ) );
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_format = new wxComboBox( this, wxID_ANY, "" );
+    m_format = new wxComboBox( sizer_1->GetStaticBox(), wxID_ANY, "" );
     grid_sizer_1->Add( m_format, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_label2 = new wxStaticText( this, wxID_ANY, _( "Edit" ) );
+    m_label2 = new wxStaticText( sizer_1->GetStaticBox(), wxID_ANY, _( "Edit" ) );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_edit = new wxComboBox( this, wxID_ANY, "" );
+    m_edit = new wxComboBox( sizer_1->GetStaticBox(), wxID_ANY, "" );
     grid_sizer_1->Add( m_edit, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_label3 = new wxStaticText( this, wxID_ANY, _( "Validation" ) );
+    m_label3 = new wxStaticText( sizer_1->GetStaticBox(), wxID_ANY, _( "Validation" ) );
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_validation = new wxComboBox( this, wxID_ANY, "" );
+    m_validation = new wxComboBox( sizer_1->GetStaticBox(), wxID_ANY, "" );
     auto validators = db->GetTableVector().m_validators;
     for( auto it = validators.begin(); it < validators.end(); ++it )
     {
         m_validation->Append( std::get<0>( *it ) );
     }
     grid_sizer_1->Add( m_validation, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_lael4 = new wxStaticText( this, wxID_ANY, _( "Header" ) );
+    m_lael4 = new wxStaticText( sizer_1->GetStaticBox(), wxID_ANY, _( "Header" ) );
     grid_sizer_1->Add( m_lael4, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_header = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_NO_VSCROLL );
+    m_header = new wxTextCtrl( sizer_1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_NO_VSCROLL );
     grid_sizer_1->Add( m_header, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer( 5, 2, 5, 5 );
