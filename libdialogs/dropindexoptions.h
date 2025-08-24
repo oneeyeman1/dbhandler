@@ -14,5 +14,16 @@
 class DropIndexOptionsDialog : public wxDialog
 {
 public:
-    DropIndexOptionsDialog(wxWindow *parent, const std::wstring &type, const std::wstring &subtype);
+    DropIndexOptionsDialog(wxWindow *parent,  const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype);
+private:
+    // begin wxGlade: AdvancedDroIndexOptions::attributes
+    wxPanel* panel_1;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
+    wxTextCtrl* m_indexName;
+    wxTextCtrl* m_tableName;
+    wxSpinCtrl* m_maxdop;
+    wxCheckBox* m_online;
+    wxTextCtrl* m_moveTo;
+    wxTextCtrl* m_filestream;
+    // end wxGlade
 };

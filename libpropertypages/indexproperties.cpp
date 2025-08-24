@@ -11,12 +11,15 @@
 #include <wx/wx.h>
 #include <map>
 #include <vector>
+#include "wx/dynlib.h"
+#include "wx/stdpaths.h"
 #include "database.h"
 #include "propertypagebase.h"
 #include "indexproperties.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
+typedef int (*DROPINDEXOPT)(wxWindow *, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &);
 
 TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
@@ -155,7 +158,31 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
         }
         else
         {
-            result = m_db->DropIndex();
+            wxDynamicLibrary lib;
+            auto stdPath = wxStandardPaths::Get();
+            wxString libName = "", libraryPath = "";
+#ifdef __WXMSW__
+            wxFileName fn( stdPath.GetExecutablePath() );
+            libraryPath = fn.GetPathWithSep();
+            libName = m_libraryPath + "dialog";
+#elif __WXMAC__
+            wxFileName fn( stdPath.GetExecutablePath() );
+            fn.RemoveLastDir();
+            libraryPath = fn.GetPathWithSep() + "Frameworks/";
+            libName = libraryPath + "liblibdialog.dylib";
+#else
+            libraryPath = stdPath.GetInstallPrefix() + "/lib/";
+            libName = libraryPath + "libdialog";
+#endif
+            lib.Load( libName );
+            if( lib.IsLoaded() )
+            {
+                DropIndexOption options;
+                DROPINDEXOPT func = (DROPINDEXOPT) lib.GetSymbol( "GetDropIndexOption" );
+                int response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype );
+                if( response == wxID_APPLY )
+                    result = m_db->DropIndex( m_table->GetFullName(), fkName.ToStdWstring(), options,  errors );
+            }
         }
         if( result )
             for( auto error : errors )

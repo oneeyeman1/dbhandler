@@ -20,8 +20,60 @@
 #endif
 
 //#include "database.h"
+#include "wx/spinctrl.h"
+#include "dropindexoptions.h"
 
-DropIndexOptionsDialoh::DropIndexOptionsDialog(wxWindow *parent, const std::wstring &type, const std::wstring &subtype) :
-  wxDialog( parent, wxID_ANY "" )
+DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype) :
+  wxDialog( parent, wxID_ANY, "" )
 {
+    SetTitle( _( "Advanced options for DROP INDEX" ) );
+    // begin wxGlade: AdvancedDroIndexOptions::AdvancedDroIndexOptions
+    panel_1 = new wxPanel( this, wxID_ANY );
+    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_3 = new wxBoxSizer( wxVERTICAL );
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+    sizer_3->Add( grid_sizer_1, 1, wxEXPAND, 0 );
+    m_label1 = new wxStaticText(panel_1, wxID_ANY, _( "Index Name" ) );
+    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_indexName = new wxTextCtrl( panel_1, wxID_ANY, indexName );
+    m_indexName->Enable( false );
+    grid_sizer_1->Add( m_indexName, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_label2 = new wxStaticText( panel_1, wxID_ANY, _( "Table Name" ) );
+    grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_tableName = new wxTextCtrl( panel_1, wxID_ANY, tableName );
+    m_tableName->Enable( false );
+    grid_sizer_1->Add( m_tableName, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_4 = new wxStaticBoxSizer( new wxStaticBox( panel_1, wxID_ANY, _( "Options" ) ), wxVERTICAL );
+    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    auto grid_sizer_2 = new wxFlexGridSizer( 4, 2, 5, 5 );
+    sizer_4->Add( grid_sizer_2, 0, wxEXPAND, 0 );
+    m_label3 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MAXDOP" );
+    grid_sizer_2->Add( m_label3, 0, 0, 0 );
+    m_maxdop = new wxSpinCtrl( sizer_4->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
+    grid_sizer_2->Add( m_maxdop, 0, 0, 0 );
+    m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "ONLINE" );
+    grid_sizer_2->Add( m_label4, 0, 0, 0 );
+    m_online = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
+    grid_sizer_2->Add( m_online, 0, 0, 0 );
+    m_label5 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MOVE TO" );
+    grid_sizer_2->Add( m_label5, 0, 0, 0 );
+    m_moveTo = new wxTextCtrl( sizer_4->GetStaticBox(), wxID_ANY, "default" );
+    grid_sizer_2->Add( m_moveTo, 0, 0, 0 );
+    m_label6 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "FILESTREAM_ON" );
+    grid_sizer_2->Add( m_label6, 0, 0, 0 );
+    m_filestream = new wxTextCtrl(sizer_4->GetStaticBox(), wxID_ANY, wxT("default"));
+    grid_sizer_2->Add( m_filestream, 0, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+
+    panel_1->SetSizer( sizer_1 );
+    Layout();
+    // end wxGlade
 }
+

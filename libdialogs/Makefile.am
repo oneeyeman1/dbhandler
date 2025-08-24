@@ -56,7 +56,9 @@ libdialogs_la_SOURCES =  \
 	createindexpostgres.cpp \
 	createindexposygres.h \
 	createtablespace.cpp \
-	createtablespace.h
+	createtablespace.h \
+	dropindexoptions.cpp \
+	dropindexoptions.h
 
 libdialogs_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libfieldswindow \

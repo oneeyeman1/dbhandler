@@ -100,6 +100,7 @@
 #include "createviewoptions.h"
 #include "saveview.h"
 #include "createtablespace.h"
+#include "dropindexoptions.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
@@ -230,7 +231,7 @@ extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, Da
     wxTheApp->SetTopWindow( parent );
 #endif
     wxString refTblName = wxString( refTableName );
-    ForeignKeyDialog dlg( parent, wxID_ANY, _( "" ), table, db, keyName, foreignKeyFields, refTblName, isView, match );
+    ForeignKeyDialog dlg( parent, wxID_ANY, "", table, db, keyName, foreignKeyFields, refTblName, isView, match );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )
@@ -535,3 +536,15 @@ extern "C" WXEXPORT int CreateTableSpace(wxWindow *parent)
     CreateTablespace dlg( parent );
     return dlg.ShowModal();
 }
+
+extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    DropIndexOptionsDialog dlg( parent, indexName, tableName, type, subtype );
+    int res = dlg.ShowModal();
+    return res;
+}
+
+
