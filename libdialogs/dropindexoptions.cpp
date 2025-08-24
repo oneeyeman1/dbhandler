@@ -90,7 +90,7 @@ void DropIndexOptionsDialog::OnApply(wxCommandEvent &event)
     if( m_online )
         m_options.m_online = m_online->GetValue();
     if( m_moveTo )
-        m_options.m_moveTo = m_moveTo->GetValue();
+        m_options.m_moveto = m_moveTo->GetValue();
     if( m_filestream )
         m_options.m_filestream = m_filestream->GetValue();
     EndModal( wxAPPLY );
