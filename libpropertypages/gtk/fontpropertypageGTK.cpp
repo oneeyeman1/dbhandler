@@ -138,7 +138,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     m_backColor->SetColourValue( font.back );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
-    m_preview = new wxFontPreviewer( this, "AaBbYyZz" );
+    m_preview = new wxFontPreviewer( itemStaticBox2, "AaBbYyZz" );
     if( m_font.font.GetUnderlined() )
         m_underline->SetValue( true );
     if( m_font.font.GetStrikethrough() )
