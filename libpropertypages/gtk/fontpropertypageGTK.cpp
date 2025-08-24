@@ -128,14 +128,14 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     g_object_ref_sink( m_fontPanel );
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
     ResetFont( true );
-    m_underline = new wxCheckBox( this, wxID_ANY, _( "Underline" ) );
-    m_strikethrough = new wxCheckBox( this, wxID_ANY, _( "Strikethrough" ) );
+    itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _( "Effects" ) );
+    itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
+    m_underline = new wxCheckBox( itemStaticBox1, wxID_ANY, _( "Underline" ) );
+    m_strikethrough = new wxCheckBox( itemStaticBox1, wxID_ANY, _( "Strikethrough" ) );
     m_textColor = new CColorComboBox( this, wxID_ANY );
     m_backColor = new CColorComboBox( this, wxID_ANY );
     m_textColor->SetColourValue( font.text );
     m_backColor->SetColourValue( font.back );
-    itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _( "Effects" ) );
-    itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
     m_preview = new wxFontPreviewer( this, "AaBbYyZz" );
