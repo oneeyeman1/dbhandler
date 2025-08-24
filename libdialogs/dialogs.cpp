@@ -537,13 +537,15 @@ extern "C" WXEXPORT int CreateTableSpace(wxWindow *parent)
     return dlg.ShowModal();
 }
 
-extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype)
+extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype, DropIndexOption &options)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DropIndexOptionsDialog dlg( parent, indexName, tableName, type, subtype );
+    DropIndexOptionsDialog dlg( parent, indexName, tableName, type, subtype, options );
     int res = dlg.ShowModal();
+    if( res == wxAPPLY )
+        options = dlg.GetOptions();
     return res;
 }
 

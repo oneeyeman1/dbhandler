@@ -19,15 +19,16 @@
     #include "wx/wx.h"
 #endif
 
-//#include "database.h"
+#include "database.h"
 #include "wx/spinctrl.h"
 #include "dropindexoptions.h"
 
-DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype) :
+DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype, DropIndexOption &options) :
   wxDialog( parent, wxID_ANY, "" )
 {
     SetTitle( _( "Advanced options for DROP INDEX" ) );
     // begin wxGlade: AdvancedDroIndexOptions::AdvancedDroIndexOptions
+    auto buttonSizer = CreateStdDialogButtonSizer( wxAPPLY | wxCANCEL );
     panel_1 = new wxPanel( this, wxID_ANY );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -70,8 +71,8 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     m_filestream = new wxTextCtrl(sizer_4->GetStaticBox(), wxID_ANY, wxT("default"));
     grid_sizer_2->Add( m_filestream, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_1->Add( buttonSizer, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-
     panel_1->SetSizer( sizer_1 );
     Layout();
     // end wxGlade

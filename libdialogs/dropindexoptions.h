@@ -14,7 +14,8 @@
 class DropIndexOptionsDialog : public wxDialog
 {
 public:
-    DropIndexOptionsDialog(wxWindow *parent,  const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype);
+    DropIndexOptionsDialog(wxWindow *parent,  const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype, DropIndexOption &options);
+    const DropIndexOption &GetOptions() const { return m_options; }
 private:
     // begin wxGlade: AdvancedDroIndexOptions::attributes
     wxPanel* panel_1;
@@ -26,4 +27,5 @@ private:
     wxTextCtrl* m_moveTo;
     wxTextCtrl* m_filestream;
     // end wxGlade
+    DropIndexOption m_options;
 };

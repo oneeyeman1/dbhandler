@@ -19,7 +19,7 @@
 
 // begin wxGlade: ::extracode
 // end wxGlade
-typedef int (*DROPINDEXOPT)(wxWindow *, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &);
+typedef int (*DROPINDEXOPT)(wxWindow *, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, DropIndexOption &);
 
 TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
@@ -179,7 +179,7 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
             {
                 DropIndexOption options;
                 DROPINDEXOPT func = (DROPINDEXOPT) lib.GetSymbol( "GetDropIndexOption" );
-                int response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype );
+                int response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, options );
                 if( response == wxID_APPLY )
                     result = m_db->DropIndex( m_table->GetFullName(), fkName.ToStdWstring(), options,  errors );
             }
