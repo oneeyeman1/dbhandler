@@ -417,6 +417,41 @@ int MySQLDatabase::CreateIndex(const std::wstring &command, const std::wstring &
     return result;
 }
 
+int MySQLDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"DROP INDEX " + indexName + L" ON " + fullTableName;
+    switch( options.m_algorythm )
+    {
+        case 1:
+            query += L" ALGORITHM = INPLACE";
+            break;
+        case 2:
+            query += L" ALGORITHM = COPY";
+            break;
+    }
+    switch( options.m_locks )
+    {
+        case 1:
+            query += L" LOCK = NONE";
+            break;
+        case 2:
+            query += L" LOCK = SHARED";
+            break;
+        case 3:
+            query += L" LOCK = EXCLUSIVE";
+            break;
+    }
+    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( res )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    return result;
+}
+
 bool MySQLDatabase::IsSystemIndexExists(MYSQL_STMT *res, const std::wstring &indexName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
 {
     bool exists = false;

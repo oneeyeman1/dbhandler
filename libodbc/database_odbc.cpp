@@ -2537,7 +2537,7 @@ int ODBCDatabase::CreateIndex(const std::wstring &command, const std::wstring &i
     return result;
 }
 
-int ODBCDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOptions &options, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg)
 {
     SQLWCHAR *qry = nullptr;
     std::wstring query = L"";

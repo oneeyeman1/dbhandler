@@ -43,7 +43,7 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
-struct DropIndexOptions
+struct DropIndexOption
 {
     int m_maxdop = 0, m_algorythm = 0, m_locks = 0, m_force = false, m_immediate = true;
     bool m_online = false, m_concurrent = false, m_cascade = false;
@@ -508,7 +508,7 @@ public:
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOptions &options, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetFieldProperties(const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg) = 0;

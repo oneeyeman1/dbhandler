@@ -633,7 +633,8 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
         else
         {
             res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( command.c_str() ).c_str() );
-            if( PQresultStatus( res ) != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+            status = PQresultStatus( res );
+            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                 errorMsg.push_back( err );
@@ -653,6 +654,29 @@ int PostgresDatabase::CreateIndex(const std::wstring &command, const std::wstrin
                 result = 1;
             }
         }
+    }
+    return result;
+}
+
+int PostgresDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg)
+{
+    PGresult *res;
+    int result = 0;
+    std::wstring query = L"";
+    query = L"DROP INDEX ";
+    if( options.m_concurrent )
+        query += L"CONCURRENTLY ";
+    query += indexName;
+    if( options.m_cascade )
+        query += L" CASCADE";
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    auto status = PQresultStatus( res );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( err );
+        PQclear( res );
+        result = 1;
     }
     return result;
 }

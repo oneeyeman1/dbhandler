@@ -603,7 +603,7 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     return result;
 }
 
-int SQLiteDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOptions &options, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg)
 {
     auto result = 0;
     std::wstring query = L"DROP INDEX " + indexName;
