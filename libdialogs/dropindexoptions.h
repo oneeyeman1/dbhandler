@@ -17,15 +17,16 @@ public:
     DropIndexOptionsDialog(wxWindow *parent,  const std::wstring &indexName, const std::wstring &tableName, const std::wstring &type, const std::wstring &subtype, DropIndexOption &options);
     const DropIndexOption &GetOptions() const { return m_options; }
 private:
+    void OnApply(wxCommandEvent &event);
     // begin wxGlade: AdvancedDroIndexOptions::attributes
     wxPanel* panel_1;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
     wxTextCtrl* m_indexName;
     wxTextCtrl* m_tableName;
-    wxSpinCtrl* m_maxdop;
-    wxCheckBox* m_online;
-    wxTextCtrl* m_moveTo;
-    wxTextCtrl* m_filestream;
+    wxSpinCtrl* m_maxdop = nullptr;
+    wxCheckBox* m_online = nullptr;
+    wxTextCtrl* m_moveTo = nullptr;
+    wxTextCtrl* m_filestream = nullptr;
     // end wxGlade
     DropIndexOption m_options;
 };

@@ -56,25 +56,43 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     sizer_4->Add( grid_sizer_2, 0, wxEXPAND, 0 );
     m_label3 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MAXDOP" );
     grid_sizer_2->Add( m_label3, 0, 0, 0 );
-    m_maxdop = new wxSpinCtrl( sizer_4->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
-    grid_sizer_2->Add( m_maxdop, 0, 0, 0 );
-    m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "ONLINE" );
-    grid_sizer_2->Add( m_label4, 0, 0, 0 );
-    m_online = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
-    grid_sizer_2->Add( m_online, 0, 0, 0 );
-    m_label5 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MOVE TO" );
-    grid_sizer_2->Add( m_label5, 0, 0, 0 );
-    m_moveTo = new wxTextCtrl( sizer_4->GetStaticBox(), wxID_ANY, "default" );
-    grid_sizer_2->Add( m_moveTo, 0, 0, 0 );
-    m_label6 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "FILESTREAM_ON" );
-    grid_sizer_2->Add( m_label6, 0, 0, 0 );
-    m_filestream = new wxTextCtrl(sizer_4->GetStaticBox(), wxID_ANY, wxT("default"));
-    grid_sizer_2->Add( m_filestream, 0, 0, 0 );
+    if( type == L"Microsoft SQL Server" || ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) )
+    {
+        m_maxdop = new wxSpinCtrl( sizer_4->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
+        grid_sizer_2->Add( m_maxdop, 0, 0, 0 );
+        m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "ONLINE" );
+        grid_sizer_2->Add( m_label4, 0, 0, 0 );
+        m_online = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
+        grid_sizer_2->Add( m_online, 0, 0, 0 );
+        m_label5 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MOVE TO" );
+        grid_sizer_2->Add( m_label5, 0, 0, 0 );
+        m_moveTo = new wxTextCtrl( sizer_4->GetStaticBox(), wxID_ANY, "default" );
+        grid_sizer_2->Add( m_moveTo, 0, 0, 0 );
+        m_label6 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "FILESTREAM_ON" );
+        grid_sizer_2->Add( m_label6, 0, 0, 0 );
+        m_filestream = new wxTextCtrl(sizer_4->GetStaticBox(), wxID_ANY, wxT("default"));
+        grid_sizer_2->Add( m_filestream, 0, 0, 0 );
+    }
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( buttonSizer, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     panel_1->SetSizer( sizer_1 );
     Layout();
     // end wxGlade
+    auto button = dynamic_cast<wxButton *>( FindWindowById( wxAPPLY ) );
+    button->Bind( wxEVT_BUTTON, &DropIndexOptionsDialog::OnApply, this );
+}
+
+void DropIndexOptionsDialog::OnApply(wxCommandEvent &event)
+{
+    if( m_maxdop )
+        m_options.m_maxdop = m_maxdop->GetValue();
+    if( m_online )
+        m_options.m_online = m_online->GetValue();
+    if( m_moveTo )
+        m_options.m_moveTo = m_moveTo->GetValue();
+    if( m_filestream )
+        m_options.m_filestream = m_filestream->GetValue();
+    EndModal( wxAPPLY );
 }
 
