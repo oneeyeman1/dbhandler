@@ -344,13 +344,15 @@ void SQLiteDatabase::GetErrorMessage(int code, std::vector<std::wstring> &errorM
 {
     auto errorCode = sqlite3_errcode( m_db );
     auto extendedErrorCode = sqlite3_extended_errcode( m_db );
+    auto pos = sqlite3_error_offset( m_db );
+    auto str = sqlite3_errstr( code );
     auto stmt = sqlite3_next_stmt( m_db, nullptr );
     if( stmt )
         errorMsg.push_back( sqlite_pimpl->m_myconv.from_bytes( sqlite3_sql( stmt ) ) );
     switch( code )
     {
     case 1:
-        errorMsg.push_back( L"SQL error" );
+        errorMsg.push_back( L"SQL error at or near " + std::to_wstring( pos ) );
         break;
     case 2:
         errorMsg.push_back( L"Internal logic error" );
@@ -451,7 +453,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     else // *nix
     {
 #ifdef __DBGTK__
-        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Cantarell\', \'\' );";
+        query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 2, ?, 0, \'\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 11, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' );";
 #elif __DBQT__
         query2 = L"INSERT OR IGNORE INTO \'sys.abcattbl\' VALUES( 4, ?, 0, \'\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', 10, 400, \'N\', \'N\', 0, 34, 0, \'Mono Seriff\', \'\' );";
 #endif // __DBGTK__
