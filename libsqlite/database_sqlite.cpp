@@ -2320,12 +2320,23 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 }
                 else
                 {
+                    res4 = sqlite3_bind_text( stmt4, 2, sqlite_pimpl->m_myconv.to_bytes( schemaName ).c_str(), -1, SQLITE_TRANSIENT );
+                    if( res4 != SQLITE_OK )
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errors );
+                    }
+                }
+                if( !result )
+                {
                     for( ; ; )
                     {
                         res4 = sqlite3_step( stmt4 );
                         if( res4 == SQLITE_ROW )
                         {
-                            indexes.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 2 ) ) ) );
+                            auto origin = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 3 ) ) );
+                            if( origin != L"pk" )
+                                indexes.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt4, 1 ) ) ) );
                             count2++;
                         }
                         else if( res4 == SQLITE_DONE )
