@@ -33,6 +33,7 @@ private:
     Database *m_db;
     DatabaseTable *m_table;
     std::vector<FKField *> m_currentFK;
+    wxString m_currentIndex;
 protected:
     void OnIndexSelected(wxCommandEvent &event);
     void OnButtonUpdateUI(wxUpdateUIEvent &event);

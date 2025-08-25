@@ -60,6 +60,13 @@ TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTa
     m_table = table;
     m_db = db;
     InitGui();
+    for( auto index : indexes )
+        list_box_1->Append( index );
+    if( list_box_1->GetCount() > 0 )
+    {
+        m_currentIndex = indexes.at( 0 );
+        list_box_1->SetSelection( 0 );
+    }
 }
 
 void TableIndex::InitGui()
@@ -160,25 +167,29 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
         }
         else
         {
-            wxDynamicLibrary lib;
-            auto stdPath = wxStandardPaths::Get();
-            wxString libName = "";
-#ifdef __WXMSW__
-            libName = "dialog";
-#elif __WXMAC__
-            libName = "liblibdialog.dylib";
-#else
-            libName = "libdialog";
-#endif
-            lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
-            if( lib.IsLoaded() )
+            int response = wxCANCEL;
+            DropIndexOption options;
+            if( m_db->GetTableVector().m_type != L"SQLite" )
             {
-                DropIndexOption options;
-                DROPINDEXOPT func = (DROPINDEXOPT) lib.GetSymbol( "GetDropIndexOption" );
-                int response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, options );
-                if( response == wxID_APPLY )
-                    result = m_db->DropIndex( m_table->GetFullName(), fkName.ToStdWstring(), options,  errors );
+                wxDynamicLibrary lib;
+                auto stdPath = wxStandardPaths::Get();
+                wxString libName = "";
+#ifdef __WXMSW__
+                libName = "\\dialogs";
+#elif __WXMAC__
+                libName = "/liblibdialogs.dylib";
+#else
+                libName = "/libdialogs";
+#endif
+                lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
+                if( lib.IsLoaded() )
+                {
+                    DROPINDEXOPT func = (DROPINDEXOPT) lib.GetSymbol( "GetDropIndexOption" );
+                    response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, options );
+                }
             }
+            if( response == wxID_APPLY || m_db->GetTableVector().m_type == L"SQLite" )
+                result = m_db->DropIndex( m_table->GetFullName(), fkName.ToStdWstring(), options,  errors );
         }
         if( result )
             for( auto error : errors )
