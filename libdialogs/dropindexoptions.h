@@ -18,6 +18,7 @@ public:
     const DropIndexOption &GetOptions() const { return m_options; }
 private:
     void OnApply(wxCommandEvent &event);
+    void OnPGOptions(wxCommandEvent &event);
     // begin wxGlade: AdvancedDroIndexOptions::attributes
     wxPanel* panel_1;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6;
@@ -27,6 +28,11 @@ private:
     wxCheckBox* m_online = nullptr;
     wxTextCtrl* m_moveTo = nullptr;
     wxTextCtrl* m_filestream = nullptr;
+    wxCheckBox *m_concurrently = nullptr;
+    wxCheckBox *m_cascade = nullptr;
+    wxCheckBox *m_restrict = nullptr;
+    wxComboBox *m_algorithm = nullptr;
+    wxComboBox *m_lockopt = nullptr;
     // end wxGlade
     DropIndexOption m_options;
 };

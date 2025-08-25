@@ -55,10 +55,10 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
     auto grid_sizer_2 = new wxFlexGridSizer( 4, 2, 5, 5 );
     sizer_4->Add( grid_sizer_2, 0, wxEXPAND, 0 );
-    m_label3 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MAXDOP" );
-    grid_sizer_2->Add( m_label3, 0, 0, 0 );
     if( type == L"Microsoft SQL Server" || ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) )
     {
+        m_label3 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "MAXDOP" );
+        grid_sizer_2->Add( m_label3, 0, 0, 0 );
         m_maxdop = new wxSpinCtrl( sizer_4->GetStaticBox(), wxID_ANY, "0", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 64 );
         grid_sizer_2->Add( m_maxdop, 0, 0, 0 );
         m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "ONLINE" );
@@ -74,6 +74,46 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
         m_filestream = new wxTextCtrl(sizer_4->GetStaticBox(), wxID_ANY, wxT("default"));
         grid_sizer_2->Add( m_filestream, 0, 0, 0 );
     }
+    if( type == L"PostgreSQL" || ( type == L"ODBC" && subtype == L"PostgresSQL" ) )
+    {
+        m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "CONCURRENTLY" );
+        grid_sizer_2->Add( m_label4, 0, 0, 0 );
+        m_concurrently = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
+        grid_sizer_2->Add( m_concurrently, 0, 0, 0 );
+        m_label5 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "CASCADE" );
+        grid_sizer_2->Add( m_label5, 0, 0, 0 );
+        m_cascade = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
+        grid_sizer_2->Add( m_cascade, 0, 0, 0 );
+        m_label6 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "RESTRICT" );
+        grid_sizer_2->Add( m_label6, 0, 0, 0 );
+        m_restrict = new wxCheckBox( sizer_4->GetStaticBox(), wxID_ANY, wxEmptyString );
+        grid_sizer_2->Add( m_restrict, 0, 0, 0 );
+        m_restrict->SetValue( true );
+    }
+    if( type == L"MySQL" || ( type == L"ODBC" && subtype == L"MySQL" ) )
+    {
+        m_label4 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "ALGORITHM" );
+        grid_sizer_2->Add( m_label4, 0, 0, 0 );
+        const wxString algChoices[] =
+        {
+            "DEFAULT",
+            "INPLACE",
+            "COPY"
+        };
+        m_algorithm = new wxComboBox( sizer_4->GetStaticBox(), wxID_ANY, "DEFAULT", wxDefaultPosition, wxDefaultSize, 3, algChoices );
+        grid_sizer_2->Add( m_algorithm, 0, 0, 0 );
+        m_label5 = new wxStaticText( sizer_4->GetStaticBox(), wxID_ANY, "LOCK_OPTION" );
+        grid_sizer_2->Add( m_label5, 0, 0, 0 );
+        const wxString lockOpt[] =
+        {
+            "DEFAULT",
+            "NONE",
+            "SHARED",
+            "EXCLUSIVE"
+        };
+        m_lockopt = new wxComboBox( sizer_4->GetStaticBox(), wxID_ANY, "DEFAULT", wxDefaultPosition, wxDefaultSize, 4, lockOpt );
+        grid_sizer_2->Add( m_lockopt, 0, 0, 0 );
+    }
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     panel_1->SetSizer( sizer_1 );
@@ -83,6 +123,10 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     // end wxGlade
     auto button = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
     button->Bind( wxEVT_BUTTON, &DropIndexOptionsDialog::OnApply, this );
+    if( m_cascade )
+        m_cascade->Bind( wxEVT_CHECKBOX, &DropIndexOptionsDialog::OnPGOptions, this );
+    if( m_restrict )
+        m_restrict->Bind( wxEVT_CHECKBOX, &DropIndexOptionsDialog::OnPGOptions, this );
 }
 
 void DropIndexOptionsDialog::OnApply(wxCommandEvent &event)
@@ -95,6 +139,19 @@ void DropIndexOptionsDialog::OnApply(wxCommandEvent &event)
         m_options.m_moveto = m_moveTo->GetValue();
     if( m_filestream )
         m_options.m_filestream = m_filestream->GetValue();
+    if( m_concurrently )
+        m_options.m_concurrent = m_concurrently->GetValue();
+    if( m_cascade )
+        m_options.m_cascade = m_cascade->GetValue();
+    if( m_algorithm )
+        m_options.m_algorythm = m_algorithm->GetSelection();
+    if( m_lockopt )
+        m_options.m_locks = m_lockopt->GetSelection();
     EndModal( wxAPPLY );
 }
 
+void DropIndexOptionsDialog::OnPGOptions(wxCommandEvent &WXUNUSED(event))
+{
+    m_cascade->SetValue( !m_cascade->GetValue() );
+    m_restrict->SetValue( !m_restrict->GetValue() );
+}
