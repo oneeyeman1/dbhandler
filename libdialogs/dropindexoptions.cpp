@@ -29,6 +29,7 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     SetTitle( _( "Advanced options for DROP INDEX" ) );
     // begin wxGlade: AdvancedDroIndexOptions::AdvancedDroIndexOptions
     auto buttonSizer = CreateStdDialogButtonSizer( wxAPPLY | wxCANCEL );
+    auto sizerMain = new wxBoxSizer( wxVERTICAL );
     panel_1 = new wxPanel( this, wxID_ANY );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -74,9 +75,10 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
         grid_sizer_2->Add( m_filestream, 0, 0, 0 );
     }
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_1->Add( buttonSizer, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     panel_1->SetSizer( sizer_1 );
+    sizerMain->Add( sizer_1, 0, wxEXPAND, 0 );
+    sizerMain->Add( buttonSizer, 0, wxEXPAND, 0 );
     Layout();
     // end wxGlade
     auto button = dynamic_cast<wxButton *>( FindWindowById( wxAPPLY ) );
