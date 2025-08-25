@@ -81,7 +81,7 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
     sizerMain->Add( buttonSizer, 0, wxEXPAND, 0 );
     Layout();
     // end wxGlade
-    auto button = dynamic_cast<wxButton *>( FindWindowById( wxAPPLY ) );
+    auto button = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
     button->Bind( wxEVT_BUTTON, &DropIndexOptionsDialog::OnApply, this );
 }
 
