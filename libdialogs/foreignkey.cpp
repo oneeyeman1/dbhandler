@@ -31,7 +31,7 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const wxPoint& pos, const wxSize& size, long style):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const bool logOnly):
     wxDialog(parent, id, title, pos, size, style)
 {
     m_match = matchOptions;
@@ -88,6 +88,8 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_onDelete->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnDeleteChanges, this );
     m_onUpdate->Bind( wxEVT_RADIOBOX, &ForeignKeyDialog::OnUpdateChanges, this );
     list_ctrl_1->Bind( wxEVT_LEFT_DOWN, &ForeignKeyDialog::OnSelectDeselectField, this );
+    if( !logOnly )
+        m_logOnly->Enable( false );
     set_properties();
     do_layout();
     // end wxGlade
@@ -149,8 +151,6 @@ void ForeignKeyDialog::set_properties()
         list_ctrl_1->InsertItem( row++, (*it)->GetFieldName() );
     }
     // end wxGlade
-    if( m_db->GetTableVector().GetDatabaseType() == L"SQLite" )
-        m_foreignKeyName->Disable();
 }
 
 
