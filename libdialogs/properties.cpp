@@ -25,6 +25,7 @@
 #include "wx/notebook.h"
 #include "wx/bmpcbox.h"
 #include "wx/docmdi.h"
+#include "wx/dynlib.h"
 #include "wx/filepicker.h"
 #include "wx/fontenum.h"
 #include "wx/listctrl.h"
@@ -134,6 +135,11 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             if( handler->GetType() == TablePrpertiesType )
             {
                 m_page19 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetForeignKeyVector(), false );
+                if( !m_page19->IsInitialized() )
+                {
+                    wxMessageBox( _( "There is a serious issue with you install. Please reinstall the application" ) );
+                    EndModal( wxID_CANCEL );
+                }
                 m_properties->InsertPage( 4, m_page19, _( "Foregn Key" ) );
                 m_page20 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetIndexNames(), true );
                 m_properties->AddPage( m_page20, _( "Indexes" ) );

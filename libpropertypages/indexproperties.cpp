@@ -20,6 +20,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 typedef int (*DROPINDEXOPT)(wxWindow *, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, DropIndexOption &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 
 TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
@@ -100,9 +101,22 @@ void TableIndex::InitGui()
     sizer_1->Fit( this );
     // end wxGlade
     list_box_1->Bind( wxEVT_LISTBOX, &TableIndex::OnIndexSelected, this );
+    m_new->Bind( wxEVT_BUTTON, &TableIndex::OnNew, this );
     m_edit->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
     m_delete->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
     m_delete->Bind( wxEVT_BUTTON, &TableIndex::OnDelete, this );
+    auto stdPath = wxStandardPaths::Get();
+    wxString libName = "";
+#ifdef __WXMSW__
+    libName = "\\dialogs";
+#elif __WXMAC__
+    libName = "/liblibdialogs.dylib";
+#else
+    libName = "/libdialogs";
+#endif
+    m_lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
+    if( m_lib.IsLoaded() )
+        m_initialized = true;
 }
 
 void TableIndex::OnButtonUpdateUI( wxUpdateUIEvent &event )
@@ -171,20 +185,9 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
             DropIndexOption options;
             if( m_db->GetTableVector().m_type != L"SQLite" )
             {
-                wxDynamicLibrary lib;
-                auto stdPath = wxStandardPaths::Get();
-                wxString libName = "";
-#ifdef __WXMSW__
-                libName = "\\dialogs";
-#elif __WXMAC__
-                libName = "/liblibdialogs.dylib";
-#else
-                libName = "/libdialogs";
-#endif
-                lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
-                if( lib.IsLoaded() )
+                if( m_lib.IsLoaded() )
                 {
-                    DROPINDEXOPT func = (DROPINDEXOPT) lib.GetSymbol( "GetDropIndexOption" );
+                    DROPINDEXOPT func = (DROPINDEXOPT) m_lib.GetSymbol( "GetDropIndexOption" );
                     response = func( nullptr, fkName.ToStdWstring(), m_table->GetFullName(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, options );
                 }
             }
@@ -198,3 +201,33 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
             list_box_1->Delete( list_box_1->GetSelection() );
     }
 }
+
+void TableIndex::OnNew(wxCommandEvent &event)
+{
+    int result = 0;
+    wxString fkName;
+    if( !m_isIndex )
+    {
+        CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) m_lib.GetSymbol( "CreateForeignKey" );
+        std::vector<std::wstring> origFields, refKeyFields, errors;
+        std::wstring refTableName;
+        int deleteProp = NO_ACTION_DELETE, updateProp = NO_ACTION_UPDATE, match = 0, res = 0;
+        bool logOnly = false;
+        std::vector<FKField *> newFK; int &
+        result = func( GetParent(), fkName, m_table, origFields, refKeyFields, refTableName, deleteProp, updateProp, m_db, logOnly, false, newFK, match );
+        if( result != wxID_CANCEL )
+        {
+            std::wstring command;
+//            int res = m_db->ApplyForeignKey( command, fkName, errors );
+            // new FK creted
+            if( res )
+            {
+                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); ++it )
+                {
+                    wxMessageBox( (*it), _( "Error" ), wxOK | wxICON_ERROR );
+                }
+            }
+        }
+    }
+}
+

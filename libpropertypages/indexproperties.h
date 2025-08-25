@@ -27,16 +27,19 @@ public:
 
     TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex);
     TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::vector<std::wstring> &indexes, bool isIndex);
+    bool IsInitialized() const { return m_initialized; }
 
 private:
-    bool m_isIndex;
+    bool m_isIndex, m_initialized = false;
     Database *m_db;
     DatabaseTable *m_table;
     std::vector<FKField *> m_currentFK;
     wxString m_currentIndex;
+    wxDynamicLibrary m_lib;
 protected:
     void OnIndexSelected(wxCommandEvent &event);
     void OnButtonUpdateUI(wxUpdateUIEvent &event);
+    void OnNew(wxCommandEvent &event);
     void OnDelete(wxCommandEvent &event);
     void InitGui();
     // begin wxGlade: TableIndex::attributes
