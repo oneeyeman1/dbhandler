@@ -40,9 +40,11 @@ TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTa
             counter++;
         }
     }
-    m_currentFK = fKeys.at( 0 );
     if( list_box_1->GetCount() > 0 )
+    {
+        m_currentFK = fKeys.at( 0 );
         list_box_1->SetSelection( 0 );
+    }
 }
 
 void TableIndex::OnIndexSelected(wxCommandEvent &WXUNUSED(event))
