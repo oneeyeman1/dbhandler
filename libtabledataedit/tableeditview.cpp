@@ -729,3 +729,4 @@ void TableEditView::OnCellClicked(wxGridEvent &event)
     }
     event.Skip();
 }
+
