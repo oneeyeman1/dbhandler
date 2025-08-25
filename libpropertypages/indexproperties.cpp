@@ -162,21 +162,15 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
         {
             wxDynamicLibrary lib;
             auto stdPath = wxStandardPaths::Get();
-            wxString libName = "", libraryPath = "";
+            wxString libName = "";
 #ifdef __WXMSW__
-            wxFileName fn( stdPath.GetExecutablePath() );
-            libraryPath = fn.GetPathWithSep();
-            libName = m_libraryPath + "dialog";
+            libName = "dialog";
 #elif __WXMAC__
-            wxFileName fn( stdPath.GetExecutablePath() );
-            fn.RemoveLastDir();
-            libraryPath = fn.GetPathWithSep() + "Frameworks/";
-            libName = libraryPath + "liblibdialog.dylib";
+            libName = "liblibdialog.dylib";
 #else
-            libraryPath = stdPath.GetInstallPrefix() + "/lib/";
-            libName = libraryPath + "libdialog";
+            libName = "libdialog";
 #endif
-            lib.Load( libName );
+            lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
             if( lib.IsLoaded() )
             {
                 DropIndexOption options;

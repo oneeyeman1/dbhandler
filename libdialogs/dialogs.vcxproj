@@ -515,6 +515,7 @@
     <ClCompile Include="detachdb.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="displayformatdefinition.cpp" />
+    <ClCompile Include="dropindexoptions.cpp" />
     <ClCompile Include="foreignkey.cpp" />
     <ClCompile Include="getobjectname.cpp" />
     <ClCompile Include="gotoline.cpp" />
@@ -545,6 +546,7 @@
     <ClInclude Include="detachdb.h" />
     <ClInclude Include="dialogs.h" />
     <ClInclude Include="displayformatdefinition.h" />
+    <ClInclude Include="dropindexoptions.h" />
     <ClInclude Include="foreignkey.h" />
     <ClInclude Include="getobjectname.h" />
     <ClInclude Include="gotoline.h" />
