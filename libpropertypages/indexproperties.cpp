@@ -204,7 +204,7 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
 
 void TableIndex::OnNew(wxCommandEvent &event)
 {
-    int result = 0;
+    int result = wxID_CANCEL;
     wxString fkName;
     if( !m_isIndex )
     {
@@ -213,7 +213,7 @@ void TableIndex::OnNew(wxCommandEvent &event)
         std::wstring refTableName;
         int deleteProp = NO_ACTION_DELETE, updateProp = NO_ACTION_UPDATE, match = 0, res = 0;
         bool logOnly = false;
-        std::vector<FKField *> newFK; int &
+        std::vector<FKField *> newFK;
         result = func( GetParent(), fkName, m_table, origFields, refKeyFields, refTableName, deleteProp, updateProp, m_db, logOnly, false, newFK, match );
         if( result != wxID_CANCEL )
         {
