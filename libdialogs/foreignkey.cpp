@@ -141,7 +141,12 @@ void ForeignKeyDialog::set_properties()
         for( std::vector<TableDefinition>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
         {
             if( (*it1).fullName != m_table->GetFullName() )
-                m_primaryKeyTable->AppendString( (*it1).fullName );
+            {
+                auto name = (*it1).fullName;
+                if( m_db->GetTableVector().m_type == L"SQLite" )
+                    name = (*it1).schemaName + L"." + (*it1).tableName;
+                m_primaryKeyTable->AppendString( name );
+            }
         }
     }
     list_ctrl_1->AppendColumn( m_table->GetTableName() );
