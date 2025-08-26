@@ -2831,3 +2831,63 @@ int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vec
     UNUSED(errorMsg);
     return 0;
 }
+
+int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
+{
+    int result = false;
+    auto res = sqlite3_prepare_v2( m_db, "SELECT name FROM pragma_table_info(?, ?) ORDER BY cid;", -1, &m_stmt, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errors );
+    }
+    else
+    {
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errors );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errors );
+        }
+    }
+    if( !result )
+    {
+        for( ;; )
+        {
+            res = sqlite3_step( m_stmt1 );
+            if( res = SQLITE_ROW )
+            {
+                fields.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt1, 0 ) ) ) );
+            }
+            else
+            {
+                if( res != SQLITE_DONE )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errors );
+                }
+                break;
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( m_stmt1 );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errors );
+        }
+    }
+    return result;
+}
+

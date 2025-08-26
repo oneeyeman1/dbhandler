@@ -2779,3 +2779,10 @@ int MySQLDatabase::GetTablespacesList(std::vector<std::wstring> &UNUSED(list), s
 {
     return 0;
 }
+
+int MySQLDatabase::GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    return result;
+}
+

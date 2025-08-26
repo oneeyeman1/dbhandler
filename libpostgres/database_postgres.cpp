@@ -2046,3 +2046,40 @@ int PostgresDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::v
     return result;
 }
 
+int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    char *values1[2];
+    const char *catalog_name = m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str();
+    const char *schema_name = m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str();
+    const char *table_name = m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str();
+    values1[0] = new char[strlen( schema_name ) + 1];
+    values1[1] = new char[strlen( table_name ) + 1];
+    strcpy( values1[0], schema_name );
+    strcpy( values1[1], table_name );
+    int len1 = (int) strlen( schema_name );
+    int len2 = (int) strlen( table_name );
+    int length1[2] = { len1, len2 };
+    int formats1[2] = { 1, 1 };
+    auto res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 0 );
+    auto status = PQresultStatus( res2 );
+    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        PQclear( res2 );
+        result = 1;
+    }
+    else if( status == PGRES_TUPLES_OK )
+    {
+        for( int j = 0; j < PQntuples( res2 ); j++ )
+        {
+            const char *field_name = PQgetvalue( res2, j, 0 );
+            auto fieldName = m_pimpl->m_myconv.from_bytes( field_name );
+            fields.push_back( fieldName );
+        }
+    }
+    PQclear( res2 );
+    return result;
+}
+
