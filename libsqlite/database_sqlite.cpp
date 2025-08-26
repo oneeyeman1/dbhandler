@@ -2369,6 +2369,7 @@ int SQLiteDatabase::AddDropTable(const std::wstring &catalog, const std::wstring
                 }
             }
             DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, pk, foreign_keys );
+            table->SetFullName( catalog + L"." + schemaName + L"." + tableName );
             table->SetCatalog( catalog );
             table->SetNumberOfFields( count1 );
             table->SetNumberOfIndexes( count2 );

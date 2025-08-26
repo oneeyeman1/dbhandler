@@ -1715,8 +1715,12 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     if( (*it)->IsPrimaryKey() )
                         pk.push_back( (*it)->GetFieldName() );
                 }
-                DatabaseTable *table = new DatabaseTable( m_pimpl->m_myconv.from_bytes( table_name ), m_pimpl->m_myconv.from_bytes( schema_name ), fields, pk, foreign_keys );
-                table->SetCatalog( m_pimpl->m_myconv.from_bytes( catalog_name ) );
+                auto catalog = m_pimpl->m_myconv.from_bytes( catalog_name );
+                auto schemaName = m_pimpl->m_myconv.from_bytes( schema_name );
+                auto tableName = m_pimpl->m_myconv.from_bytes( table_name );
+                DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, pk, foreign_keys );
+                table->SetFullName( catalog + L"." + schemaName + L"." + tableName );
+                table->SetCatalog( catalog );
                 table->SetNumberOfFields( numFields );
                 table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
                 if( GetTableProperties( table, errors ) )

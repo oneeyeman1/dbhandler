@@ -6184,6 +6184,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         pk.push_back( (*it)->GetFieldName() );
                 }
                 DatabaseTable *new_table = new DatabaseTable( tempTableName, tempSchemaName, fields, pk, foreign_keys );
+                new_table->SetFullName( catalog + L"." + tempSchemaName + L"." + tempTableName );
                 new_table->SetTableOwner( owner );
                 new_table->SetCatalog( catalog );
                 new_table->SetNumberOfFields( fields.size() );
