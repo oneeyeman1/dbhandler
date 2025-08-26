@@ -32,7 +32,7 @@
 
 
 ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const bool logOnly):
-    wxDialog(parent, id, title, pos, size, style)
+    wxDialog(parent, id, title)
 {
     m_match = matchOptions;
     m_matching = NULL;
@@ -136,12 +136,12 @@ void ForeignKeyDialog::set_properties()
     }
     m_OK->SetDefault();
     m_onDelete->SetSelection( 0 );
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::const_iterator it = m_db->GetTableVector().m_tables.begin(); it != m_db->GetTableVector().m_tables.end(); it++ )
+    for( std::map<std::wstring, std::vector<TableDefinition> >::const_iterator it = m_db->GetTableVector().m_tableDefinitions.begin(); it != m_db->GetTableVector().m_tableDefinitions.end(); it++ )
     {
-        for( std::vector<DatabaseTable *>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
+        for( std::vector<TableDefinition>::const_iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); it1++ )
         {
-            if( (*it1)->GetTableName() != m_table->GetTableName() && (*it1)->GetSchemaName() == m_table->GetSchemaName() )
-                m_primaryKeyTable->AppendString( (*it1)->GetTableName() );
+            if( (*it1).fullName != m_table->GetFullName() )
+                m_primaryKeyTable->AppendString( (*it1).fullName );
         }
     }
     list_ctrl_1->AppendColumn( m_table->GetTableName() );
