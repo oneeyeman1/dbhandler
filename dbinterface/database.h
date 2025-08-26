@@ -52,8 +52,14 @@ struct DropIndexOption
 
 struct TableDefinition
 {
-    std::wstring schemaName, tableName, catalogName;
-    TableDefinition(const std::wstring &cat, const std::wstring &schema, const std::wstring &table) : schemaName(schema), tableName(table), catalogName(cat) {}
+    std::wstring schemaName, tableName, catalogName, fullName;
+    TableDefinition(const std::wstring &cat, const std::wstring &schema, const std::wstring &table) : schemaName(schema), tableName(table), catalogName(cat)
+    {
+        if( !cat.empty() )
+            fullName = cat + L"." + schema + L"." + table;
+        else
+            fullName = schema + L"." + table;
+    }
     bool operator==(const TableDefinition &def) const
     {
         if( def.schemaName == schemaName && def.tableName == tableName && def.catalogName == catalogName )
