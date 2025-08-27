@@ -146,7 +146,7 @@ void ForeignKeyDialog::set_properties()
                 if( m_db->GetTableVector().m_type == L"SQLite" )
                     name = (*it1).schemaName + L"." + (*it1).tableName;
                 auto item = m_primaryKeyTable->Append( name );
-                m_primaryKeyTable->SetClientObject( item, (wxClientData *) &(*it1) );
+                m_primaryKeyTable->SetClientObject( item, (wxClientData *) it1 );
             }
         }
     }
