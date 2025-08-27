@@ -2074,9 +2074,11 @@ int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wst
     {
         for( int j = 0; j < PQntuples( res2 ); j++ )
         {
-            const char *field_name = PQgetvalue( res2, j, 0 );
-            auto fieldName = m_pimpl->m_myconv.from_bytes( field_name );
-            fields.push_back( fieldName );
+            if( !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) )
+            {
+                auto fieldName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 0 ) );
+                fields.push_back( fieldName );
+            }
         }
     }
     PQclear( res2 );

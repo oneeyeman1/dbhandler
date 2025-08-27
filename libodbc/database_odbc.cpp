@@ -7512,7 +7512,8 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     std::wstring fieldName;
     std::unique_ptr<SQLWCHAR> table_name = std::make_unique< SQLWCHAR>( table.length() + 2 );
     std::unique_ptr<SQLWCHAR> schema_name = std::make_unique<SQLWCHAR>( schema.length() + 2 );
-    std::unique_ptr<SQLWCHAR> catalog_name = std::make_unique<SQLWCHAR>( catalog.size() + 2 );
+//    std::unique_ptr<SQLWCHAR> catalog_name = std::make_unique<SQLWCHAR>( catalog.size() + 2 );
+    std::basic_string<SQLWCHAR> catalog_name( catalog.begin(), catalog.end() );
     SQLWCHAR szColumnName[256];
     SQLLEN cbColumnName;
 //    memset( table_name, '\0', table.length() + 2 );
@@ -7520,7 +7521,7 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
 //    memset( catalog_name, '\0', catalog.length() + 2 );
     uc_to_str_cpy( table_name.get(), table );
     uc_to_str_cpy( schema_name.get(), schema );
-    uc_to_str_cpy( catalog_name.get(), catalog );
+//    uc_to_str_cpy( catalog_name.get(), catalog );
     auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -7529,11 +7530,16 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     }
     if( !result )
     {
-        SQLSMALLINT numColumns;
         if( pimpl.m_subtype != L"Oracle" )
-            ret = SQLColumns( m_hstmt, catalog_name.get(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0);
+            ret = SQLPrimaryKeys( m_hstmt, catalog_name.data(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS );
         else
-            ret = SQLColumns( m_hstmt, NULL, SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0 );
+            ret = SQLPrimaryKeys( m_hstmt, NULL, SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS );
+
+/*        if( pimpl.m_subtype != L"Oracle" )
+//            ret = SQLColumns( m_hstmt, catalog_name.get(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0);
+            ret = SQLColumns( m_hstmt, catalog_name.data(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0);
+        else
+            ret = SQLColumns( m_hstmt, NULL, SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0 );*/
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errors, STMT_ERROR );
@@ -7553,8 +7559,9 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     {
         for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
         {
-            str_to_uc_cpy( fieldName, szColumnName );
-            fields.push_back( fieldName );
+            std::wstring pkFieldName;
+            str_to_uc_cpy( pkFieldName, szColumnName );
+            fields.push_back( pkFieldName );
         }
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {

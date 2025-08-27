@@ -2835,7 +2835,7 @@ int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vec
 int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
 {
     int result = false;
-    auto res = sqlite3_prepare_v2( m_db, "SELECT name FROM pragma_table_info(?, ?) ORDER BY cid;", -1, &m_stmt, nullptr );
+    auto res = sqlite3_prepare_v2( m_db, "SELECT name, pk FROM pragma_table_info(?, ?) ORDER BY cid;", -1, &m_stmt, nullptr );
     if( res != SQLITE_OK )
     {
         result = 1;
@@ -2843,7 +2843,7 @@ int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstri
     }
     else
     {
-        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -2852,7 +2852,7 @@ int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstri
     }
     if( !result )
     {
-        res = sqlite3_bind_text( m_stmt1, 1, sqlite_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -2863,10 +2863,12 @@ int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstri
     {
         for( ;; )
         {
-            res = sqlite3_step( m_stmt1 );
-            if( res = SQLITE_ROW )
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
             {
-                fields.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( m_stmt1, 0 ) ) ) );
+                auto name = sqlite3_column_text( m_stmt, 0 );
+                if( sqlite3_column_int( m_stmt, 1 ) == 1 )
+                    fields.push_back( sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( name ) ) );
             }
             else
             {
@@ -2881,7 +2883,7 @@ int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstri
     }
     if( !result )
     {
-        res = sqlite3_finalize( m_stmt1 );
+        res = sqlite3_finalize( m_stmt );
         if( res != SQLITE_OK )
         {
             result = 1;
