@@ -36,6 +36,7 @@ public:
     int GetDeleteParam() const;
     int GetUpdateParam() const;
     const std::wstring &GetReferencedTable() const;
+    const wxString &GetForeignKeyName() const;
     void OnApplyCommand(wxCommandEvent &event);
     void OnPrimaryKeyTableSelection(wxCommandEvent &event);
     void OnDeleteChanges(wxCommandEvent &event);
@@ -45,6 +46,7 @@ public:
 private:
     std::vector<std::wstring> m_foreignKey, m_primaryKey;
     std::wstring m_refTableName;
+    wxString m_fkName;
     int m_delete, m_update;
     DatabaseTable *m_pkTable;
     bool m_isLogOnly, m_isView, m_edited;

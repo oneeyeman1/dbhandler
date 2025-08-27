@@ -44,7 +44,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_edited = false;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
-    m_foreignKeyName = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_foreignKeyName = new wxTextCtrl( this, wxID_ANY );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Primary Key Table:" ) );
     m_primaryKeyTable = new wxComboBox( this, wxID_ANY, wxT( "" ), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_DROPDOWN | wxCB_READONLY );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Columns:" ) );
@@ -93,6 +93,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     set_properties();
     do_layout();
     // end wxGlade
+    list_ctrl_1->SetColumnWidth( 0, list_ctrl_1->GetSize().GetWidth() );
     wxPoint pt1 = m_foreignKeyColumns->GetPosition();
     int width1 = m_foreignKeyColumns->GetSize().GetWidth();
     m_foreignKeyColumns->Hide();
@@ -290,7 +291,7 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> fields, errors;
-    TableDefinition *def = reinterpret_cast<TableDefinition *>( m_primaryKeyTable->GetClientObject( m_primaryKeyTable->GetSelection()  ) );
+    TableDefinition *def = reinterpret_cast<TableDefinition *>( m_primaryKeyTable->GetClientData( m_primaryKeyTable->GetSelection()  ) );
     wxBeginBusyCursor();
     auto res = m_db->GetTableFields( def->catalogName, def->schemaName, def->tableName, fields, errors );
     wxEndBusyCursor();
@@ -341,6 +342,11 @@ const std::vector<std::wstring> &ForeignKeyDialog::GetPrimaryKeyFields() const
 const std::wstring &ForeignKeyDialog::GetReferencedTable() const
 {
     return m_refTableName;
+}
+
+const wxString &ForeignKeyDialog::GetForeignKeyName() const
+{
+    return m_fkName;
 }
 
 int ForeignKeyDialog::GetDeleteParam() const
