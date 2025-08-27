@@ -7510,18 +7510,14 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
 {
     int result = 0;
     std::wstring fieldName;
-    std::unique_ptr<SQLWCHAR> table_name = std::make_unique< SQLWCHAR>( table.length() + 2 );
-    std::unique_ptr<SQLWCHAR> schema_name = std::make_unique<SQLWCHAR>( schema.length() + 2 );
-//    std::unique_ptr<SQLWCHAR> catalog_name = std::make_unique<SQLWCHAR>( catalog.size() + 2 );
-    std::basic_string<SQLWCHAR> catalog_name( catalog.begin(), catalog.end() );
+    std::unique_ptr<SQLWCHAR[]> table_name = std::make_unique< SQLWCHAR[]>( table.length() + 2 );
+    std::unique_ptr<SQLWCHAR[]> schema_name = std::make_unique<SQLWCHAR[]>( schema.length() + 2 );
+    std::unique_ptr<SQLWCHAR[]> catalog_name = std::make_unique<SQLWCHAR[]>( catalog.size() + 2 );
     SQLWCHAR szColumnName[256];
     SQLLEN cbColumnName;
-//    memset( table_name, '\0', table.length() + 2 );
-//    memset( schema_name, '\0', schema.length() + 2 );
-//    memset( catalog_name, '\0', catalog.length() + 2 );
     uc_to_str_cpy( table_name.get(), table );
     uc_to_str_cpy( schema_name.get(), schema );
-//    uc_to_str_cpy( catalog_name.get(), catalog );
+    uc_to_str_cpy( catalog_name.get(), catalog );
     auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -7531,15 +7527,9 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     if( !result )
     {
         if( pimpl.m_subtype != L"Oracle" )
-            ret = SQLPrimaryKeys( m_hstmt, catalog_name.data(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS );
+            ret = SQLPrimaryKeys( m_hstmt, catalog_name.get(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS );
         else
             ret = SQLPrimaryKeys( m_hstmt, NULL, SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS );
-
-/*        if( pimpl.m_subtype != L"Oracle" )
-//            ret = SQLColumns( m_hstmt, catalog_name.get(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0);
-            ret = SQLColumns( m_hstmt, catalog_name.data(), SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0);
-        else
-            ret = SQLColumns( m_hstmt, NULL, SQL_NTS, schema_name.get(), SQL_NTS, table_name.get(), SQL_NTS, NULL, 0 );*/
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errors, STMT_ERROR );
