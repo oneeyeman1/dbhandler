@@ -60,7 +60,6 @@ private:
 
 protected:
     bool Verify();
-    void DoChangePrimaryKeyTableName();
     // begin wxGlade: ForeignKeyDialog::attributes
     wxStaticText* m_label1;
     wxTextCtrl* m_foreignKeyName;

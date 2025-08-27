@@ -105,7 +105,7 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     {
         m_foreignKeyName->SetValue( keyName );
         m_primaryKeyTable->SetValue( m_refTableName );
-        DoChangePrimaryKeyTableName();
+//        DoChangePrimaryKeyTableName();
         for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
         {
             list_ctrl_1->SetItemState( list_ctrl_1->FindItem( -1, (*it) ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
@@ -115,10 +115,10 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
 
 ForeignKeyDialog::~ForeignKeyDialog()
 {
-    delete m_foreignKeyColumnsFields;
-    m_foreignKeyColumnsFields = NULL;
-    delete m_primaryKeyColumnsFields;
-    m_primaryKeyColumnsFields = NULL;
+//    delete m_foreignKeyColumnsFields;
+//    m_foreignKeyColumnsFields = NULL;
+//    delete m_primaryKeyColumnsFields;
+//    m_primaryKeyColumnsFields = NULL;
 }
 
 void ForeignKeyDialog::set_properties()
@@ -145,7 +145,8 @@ void ForeignKeyDialog::set_properties()
                 auto name = (*it1).fullName;
                 if( m_db->GetTableVector().m_type == L"SQLite" )
                     name = (*it1).schemaName + L"." + (*it1).tableName;
-                m_primaryKeyTable->AppendString( name );
+                auto item = m_primaryKeyTable->Append( name );
+                m_primaryKeyTable->SetClientObject( item, (wxClientData *) &(*it1) );
             }
         }
     }
@@ -288,32 +289,28 @@ void ForeignKeyDialog::OnApplyCommand(wxCommandEvent &event)
 
 void ForeignKeyDialog::OnPrimaryKeyTableSelection(wxCommandEvent &WXUNUSED(event))
 {
-    DoChangePrimaryKeyTableName();
-    m_edited = true;
-/*    bool found = false;
+    std::vector<std::wstring> fields, errors;
+    TableDefinition *def = reinterpret_cast<TableDefinition *>( m_primaryKeyTable->GetClientObject( m_primaryKeyTable->GetSelection()  ) );
+    wxBeginBusyCursor();
+    auto res = m_db->GetTableFields( def->catalogName, def->schemaName, def->tableName, fields, errors );
+    wxEndBusyCursor();
+    if( res )
+    {
+        for( auto error: errors )
+        {
+            wxMessageBox( error, _( "Error" ), wxICON_EXCLAMATION | wxID_OK );
+            return;
+        }
+    }
     m_primaryKeyColumnsFields->Clear();
     m_primaryKey.clear();
-    std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
+    for( std::vector<std::wstring>::iterator it = fields.begin(); it < fields.end(); ++it )
     {
-        for( std::vector<DatabaseTable *>::iterator it1 = (it)->second.begin(); it1 < (*it).second.end() && !found; it1++ )
-        {
-            if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue() )
-            {
-                m_pkTable = (*it1);
-                found = true;
-            }
-        }
+        m_primaryKeyColumnsFields->AddField( (*it) );
+        m_primaryKey.push_back( (*it) );
     }
-    for( std::vector<Field *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
-    {
-        if( (*it)->IsPrimaryKey() )
-        {
-            m_primaryKeyColumnsFields->AddField( (*it)->GetFieldName() );
-            m_primaryKey.push_back( (*it)->GetFieldName() );
-        }
-    }
-    m_refTableName = m_primaryKeyTable->GetValue();*/
+    m_refTableName = m_primaryKeyTable->GetValue();
+    m_edited = true;
 }
 
 bool ForeignKeyDialog::IsLogOnlyI()
@@ -354,34 +351,6 @@ int ForeignKeyDialog::GetDeleteParam() const
 int ForeignKeyDialog::GetUpdateParam() const
 {
     return m_update;
-}
-
-void ForeignKeyDialog::DoChangePrimaryKeyTableName()
-{
-    bool found = false;
-    m_primaryKeyColumnsFields->Clear();
-    m_primaryKey.clear();
-    std::map<std::wstring, std::vector<DatabaseTable *> > tableVec = m_db->GetTableVector().m_tables;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = tableVec.begin(); it != tableVec.end() && !found; it++ )
-    {
-        for( std::vector<DatabaseTable *>::iterator it1 = (it)->second.begin(); it1 < (*it).second.end() && !found; it1++ )
-        {
-            if( (*it1)->GetTableName() == m_primaryKeyTable->GetValue() )
-            {
-                m_pkTable = (*it1);
-                found = true;
-            }
-        }
-    }
-    for( std::vector<TableField *>::const_iterator it = m_pkTable->GetFields().begin(); it < m_pkTable->GetFields().end(); it++ )
-    {
-        if( (*it)->IsPrimaryKey() )
-        {
-            m_primaryKeyColumnsFields->AddField( (*it)->GetFieldName() );
-            m_primaryKey.push_back( (*it)->GetFieldName() );
-        }
-    }
-    m_refTableName = m_primaryKeyTable->GetValue();
 }
 
 void ForeignKeyDialog::OnDeleteChanges(wxCommandEvent &WXUNUSED(event))
