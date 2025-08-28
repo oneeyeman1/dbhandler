@@ -111,14 +111,23 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
     m_primaryKeyColumnsFields = new FieldWindow( this, false, pt2, width2 );
-    for( auto field: foreignKey )
+    if( !isView )
     {
-        m_foreignKeyName->SetValue( field->GetFKName() );
-        m_primaryKeyTable->ChangeValue( field->GetReferentialSchemaName() + L"." + field->GetReferencedTableName() );
-//        DoChangePrimaryKeyTableName();
-        for( std::vector<std::wstring>::const_iterator it = field->GetOriginalFields().begin(); it < field->GetOriginalFields().end(); ++it )
+        m_foreignKeyName->SetValue( foreignKey[0]->GetFKName() );
+        for( auto field: foreignKey )
         {
-            list_ctrl_1->SetItemState( list_ctrl_1->FindItem( -1, (*it) ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            m_primaryKeyTable->ChangeValue( field->GetReferentialSchemaName() + L"." + field->GetReferencedTableName() );
+            for( std::vector<std::wstring>::const_iterator it = field->GetOriginalFields().begin(); it < field->GetOriginalFields().end(); ++it )
+            {
+                list_ctrl_1->SetItemState( list_ctrl_1->FindItem( -1, (*it) ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+                m_foreignKeyColumnsFields->AddField( (*it) );
+            }
+            for( std::vector<std::wstring>::const_iterator it = field->GetReferencedFields().begin(); it < field->GetReferencedFields().end(); ++it )
+            {
+                m_primaryKeyColumnsFields->AddField( (*it) );
+            }
+            m_onDelete->SetSelection( foreignKey[0]->GetOnDeleteConstraint() );
+            m_onUpdate->SetSelection( foreignKey[0]->GetOnUpdateConstraint() );
         }
     }
 }

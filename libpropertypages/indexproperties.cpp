@@ -102,6 +102,7 @@ void TableIndex::InitGui()
     // end wxGlade
     list_box_1->Bind( wxEVT_LISTBOX, &TableIndex::OnIndexSelected, this );
     m_new->Bind( wxEVT_BUTTON, &TableIndex::OnNew, this );
+    m_edit->Bind(wxEVT_BUTTON, &TableIndex::OnEdit, this );
     m_edit->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
     m_delete->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
     m_delete->Bind( wxEVT_BUTTON, &TableIndex::OnDelete, this );
@@ -214,7 +215,7 @@ void TableIndex::OnNew(wxCommandEvent &event)
         int deleteProp = NO_ACTION_DELETE, updateProp = NO_ACTION_UPDATE, match = 0, res = 0;
         bool logOnly = false;
         std::vector<FKField *> newFK;
-        result = func( GetParent(), m_table, m_currentFK, m_db, logOnly, false, newFK, match );
+        result = func( GetParent(), m_table, newFK, m_db, logOnly, true, newFK, match );
         if( result != wxID_CANCEL )
         {
             std::wstring command;
@@ -227,6 +228,35 @@ void TableIndex::OnNew(wxCommandEvent &event)
                     wxMessageBox( (*it), _( "Error" ), wxOK | wxICON_ERROR );
                 }
             }
+        }
+    }
+}
+
+void TableIndex::OnEdit(wxCommandEvent &event)
+{
+    int result = wxID_CANCEL;
+    wxString fkName;
+    if( !m_isIndex )
+    {
+        if( m_currentFK[0]->GetFKName() .empty() )
+            m_currentFK[0]->SetFKName( list_box_1->GetStringSelection().ToStdWstring() );
+        CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) m_lib.GetSymbol( "CreateForeignKey" );
+        std::vector<FKField *> newFK;
+        int match;
+        bool logOnly = false;
+        result = func( GetParent(), m_table, m_currentFK, m_db, logOnly, false, newFK, match );
+        if( result != wxID_CANCEL )
+        {
+            std::wstring command;
+            /*int res = m_db->ApplyForeignKey( command, fkName.ToStdWstring(), *m_table, origFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
+            // new FK creted
+            if( res )
+            {
+                for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); ++it )
+                {
+                    wxMessageBox( (*it), _( "Error" ), wxOK | wxICON_ERROR );
+                }
+            }*/
         }
     }
 }

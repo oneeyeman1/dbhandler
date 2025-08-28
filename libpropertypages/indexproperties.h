@@ -40,6 +40,7 @@ protected:
     void OnIndexSelected(wxCommandEvent &event);
     void OnButtonUpdateUI(wxUpdateUIEvent &event);
     void OnNew(wxCommandEvent &event);
+    void OnEdit(wxCommandEvent &event);
     void OnDelete(wxCommandEvent &event);
     void InitGui();
     // begin wxGlade: TableIndex::attributes

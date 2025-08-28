@@ -360,6 +360,7 @@ public:
     FK_ONUPDATE GetOnUpdateConstraint() const { return updateConstraint; }
     FK_ONDELETE GetOnDeleteConstraint() const { return deleteConstraint; }
     int GetMatchOPtion() const { return match; }
+    void SetFKName(const std::wstring &name) { fkName = name; }
 private:
     int fkId;
     std::wstring tableName, originalField, referencedField, refTable, origSchema, refSchema, fkName;
