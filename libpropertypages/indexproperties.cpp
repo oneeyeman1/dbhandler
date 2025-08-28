@@ -84,11 +84,11 @@ void TableIndex::InitGui()
     grid_sizer_1->Add( list_box_1, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
     grid_sizer_1->Add( sizer_3, 1, wxEXPAND, 0 );
-    m_edit = new wxButton( this, wxID_ANY, _( "&Edit..." ) );
+    m_edit = new wxButton( this, wxID_ANY, _( u8"&Edit...\\u2026" ) );
     m_edit->Enable( false );
     sizer_3->Add( m_edit, 0, 0, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_new = new wxButton( this, wxID_ANY, _( "&New..." ) );
+    m_new = new wxButton( this, wxID_ANY, _( u8"&New...\\u2026" ) );
     sizer_3->Add( m_new, 0, 0, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     m_delete = new wxButton( this, wxID_ANY, _( "&Delete" ) );
