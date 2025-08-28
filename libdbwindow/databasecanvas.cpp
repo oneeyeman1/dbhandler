@@ -62,7 +62,7 @@
 #include "ErdForeignKey.h"
 
 typedef void (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::vector<wxString> &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, std::vector<FKField *> &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef int (*SELECTJOINTYPE)(wxWindow *parent, const wxString &origTable, const wxString &refTable, const wxString &origField, const wxString &refField, int &type);
 /*
 BEGIN_EVENT_TABLE(DatabaseCanvas, wxSFShapeCanvas)
@@ -1181,7 +1181,8 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                result = func( m_view->GetFrame(), constraintName, table, foreignKeyFields, refKeyFields, const_cast<std::wstring &>( refTableName.ToStdWstring() ), deleteProp, updateProp, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(),  logOnly, true, newFK, match );
+                std::vector<FKField *> newFK;
+                result = func( m_view->GetFrame(), table, newFK, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(), logOnly, true, newFK, match );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
