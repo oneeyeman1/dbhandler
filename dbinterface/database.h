@@ -367,6 +367,8 @@ private:
     FK_ONUPDATE updateConstraint;
     FK_ONDELETE deleteConstraint;
     int match;
+    std::wstring m_match;
+    bool m_deferrable, m_initiallydeferrable;
 };
 
 class DatabaseTable
