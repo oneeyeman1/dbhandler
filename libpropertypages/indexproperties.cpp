@@ -20,7 +20,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 typedef int (*DROPINDEXOPT)(wxWindow *, const std::wstring &, const std::wstring &, const std::wstring &, const std::wstring &, DropIndexOption &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, std::vector<FKField *> &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 
 TableIndex::TableIndex(wxWindow *parent, wxWindowID id, Database *db, DatabaseTable *table, const std::map<unsigned long, std::vector<FKField *> > &fKeys, bool isIndex):
     PropertyPageBase(parent, id)
@@ -214,7 +214,7 @@ void TableIndex::OnNew(wxCommandEvent &event)
         int deleteProp = NO_ACTION_DELETE, updateProp = NO_ACTION_UPDATE, match = 0, res = 0;
         bool logOnly = false;
         std::vector<FKField *> newFK;
-        result = func( GetParent(), fkName, m_table, origFields, refKeyFields, refTableName, deleteProp, updateProp, m_db, logOnly, false, newFK, match );
+        result = func( GetParent(), m_table, m_currentFK, m_db, logOnly, false, newFK, match );
         if( result != wxID_CANCEL )
         {
             std::wstring command;

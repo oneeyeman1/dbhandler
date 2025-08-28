@@ -224,29 +224,18 @@ extern "C" WXEXPORT int CreatePropertiesDialogForObject(wxWindow *parent, std::u
     return res;
 }
 
-extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, wxString &keyName, DatabaseTable *table, std::vector<std::wstring> &foreignKeyFields, std::vector<std::wstring> &refKeyFields, std::wstring &refTableName, int &deleteProp, int &updateProp, Database *db, bool &logOnly, bool isView, std::vector<FKField *> &newFK, int &match)
+extern "C" WXEXPORT int CreateForeignKey(wxWindow *parent, DatabaseTable *table, std::vector<FKField *> &foreignKeyFields, Database *db, bool &logOnly, bool isView, std::vector<FKField *> &newFK, int &match)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    wxString refTblName = wxString( refTableName );
-    ForeignKeyDialog dlg( parent, wxID_ANY, "", table, db, keyName, foreignKeyFields, refTblName, isView, match, logOnly );
+    ForeignKeyDialog dlg( parent, wxID_ANY, "", table, db, foreignKeyFields, isView, match, logOnly );
     dlg.Center();
     res = dlg.ShowModal();
     if( res != wxID_CANCEL || dlg.IsForeignKeyEdited() )
     {
         logOnly = dlg.IsLogOnlyI();
-        keyName = dlg.GetKeyNameCtrl()->GetValue();
-        if( !isView )
-        {
-            foreignKeyFields = dlg.GetForeignKeyFields();
-            refKeyFields = dlg.GetPrimaryKeyFields();
-            refTableName = dlg.GetReferencedTable();
-            deleteProp = dlg.GetDeleteParam();
-            updateProp = dlg.GetUpdateParam();
-            match = dlg.GetMatchingOptions();
-		}
         newFK = dlg.GetForeignKeyVector();
     }
     return res;

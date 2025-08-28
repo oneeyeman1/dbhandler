@@ -31,7 +31,7 @@
 
 
 
-ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const bool logOnly):
+ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const std::vector<FKField *> &foreignKey, bool isView, int matchOptions, const bool logOnly):
     wxDialog(parent, id, title)
 {
     m_match = matchOptions;
@@ -40,7 +40,6 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     m_table = table;
     m_isLogOnly = false;
     m_isView = isView;
-    m_refTableName = refTableName;
     m_edited = false;
     // begin wxGlade: ForeignKeyDialog::ForeignKeyDialog
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Foreign Key Name:" ) );
@@ -112,12 +111,12 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     int width2 = m_primaryKeyColumns->GetSize().GetWidth();
     m_primaryKeyColumns->Hide();
     m_primaryKeyColumnsFields = new FieldWindow( this, false, pt2, width2 );
-    if( m_isView )
+    for( auto field: foreignKey )
     {
-        m_foreignKeyName->SetValue( keyName );
-        m_primaryKeyTable->SetValue( m_refTableName );
+        m_foreignKeyName->SetValue( field->GetFKName() );
+        m_primaryKeyTable->ChangeValue( field->GetReferentialSchemaName() + L"." + field->GetReferencedTableName() );
 //        DoChangePrimaryKeyTableName();
-        for( std::vector<std::wstring>::iterator it = foreignKeyFields.begin(); it < foreignKeyFields.end(); it++ )
+        for( std::vector<std::wstring>::const_iterator it = field->GetOriginalFields().begin(); it < field->GetOriginalFields().end(); ++it )
         {
             list_ctrl_1->SetItemState( list_ctrl_1->FindItem( -1, (*it) ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
         }

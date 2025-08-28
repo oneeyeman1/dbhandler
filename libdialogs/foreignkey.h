@@ -24,7 +24,7 @@ class ForeignKeyDialog: public wxDialog
 public:
     // begin wxGlade: ForeignKeyDialog::ids
     // end wxGlade
-    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, wxString &keyName, std::vector<std::wstring> &foreignKeyFields, wxString &refTableName, bool isView, int matchOptions, const bool logOnly) ;
+    ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxString& title, DatabaseTable *table, Database *db, const std::vector<FKField *> &foreignKeyFields, bool isView, int matchOptions, const bool logOnly) ;
     ~ForeignKeyDialog();
     bool IsLogOnlyI();
     wxTextCtrl *GetKeyNameCtrl() const;
