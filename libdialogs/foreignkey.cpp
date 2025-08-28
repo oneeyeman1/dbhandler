@@ -73,6 +73,9 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     };
     m_onDelete = new wxRadioBox( this, wxID_ANY, _( "On Delete of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onDelete_choices, 1, wxRA_SPECIFY_COLS );
     m_onUpdate = new wxRadioBox( this, wxID_ANY, _( "On Update of Primary Table Row" ), wxDefaultPosition, wxDefaultSize, 5, m_onUpdate_choices, 1, wxRA_SPECIFY_COLS );
+    if( m_db->GetTableVector().m_type == L"Microsoft SQL Server" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) )
+    {
+    }
     if( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) )
     {
         const wxString m_matching_choices[] = {
@@ -81,6 +84,13 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
             _( "MATCH SIMPLE" ),
         };
         m_matching = new wxRadioBox( this, wxID_ANY, _( "Matching Options" ), wxDefaultPosition, wxDefaultSize, 3, m_matching_choices, 3, wxRA_SPECIFY_COLS );
+    }
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        m_label5 = new wxStaticText( this, wxID_ANY, "MATCH" );
+        m_matchName = new wxTextCtrl( this, wxID_ANY );
+        m_deferrable = new wxCheckBox( this, wxID_ANY, "DEFERRABLE" );
+        m_initdefer = new wxCheckBox( this, wxID_ANY, "INITIALLY DEFERRABLE" );
     }
     m_OK->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
     m_logOnly->Bind( wxEVT_BUTTON, &ForeignKeyDialog::OnApplyCommand, this );
@@ -185,6 +195,21 @@ void ForeignKeyDialog::do_layout()
     {
         optionsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
         optionsSizer->Add( m_matching, 0, wxEXPAND, 0 );
+    }
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        auto optionsSizer1 = new wxBoxSizer( wxHORIZONTAL );
+        optionsSizer1->Add( m_label5, 0, wxEXPAND, 0 );
+        optionsSizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+        optionsSizer1->Add( m_matchName, 0, wxEXPAND, 0 );
+        optionsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+        optionsSizer->Add( optionsSizer1, 0, wxEXPAND, 0 );
+        auto optionsSizer2 = new wxBoxSizer( wxHORIZONTAL );
+        optionsSizer2->Add( m_deferrable, 0, wxEXPAND, 0 );
+        optionsSizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+        optionsSizer2->Add( m_initdefer, 0, wxEXPAND, 0 );
+        optionsSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+        optionsSizer->Add( optionsSizer2, 0, wxEXPAND, 0 );
     }
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );

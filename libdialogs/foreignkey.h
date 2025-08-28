@@ -80,6 +80,9 @@ protected:
     wxStaticText* m_label6;
     wxListCtrl* list_ctrl_1;
     wxRadioBox* m_onDelete, *m_onUpdate, *m_matching;
+    wxStaticText *m_label5 = nullptr;
+    wxTextCtrl *m_matchName = nullptr;
+    wxCheckBox *m_deferrable = nullptr, *m_initdefer = nullptr, *m_replication = nullptr;
     // end wxGlade
 }; // wxGlade: end class
 
