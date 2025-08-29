@@ -1169,20 +1169,20 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             wxString libName;
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
-            libName = m_libPath + "dialogs";
+            libName = "\\dialogs";
 #elif __WXMAC__
-            libName = m_libPath + "liblibdialogs.dylib";
+            libName = "/liblibdialogs.dylib";
 #else
-            libName = m_libPath + "libdialogs";
+            libName = "/libdialogs";
 #endif
-            lib.Load( libName );
+            lib.Load(  wxStandardPaths::Get().GetSharedLibrariesDir() + libName  );
             wxString constraintName = constraint->GetName();
 //                std::wstring refTableName = constraint->GetRefTable().ToStdWstring();
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
                 std::vector<FKField *> newFK;
-                result = func( m_view->GetFrame(), table, newFK, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(), logOnly, true, newFK, match );
+                result = func( m_view->GetFrame(), table, newFK, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(), logOnly, false, newFK, match );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
