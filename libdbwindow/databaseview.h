@@ -68,7 +68,7 @@ public:
     virtual void OnUpdate(wxView *sender, wxObject *hint = NULL) wxOVERRIDE;
     virtual bool OnClose(bool deleteWindow = true) wxOVERRIDE;
 #if defined __WXMSW__ || defined __WXGTK__
-    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
+//    virtual void OnActivateView(bool activate, wxView *activeView, wxView *deactiveView);
 #endif
     void OnViewSelectedTables(wxCommandEvent &event);
     void OnNewIndex(wxCommandEvent &event);

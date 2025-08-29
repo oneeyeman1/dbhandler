@@ -133,7 +133,7 @@ typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxStrin
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &);
 typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
-typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, wxString &, DatabaseTable *, std::vector<std::wstring> &, std::vector<std::wstring> &, std::wstring &, int &, int &, Database *, bool &, bool, std::vector<FKField *> &, int &);
+typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, std::vector<FKField *> &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
 typedef int (*CHOOSEOBJECT)(wxWindow *, int, std::vector<QueryInfo> &, wxString &, std::vector<LibrariesInfo> &path, bool &update);
 typedef int (*NEWQUERY)(wxWindow *, int &, int &);
@@ -1237,7 +1237,7 @@ void DrawingView::OnForeignKey(wxCommandEvent &WXUNUSED(event))
     if( lib.IsLoaded() )
     {
         CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-        result = func( m_frame, kName, dbTable, foreignKeyFields, refKeyFields, refTableName, deleteProp, updateProp, GetDocument()->GetDatabase(),  logOnly, false, newFK, match );
+        result = func( m_frame, dbTable, newFK, GetDocument()->GetDatabase(),  logOnly, true, newFK, match );
         if( result != wxID_CANCEL )
         {
             int res = GetDocument()->GetDatabase()->ApplyForeignKey( command, kName.ToStdWstring(), *dbTable, foreignKeyFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, true, match, errors );
@@ -1642,7 +1642,7 @@ ViewType DrawingView::GetViewType()
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
-void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+/*void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
     wxDocMDIParentFrame *frame = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
     wxSize clientSize = frame->GetClientSize();
@@ -1661,7 +1661,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         {
         }
     }
-}
+}*/
 #endif
 
 void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
