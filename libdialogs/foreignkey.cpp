@@ -78,9 +78,9 @@ ForeignKeyDialog::ForeignKeyDialog(wxWindow* parent, wxWindowID id, const wxStri
     if( m_db->GetTableVector().m_type == L"PostgreSQL" || ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) )
     {
         const wxString m_matching_choices[] = {
-            _( "MATCH FULL" ),
-            _( "MATCH PARTIAL" ),
-            _( "MATCH SIMPLE" ),
+            "MATCH FULL",
+            "MATCH PARTIAL",
+            "MATCH SIMPLE",
         };
         m_matching = new wxRadioBox( this, wxID_ANY, _( "Matching Options" ), wxDefaultPosition, wxDefaultSize, 3, m_matching_choices, 3, wxRA_SPECIFY_COLS );
     }
