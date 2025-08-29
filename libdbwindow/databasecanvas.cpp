@@ -1081,13 +1081,16 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
         {
             bool logOnly;
             Constraint *constraint = sign->GetConstraint();
-            std::wstring kName = constraint->GetName().ToStdWstring(), refTable, fkTable;
+            std::wstring fkName = constraint->GetName().ToStdWstring(), refTable, fkTable, refSchema;
             std::vector<std::wstring> foreignKeyFields, refKeyFields;
             constraint->GetLocalColumns( foreignKeyFields );
             constraint->GetRefColumns( refKeyFields );
             DatabaseTable *table = const_cast<DatabaseTable *>( constraint->GetFKTable() );
             wxString refTableName = constraint->GetRefTable();
-            int match = constraint->GetPGMatch();
+            Database *db = dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase();
+            auto match = -1;
+            if( db->GetTableVector().m_type == L"PostgreSQL" || ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"PosthreSQL" ) )
+                match = constraint->GetPGMatch();
             bool found1 = false, found2 = false;
             for( std::vector<MyErdTable *>::iterator it = m_displayedTables.begin(); it < m_displayedTables.end() && !found1 && !found2; it++ )
             {
@@ -1100,6 +1103,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 if( const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName() == refTableName )
                 {
                     refTable = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetTableName();
+                    refSchema = const_cast<DatabaseTable *>( (*it)->GetTable() )->GetSchemaName();
                     found2 = true;
                 }
             }
@@ -1176,17 +1180,23 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             libName = "/libdialogs";
 #endif
             lib.Load(  wxStandardPaths::Get().GetSharedLibrariesDir() + libName  );
-            wxString constraintName = constraint->GetName();
 //                std::wstring refTableName = constraint->GetRefTable().ToStdWstring();
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                std::vector<FKField *> newFK;
-                result = func( m_view->GetFrame(), table, newFK, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(), logOnly, false, newFK, match );
+                std::vector<FKField *> newFK, oldFK;
+                auto i = 0;
+                for( auto keyField : foreignKeyFields )
+                {
+// int id, const std::wstring &name, const std::wstring &orig_schema, const std::wstring &table_name, const std::wstring &original_field, const std::wstring &ref_schema, const std::wstring &ref_table, const std::wstring &referenced_field, const std::vector<std::wstring> &origFields, const std::vector<std::wstring> &refFields, FK_ONUPDATE update_constraint, FK_ONDELETE delete_constraint, int match = -1
+                    oldFK.push_back( new FKField( 1, fkName, table->GetSchemaName(), table->GetTableName(), keyField, refSchema, refTable, refKeyFields[i], foreignKeyFields, refKeyFields, actionUpdate, actionDelete, match ) );
+                    i++;
+                }
+                result = func( m_view->GetFrame(), table, oldFK, dynamic_cast<DrawingDocument *>( m_view->GetDocument() )->GetDatabase(), logOnly, false, newFK, match );
                 if( result != wxID_CANCEL )
                 {
                     std::wstring command = L"";
-                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, kName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
+                    int res = ((DrawingDocument *) m_view->GetDocument())->GetDatabase()->ApplyForeignKey( command, fkName, *table, foreignKeyFields, refTableName.ToStdWstring(), refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
                     if( res )
                     {
                         for( std::vector<std::wstring>::iterator it = errors.begin(); it < errors.end(); it++ )
