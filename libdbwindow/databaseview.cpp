@@ -236,7 +236,6 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fieldText = nullptr;
     m_fontName = nullptr;
     m_fontSize = nullptr;
-    m_snitialized = false;
     m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
@@ -379,9 +378,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
 //    sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
-#ifdef __WXGTK__
-    Activate( true );
-#endif
+    m_initialized = true;
     return true;
 }
 
@@ -443,21 +440,22 @@ void DrawingView::OnClose(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::CreateViewToolBar()
 {
-	long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
+    auto size = m_parent->GetClientSize();
+    long styleViewBar = wxNO_BORDER | wxTB_FLAT, styleStyleBar = wxNO_BORDER | wxTB_FLAT;
     switch( m_tbSetup[0].m_orientation )
     {
-    case 0:
-        styleViewBar |= wxTB_VERTICAL;
-        break;
-    case 1:
-        styleViewBar |= wxTB_HORIZONTAL;
-        break;
-    case 2:
-        styleViewBar |= wxTB_RIGHT;
-        break;
-    case 3:
-        styleViewBar |= wxTB_BOTTOM;
-        break;
+        case 0:
+            styleViewBar |= wxTB_VERTICAL;
+            break;
+        case 1:
+            styleViewBar |= wxTB_HORIZONTAL;
+            break;
+        case 2:
+            styleViewBar |= wxTB_RIGHT;
+            break;
+        case 3:
+            styleViewBar |= wxTB_BOTTOM;
+            break;
     }
     if( !m_tbSetup[0].m_showTooltips )
         styleViewBar |= wxTB_NO_TOOLTIPS;
@@ -465,18 +463,18 @@ void DrawingView::CreateViewToolBar()
         styleViewBar |= wxTB_TEXT ;
     switch( m_tbSetup[1].m_orientation )
     {
-    case 0:
-        styleStyleBar |= wxTB_VERTICAL;
-        break;
-    case 1:
-        styleStyleBar |= wxTB_HORIZONTAL;
-        break;
-    case 2:
-        styleStyleBar |= wxTB_RIGHT;
-        break;
-    case 3:
-        styleStyleBar |= wxTB_BOTTOM;
-        break;
+        case 0:
+            styleStyleBar |= wxTB_VERTICAL;
+            break;
+        case 1:
+            styleStyleBar |= wxTB_HORIZONTAL;
+            break;
+        case 2:
+            styleStyleBar |= wxTB_RIGHT;
+            break;
+        case 3:
+            styleStyleBar |= wxTB_BOTTOM;
+            break;
     }
     if( !m_tbSetup[1].m_showTooltips )
         styleStyleBar |= wxTB_NO_TOOLTIPS;
@@ -486,9 +484,8 @@ void DrawingView::CreateViewToolBar()
 #ifdef __WXOSX__
     parent = m_frame;
 #else
-	parent = m_parent;
+    parent = m_parent;
 #endif
-    auto size = m_parent->GetClientSize();
 #ifdef __WXOSX__
     m_tb = m_frame->CreateToolBar();
     m_tb->SetName( "ViewBar" );
@@ -799,7 +796,7 @@ void DrawingView::CreateViewToolBar()
     {
         m_styleBar->Realize();
     }
-    LayoutChildren( size );;
+    LayoutChildren( size );
 }
 
 void DrawingView::LayoutChildren(const wxSize &size)
@@ -923,7 +920,6 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
     libName = m_libPath + "libdialogs";
 #endif
     lib.Load( libName );
-    auto tbPosition = m_tb->GetPosition();
     auto frameSize = m_frame->GetSize();
     if( lib.IsLoaded() )
     {
@@ -972,7 +968,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
                     }
                     else
                     {
-                        wxMessageBox( "Error loading the query from the disk" );
+                        wxMessageBox( _( "Error loading the query from the disk" ) );
                         return;
                     }
                 }
@@ -1642,26 +1638,32 @@ ViewType DrawingView::GetViewType()
 }
 
 #if defined __WXMSW__ || defined __WXGTK__
-/*void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
+void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
-    wxDocMDIParentFrame *frame = (wxDocMDIParentFrame *) m_frame->GetMDIParent();
-    wxSize clientSize = frame->GetClientSize();
-    if( activate )
-        m_isActive = true;
-    if( !activate && !m_isActive )
+    if( m_initialized )
     {
-        if( !deactiveView && m_tb )
+        wxSize clientSize = m_parent->GetClientSize();
+        if( activate )
+            m_isActive = true;
+        if( activate )
         {
-            m_tb->Destroy();
-            m_tb = NULL;
-            if( frame && frame->GetParent() )
-                frame->GetParent()->SetSize( 0, 0, clientSize.x, clientSize.y ); 
+            if( m_type == QueryView )
+                if( m_styleBar )
+                    m_styleBar->Show( true );
+            m_frame->SetSize( 0, 0, clientSize.x, clientSize.y );
+            CreateViewToolBar();
         }
         else
         {
+            m_tb->ClearTools();
+            if( m_styleBar )
+            {
+                m_styleBar->Show( false );
+                m_styleBar->ClearTools();
+            }
         }
     }
-}*/
+}
 #endif
 
 void DrawingView::OnAlterTable(wxCommandEvent &WXUNUSED(event))
@@ -2935,10 +2937,6 @@ void DrawingView::CreateQueryMenu(const int queryType)
     }
     mbar->Insert( 0, fileMenu, _( "File" ) );
     mbar->Append( helpMenu, _( "Help" ) );
-    if( !m_snitialized )
-    {
-        m_snitialized = true;
-    }
     if( queryType == QuerySyntaxMenu )
     {
         mbar->EnableTop( 0, false );
