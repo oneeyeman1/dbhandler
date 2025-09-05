@@ -42,11 +42,11 @@ void FieldTypeShape::SetField(TableField *field)
 void FieldTypeShape::DrawNormal(wxDC &dc)
 {
     auto rect = GetBoundingBox();
-    auto tableRect = GetParentShape()->GetParentShape()->GetBoundingBox();
-    auto fieldRect = m_fieldShape->GetBoundingBox();
-    if( m_comment && m_comment->GetText().IsEmpty() )
+    rect.x = m_fieldShape->GetBoundingBox().GetLeft();
+    rect.width += m_fieldShape->GetBoundingBox().GetWidth();
+    if( m_comment )
     {
-        rect.width = tableRect.GetWidth() - rect.GetLeft();
+        rect.width += m_comment->GetBoundingBox().GetWidth();
     }
     wxString line;
     int i = 0;

@@ -81,8 +81,11 @@ FieldShape::~FieldShape(void)
 void FieldShape::DrawNormal(wxDC &dc)
 {
     wxRect rect = this->GetBoundingBox();
-    rect.x = GetParentShape()->GetParentShape()->GetBoundingBox().GetLeft();
-    rect.width = GetParentShape()->GetParentShape()->GetBoundingBox().GetWidth();
+    rect.x = GetBoundingBox().GetLeft();
+    if( m_typeShape )
+        rect.width += m_typeShape->GetBoundingBox().GetWidth();
+    if( m_comment )
+        rect.width += m_comment->GetBoundingBox().GetWidth();
 /*    if( m_typeShape && !m_typeShape->GetText().IsEmpty() )
     {
         rect.width = m_typeShape->GetBoundingBox().GetLeft();
@@ -181,26 +184,6 @@ void FieldShape::Select(bool state)
     m_fSelected = state;
 }
 
-/*wxRect FieldShape::GetBoundingBox()
-{
-    wxRect rect = wxSFRectShape::GetBoundingBox();
-    wxRect parentRect = this->GetParentShape()->GetParentShape()->GetBoundingBox();
-    rect.SetLeft( parentRect.GetLeft() );
-    if( m_typeShape )
-    {
-        rect.width = m_typeShape->GetBoundingBox().GetLeft();
-    }
-    else if( m_comment && !m_comment->GetText().IsEmpty() )
-    {
-        rect.width = m_comment->GetBoundingBox().GetLeft();
-    }
-    else
-    {
-        rect.width = parentRect.GetRight();
-    }
-    return rect;
-}
-*/
 int FieldShape::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;

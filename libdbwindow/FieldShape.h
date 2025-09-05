@@ -11,7 +11,6 @@ public:
     FieldShape(const TableField *field);
     FieldShape(const FieldShape &shape);
     virtual ~FieldShape(void);
-//    virtual wxRect GetBoundingBox() wxOVERRIDE;
 //    virtual bool Contains(const wxPoint& pos) wxOVERRIDE;
     void SetParentRect(const wxRect &rect);
     void SetField(TableField *field);
