@@ -330,12 +330,12 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
 {
     ViewType type = dynamic_cast<DrawingView *>( m_view )->GetViewType();
     wxSFShapeBase* pShape = NULL;
-    ShapeList shapes, list;
+    ShapeList shapes, list, oldSel;
     ConstraintSign *sign = NULL;
-    GetSelectedShapes( shapes );
+    GetSelectedShapes( oldSel );
     GetShapesAtPosition( event.GetPosition(), list );
     int count = 0;
-    for( ShapeList::iterator it = shapes.begin(); it != shapes.end(); it++ )
+    for( ShapeList::iterator it = oldSel.begin(); it != oldSel.end(); it++ )
     {
         MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
         if( table )
@@ -345,7 +345,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             count++;
     }
     bool found = false;
-    for( ShapeList::iterator it1 = list.begin(); it1 != list.end() && !found; it1++ )
+    for( ShapeList::iterator it1 = list.begin(); it1 != list.end() && !found && m_oldSelectedSign; it1++ )
     {
         sign = wxDynamicCast( (*it1), ConstraintSign );
         if( sign )
@@ -361,6 +361,7 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             Refresh();
         }
     }
+    shapes = oldSel;
     switch( m_mode )
     {
         case modeTABLE:
@@ -389,6 +390,8 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         Refresh();
     }
     wxSFTextShape *shape = nullptr;
+    for( auto selShape : oldSel )
+        selShape->Select( true );
     if( type == QueryView || type == NewViewView )
     {
         if( sign )
@@ -396,66 +399,57 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
         }
         else
         {
-            for( ShapeList::iterator it1 = shapes.begin(); it1 != shapes.end(); it1++ )
+            FieldShape *fld = nullptr;
+            MyErdTable *tbl = nullptr;
+            for( ShapeList::iterator it1 = list.begin(); it1 != list.end(); it1++ )
             {
-                FieldShape *field = wxDynamicCast( (*it1), FieldShape );
-                if( field )
-                {
-                    field->Select( true );
-                    shape = field->GetCommentShape();
-                    if( shape )
-                        shape->Select( true );
-                    shape = field->GetTypeShape();
-                    if( shape )
-                        shape->Select( true );
-                }
-            }
-            FieldShape *fld = NULL;
-            MyErdTable *tbl = NULL;
-            for( ShapeList::iterator it = list.begin(); it != list.end(); it++ )
-            {
-                MyErdTable *table = wxDynamicCast( (*it), MyErdTable );
+                bool sel;
+                MyErdTable *table = wxDynamicCast( (*it1), MyErdTable );
                 if( table )
                 {
                     tbl = table;
                 }
                 else
                 {
-                    FieldShape *field = wxDynamicCast( (*it), FieldShape );
+                    FieldShape *field = wxDynamicCast( (*it1), FieldShape );
                     if( field )
                     {
                         fld = field;
-                        field->Select( !field->IsSelected() );
+                        sel = field->IsSelected();
+                        field->Select( !sel );
                         shape = field->GetCommentShape();
-                        if( shape )
-                            shape->Select( !field->IsSelected() );
+                        if( shape && !shape->GetText().IsEmpty() )
+                            shape->Select( !sel );
                         shape = field->GetTypeShape();
                         if( shape )
-                            shape->Select( !field->IsSelected() );
+                            shape->Select( !sel );
                     }
                     else
                     {
-                        FieldTypeShape *typeShape = wxDynamicCast( (*it), FieldTypeShape );
+                        FieldTypeShape *typeShape = wxDynamicCast( (*it1), FieldTypeShape );
                         if( typeShape )
                         {
+                            sel = typeShape->IsSelected();
+                            fld = typeShape->GetFieldShape();
                             shape = typeShape->GetFieldShape();
-                            typeShape->Select( !shape->IsSelected() );
-                            shape->Select( !shape->IsSelected() );
+                            typeShape->Select( !sel );
                             shape = typeShape->GetCommentShape();
-                            if( shape )
-                                shape->Select( typeShape->IsSelected() );
+                            shape->Select( !sel );
+                            shape = typeShape->GetFieldShape();
+                            shape->Select( !sel );
                         }
                         else
                         {
-                            CommentFieldShape *comment = wxDynamicCast( (*it), CommentFieldShape );
+                            CommentFieldShape *comment = wxDynamicCast( (*it1), CommentFieldShape );
                             if( comment )
                             {
-                                shape = comment->GetFieldShape();
-                                comment->Select( !shape->IsSelected() );
-                                shape->Select( !shape->IsSelected() );
+                                sel = comment->IsSelected();
+                                fld = comment->GetFieldShape();
+                                fld->Select( !sel );
+                                comment->Select( !sel );
                                 shape = comment->GetTypeShape();
                                 if( shape )
-                                    shape->Select( !comment->IsSelected() );
+                                shape->Select( !sel );
                             }
                         }
                     }
@@ -464,7 +458,14 @@ void DatabaseCanvas::OnLeftDown(wxMouseEvent &event)
             Refresh();
             if( fld )
             {
-                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, const_cast<DatabaseTable *>( tbl->GetTable() )->GetFullName() );
+                Database *db = dynamic_cast<DrawingDocument *>( dynamic_cast<DrawingView *>( m_view )->GetDocument() )->GetDatabase();
+                DatabaseTable *table = const_cast<DatabaseTable *>( tbl->GetTable() );
+                wxString name = "";
+                if( db->GetTableVector().m_type == L"SQLite" )
+                    name = table->GetSchemaName() + L"." + table->GetTableName();
+                else
+                    name = table->GetFullName();
+                dynamic_cast<DrawingView *>( m_view )->AddFieldToQuery( *fld, fld->IsSelected() ? ADD : REMOVE, name.ToStdWstring() );
                 if( fld->IsSelected() )
                     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryField( fld->GetField()->GetFullName() );
                 else
