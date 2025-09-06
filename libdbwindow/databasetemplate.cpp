@@ -31,6 +31,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "guiobjectsproperties.h"

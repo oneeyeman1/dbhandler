@@ -23,6 +23,7 @@
 #endif
 
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
 #include "tablegeneral.h"

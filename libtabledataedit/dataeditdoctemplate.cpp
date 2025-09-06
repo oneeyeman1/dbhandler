@@ -28,6 +28,7 @@
 #include "wx/dynlib.h"
 #include "wx/grid.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "mytabledefgrid.h"

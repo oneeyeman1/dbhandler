@@ -38,8 +38,8 @@ struct FieldTableProperties
 
 struct DesignCanvasGeneralProperties
 {
-    int units, interval;
-    wxColour colorBackground;
+    int units = 1, interval = 0;
+    wxColour colorBackground = wxTheColourDatabase->Find( "WHITE" );
 };
 
 struct DesignCanvasPrintProperties

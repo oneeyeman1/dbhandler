@@ -42,6 +42,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "ablbaseview.h"
 #include "guiobjectsproperties.h"

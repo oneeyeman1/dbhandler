@@ -82,6 +82,7 @@
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "guiobjectsproperties.h"
@@ -348,7 +349,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     }
     if( m_type == QueryView )
     {
-        m_designCanvas = new DesignCanvas( this, ptCanvas );
+        m_designCanvas = new DesignCanvas( this, ptCanvas, m_conf );
         sizer->Add( m_designCanvas, 1, wxEXPAND, 0 );
         m_canvas->Show( false );
         m_edit = new wxStyledTextCtrl( m_frame );

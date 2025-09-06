@@ -39,6 +39,7 @@
 #include "wx/treelist.h"
 #include "wx/dir.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"

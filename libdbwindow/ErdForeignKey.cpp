@@ -17,6 +17,7 @@
 #include "wxsf/BitmapShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"

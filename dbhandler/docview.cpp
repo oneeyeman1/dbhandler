@@ -40,6 +40,7 @@
 #include "wx/uilocale.h"
 #include "wx/fswatcher.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"

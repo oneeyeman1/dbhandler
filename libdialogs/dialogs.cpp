@@ -46,9 +46,10 @@
 #ifdef __WXQT__
 #include <QFontDialog>
 #endif
-#include "database.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
 #include "guiobjectsproperties.h"

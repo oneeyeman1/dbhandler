@@ -41,6 +41,7 @@
 #endif
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 //#include "objectproperties.h"
 #include "propertieshandlerbase.h"

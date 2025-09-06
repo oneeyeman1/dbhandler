@@ -12,6 +12,8 @@
 #include <wx/wx.h>
 #include "wx/filepicker.h"
 #include "wx/valnum.h"
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
 #include "databaseoptionsgeneral.h"

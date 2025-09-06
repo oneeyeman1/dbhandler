@@ -18,6 +18,8 @@
 #include "wx/generic/stattextg.h"
 #endif
 #endif
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "bitmappanel.h"
 #include "newquery.h"

@@ -9,6 +9,7 @@
 #include "wxsf/DiagramManager.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"

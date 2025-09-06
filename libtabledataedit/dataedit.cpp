@@ -20,6 +20,7 @@
 #include "wx/grid.h"
 #include "wx/dynlib.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "tableattributes.h"

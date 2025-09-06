@@ -10,9 +10,12 @@
 //
 #include <wx/wx.h>
 
+#include <vector>
 #include <map>
 #include "wx/bmpcbox.h"
 #include "wx/gdicmn.h"
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "colorcombobox.h"
 #include "propertypagebase.h"

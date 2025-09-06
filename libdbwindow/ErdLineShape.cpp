@@ -22,6 +22,7 @@
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/GridShape.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "guiobjectsproperties.h"

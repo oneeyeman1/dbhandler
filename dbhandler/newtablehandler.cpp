@@ -11,6 +11,7 @@
 #include "wx/msgdlg.h"
 #include "wx/xml/xml.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "painterobjects.h"

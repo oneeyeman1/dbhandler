@@ -30,6 +30,7 @@
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "constraint.h"
 #include "constraintsign.h"

@@ -13,6 +13,8 @@
 #include <map>
 #include "wx/checkbox.h"
 #include "wx/filepicker.h"
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
 #include "librarypainteroptionsmgmt.h"

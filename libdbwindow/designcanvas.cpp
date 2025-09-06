@@ -30,6 +30,7 @@
 #include "wxsf/FlexGridShape.h"
 //#include "XmlSerializer.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "ablbaseview.h"
 #include "guiobjectsproperties.h"
@@ -61,12 +62,13 @@
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &, wxString &, bool, wxCriticalSection &);
 typedef int (*CREATEPROPERTIESDIALOGFOROBJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
 
-DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point) : wxSFShapeCanvas()
+DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point, Configuration *conf) : wxSFShapeCanvas()
 {
     m_object = DesignPropertiesType;
     m_view = view;
     startPoint.x = 1;
     startPoint.y = 1;
+    m_any = conf->m_desginProp;
     DesignProperties options = m_any.As<DesignProperties>();
     options.m_general.colorBackground = *wxWHITE;
 //    m_options.customMove = true;

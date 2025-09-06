@@ -12,6 +12,8 @@
 
 #include <map>
 #include "wx/checkbox.h"
+#include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
 #include "librarypainteroptionsgeneral.h"

@@ -119,6 +119,7 @@ struct Configuration
     LibraryPainterOptions m_libPainterOptions;
     wxString m_currentLibrary;
     wxLayoutDirection m_textDirection;
+    DesignProperties m_desginProp;
 };
 
 

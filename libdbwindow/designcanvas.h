@@ -4,7 +4,7 @@ class DesignCanvas : public wxSFShapeCanvas, public PropertiesHandler
 {
 public:
     enum MODE { modeDESIGN, modeTABLE, modeVIEW, modeLine };
-    DesignCanvas (wxView *view, const wxPoint &point);
+    DesignCanvas (wxView *view, const wxPoint &point, Configuration *conf);
     virtual ~DesignCanvas ();
     void ClearDesignCanvas();
     void SetQuickQueryFields(const std::vector<wxString> &fields);

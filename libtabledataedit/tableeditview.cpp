@@ -46,6 +46,7 @@
 #include "wx/grid.h"
 #include "typecombobox.h"
 #include "database.h"
+#include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertieshandlerbase.h"
 #include "mytabledefgrid.h"
