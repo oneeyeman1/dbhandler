@@ -1237,13 +1237,13 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             wxString libName;
             wxDynamicLibrary lib;
 #ifdef __WXMSW__
-            libName = m_libPath + "dialogs";
+            libName = "\\dialogs";
 #elif __WXMAC__
-            libName = m_libPath + "liblibdialogs.dylib";
+            libName = "/liblibdialogs.dylib";
 #else
-            libName = m_libPath + "libdialogs";
+            libName = "/libdialogs";
 #endif
-            lib.Load( libName );
+            lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
             long oldSign = 0;
             int constraintSign = oldSign = constraint->GetSign();
