@@ -69,16 +69,6 @@ DesignCanvas::DesignCanvas(wxView *view, const wxPoint &point, Configuration *co
     startPoint.x = 1;
     startPoint.y = 1;
     m_any = conf->m_desginProp;
-    DesignProperties options = m_any.As<DesignProperties>();
-    options.m_general.colorBackground = *wxWHITE;
-//    m_options.customMove = true;
-    options.m_general.interval = 0;
-//    m_options.mouseSelect = true;
-//    m_options.rowResize = false;
-    options.m_general.units = 3;
-    options.cursor = -1;
-//    m_options.display = 2;
-    options.cursorName = wxEmptyString;
     m_pManager.SetRootItem( new xsSerializable() );
     SetDiagramManager( &m_pManager );
     Create( view->GetFrame(), wxID_ANY, point, wxDefaultSize, wxHSCROLL | wxVSCROLL | wxALWAYS_SHOW_SB );
