@@ -1641,6 +1641,7 @@ ViewType DrawingView::GetViewType()
 #if defined __WXMSW__ || defined __WXGTK__
 void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deactiveView)
 {
+#if __WXGTK__
     if( m_initialized )
     {
         wxSize clientSize = m_parent->GetClientSize();
@@ -1664,6 +1665,7 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
             }
         }
     }
+#endif
 }
 #endif
 
