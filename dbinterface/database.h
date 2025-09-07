@@ -393,6 +393,14 @@ public:
             delete (*iter);
             (*iter) = nullptr;
         }
+        for( auto const &key : foreign_keys )
+        {
+            for( FKField *it1 : key.second )
+            {
+                delete it1;
+                it1 = nullptr;
+            }
+        }
     }
     const std::wstring &GetFullName() {return m_fullName; }
     const std::wstring &GetTableName() const { return m_tableName; }
