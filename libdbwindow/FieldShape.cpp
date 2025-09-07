@@ -87,26 +87,11 @@ void FieldShape::DrawNormal(wxDC &dc)
         rect.width += m_typeShape->GetBoundingBox().GetWidth();
     if( m_comment )
         rect.width += m_comment->GetBoundingBox().GetWidth();
-/*    if( m_typeShape && !m_typeShape->GetText().IsEmpty() )
-    {
-        rect.width = m_typeShape->GetBoundingBox().GetLeft();
-    }
-    else if( m_comment && !m_comment->GetText().IsEmpty() )
-    {
-        rect.width = m_comment->GetBoundingBox().GetLeft();
-    }
-    else
-        rect.width = GetParentShape()->GetParentShape()->GetBoundingBox().GetWidth();
-    wxSFShapeBase *parentShape = GetParentShape()->GetParentShape();
-    wxRect rectParent = parentShape->GetBoundingBox();
-    m_parentRect.x = rectParent.x;
-    m_parentRect.width = rectParent.width;*/
     wxString line;
     int i = 0;
     if( this->m_fSelected )
     {
-        m_backColour = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
-        dc.SetBrush( m_backColour );
+        dc.SetBrush( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
         if( m_typeShape )
             m_typeShape->Select( true );
         if( m_comment )
