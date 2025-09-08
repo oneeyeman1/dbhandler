@@ -148,7 +148,8 @@ void GridTableShape::DoChildrenLayout()
             node = node->GetNext();
         }
     }
-    nIndex = nCol = 0;
+    nCol = -1;
+    nIndex = 0;
     nRow = -1;
     for( size_t i = 0; i < m_arrCells.GetCount(); i++ )
     {
@@ -166,11 +167,11 @@ void GridTableShape::DoChildrenLayout()
                 FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + (nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + (nRow + 1) * m_nCellSpace,
                     maxRect0.GetWidth(), maxRect0.GetHeight() ) );
             if( nCol == 1 )
-                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect0.GetHeight() + (nRow + 1) * m_nCellSpace,
+                FitShapeToRect( pShape, wxRect( nCol * maxRect1.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect1.GetHeight() + (nRow + 1) * m_nCellSpace,
                     maxRect1.GetWidth(), maxRect1.GetHeight() ) );
             if( nCol == 2 )
-                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect0.GetHeight() + (nRow + 1) * m_nCellSpace,
-                                               maxRect1.GetWidth(), maxRect1.GetHeight() ) );
+                FitShapeToRect( pShape, wxRect( nCol * maxRect2.GetWidth() + (nCol + 1) * m_nCellSpace, nRow * maxRect2.GetHeight() + (nRow + 1) * m_nCellSpace,
+                                               maxRect2.GetWidth(), maxRect2.GetHeight() ) );
 		}
 	}
 }
