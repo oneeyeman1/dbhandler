@@ -1657,7 +1657,8 @@ void DrawingView::OnActivateView(bool activate, wxView *activeView, wxView *deac
         }
         else
         {
-            m_tb->ClearTools();
+            if( m_tb )
+                m_tb->ClearTools();
             if( m_styleBar )
             {
                 m_styleBar->Show( false );
