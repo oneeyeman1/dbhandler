@@ -23,7 +23,7 @@ protected:
 private:
     wxColour m_backColor;
     TableField *m_tableField;
-    FieldShape *m_fieldShape;
-    FieldTypeShape *m_typeShape;
+    FieldShape *m_fieldShape = nullptr;
+    FieldTypeShape *m_typeShape = nullptr;
 };
 

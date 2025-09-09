@@ -45,8 +45,11 @@ void CommentFieldShape::SetField(TableField *field)
 void CommentFieldShape::DrawNormal(wxDC &dc)
 {
     wxRect rect = this->GetBoundingBox();
-    rect.x = m_fieldShape->GetBoundingBox().GetLeft();
-    rect.width += m_fieldShape->GetBoundingBox().GetWidth();
+    if( m_fieldShape )
+    {
+        rect.x = m_fieldShape->GetBoundingBox().GetLeft();
+        rect.width += m_fieldShape->GetBoundingBox().GetWidth();
+    }
     if( m_typeShape )
         rect.width += m_typeShape->GetBoundingBox().GetWidth();
     if( !GetText().IsEmpty() )
@@ -94,3 +97,4 @@ void CommentFieldShape::DrawSelected(wxDC &dc)
 {
     DrawNormal( dc );
 }
+
