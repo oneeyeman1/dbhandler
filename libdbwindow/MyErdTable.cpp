@@ -52,7 +52,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius( 15 );
     m_header = new HeaderGrid();
-    m_header->SetCellSpace( 10 );
+    m_header->SetCellSpace( 5 );
     m_pLabel = new NameTableShape();
     if( m_displayComments )
     {
@@ -60,7 +60,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_comment->SetId( 1001 );
     }
     m_pGrid = new GridTableShape( m_type );
-    m_pGrid->SetCellSpace( 10 );
+    m_pGrid->SetCellSpace( 5 );
 
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
@@ -138,13 +138,13 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
     m_header = new HeaderGrid();
-    m_header->SetCellSpace( 10 );
+    m_header->SetCellSpace( 5 );
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
     m_comment = new CommentTableShape( table );
     m_comment->SetId( 1001 );
     m_pGrid = new GridTableShape( type );
-    m_pGrid->SetCellSpace( 10 );
+    m_pGrid->SetCellSpace( 5 );
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
     {
@@ -238,6 +238,7 @@ void MyErdTable::UpdateTable()
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     m_header = new HeaderGrid; 
+    m_header->SetCellSpace( 5 );
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
     m_comment = new CommentTableShape();
