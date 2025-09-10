@@ -33,7 +33,7 @@ private:
     int m_size, m_decimal;
     wxString m_name, m_type;
     wxColour m_backColour;
-    FieldTypeShape *m_typeShape;
-    CommentFieldShape *m_comment;
+    FieldTypeShape *m_typeShape = nullptr;
+    CommentFieldShape *m_comment = nullptr;
 };
 
