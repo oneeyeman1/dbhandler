@@ -976,6 +976,7 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                             if( widthStr.substr( widthStr.size() - 3 ) == "qry" )
                             {
                                 objectName = widthStr.substr( 0, widthStr.length() - 4 );
+                                query.name = objectName;
                             }
                         }
                         if( queryChildren->GetName().IsSameAs( "lastmodified" ) )
@@ -997,11 +998,13 @@ bool MainFrame::LoadApplication(const std::vector<LibrariesInfo> &path)
                         if( queryChildren->GetName().IsSameAs( "comment" ) )
                         {
                             objectComment = queryChildren->GetNodeContent();
+                            query.comment = objectComment;
                         }
                         queryChildren = queryChildren->GetNext();
                     }
                 }
                 m_library->GetObjects().push_back( LibraryObjects( m_library->GetLibraryName(), objectName, lastmodified, lastcompiled, size, objectComment ) );
+                queries.push_back( query );
                 bodyChildren = bodyChildren->GetNext();
             }
         }
