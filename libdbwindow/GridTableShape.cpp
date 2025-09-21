@@ -98,7 +98,7 @@ void GridTableShape::DoChildrenLayout()
                         if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect2.GetHeight() ) )
                             maxRect2.SetHeight( currRect.GetHeight() );
                     }
-                    else
+/*                    else
                     {
                         wxSFShapeBase *temp4 = wxDynamicCast( pShape, wxSFShapeBase );
                         if( temp4 && !isKeyPresent )
@@ -108,7 +108,7 @@ void GridTableShape::DoChildrenLayout()
 //                            if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect.GetHeight() > maxRect0.GetHeight() ) )
                                 maxRect0.SetHeight( 14 );
                         }
-                    }
+                    }*/
                 }
             }
             node = node->GetNext();
