@@ -153,8 +153,8 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     //    Bind( wxID_TABLEDROPTABLE, &DatabaseCanvas::OnDropTable, this );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnDropTable, this, wxID_DROPOBJECT );
     Bind( wxEVT_MENU, &DatabaseCanvas::OnCloseTable, this, wxID_TABLECLOSE );
-    Bind( wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWDATATYPES );
-    Bind(  wxEVT_UPDATE_UI, &DatabaseCanvas::nUpdateTableParam, this, wxID_SHOWCOMMENTS );
+    Bind( wxEVT_UPDATE_UI, &DatabaseCanvas::UpdateTableParam, this, wxID_SHOWDATATYPES );
+    Bind(  wxEVT_UPDATE_UI, &DatabaseCanvas::UpdateTableParam, this, wxID_SHOWCOMMENTS );
 }
 
 DatabaseCanvas::~DatabaseCanvas()
@@ -1582,7 +1582,7 @@ void DatabaseCanvas::SetQueryArguments(const std::vector<QueryArguments> argumen
     dynamic_cast<QueryRoot *>( m_pManager.GetRootItem() )->AddQueryArgument( arguments );
 }
 
-void DatabaseCanvas::nUpdateTableParam( wxUpdateUIEvent &event )
+void DatabaseCanvas::UpdateTableParam( wxUpdateUIEvent &event )
 {
     switch( event.GetId() )
     {

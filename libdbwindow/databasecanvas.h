@@ -86,7 +86,7 @@ public:
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:
     bool IsTableDisplayed(const std::wstring &name);
-    void nUpdateTableParam(wxUpdateUIEvent &event);
+    void UpdateTableParam(wxUpdateUIEvent &event);
 private:
     std::vector<MyErdTable *> m_displayedTables;
     wxView *m_view;
