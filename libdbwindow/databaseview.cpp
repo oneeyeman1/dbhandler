@@ -240,22 +240,25 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_dbFrame = nullptr;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
-    m_fontSizes.push_back( "8" );
-    m_fontSizes.push_back( "9" );
-    m_fontSizes.push_back( "10" );
-    m_fontSizes.push_back( "11" );
-    m_fontSizes.push_back( "12" );
-    m_fontSizes.push_back( "14" );
-    m_fontSizes.push_back( "16" );
-    m_fontSizes.push_back( "18" );
-    m_fontSizes.push_back( "20" );
-    m_fontSizes.push_back( "22" );
-    m_fontSizes.push_back( "24" );
-    m_fontSizes.push_back( "26" );
-    m_fontSizes.push_back( "28" );
-    m_fontSizes.push_back( "36" );
-    m_fontSizes.push_back( "48" );
-    m_fontSizes.push_back( "72" );
+    if( m_type != DatabaseView )
+    {
+        m_fontSizes.push_back( "8" );
+        m_fontSizes.push_back( "9" );
+        m_fontSizes.push_back( "10" );
+        m_fontSizes.push_back( "11" );
+        m_fontSizes.push_back( "12" );
+        m_fontSizes.push_back( "14" );
+        m_fontSizes.push_back( "16" );
+        m_fontSizes.push_back( "18" );
+        m_fontSizes.push_back( "20" );
+        m_fontSizes.push_back( "22" );
+        m_fontSizes.push_back( "24" );
+        m_fontSizes.push_back( "26" );
+        m_fontSizes.push_back( "28" );
+        m_fontSizes.push_back( "36" );
+        m_fontSizes.push_back( "48" );
+        m_fontSizes.push_back( "72" );
+    }
     wxRect clientRect = m_parent->GetClientRect();
     wxString title;
     if( m_type == QueryView )
