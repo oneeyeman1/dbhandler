@@ -379,7 +379,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_frame->Bind( wxEVT_ICONIZE, &DrawingView::OnIconise, this );
     if( m_fontName )
         m_fontName->Bind( wxEVT_COMBOBOX, &DrawingView::OnFontSeectionChange, this );
-//    sizer->Layout();
+    sizer->Layout();
     m_frame->Layout();
     m_frame->Show();
     m_initialized = true;
@@ -1115,6 +1115,7 @@ void DrawingView::GetTablesForView(Database *db, bool init, const std::vector<Qu
             }
         }
     }
+    m_frame->SendSizeEvent();
 }
 
 DrawingDocument* DrawingView::GetDocument()
@@ -2596,8 +2597,7 @@ void DrawingView::OnShowDataTypes(wxCommandEvent &event)
 {
     m_canvas->ShowHideTablePart( 1, event.IsChecked() );
     auto item = m_frame->GetMenuBar()->FindItem( wxID_SHOWDATATYPES );
-    item->Toggle();
-    ChangeTableTypeMMenu();
+    item->Check( event.IsChecked() );
 }
 
 void DrawingView::OnShowComments(wxCommandEvent &event)
