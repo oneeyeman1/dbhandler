@@ -11,6 +11,7 @@
 #endif
 
 #include <memory>
+#include "wx/scopeguard.h"
 #include "wx/scopedptr.h"
 #include "wx/except.h"
 #include "wx/docview.h"
@@ -66,66 +67,40 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxWindow *parent, wxDocument *
 {
     wxScopedPtr<DrawingView> view( (DrawingView *) DoCreateView() );
     if( !view )
-        return NULL;
+        return nullptr;
     view->SetViewType( type );
     view->SetParentWindow( parent );
     view->SetDocument( doc );
     view->SetPaintersMap( painters );
     view->SetToolbarOptions( conf );
     if( !view->OnCreate( doc, flags ) )
-        return NULL;
+        return nullptr;
     return view.release();
 }
 
-bool DatabaseTemplate::CreateDatabaseDocument(wxWindow *parent, const wxString &path, ViewType type, Database *db, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<QueryInfo> &queriess, std::vector<LibrariesInfo> &libPath, Configuration *conf, long flags)
+DrawingDocument *DatabaseTemplate::CreateDatabaseDocument(wxWindow *parent, const wxString &path, ViewType type, Database *db, std::map<wxString, wxDynamicLibrary *> &painters, const std::vector<QueryInfo> &queriess, std::vector<LibrariesInfo> &libPath, Configuration *conf, long flags)
 {
     DrawingDocument * const doc = (DrawingDocument *) DoCreateDocument();
-    wxTRY
+    wxScopeGuard guard = wxMakeGuard( [&, this]()
     {
-        doc->SetFilename( path );
-        doc->SetDocumentTemplate( this );
-        GetDocumentManager()->AddDocument( doc );
-        doc->SetDatabase( db/*, true, queriess, libPath*/ );
-        doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        if( CreateDatabaseView( parent, doc, type, painters, conf, flags ) )
-            return true;
         if( GetDocumentManager()->GetDocuments().Member( doc ) )
             doc->DeleteAllViews();
-        return false;
+    });
+    doc->SetFilename( path );
+    doc->SetDocumentTemplate( this );
+    GetDocumentManager()->AddDocument( doc );
+    doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
+    doc->SetDatabase( db );
+    if( !CreateDatabaseView( parent, doc, type, painters, conf, flags ) )
+    {
+        delete doc;
+        return nullptr;
     }
-    wxCATCH_ALL
-    (
-        if( GetDocumentManager()->GetDocuments().Member( doc ) )
-            doc->DeleteAllViews();
-        throw;
-    )
+    guard.Dismiss();
+    return doc;
 }
 
-bool DatabaseTemplate::CreateDatabaseDocument(wxWindow *parent, const wxString &path, ViewType type, Database *db, Configuration *conf, long flags)
-{
-    DrawingDocument * const doc = (DrawingDocument *) DoCreateDocument();
-    wxTRY
-    {
-        doc->SetFilename( path );
-        doc->SetDocumentTemplate( this );
-        GetDocumentManager()->AddDocument( doc );
-        doc->SetDatabase( db );
-        doc->SetCommandProcessor( doc->OnCreateCommandProcessor() );
-        if( CreateDatabaseView( parent, doc, type, conf, flags ) )
-            return true;
-        if( GetDocumentManager()->GetDocuments().Member( doc ) )
-            doc->DeleteAllViews();
-        return false;
-    }
-    wxCATCH_ALL
-    (
-        if( GetDocumentManager()->GetDocuments().Member( doc ) )
-            doc->DeleteAllViews();
-        throw;
-     )
-}
-
-DrawingView *DatabaseTemplate::CreateDatabaseView(wxWindow *parent, wxDocument *doc, ViewType type,  Configuration *conf, long flags)
+/*DrawingView *DatabaseTemplate::CreateDatabaseView(wxWindow *parent, wxDocument *doc, ViewType type,  Configuration *conf, long flags)
 {
     wxScopedPtr<DrawingView> view( (DrawingView *) DoCreateView() );
     if( !view )
@@ -138,3 +113,4 @@ DrawingView *DatabaseTemplate::CreateDatabaseView(wxWindow *parent, wxDocument *
         return NULL;
     return view.release();
 }
+*/

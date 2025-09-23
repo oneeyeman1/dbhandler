@@ -3232,7 +3232,7 @@ void DrawingView::OnDatabaseCreateView(wxCommandEvent &WXUNUSED(event))
 #endif
     m_frame->Show( false );
     auto docTemplate = (DatabaseTemplate *) GetDocumentManager()->FindTemplate( CLASSINFO( DrawingDocument ) );
-    docTemplate->CreateDatabaseDocument( m_parent, "*.qrv", NewViewView, GetDocument()->GetDatabase(), m_conf, wxDOC_NEW | wxDOC_SILENT );
+    docTemplate->CreateDatabaseDocument( m_parent, "*.qrv", NewViewView, GetDocument()->GetDatabase(), m_painters, m_queries, m_path, m_conf, wxDOC_NEW | wxDOC_SILENT );
     dynamic_cast<DrawingDocument *>( GetDocumentManager()->GetCurrentDocument() )->SetDatabase( GetDocument()->GetDatabase()  );
     dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetDatabaseChildWindow( m_frame );
     dynamic_cast<DrawingView *>( docTemplate->GetDocumentManager()->GetCurrentView() )->SetLogWindow( m_log );
