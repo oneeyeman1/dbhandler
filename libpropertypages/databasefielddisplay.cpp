@@ -81,7 +81,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
         _( "UPPER" ),
         _( "lower" ),
     };
-    m_case = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 4, m_case_choices, wxCB_DROPDOWN );
+    m_case = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, m_case_choices, wxCB_DROPDOWN );
     m_case->SetSelection( 0 );
     grid_sizer_3->Add( m_case, 0, 0, 0 );
     wxFlexGridSizer* grid_sizer_4 = new wxFlexGridSizer( 2, 3, 5, 5 );
