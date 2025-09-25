@@ -13,6 +13,7 @@
 #include <wx/dynlib.h>
 #include "wx/filename.h"
 #include "wx/stdpaths.h"
+#include "wx/display.h"
 #include <wx/intl.h>
 #include "database.h"
 #include "propertypagebase.h"
@@ -25,6 +26,7 @@ typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &,
 
 DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db):  PropertyPageBase( parent )
 {
+    auto ppi = wxDisplay::GetStdPPIValue();
     m_db = db;
     m_type = type;
     // begin wxGlade: DatabaseFieldDisplay::DatabaseFieldDisplay
@@ -89,12 +91,14 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     wxStaticText* m_label4 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Display Height" ) );
     grid_sizer_4->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_displayHeight = new wxTextCtrl( sizer_5->GetStaticBox(), wxID_ANY, "" );
+    m_displayHeight->SetValue( wxString::Format( "%.2f", (double) prop.m_height / (double) ppi ) );
     grid_sizer_4->Add( m_displayHeight, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label5 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
     grid_sizer_4->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label6 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Dsplay Width" ) );
     grid_sizer_4->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_displayWidth = new wxTextCtrl( sizer_5->GetStaticBox(), wxID_ANY, "" );
+    m_displayWidth->SetValue( wxString::Format( "%.2f", (double) prop.m_width / (double) ppi ) );
     grid_sizer_4->Add( m_displayWidth, 0, 0, 0 );
     m_label7 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
     grid_sizer_4->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );

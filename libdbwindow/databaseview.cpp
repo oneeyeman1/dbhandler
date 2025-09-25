@@ -1539,6 +1539,23 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
             res = db->GetFieldProperties( tableName.ToStdWstring(), dbField->GetField(), errors );
         }
+        auto prop = erdTable->GetDatabaseTable()->GetTableProperties();
+        wxCoord w = 0, h = 0;
+        wxFontWeight weigt;
+        wxFontStyle style;
+        if( prop.m_dataFontWeight >= 0 && prop.m_dataFontWeight <= 400 )
+            weigt = wxFONTWEIGHT_NORMAL;
+        if( prop.m_dataFontWeight >= 500 && prop.m_dataFontWeight <= 1000 )
+            weigt = wxFONTWEIGHT_BOLD;
+        if( prop.m_dataFontItalic = 0 )
+            style = wxFONTSTYLE_NORMAL;
+        else
+            style = wxFONTSTYLE_ITALIC;
+        wxFont font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, style, weigt, prop.m_dataFontUnderline, prop.m_dataFontName, (wxFontEncoding) prop.m_dataFontEncoding );
+        wxMemoryDC dc;
+        dc.GetTextExtent( dbField->GetField()->GetFieldName(), &w, &h, nullptr, nullptr, &font );
+        dbField->GetField()->GetFieldProperties().m_display.m_width = w;
+        dbField->GetField()->GetFieldProperties().m_display.m_height = h;
         dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
         dbField->SetType( DatabaseFieldPropertiesType );
         propertiesPtr = dbField;
