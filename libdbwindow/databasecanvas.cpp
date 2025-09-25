@@ -1428,7 +1428,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
-                        table->SetDataaseTable( (*it2) );
+                        table->SetDatabaseTable( (*it2) );
                         for( auto field : (*it2)->GetFields() )
                         {
                             dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, table->GetSchemaName() + "." + table->GetTableName() + "." + field->GetFieldName() );
@@ -1440,7 +1440,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
-                        table->SetDataaseTable( (*it2) );
+                        table->SetDatabaseTable( (*it2) );
                         for( auto field : (*it2)->GetFields() )
                         {
                             dynamic_cast<DrawingView *>( m_view )->GetGroupByPage()->GetSourceList()->InsertItem( index++, table->GetCatalogName() + "." + table->GetSchemaName() + "." + table->GetTableName() + "." + field->GetFieldName() );
@@ -1493,7 +1493,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     if( table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
-                        table->SetDataaseTable( (*it2) );
+                        table->SetDatabaseTable( (*it2) );
                     }
                 }
                 else
@@ -1501,7 +1501,7 @@ void DatabaseCanvas::LoadQuery(const std::map<std::wstring, std::vector<Database
                     if( table->GetCatalogName() == (*it2)->GetCatalog() && table->GetSchemaName() == (*it2)->GetSchemaName() && table->GetTableName() == (*it2)->GetTableName() )
                     {
                         found = true;
-                        table->SetDataaseTable( (*it2) );
+                        table->SetDatabaseTable( (*it2) );
                     }
                 }
             }
