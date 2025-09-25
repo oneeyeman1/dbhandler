@@ -44,7 +44,7 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     for( it; it < db->GetTableVector().m_validators.end(); ++it )
     {
         auto item = m_rules->Append( std::get<(0)>( *it ) );
-        m_rules->SetClientObject( item, (wxClientData *) &(*it) );
+        m_rules->SetClientData( item, (wxClientData *) &(*it) );
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
