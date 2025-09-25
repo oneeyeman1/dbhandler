@@ -26,7 +26,8 @@ public:
             m_header->ShowComments( display );
         if( display ) m_columns++; else m_columns--;
     }
-    void SetDataaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
+    void SetDatabaseTable(const DatabaseTable *table) { m_table = const_cast<DatabaseTable *>( table ); }
+    DatabaseTable *GetDatabaseTable() const { return m_table; }
     void SetDatabase(Database *db) { m_db = db; }
     const wxString &GetCatalogName() const { return m_catalogName; }
     const wxString &GetSchemaName() const { return m_schemaName; }
