@@ -40,6 +40,7 @@ protected:
     wxStaticText *m_label1, *m_label2;
     void OnEditUpdateUI(wxUpdateUIEvent &event);
     void OnButtonPress(wxCommandEvent &event);
+    void OnChange(wxCommandEvent &event);
 }; // wxGlade: end class
 
 

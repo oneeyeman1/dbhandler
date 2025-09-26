@@ -11,6 +11,7 @@ public:
 protected:
     void do_layout();
     void set_properties();
+    void OnChanged(wxCommandEvent &event);
 private:
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4;
     wxTextCtrl *m_label, *m_heading;

@@ -69,6 +69,8 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
     m_edit->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
     m_new->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
+    m_rules->Bind( wxEVT_LISTBOX, &FieldValidation::OnChange, this );
+    m_initValue->Bind( wxEVT_COMBOBOX, &FieldValidation::OnChange, this );
 }
 
 void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
@@ -113,3 +115,9 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
         int res = func( nullptr, isNew, fieldType, m_db, rule );
     }
 }
+
+void FieldValidation::OnChange(wxCommandEvent &event)
+{
+    m_isModified = true;
+}
+

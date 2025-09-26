@@ -17,6 +17,7 @@ FieldHeader::FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &pr
     m_layout = parent->GetLayoutDirection();
     m_label1 = new wxStaticText( this, wxID_ANY, _( "&Label:" ) );
     m_label = new wxTextCtrl( this, wxID_ANY, prop.m_label );
+    m_label->Bind( wxEVT_TEXT, &FieldHeader::OnChanged, this );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "&Position: " ) );
     wxString choices[2];
     if( m_layout == wxLayout_RightToLeft )
@@ -30,8 +31,10 @@ FieldHeader::FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &pr
         choices[0] = _( "left" );
         m_labelPos = new wxComboBox( this, wxID_ANY, choices[prop.m_labelAlignment], wxDefaultPosition, wxDefaultSize, 1, choices, wxCB_DROPDOWN | wxCB_READONLY );
     }
+    m_labelPos->Bind( wxEVT_COMBOBOX, &FieldHeader::OnChanged, this );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "&Heading:" ) );
     m_heading = new wxTextCtrl( this, wxID_ANY, prop.m_heading, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_heading->Bind( wxEVT_TEXT, &FieldHeader::OnChanged, this );
     m_label4 = new wxStaticText( this, wxID_ANY, wxEmptyString );
     wxString choices2[] =
     {
@@ -40,6 +43,7 @@ FieldHeader::FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &pr
         _( "center" )
     };
     m_headingPos = new wxComboBox( this, wxID_ANY, choices2[prop.m_headingAlignment], wxDefaultPosition, wxDefaultSize, 3, choices2, wxCB_DROPDOWN | wxCB_READONLY );
+    m_headingPos->Bind( wxEVT_COMBOBOX, &FieldHeader::OnChanged, this );
     set_properties();
     do_layout();
 }
@@ -111,3 +115,9 @@ wxComboBox *FieldHeader::GetHeaderAlignmentCtrl ()
 {
     return m_headingPos;
 }
+
+void FieldHeader::OnChanged(wxCommandEvent &event)
+{
+    m_isModified = true;
+}
+
