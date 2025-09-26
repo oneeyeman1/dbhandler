@@ -24,7 +24,7 @@ public:
     // begin wxGlade: DisplayFormatDefinition::ids
     // end wxGlade
 
-    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, Database *db);
+    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, const FieldTableDisplayProperties &prop, Database *db);
 
 private:
     bool m_isNew, m_isChanged;
