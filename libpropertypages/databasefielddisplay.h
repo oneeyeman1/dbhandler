@@ -27,6 +27,7 @@ public:
 private:
     wxString m_type;
     Database *m_db;
+    FieldTableDisplayProperties m_prop;
 protected:
     void OnEditNewFormat(wxCommandEvent &event);
     void OnUpdateUIEditButton(wxUpdateUIEvent &event);

@@ -22,13 +22,14 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, Database *);
+typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, const FieldTableDisplayProperties &, Database *);
 
 DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db):  PropertyPageBase( parent )
 {
     auto ppi = wxDisplay::GetStdPPIValue();
     m_db = db;
     m_type = type;
+    m_prop = prop;
     // begin wxGlade: DatabaseFieldDisplay::DatabaseFieldDisplay
     wxBoxSizer* sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -48,11 +49,9 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
         for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
             auto item = m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
-            if( (*it).first == 1 )
-                m_formats->Select( item );
         }
     }
-    grid_sizer_1->Add( m_formats, 0, /*wxEXPAND*/0, 0 );
+    grid_sizer_1->Add( m_formats, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
     grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
     m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
@@ -116,7 +115,6 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_displayWidth->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
-    m_formats->SetSelection( wxNOT_FOUND );
     m_justify->SetFocus();
 }
 
@@ -140,26 +138,20 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
         isNew = false;
         format = m_formats->GetString( m_formats->GetSelection() );
     }
-    auto stdPath = wxStandardPaths::Get();
-    wxString libName = "", libPath = "";
+    auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir();
+    wxString libName = "";
 #ifdef __WXOSX__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    fn.RemoveLastDir();
-    libPath = fn.GetPathWithSep() + "Frameworks/";
-    libName = libPath + "liblibdialogs.dylib" ;
+    libName = "/liblibdialogs.dylib" ;
 #elif __WXGTK__
-    libPath = stdPath.GetInstallPrefix() + "/lib/";
-    libName = libPath + "libdialogs";
+    libName = "/libdialogs";
 #elif __WXMSW__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    libPath = fn.GetPathWithSep();
-    libName = libPath + "dialogs";
+    libName = "\\dialogs";
 #endif
-    lib.Load( libName );
+    lib.Load( stdPath + libName );
     if( lib.IsLoaded() )
     {
         ADDEDITMASK func = (ADDEDITMASK) lib.GetSymbol( "AddEditMask" );
-        func( nullptr, isNew, m_type, format, m_db );
+        func( nullptr, isNew, m_type, format, m_prop, m_db );
     }
 }
 
