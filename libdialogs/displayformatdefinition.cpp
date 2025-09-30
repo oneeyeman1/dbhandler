@@ -62,6 +62,15 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     const wxString *m_format_choices = NULL;
     m_format = new wxComboBox( panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_format_choices, wxCB_DROPDOWN );
+    for( auto format: prop.m_format )
+    {
+        for( auto f: format.second )
+        {
+            m_format->Append( std::get<1>( f ) );
+        }
+    }
+    if( !m_isNew )
+        m_format->SetValue( m_fieldFormat );
     grid_sizer_1->Add( m_format, 0, wxALIGN_CENTER_VERTICAL | wxEXPAND, 0 );
     m_label4 = new wxStaticText( panel_1, wxID_ANY, _( "Test Value" ) );
     grid_sizer_1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
