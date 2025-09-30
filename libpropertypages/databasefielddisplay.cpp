@@ -137,7 +137,8 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     else
     {
         isNew = false;
-//        format = m_formats->GetClientData( m_formats->GetSelection() );
+        format = reinterpret_cast<wxStringClientData *>( m_formats->GetClientObject( m_formats->GetSelection() ) )->GetData();
+        wxMessageBox( format );
     }
     auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir();
     wxString libName = "";
