@@ -384,3 +384,4 @@ bool PropertiesDialog::IsLogOnly() const
         return m_page6->IsLogOnly();
     return false;
 }
+
