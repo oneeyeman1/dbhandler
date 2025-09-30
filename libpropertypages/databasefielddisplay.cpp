@@ -43,15 +43,6 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Dislay Frmat" ) );
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
-    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_format.begin(); it != prop.m_format.end(); ++it )
-    {
-        for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
-        {
-            auto item = m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
-        }
-    }
-    grid_sizer_1->Add( m_formats, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxVERTICAL );
     grid_sizer_1->Add( sizer_4, 0, wxEXPAND, 0 );
     m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
@@ -107,6 +98,15 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
+    m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
+    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_format.begin(); it != prop.m_format.end(); ++it )
+    {
+        for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
+        {
+            auto item = m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
+        }
+    }
+    grid_sizer_1->Insert( 2, m_formats, 0, wxEXPAND, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
@@ -115,6 +115,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_displayWidth->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
+    m_edit->Bind( wxEVT_UPDATE_UI, &DatabaseFieldDisplay::OnUpdateUIEditButton, this );
     m_justify->SetFocus();
 }
 
@@ -136,7 +137,7 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     else
     {
         isNew = false;
-        format = m_formats->GetString( m_formats->GetSelection() );
+//        format = m_formats->GetClientData( m_formats->GetSelection() );
     }
     auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir();
     wxString libName = "";

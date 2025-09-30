@@ -23,6 +23,7 @@ public:
     // end wxGlade
 
     DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db);
+    wxComboBox *GetJustifyControl() const { return m_justify; }
 
 private:
     wxString m_type;
