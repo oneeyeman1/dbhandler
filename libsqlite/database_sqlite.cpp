@@ -2832,7 +2832,7 @@ int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vec
     return 0;
 }
 
-int SQLiteDatabase::GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
+int SQLiteDatabase::GetTableFields(const std::wstring &UNUSED(catalog), const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors)
 {
     int result = false;
     auto res = sqlite3_prepare_v2( m_db, "SELECT name, pk FROM pragma_table_info(?, ?) ORDER BY cid;", -1, &m_stmt, nullptr );
