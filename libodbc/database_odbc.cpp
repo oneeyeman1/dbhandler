@@ -3613,6 +3613,15 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
         ret = SQLDescribeParam( m_hstmt, 1, &dataType, &paramSize, &decimalDigits, &nullable );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -4943,7 +4952,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( errorMsg, ENV_ERROR );
         result = 1;
     }
-    ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)50, 0 );
+    ret = SQLSetConnectAttr( dbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)50, 0 );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
     {
         GetErrorMessage( errorMsg, 2 );
