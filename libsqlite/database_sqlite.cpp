@@ -1548,7 +1548,7 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg)
 {
     sqlite3_stmt *stmt = nullptr;
-    int result = 0, res;
+    int result = 0, res = SQLITE_OK;
     std::vector<std::wstring> createCommands;
     auto name = tableName->GetTableName();
     // 1. Turn off foreign keys
@@ -2024,7 +2024,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        unsigned int count;
+        unsigned int count = 0;
         std::vector<std::wstring> tableNames = pimpl.GetTableNames();
         std::string query1 = "SELECT name FROM sqlite_master WHERE type = 'table' OR type = 'view';";
         std::string query2 = "SELECT count(name) FROM sqlite_master WHERE type = 'table' OR type = 'view';";
