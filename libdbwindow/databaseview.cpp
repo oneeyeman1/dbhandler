@@ -1480,6 +1480,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
                     if( dbField )
                     {
                         erdTable = wxDynamicCast( dbField->GetParentShape()->GetParentShape(), MyErdTable );
+                        tableName = erdTable->GetTableName();
                         type = DatabaseFieldPropertiesType;
                     }
                     else

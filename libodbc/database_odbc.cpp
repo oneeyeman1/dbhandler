@@ -3589,7 +3589,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     unsigned short labelAlignment = 0, headingAlignment = 0;
     SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
     memset( table, '\0', schemaName.length() + tableName.length() + 3 );
-    memset( owner, '0', ownerName.length() + 2 );
+    memset( owner, '\0', ownerName.length() + 2 );
     memset( fieldNameReq, '\0', fieldName.length() + 2);
     uc_to_str_cpy( table, schemaName );
     uc_to_str_cpy( table, L"." );
