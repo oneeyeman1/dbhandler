@@ -448,6 +448,7 @@ void CFontPropertyPage::OnChangeFont(wxCommandEvent &event)
     if( event.GetEventObject() == itemChoice7 )
     {
         m_faceName = itemChoice7->GetValue();
+        m_font.font.SetFaceName( m_faceName );
         FillSizeList();
     }
     if( event.GetEventObject() == itemChoice10 )
