@@ -342,10 +342,7 @@ int SQLiteDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 void SQLiteDatabase::GetErrorMessage(int code, std::vector<std::wstring> &errorMsg)
 {
-    auto errorCode = sqlite3_errcode( m_db );
-    auto extendedErrorCode = sqlite3_extended_errcode( m_db );
     auto pos = sqlite3_error_offset( m_db );
-    auto str = sqlite3_errstr( code );
     auto stmt = sqlite3_next_stmt( m_db, nullptr );
     if( stmt )
         errorMsg.push_back( sqlite_pimpl->m_myconv.from_bytes( sqlite3_sql( stmt ) ) );
@@ -605,10 +602,10 @@ int SQLiteDatabase::CreateIndex(const std::wstring &command, const std::wstring 
     return result;
 }
 
-int SQLiteDatabase::DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::DropIndex(const std::wstring &UNUSED(fullTableName), const std::wstring &indexName, const DropIndexOption &UNUSED(options), std::vector<std::wstring> &errorMsg)
 {
     auto result = 0;
-    std::wstring query = L"DROP INDEX " + indexName;
+    std::wstring query = L"DROP INDEX IF EXISTS " + indexName;
     auto res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), nullptr, nullptr, nullptr );
     if( res != SQLITE_OK )
     {
@@ -1617,7 +1614,7 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
                 {
                     auto temp = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 1 ) ) );
                     auto temp1 = temp;
-                    std::transform( temp.begin(), temp.end(), temp.begin(), ::toupper );
+                    std::transform( temp.begin(), temp.end(), temp.begin(), ::towupper );
                     if( temp.find( L"TABLE" ) != std::wstring::npos && temp.find( L"CREATE" ) != std::wstring::npos )
                         createCommand = temp1;
                     createCommands.push_back( temp );
@@ -1651,11 +1648,11 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
     if( std::regex_search( createCommand, findings, pattern ) )
     {
         auto start = findings[0].first - createCommand.begin();
-        auto temp = createCommand.substr( 0, start );
-        auto end = temp.find( L"," );
+        auto temp1 = createCommand.substr( 0, start );
+        auto end = temp1.find( L"," );
         if( end == std::wstring::npos )
-            end = temp.length() - 1;
-        temp += createCommand.substr( end );
+            end = temp1.length() - 1;
+        temp1 += createCommand.substr( end );
         createCommand = temp;
     }
     // 5. Create new table with revised format
@@ -2825,10 +2822,8 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
     return result;
 }
 
-int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetTablespacesList(std::vector<std::wstring> &UNUSED(list), std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    UNUSED(list);
-    UNUSED(errorMsg);
     return 0;
 }
 
