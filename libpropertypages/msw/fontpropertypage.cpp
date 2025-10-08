@@ -622,7 +622,10 @@ int CALLBACK CFontPropertyPage::EnumFontFamiliesCallback2(ENUMLOGFONT *lpelf, NE
 void CFontPropertyPage::FillFacenameList()
 {
     HDC dc = ::GetDC( NULL );
-    EnumFontFamilies( dc, NULL, (FONTENUMPROC) CFontPropertyPage::EnumFontFamiliesCallback, (LPARAM) this );
+    LOGFONT lf;
+    lf.lfCharSet = DEFAULT_CHARSET;
+    lf.lfFaceName[0] = '\0';
+    EnumFontFamiliesEx( dc, &lf, (FONTENUMPROC) CFontPropertyPage::EnumFontFamiliesCallback, (LPARAM) this, 0 );
     ::ReleaseDC( NULL, dc );
 }
 
