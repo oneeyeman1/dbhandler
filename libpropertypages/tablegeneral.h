@@ -8,6 +8,7 @@ public:
     ~TableGeneralProperty();
     wxTextCtrl *GetCommentCtrl();
     const std::wstring &GetComment();
+    virtual bool IsLogOnly() const override;
 protected:
     void OnCommentKeyEntered(wxKeyEvent &event);
     void OnEditComment(wxCommandEvent &event);

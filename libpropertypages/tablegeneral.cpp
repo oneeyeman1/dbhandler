@@ -131,3 +131,8 @@ void TableGeneralProperty::OnLogOnly(wxCommandEvent &event)
 {
     m_isLogOnly = event.GetInt();
 }
+
+bool TableGeneralProperty::IsLogOnly() const
+{
+    return m_isLogOnly;
+}
