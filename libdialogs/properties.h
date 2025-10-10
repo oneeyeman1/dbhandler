@@ -41,6 +41,7 @@ private:
     int m_type;
     std::wstring m_dbType, m_command;
     bool m_isApplied;
+    int m_osId;
 //    TableProperties m_tableProperties;
     PropertiesHandler *m_handler;
     // begin wxGlade: PropertiesDialog::methods

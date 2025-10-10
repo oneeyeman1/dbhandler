@@ -97,7 +97,8 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case TablePrpertiesType:
         {
             TableProperties prop;
-            prop.Init( handler->GetDatabase()->GetOSId() );
+            m_osId = handler->GetDatabase()->GetOSId();
+            prop.Init( m_osId );
             if( handler->GetType() == DatabaseTablePropertiesType ) 
                 prop = ( handler )->GetProperties().As<TableProperties>();
             else
@@ -287,6 +288,7 @@ bool PropertiesDialog::ApplyProperties()
         case DatabaseTablePropertiesType:
         {
             TableProperties prop;
+            prop.Init( m_osId );
             logOnly = m_page1->IsLogOnly();
             prop.m_comment = m_page1->GetCommentCtrl()->GetValue().ToStdWstring();
             prop.m_dataFontCharacterSet = m_page2->GetFont().font.GetEncoding();
