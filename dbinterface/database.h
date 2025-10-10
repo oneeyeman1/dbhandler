@@ -14,6 +14,8 @@
 
 #define NO_MORE_ROWS 100
 
+#define DEFAULT_CHARSET         1
+
 #define INTEGER_TYPE 1
 #define DOUBLE_TYPE  2
 #define STRING_TYPE  3
@@ -177,12 +179,37 @@ public:
     }
     void Init(const int id)
     {
-        switch( id )
+        int osId;
+        if( id >= 0 && id <= 4 )
+            osId = id;
+        else
+        {
+            if( id & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+            {
+                osId = WINDOWS;
+            }
+            else if( id & ( 1 << 0 | 1 << 1 ) ) // Mac
+            {
+                osId = OSX;
+            }
+            else // *nix
+            {
+#ifdef __DBGTK__
+                osId = GTK;
+#elif __DBQT__
+                osId = QT;
+#endif // __DBGTK__
+            }
+        }
+        switch( osId )
         {
         case WINDOWS:
             m_dataFontName = L"MS Sans Serif";
             m_headingFontName = L"MS Sans Serif";
             m_labelFontName = L"MS Sans Serif";
+            m_dataFontCharacterSet = DEFAULT_CHARSET;
+            m_headingFontCharacterSet = DEFAULT_CHARSET;
+            m_labelFontCharacterSer = DEFAULT_CHARSET;
             break;
         case GTK:
             m_dataFontName = L"Serif";
