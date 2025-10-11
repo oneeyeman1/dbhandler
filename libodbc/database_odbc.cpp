@@ -3119,7 +3119,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         else
         {
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
         }
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -3142,8 +3142,20 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
 
 int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, id;
     bool exist;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __DBGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif
+    }
     std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
