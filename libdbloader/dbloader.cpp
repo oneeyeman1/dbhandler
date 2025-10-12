@@ -183,7 +183,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 wxString password_wx( password );
                 GETODBCCREDENTIALS func1 = (GETODBCCREDENTIALS) lib.GetSymbol( "GetODBCCredentails" );
                 result = func1( parent, name, user_wx, password_wx );
-                name = name + L";" + user_wx + L";" + password_wx;
+                name = L"DSN=" + name + L";UID=" + user_wx + L";PWD=" + password_wx;
 #endif
             }
             else if( engine == "PostgreSQL" )
