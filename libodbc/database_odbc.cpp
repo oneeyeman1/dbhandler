@@ -2091,15 +2091,53 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     std::wstring qry2;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-        qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+    {
+        if( osid == WINDOWS )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+        else if( osid == GTK )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+        else if( osid == QT )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+        else if( osid == OSX )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  \'\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+    }
     if( pimpl.m_subtype == L"MySQL" )
-        qry2 = L"INSERT IGNORE INTO \"abcattbl\" VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    {
+        if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 )
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == GTK )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == QT )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == OSX )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
+        else
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == GTK )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == QT )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            else if( osid == OSX )
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
+    }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        }
         else
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        }
     }
     SQLWCHAR *qry = new SQLWCHAR[qry2.length() + 2];
     memset( qry, '\0', qry2.length() + 2 );
@@ -2159,10 +2197,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     str_to_uc_cpy( cat, catalogName );
                     str_to_uc_cpy( schema, schemaName );
                     str_to_uc_cpy( table, tableName );
-                    if( schema.empty() && !cat.empty() && schemaName )
+                    if( schema.empty() && !cat.empty() )
                     {
                         schema = cat;
-                        copy_uc_to_uc( schemaName, catalogName );
                     }
                     pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                     count++;
@@ -2206,7 +2243,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             auto qry1 = new SQLWCHAR[30];
             memset( qry1, '\0', 30 );
-            uc_to_str_cpy( qry1, L"BEGIN TRANSACTION" );
+            uc_to_str_cpy( qry1, L"BEGIN" );
             ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
             delete[] qry1;
             qry1 = nullptr;
@@ -6277,21 +6314,16 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
 
 void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser)
 {
-    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
-    SQLWCHAR *entry = new SQLWCHAR[50];
-    SQLWCHAR *retBuffer = new SQLWCHAR[256];
+    SQLWCHAR connectDSN[dsn.length() + 2];
+    SQLWCHAR entry[50];
+    SQLWCHAR retBuffer[256];
     SQLWCHAR fileName[16];
     SQLWCHAR defValue[50];
-    memset( fileName, '\0', 16 );
-    memset( retBuffer, '\0', 256 );
-    memset( entry, '\0', 52 );
-    memset( connectDSN, '\0', dsn.length() + 2 );
-    memset( defValue, '\0', 50 );
     uc_to_str_cpy( fileName, L"odbc.ini" );
-    uc_to_str_cpy( retBuffer, L" " );
+    uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"UserID" );
     uc_to_str_cpy( connectDSN, dsn );
-    uc_to_str_cpy( defValue, L" " );
+    uc_to_str_cpy( defValue, L"" );
     int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
         connectedUser = L"";
@@ -6303,7 +6335,7 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
             connectedUser = L"";
         else if( ret == 0 )
         {
-            uc_to_str_cpy( entry, L"User" );
+            uc_to_str_cpy( entry, L"UID" );
             ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
             if( ret < 0 )
                 connectedUser = L"";
@@ -6315,12 +6347,9 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
-    delete[] connectDSN;
-    delete[] entry;
-    delete[] retBuffer;
 }
 
-void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword)
+void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword, std::vector<std::wstring> &errorMsg)
 {
     SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
     SQLWCHAR *entry = new SQLWCHAR[50];
@@ -6333,15 +6362,23 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     memset( connectDSN, '\0', dsn.length() + 2 );
     memset( defValue, '\0', 50 );
     uc_to_str_cpy( fileName, L"odbc.ini" );
-    uc_to_str_cpy( retBuffer, L" " );
+    uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
     uc_to_str_cpy( connectDSN, dsn );
     uc_to_str_cpy( defValue, L" " );
     int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
+    {
+        GetDSNErrorMessage( errorMsg );
         connectionPassword = L"";
-    else
-        str_to_uc_cpy( connectionPassword, retBuffer );
+    }
+    else if( ret == 0 )
+    {
+        uc_to_str_cpy( entry, L"PWD" );
+        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        if( ret > 0 )
+            str_to_uc_cpy( connectionPassword, retBuffer );
+    }
     delete[] connectDSN;
     delete[] entry;
     delete[] retBuffer;
