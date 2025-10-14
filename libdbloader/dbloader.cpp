@@ -152,7 +152,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
         for( std::vector<std::wstring>::iterator it = dsn.begin(); it < dsn.end(); ++it )
         {
             wxString temp( (*it) );
-            if( std::find_if( profiles.begin(), profiles.end(), 
+            if( std::find_if( profiles.begin(), profiles.end(),
                                [temp](Profile prof)
                                {
                                    return prof.m_name == temp;
@@ -178,12 +178,12 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
 #if !defined(__WXMSW__)
                 std::wstring user, password;
                 dynamic_cast<ODBCDatabase *>( pdb )->GetConnectedUser( name.ToStdWstring(), user );
-                dynamic_cast<ODBCDatabase *>( pdb )->GetConnectionPassword ( name.ToStdWstring(), password );
+                dynamic_cast<ODBCDatabase *>( pdb )->GetConnectionPassword ( name.ToStdWstring(), password, errorMsg );
 	            wxString user_wx( user );
                 wxString password_wx( password );
                 GETODBCCREDENTIALS func1 = (GETODBCCREDENTIALS) lib.GetSymbol( "GetODBCCredentails" );
                 result = func1( parent, name, user_wx, password_wx );
-                name = name + L";" + user_wx + L";" + password_wx;
+                name = L"DSN=" + name + L";UID=" + user_wx + L";PWD=" + password_wx;
 #endif
             }
             else if( engine == "PostgreSQL" )
