@@ -7552,7 +7552,9 @@ int ODBCDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vecto
     int result = 0;
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        std::wstring query = L"SELECT * FROM pg_tablespaces;";
+        SQLINTEGER ind;
+        SQLWCHAR tbspaceName[256];
+        std::wstring query = L"SELECT name FROM pg_tablespaces;";
         auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -7572,6 +7574,34 @@ int ODBCDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vecto
             }
             delete[] qry;
             qry = nullptr;
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &tbspaceName, 256, &ind );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring tableSpace;
+                str_to_uc_cpy( tableSpace, tbspaceName );
+                list.push_back( tableSpace );
+            }
+        }
+        if( !result )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            m_hstmt = 0;
         }
     }
     else
