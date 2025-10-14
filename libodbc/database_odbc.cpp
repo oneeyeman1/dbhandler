@@ -2826,6 +2826,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.size() + 2 );
     uc_to_str_cpy( qry, query );
+    TableProperties prop;
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3071,7 +3072,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         ret = SQLFetch( m_hstmt );
         if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
         {
-            TableProperties prop;
             std::wstring name;
             prop.m_dataFontSize = dataFontSize;
             prop.m_dataFontWeight = dataFontWeight;
@@ -3108,7 +3108,12 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             table->SetTableProperties( prop );
             name = L"";
         }
-        else if( ret != SQL_NO_DATA )
+        else if( ret == SQL_NO_DATA )
+        {
+            prop.Init( id );
+            table->SetTableProperties( prop );
+        }
+        else
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
@@ -3119,7 +3124,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         else
         {
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
         }
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -3146,6 +3151,19 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     bool exist;
     std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
+    int id;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __DBGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif // __DBGTK__
+    }
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
@@ -3493,7 +3511,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 {
     bool result = false;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ?;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
@@ -3563,7 +3581,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     }
     else
     {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     }
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
