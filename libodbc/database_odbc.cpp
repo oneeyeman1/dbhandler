@@ -2244,6 +2244,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             auto qry1 = new SQLWCHAR[30];
             memset( qry1, '\0', 30 );
             uc_to_str_cpy( qry1, L"BEGIN" );
+            if( pimpl.m_subtype == L"Microsoft SQL Server" )
+                uc_to_str_cpy( qry1, L" TRANSACTION" );
             ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
             delete[] qry1;
             qry1 = nullptr;
