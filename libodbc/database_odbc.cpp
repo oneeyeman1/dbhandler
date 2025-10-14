@@ -2437,16 +2437,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         break;
                     }
                 }
-                if( !result )
-                {
-                    ret = SQLFreeStmt( m_hstmt, SQL_RESET_PARAMS );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
-                        break;
-                    }
-                }
                 delete[] schemaName;
                 delete[] tableName;
                 schemaName = nullptr;
