@@ -3203,19 +3203,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
-    int id;
-    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
-        id = WINDOWS;
-    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
-        id = OSX;
-    else // *nix
-    {
-#ifdef __DBGTK__
-        id = GTK;
-#else
-        id = QT;
-#endif // __DBGTK__
-    }
     SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );
@@ -3562,7 +3549,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
 bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     bool result = false;
-    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
+    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbOs = SQL_NTS;
     int id;
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = WINDOWS;
@@ -3576,7 +3563,6 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
         id = QT;
 #endif // __DBGTK__
     }
-    SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS, cbOs;
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
     std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
     tname += const_cast<DatabaseTable *>( table )->GetTableName();
@@ -6336,7 +6322,9 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
 
 void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser)
 {
-    SQLWCHAR connectDSN[dsn.length() + 2];
+    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
+    memset( connectDSN, '\0', dsn.length() + 2 );
+    uc_to_str_cpy( connectDSN, dsn );
     SQLWCHAR entry[50];
     SQLWCHAR retBuffer[256];
     SQLWCHAR fileName[16];
@@ -6369,6 +6357,8 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
+    delete[] connectDSN;
+    connectDSN = nullptr;
 }
 
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword, std::vector<std::wstring> &errorMsg)
