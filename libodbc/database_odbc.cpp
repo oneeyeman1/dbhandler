@@ -775,6 +775,20 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                     else
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                    if( !result )
+                    {
+                        auto qry1 = new SQLWCHAR[200];
+                        memset( qry1, '\0', 200 );
+                        uc_to_str_cpy( qry1, L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION ON" );
+                        ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+                        delete[] qry1;
+                        qry1 = nullptr;
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
                     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
@@ -1925,6 +1939,20 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     SQLINTEGER pcbValue;
     if( !m_isConnected )
     {
+        if( !result )
+        {
+            auto qry1 = new SQLWCHAR[200];
+            memset( qry1, '\0', 200 );
+            uc_to_str_cpy( qry1, L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION OFF" );
+            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+            delete[] qry1;
+            qry1 = nullptr;
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
         ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
         ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
         return 0;
