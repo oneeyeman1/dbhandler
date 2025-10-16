@@ -179,7 +179,7 @@ public:
     }
     void Init(const int id)
     {
-        int osId;
+        int osId = -1;
         if( id >= 0 && id <= 4 )
             osId = id;
         else
