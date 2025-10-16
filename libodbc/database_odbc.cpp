@@ -2457,6 +2457,20 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
+            if( !result )
+            {
+                qry1 = new SQLWCHAR[50];
+                memset( qry1, '\0', 50 );
+                uc_to_str_cpy( qry1, L"SET TRANSACTION ISOLATION LEVEL READ COMMITTED" );
+                ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+                delete[] qry1;
+                qry1 = nullptr;
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
         }
     }
     for( int i = 0; i < 5; i++ )
