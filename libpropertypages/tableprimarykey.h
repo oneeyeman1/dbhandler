@@ -5,6 +5,8 @@ public:
     TablePrimaryKey(wxWindow *parent, const DatabaseTable *table);
 protected:
     void do_layout();
+    void OnFieldSelect(wxListEvent &event);
+    void OnFieldDeselect(wxListEvent &event);
 private:
     FieldWindow* m_foreignKeyColumnsFields;
     wxStaticText *m_label;

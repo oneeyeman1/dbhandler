@@ -35,6 +35,8 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
     }
+    m_fields->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnFieldSelect, this );
+    m_fields->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnFieldDeselect, this );
     do_layout();
 }
 
@@ -52,4 +54,16 @@ void TablePrimaryKey::do_layout()
     main->Add( sizer1, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
+}
+
+void TablePrimaryKey::OnFieldSelect(wxListEvent &event)
+{
+    m_isModified = true;
+    m_foreignKeyColumnsFields->AddField( event.GetString() );
+}
+
+void TablePrimaryKey::OnFieldDeselect(wxListEvent &event)
+{
+    m_isModified = true;
+    m_foreignKeyColumnsFields->RemoveField( event.GetString() );
 }
