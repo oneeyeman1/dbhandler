@@ -6396,21 +6396,16 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword, std::vector<std::wstring> &errorMsg)
 {
     SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
-    SQLWCHAR *entry = new SQLWCHAR[50];
-    SQLWCHAR *retBuffer = new SQLWCHAR[256];
-    SQLWCHAR fileName[16];
-    SQLWCHAR defValue[50];
-    memset( fileName, '\0', 16 );
-    memset( retBuffer, '\0', 256 );
-    memset( entry, '\0', 52 );
     memset( connectDSN, '\0', dsn.length() + 2 );
+    uc_to_str_cpy( connectDSN, dsn );
+    SQLWCHAR entry[50];
+    SQLWCHAR retBuffer[256];
+    SQLWCHAR defValue[50];
     memset( defValue, '\0', 50 );
-    uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
-    uc_to_str_cpy( connectDSN, dsn );
     uc_to_str_cpy( defValue, L" " );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
     if( ret < 0 )
     {
         GetDSNErrorMessage( errorMsg );
@@ -6419,13 +6414,11 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"PWD" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
         if( ret > 0 )
             str_to_uc_cpy( connectionPassword, retBuffer );
     }
     delete[] connectDSN;
-    delete[] entry;
-    delete[] retBuffer;
 }
 
 bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
