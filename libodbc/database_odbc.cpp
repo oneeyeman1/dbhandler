@@ -6362,26 +6362,23 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     uc_to_str_cpy( connectDSN, dsn );
     SQLWCHAR entry[50];
     SQLWCHAR retBuffer[256];
-    SQLWCHAR fileName[16];
     SQLWCHAR defValue[50];
-    uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"UserID" );
-    uc_to_str_cpy( connectDSN, dsn );
     uc_to_str_cpy( defValue, L"" );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
     if( ret < 0 )
         connectedUser = L"";
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"UserName" );
-        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
         if( ret < 0 )
             connectedUser = L"";
         else if( ret == 0 )
         {
             uc_to_str_cpy( entry, L"UID" );
-            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
             if( ret < 0 )
                 connectedUser = L"";
             else
