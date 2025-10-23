@@ -76,4 +76,6 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
             m_foreignKeyColumnsFields->AddField( label );
         }
     }
+    else
+        event.Skip();
 }
