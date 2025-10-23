@@ -32,11 +32,11 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
         if( (*it)->IsPrimaryKey() )
         {
             m_fields->SetItemState( m_fields->FindItem( -1, (*it)->GetFieldName() ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            newKey.push_back( (*it)->GetFieldName() );
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
     }
-    m_fields->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnFieldSelect, this );
-    m_fields->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnFieldDeselect, this );
+    m_fields->Bind( wxEVT_LEFT_DOWN, &TablePrimaryKey::OnLeftDown, this );
     do_layout();
 }
 
@@ -56,14 +56,26 @@ void TablePrimaryKey::do_layout()
     SetSizer( main );
 }
 
-void TablePrimaryKey::OnFieldSelect(wxListEvent &event)
+void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
 {
-    m_isModified = true;
-    m_foreignKeyColumnsFields->AddField( event.GetString() );
-}
-
-void TablePrimaryKey::OnFieldDeselect(wxListEvent &event)
-{
-    m_isModified = true;
-    m_foreignKeyColumnsFields->RemoveField( event.GetString() );
+    auto flags = wxLIST_HITTEST_ONITEM;
+    auto item = m_fields->HitTest( event.GetPosition(), flags );
+    if( item != wxNOT_FOUND )
+    {
+        auto label = m_fields->GetItemText( item );
+        if( m_fields->GetItemState( item, wxLIST_STATE_SELECTED ) == wxLIST_STATE_SELECTED )
+        {
+            m_fields->SetItemState( item, 0, wxLIST_STATE_SELECTED );
+            newKey.erase( std::remove( newKey.begin(), newKey.end(), label ), newKey.end() );
+            m_foreignKeyColumnsFields->RemoveField( label );
+        }
+        else
+        {
+            m_fields->SetItemState( item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            newKey.push_back( label );
+            m_foreignKeyColumnsFields->AddField( label );
+        }
+        wxMessageBox( "Item" );
+    }
+    event.Skip();
 }
