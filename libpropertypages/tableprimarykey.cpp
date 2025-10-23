@@ -75,7 +75,5 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
             newKey.push_back( label );
             m_foreignKeyColumnsFields->AddField( label );
         }
-        wxMessageBox( "Item" );
     }
-    event.Skip();
 }
