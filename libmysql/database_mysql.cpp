@@ -1447,103 +1447,140 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
 {
     match = match;
     int result = 0;
-    std::wstring query = L"ALTER TABLE ";
-    query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
-    query += L"ADD CONSTRAINT " + keyName + L" ";
-    query += L"FOREIGN KEY(";
     std::vector<std::wstring> origFields, refFields;
-    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
-    {
-        query += (*it1)->GetOriginalFieldName();
-        if( it1 == newFK.end() - 1 )
-            query += L") ";
-        else
-            query += L",";
-        origFields.push_back( (*it1)->GetOriginalFieldName() );
-    }
-    query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
-    for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
-    {
-        query += (*it1)->GetReferencedFieldName();
-        if( it1 == newFK.end() - 1 )
-            query += L") ";
-        else
-            query += L",";
-        refFields.push_back( (*it1)->GetReferencedFieldName() );
-    }
-    query += L"ON DELETE ";
+    std::wstring query, query1;
     FK_ONUPDATE updProp = NO_ACTION_UPDATE;
     FK_ONDELETE delProp = NO_ACTION_DELETE;
-    switch( deleteProp )
+    if( !logOnly && mysql_query( m_db, "BEGIN" ) )
     {
-    case 0:
-        query += L"NO ACTION ";
-        delProp = NO_ACTION_DELETE;
-        break;
-    case 1:
-        query += L"RESTRICT ";
-        delProp = RESTRICT_DELETE;
-        break;
-    case 2:
-        query += L"CASCADE ";
-        delProp = CASCADE_DELETE;
-        break;
-    case 3:
-        query += L"SET NULL ";
-        delProp = SET_NULL_DELETE;
-        break;
-    case 4:
-        query += L"SET DEFAULT ";
-        delProp = SET_DEFAULT_DELETE;
-        break;
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( L"Applying foreign key failed: " + err );
+        result = 1;
     }
-    query += L"ON UPDATE ";
-    switch( updateProp )
+    if( !result )
     {
-    case 0:
-        query += L"NO ACTION";
-        updProp = NO_ACTION_UPDATE;
-        break;
-    case 1:
-        query += L"RESTRICT";
-        updProp = RESTRICT_UPDATE;
-        break;
-    case 2:
-        query += L"CASCADE";
-        updProp = CASCADE_UPDATE;
-        break;
-    case 3:
-        query += L"SET NULL";
-        updProp = SET_NULL_UPDATE;
-        break;
-    case 4:
-        query += L"SET DEFAULT";
-        updProp = SET_DEFAULT_UPDATE;
-        break;
-    }
-    // TODO This will need to be reimplemented
-//    if( !isNew )
-//        result = DropForeignKey( command, &tableName, keyName, logOnly, errorMsg );
-    if( !logOnly && !result )
-    {
-        if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() ) )
+        query = L"ALTER TABLE ";
+        query += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+        query += L"ADD CONSTRAINT " + keyName + L" ";
+        if( !isNew )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( L"Applying foreign key failed: " + err );
-            result = 1;
+            query1 = L"ALTER TABLE ";
+            query1 += tableName.GetSchemaName() + L"." + tableName.GetTableName() + L" ";
+            query1 += L"DROP FOREIGN KEY " + keyName + L";";
+        }
+        if( isNew )
+        {
+            query += L"FOREIGN KEY(";
+            for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
+            {
+                query += (*it1)->GetOriginalFieldName();
+                if( it1 == newFK.end() - 1 )
+                    query += L") ";
+                else
+                    query += L",";
+                origFields.push_back( (*it1)->GetOriginalFieldName() );
+            }
+            query += L"REFERENCES " + newFK.at( 0 )->GetReferencedTableName() + L"(";
+            for( std::vector<FKField *>::const_iterator it1 = newFK.begin(); it1 < newFK.end(); it1++ )
+            {
+                query += (*it1)->GetReferencedFieldName();
+                if( it1 == newFK.end() - 1 )
+                    query += L") ";
+                else
+                    query += L",";
+                refFields.push_back( (*it1)->GetReferencedFieldName() );
+            }
+            query += L"ON DELETE ";
+            switch( deleteProp )
+            {
+            case 0:
+                query += L"NO ACTION ";
+                delProp = NO_ACTION_DELETE;
+                break;
+            case 1:
+                query += L"RESTRICT ";
+                delProp = RESTRICT_DELETE;
+                break;
+            case 2:
+                query += L"CASCADE ";
+                delProp = CASCADE_DELETE;
+                break;
+            case 3:
+                query += L"SET NULL ";
+                delProp = SET_NULL_DELETE;
+                break;
+            case 4:
+                query += L"SET DEFAULT ";
+                delProp = SET_DEFAULT_DELETE;
+                break;
+            }
+            query += L"ON UPDATE ";
+            switch( updateProp )
+            {
+            case 0:
+                query += L"NO ACTION";
+                updProp = NO_ACTION_UPDATE;
+                break;
+            case 1:
+                query += L"RESTRICT";
+                updProp = RESTRICT_UPDATE;
+                break;
+            case 2:
+                query += L"CASCADE";
+                updProp = CASCADE_UPDATE;
+                break;
+            case 3:
+                query += L"SET NULL";
+                updProp = SET_NULL_UPDATE;
+                break;
+            case 4:
+                query += L"SET DEFAULT";
+                updProp = SET_DEFAULT_UPDATE;
+                break;
+            }
+        }
+        if( !logOnly )
+        {
+            if( !result && !query1.empty() )
+            {
+                if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( L"Applying foreign key failed: " + err );
+                    result = 1;
+                }
+            }
+            if( !result && mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( L"Applying foreign key failed: " + err );
+                result = 1;
+            }
+            if( !result )
+            {
+                if( mysql_query( m_db, "COMMIT" ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( L"Applying foreign key failed: " + err );
+                    result = 1;
+                }
+            }
+            else
+            {
+                if( mysql_query( m_db, "ROLLBACK" ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( L"Applying foreign key failed: " + err );
+                    result = 1;
+                }
+            }
         }
         else
         {
-            std::map<unsigned long, std::vector<FKField *> > fKeys = tableName.GetForeignKeyVector();
-            size_t size = fKeys.size();
-            size++;
-            for( unsigned int i = 0; i < foreignKeyFields.size(); i++ )
-                fKeys[size].push_back( new FKField( i, keyName, L"", tableName.GetTableName(), foreignKeyFields.at( i ), L"", refTableName, refKeyFields.at( i ), origFields, refFields, updProp, delProp ) );
-            newFK = fKeys[size];
+            command += query1 + L"\n\r";
+            command += query + L"\n\r"; 
         }
     }
-    else
-        command = query;
     return result;
 }
 
@@ -2786,3 +2823,8 @@ int MySQLDatabase::GetTableFields(const std::wstring &catalog, const std::wstrin
     return result;
 }
 
+int MySQLDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
