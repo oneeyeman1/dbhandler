@@ -6364,9 +6364,12 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     SQLWCHAR retBuffer[256];
     SQLWCHAR fileName[16];
     SQLWCHAR defValue[50];
+    memset( entry, '\0', 50 );
+    memset( defValue, '\0', 50 );
+    memset( fileName, '\0', 16 );
     uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
-    uc_to_str_cpy( entry, L"UserID" );
+    uc_to_str_cpy( entry, L"UID" );
     uc_to_str_cpy( connectDSN, dsn );
     uc_to_str_cpy( defValue, L"" );
     int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
@@ -7594,7 +7597,7 @@ int ODBCDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::vecto
     int result = 0;
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        SQLINTEGER ind;
+        SQLLEN ind;
         SQLWCHAR tbspaceName[256];
         std::wstring query = L"SELECT name FROM pg_tablespaces;";
         auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
