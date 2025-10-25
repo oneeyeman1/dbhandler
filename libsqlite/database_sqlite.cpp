@@ -1546,101 +1546,12 @@ int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableNa
 {
     sqlite3_stmt *stmt = nullptr;
     int result = 0, res = SQLITE_OK;
+    std::wstring createCommand;
     std::vector<std::wstring> createCommands;
     auto name = tableName->GetTableName();
-    // 1. Turn off foreign keys
-    if( logOnly )
-        command = L"PRAGMA foregn_key = OFF;\n\r";
-    else
-    {
-        res = sqlite3_exec( m_db, "PRAGMA foreign_keys = OFF", nullptr, nullptr, nullptr );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    // 2. Start transaction
-    if( !result )
-    {
-        if( logOnly )
-            command += L"BEGIN\n\r";
-        else
-        {
-            res = sqlite3_exec( m_db, "BEGIN", nullptr, nullptr, nullptr );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }
-    }
-    // 3. Retrieve all commands to create the table
-    if( !result )
-    {
-        if( logOnly )
-            command += L"SELECT type, sql FROM sqlite_schema WHERE tbl_name=" + tableName->GetTableName() + L"\n\r";
-        else
-        {
-            res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_master WHERE tbl_name=?", -1, &stmt, NULL );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }
-    }
-    if( !result )
-    {
-        if( !logOnly )
-        {
-            res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( name ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }
-    }
-    std::wstring createCommand;
-    if( !result )
-    {
-        if( !logOnly )
-        {
-            while( true )
-            {
-                res = sqlite3_step( stmt );
-                if( res == SQLITE_ROW )
-                {
-                    auto temp = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 1 ) ) );
-                    auto temp1 = temp;
-                    std::transform( temp.begin(), temp.end(), temp.begin(), ::towupper );
-                    if( temp.find( L"TABLE" ) != std::wstring::npos && temp.find( L"CREATE" ) != std::wstring::npos )
-                        createCommand = temp1;
-                    createCommands.push_back( temp );
-                }
-                else if( res == SQLITE_DONE )
-                    break;
-                else
-                {
-                    result = 1;
-                    GetErrorMessage( res, errorMsg );
-                }
-            }
-        }
-    }
-    if( !result )
-    {
-        if( !logOnly )
-        {
-            res = sqlite3_finalize( stmt );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }
-    }
+    auto ret = StartAlterTable( command, createCommand, createCommands, logOnly, name, errorMsg );
+    if( ret )
+        result = 1;
     // 4. Remove foreign key constraint from CREATE TABLE command
     std::wstring resultCommand, temp;
     std::wregex pattern( keyName, std::regex_constants::icase );
@@ -2888,3 +2799,160 @@ int SQLiteDatabase::GetTableFields(const std::wstring &UNUSED(catalog), const st
     return result;
 }
 
+int SQLiteDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, res = SQLITE_OK;
+    std::vector<std::wstring> createCommands;
+    std::wstring createCommand;
+    auto ret = StartAlterTable( command, createCommand, createCommands, isLog, tableName, errorMsg );
+    if( ret )
+        result = 1;
+    // 4. Remove foreign key constraint from CREATE TABLE command
+    std::wstring resultCommand, temp;
+    std::wregex pattern( L"primary key", std::regex_constants::icase );
+    std::wsmatch findings;
+    if( std::regex_search( createCommand, findings, pattern ) )
+    {
+        auto start = findings[0].first - createCommand.begin();
+        auto temp1 = createCommand.substr( 0, start );
+        auto end = temp1.find( L"," );
+        if( end == std::wstring::npos )
+            end = temp1.length() - 1;
+        temp1 += createCommand.substr( end );
+        createCommand = temp;
+    }
+    // 5. Create new table with revised format
+    auto pos = createCommand.find( tableName );
+    if( pos != std::wstring::npos )
+        createCommand.replace( pos, tableName.length(), L"new_" + tableName );
+    if( !result )
+    {
+        if( isLog )
+            command += createCommand + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( createCommand.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 6. Populate data in a new table from the old one
+    if( !result )
+    {
+        temp = L"INSERT INTO new_" + tableName + L" SELECT * FROM " + tableName;
+        if( isLog )
+            command += temp + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    return result;
+}
+
+int SQLiteDatabase::StartAlterTable(std::wstring &command, std::wstring &createCommand, std::vector<std::wstring> &createCommands, bool isLog, const std::wstring &tableName, std::vector<std::wstring> &errorMsg)
+{
+    sqlite3_stmt *stmt = nullptr;
+    int result = 0, res = SQLITE_OK;
+    // 1. Turn off foreign keys
+    if( isLog )
+        command = L"PRAGMA foregn_key = OFF;\n\r";
+    else
+    {
+        res = sqlite3_exec( m_db, "PRAGMA foreign_keys = OFF", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    // 2. Start transaction
+    if( !result )
+    {
+        if( isLog )
+            command += L"BEGIN\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, "BEGIN", nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 3. Retrieve all commands to create the table
+    if( !result )
+    {
+        if( isLog )
+            command += L"SELECT type, sql FROM sqlite_schema WHERE tbl_name=" + tableName + L"\n\r";
+        else
+        {
+            res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_master WHERE tbl_name=?", -1, &stmt, NULL );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    if( !result )
+    {
+        if( !isLog )
+        {
+            res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName ).c_str(), -1, SQLITE_TRANSIENT );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    if( !result )
+    {
+        if( !isLog )
+        {
+            while( true )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    auto temp = sqlite_pimpl->m_myconv.from_bytes( reinterpret_cast<const char *>( sqlite3_column_text( stmt, 1 ) ) );
+                    auto temp1 = temp;
+                    std::transform( temp.begin(), temp.end(), temp.begin(), ::towupper );
+                    if( temp.find( L"TABLE" ) != std::wstring::npos && temp.find( L"CREATE" ) != std::wstring::npos )
+                        createCommand = temp1;
+                    createCommands.push_back( temp );
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMsg );
+                }
+            }
+        }
+    }
+    if( !result )
+    {
+        if( !isLog )
+        {
+            res = sqlite3_finalize( stmt );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    return result;
+}

@@ -39,6 +39,7 @@ public:
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)  override;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) override;
+    virtual int EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
 protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
@@ -52,6 +53,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
 //    int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
+    int StartAlterTable(std::wstring &command, std::wstring &createCommand, std::vector<std::wstring> &createCommands, bool isLog, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
     sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3, *m_stmt;

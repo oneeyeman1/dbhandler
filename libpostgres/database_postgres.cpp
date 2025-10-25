@@ -2085,3 +2085,8 @@ int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wst
     return result;
 }
 
+int PostgresDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}

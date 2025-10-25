@@ -6362,29 +6362,26 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     uc_to_str_cpy( connectDSN, dsn );
     SQLWCHAR entry[50];
     SQLWCHAR retBuffer[256];
-    SQLWCHAR fileName[16];
     SQLWCHAR defValue[50];
     memset( entry, '\0', 50 );
     memset( defValue, '\0', 50 );
     memset( fileName, '\0', 16 );
-    uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"UID" );
     uc_to_str_cpy( connectDSN, dsn );
-    uc_to_str_cpy( defValue, L"" );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
     if( ret < 0 )
         connectedUser = L"";
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"UserName" );
-        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
         if( ret < 0 )
             connectedUser = L"";
         else if( ret == 0 )
         {
             uc_to_str_cpy( entry, L"UID" );
-            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
             if( ret < 0 )
                 connectedUser = L"";
             else
@@ -6402,21 +6399,16 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword, std::vector<std::wstring> &errorMsg)
 {
     SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
-    SQLWCHAR *entry = new SQLWCHAR[50];
-    SQLWCHAR *retBuffer = new SQLWCHAR[256];
-    SQLWCHAR fileName[16];
-    SQLWCHAR defValue[50];
-    memset( fileName, '\0', 16 );
-    memset( retBuffer, '\0', 256 );
-    memset( entry, '\0', 52 );
     memset( connectDSN, '\0', dsn.length() + 2 );
+    uc_to_str_cpy( connectDSN, dsn );
+    SQLWCHAR entry[50];
+    SQLWCHAR retBuffer[256];
+    SQLWCHAR defValue[50];
     memset( defValue, '\0', 50 );
-    uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
-    uc_to_str_cpy( connectDSN, dsn );
     uc_to_str_cpy( defValue, L" " );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
     if( ret < 0 )
     {
         GetDSNErrorMessage( errorMsg );
@@ -6425,13 +6417,11 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"PWD" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
         if( ret > 0 )
             str_to_uc_cpy( connectionPassword, retBuffer );
     }
     delete[] connectDSN;
-    delete[] entry;
-    delete[] retBuffer;
 }
 
 bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
@@ -7723,3 +7713,105 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     return result;
 }
 
+int ODBCDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query1, query2, query3, query4, query5;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        // 1. Identify all foreign keys
+        query1 = L"SELECT FK.TABLE_SCHEMA AS ForeignTableSchema, FK.TABLE_NAME AS ForeignTableName, RC.CONSTRAINT_NAME AS ConstraintName FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS AS RC, INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS FK, INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS PK WHERE RC.CONSTRAINT_NAME = FK.CONSTRAINT_NAME AND RC.UNIQUE_CONSTRAINT_NAME = PK.CONSTRAINT_NAME AND PK.TABLE_NAME = ?;";
+        // 2. Drop all foreign keys referenced
+        query2 = L"ALTER TABLE name DROP CONSTRAINT " ;
+        // 3. Find constraint name
+        query3 = L"SELECT name FROM sys.key_constraints WHERE [type] = 'PK' AND parent_object_id = OBJECT_ID('?');";
+        // 4. Drop PK
+        query4 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT ?;";
+        // 5. Re-add PK
+        query5 = L"ALTER TABLE " + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+    }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        // 1. Find constraint name
+        query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY' AND tc.table_name = ?;";
+        // 2. Drop PK
+        query2 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT your_table_name_pkey; CASCADE";
+        // 3. Re-add PK
+        query3 = L"ALTER TABLE " + tableName + L" ADD PRIMARY KEY (column1, column2);";
+    }
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+        // 1.  Identify all foreign keys
+        query1 = L"SELECT TABLE_NAME, CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_NAME = ?;";
+        // 2. Drop all foreign keys referenced
+        query2 = L"ALTER TABLE name DROP CONSTRAINT " ;
+        // 3. Find constraint name
+        query3 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY' AND tc.table_name = ?;";
+        // 4. Drop PK
+        query4 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT your_table_name_pkey; CASCADE";
+        // 5. Re-add PK
+        query5 = L"ALTER TABLE " + tableName + L" ADD PRIMARY KEY (column1, column2);";
+    }
+    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( isLog )
+        {
+            command += L"BEGIN";
+            if( pimpl.m_subtype == L"Microsoft SQL Server" )
+                command += L" TRANSACTION";
+        }
+        else
+        {
+            auto qry1 = new SQLWCHAR[30];
+            memset( qry1, '\0', 30 );
+            uc_to_str_cpy( qry1, L"BEGIN" );
+            if( pimpl.m_subtype == L"Microsoft SQL Server" )
+                uc_to_str_cpy( qry1, L" TRANSACTION" );
+            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
+            delete[] qry1;
+            qry1 = nullptr;
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+    }
+    if( pimpl.m_type != L"PostgreSQL" )
+    {
+        auto qry = new SQLWCHAR[query1.length() + 2];
+        memset( qry, '\0', query1.length() + 2 );
+        uc_to_str_cpy( qry, query1 );
+        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    else
+    {
+        ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    return result;
+}
