@@ -6361,6 +6361,7 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     memset( connectDSN, '\0', dsn.length() + 2 );
     uc_to_str_cpy( connectDSN, dsn );
     SQLWCHAR entry[50];
+    SQLWCHAR fileName[16];
     SQLWCHAR retBuffer[256];
     SQLWCHAR defValue[50];
     memset( entry, '\0', 50 );
@@ -6368,20 +6369,20 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     memset( fileName, '\0', 16 );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"UID" );
-    uc_to_str_cpy( connectDSN, dsn );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
+    uc_to_str_cpy( fileName, L"odbc.ini" );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
         connectedUser = L"";
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"UserName" );
-        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
         if( ret < 0 )
             connectedUser = L"";
         else if( ret == 0 )
         {
             uc_to_str_cpy( entry, L"UID" );
-            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
+            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
             if( ret < 0 )
                 connectedUser = L"";
             else
@@ -6401,14 +6402,18 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
     memset( connectDSN, '\0', dsn.length() + 2 );
     uc_to_str_cpy( connectDSN, dsn );
+    SQLWCHAR fileName[16];
     SQLWCHAR entry[50];
     SQLWCHAR retBuffer[256];
     SQLWCHAR defValue[50];
+    memset( fileName, '\0', 16 );
     memset( defValue, '\0', 50 );
+    memset( entry, '\0', 50 );
+    uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
     uc_to_str_cpy( defValue, L" " );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
+    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
     {
         GetDSNErrorMessage( errorMsg );
@@ -6417,7 +6422,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"PWD" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, L"odbc.ini" );
+        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
         if( ret > 0 )
             str_to_uc_cpy( connectionPassword, retBuffer );
     }
@@ -7797,7 +7802,12 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vecto
     }
     if( !result )
     {
-        ret = SQLExecDirect( m_hstmt, L"COMMIT", SQL_NTS );
+        auto qry = new SQLWCHAR[10];
+        memset( qry, '\0', 10 );
+        uc_to_str_cpy( qry, L"COMMIT" );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        delete[] qry;
+        qry = nullptr;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -7806,7 +7816,12 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vecto
     }
     else
     {
-        ret = SQLExecDirect( m_hstmt, L"ROLLBACK", SQL_NTS );
+        auto qry = new SQLWCHAR[10];
+        memset( qry, '\0', 10 );
+        uc_to_str_cpy( qry, L"ROLLBACK" );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        delete[] qry;
+        qry = nullptr;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
