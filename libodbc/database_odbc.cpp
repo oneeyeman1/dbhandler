@@ -775,7 +775,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                     else
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    if( !result )
+                    if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
                     {
                         auto qry1 = new SQLWCHAR[200];
                         memset( qry1, '\0', 200 );
@@ -1939,7 +1939,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     SQLINTEGER pcbValue;
     if( !m_isConnected )
     {
-        if( !result )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
             auto qry1 = new SQLWCHAR[200];
             memset( qry1, '\0', 200 );
