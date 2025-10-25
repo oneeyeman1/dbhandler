@@ -7315,13 +7315,7 @@ int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
     short int validType;
     int control;
     std::wstring validName, validRule, validMessage;
-    if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT * FROM abcatvld;";
-    if( pimpl.m_subtype == L"PostgreSQL" )
-        if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
-            query = L"SELECT * FROM abcatvld FOR UPDATE;";
-        else
-            query = L"SELECT * FROM abcatvld FOR UPDATE;";
+    query = L"SELECT * FROM abcatvld;";
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -7334,6 +7328,8 @@ int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
         memset( qry, '\0', query.length() + 2 );
         uc_to_str_cpy( qry, query );
         ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        delete[] qry;
+        qry = nullptr;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -7417,8 +7413,6 @@ int ODBCDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
             m_hstmt = 0;
         }
     }
-    delete[] qry;
-    qry = nullptr;
     return result;
 }
 
