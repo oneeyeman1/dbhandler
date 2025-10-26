@@ -5430,7 +5430,8 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         name = schemaName;
                     else
                         name = L"\"" + schemaName + L"\'";
-                    query += name + L".";
+                    if( catalog != schemaName )
+                        query += name + L".";
                     pos = tableName.rfind( '.' );
                     if( pos != std::wstring::npos )
                         name = tableName.substr( pos + 1 );
@@ -5474,8 +5475,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                     autoinc_fields.clear();
                                     break;
                                 }
-                                if( result )
-                                    break;
                                 ret = SQLColAttribute( m_hstmt, (SQLUSMALLINT) i + 1, SQL_DESC_AUTO_UNIQUE_VALUE, NULL, 0, NULL, &autoincrement );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
