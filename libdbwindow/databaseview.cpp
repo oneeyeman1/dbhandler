@@ -130,7 +130,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST 
 const wxEventTypeTag<wxCommandEvent> wxEVT_CHANGE_QUERY( wxEVT_USER_FIRST + 3 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 );
 
-typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool);
+typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
 typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &);
 typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
@@ -1285,6 +1285,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     int res = 0;
     wxString libName;
     wxDynamicLibrary lib;
+    std::vector<std::wstring> errors;
 #ifdef __WXMSW__
     libName = m_libPath + "dialogs";
 #elif __WXMAC__
@@ -1296,7 +1297,13 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     if( lib.IsLoaded() && !quickSelect )
     {
         TABLESELECTION func2 = (TABLESELECTION) lib.GetSymbol( "SelectTablesForView" );
-        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type, isNewView );
+        res = func2( m_frame, GetDocument()->GetDatabase(), tables, GetDocument()->GetTableNames(), isTableView, m_type, isNewView, errors );
+    }
+    if( errors.size() > 0 )
+    {
+        for( auto err: errors )
+            wxMessageBox( err, _( "Error" ), wxICON_EXCLAMATION | wxID_OK );
+        return wxCANCEL;
     }
     if( m_type == QueryView || m_type == NewViewView )
     {
