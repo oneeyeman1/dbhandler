@@ -1302,7 +1302,7 @@ int DrawingView::SelectTable(bool isTableView, std::map<wxString, std::vector<Ta
     if( errors.size() > 0 )
     {
         for( auto err: errors )
-            wxMessageBox( err, _( "Error" ), wxICON_EXCLAMATION | wxID_OK );
+            wxMessageBox( err, _( "Error" ), wxICON_EXCLAMATION | wxOK );
         return wxCANCEL;
     }
     if( m_type == QueryView || m_type == NewViewView )
