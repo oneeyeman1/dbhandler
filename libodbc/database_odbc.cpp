@@ -570,7 +570,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 std::wstring tempmySQL;
                 str_to_uc_cpy( tempmySQL, driver );
                 if( tempmySQL.find( L"myodbc" ) != std::wstring::npos )
-                    uc_to_str_cpy( connectStrIn, L";NO_SCHEMA=0" );
+                    uc_to_str_cpy( connectStrIn, L";NO_SCHEMA=0;NO_CATALOG=0" );
                 if( user && password )
                 {
                     uc_to_str_cpy( connectStrIn, L";UID=" );
@@ -2947,7 +2947,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 5, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
+        ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &dataFontSize, 0, &cbDataFontSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2956,7 +2956,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 6, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
+        ret = SQLBindCol( m_hstmt, 5, SQL_C_SSHORT, &dataFontWeight, 0, &cbDataFontWeight );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2965,7 +2965,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 7, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
+        ret = SQLBindCol( m_hstmt, 6, SQL_C_CHAR, &dataFontItalic, 2, &cbDataFontItalic );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2974,7 +2974,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 8, SQL_C_SSHORT, &dataFontUnderline, 2, &cbDataFontUnderline );
+        ret = SQLBindCol( m_hstmt, 7, SQL_C_SSHORT, &dataFontUnderline, 2, &cbDataFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2983,7 +2983,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 9, SQL_C_SSHORT, &dataFontStriken, 2, &cbDataFontStriken );
+        ret = SQLBindCol( m_hstmt, 8, SQL_C_SSHORT, &dataFontStriken, 2, &cbDataFontStriken );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2992,7 +2992,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 10, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
+        ret = SQLBindCol( m_hstmt, 9, SQL_C_SSHORT, &dataFontCharacterSet, 0, &cbDataFontCharacterSet );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3001,7 +3001,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 11, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
+        ret = SQLBindCol( m_hstmt, 10, SQL_C_SSHORT, &dataFontPixelSize, 0, &cbDataFontPixelSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3010,7 +3010,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 12, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
+        ret = SQLBindCol( m_hstmt, 11, SQL_C_WCHAR, &dataFontName, 44, &cbDataFontName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3019,7 +3019,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 13, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
+        ret = SQLBindCol( m_hstmt, 12, SQL_C_SSHORT, &headingFontSize, 0, &cbHeadingFontSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3028,7 +3028,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 14, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
+        ret = SQLBindCol( m_hstmt, 13, SQL_C_SSHORT, &headingFontWeight, 0, &cbHeadingFontWeight );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3037,7 +3037,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 15, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
+        ret = SQLBindCol( m_hstmt, 14, SQL_C_CHAR, &headingFontItalic, 2, &cbHeadingFontItalic );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3046,7 +3046,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 16, SQL_C_SSHORT, &headingFontUnderline, 2, &cbHeadingFontUnderline );
+        ret = SQLBindCol( m_hstmt, 15, SQL_C_SSHORT, &headingFontUnderline, 2, &cbHeadingFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3055,7 +3055,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 17, SQL_C_SSHORT, &headingFontStriken, 2, &cbHeadingFontStriken );
+        ret = SQLBindCol( m_hstmt, 16, SQL_C_SSHORT, &headingFontStriken, 2, &cbHeadingFontStriken );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3064,7 +3064,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 18, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
+        ret = SQLBindCol( m_hstmt, 17, SQL_C_SSHORT, &headingFontCharacterSet, 0, &cbHeadingFontCharacterSet );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3073,7 +3073,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 19, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
+        ret = SQLBindCol( m_hstmt, 18, SQL_C_SSHORT, &headingFontPixelSize, 0, &cbHeadingFontPixelSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3082,7 +3082,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 20, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
+        ret = SQLBindCol( m_hstmt, 19, SQL_C_WCHAR, &headingFontName, 44, &cbHeadingFontName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3091,7 +3091,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 21, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
+        ret = SQLBindCol( m_hstmt, 20, SQL_C_SSHORT, &labelFontSize, 0, &cbLabelFontSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3100,7 +3100,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 22, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
+        ret = SQLBindCol( m_hstmt, 21, SQL_C_SSHORT, &labelFontWeight, 0, &cbLabelFontWeight );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3109,7 +3109,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 23, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
+        ret = SQLBindCol( m_hstmt, 22, SQL_C_CHAR, &labelFontItalic, 3, &cbLabelFontItalic );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3118,7 +3118,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 24, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
+        ret = SQLBindCol( m_hstmt, 23, SQL_C_SSHORT, &labelFontUnderline, 3, &cbLabelFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3127,7 +3127,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 25, SQL_C_SSHORT, &labelFontStriken, 3, &cbLabelFontStriken );
+        ret = SQLBindCol( m_hstmt, 24, SQL_C_SSHORT, &labelFontStriken, 3, &cbLabelFontStriken );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3136,7 +3136,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 26, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
+        ret = SQLBindCol( m_hstmt, 25, SQL_C_SSHORT, &labelFontCharacterSet, 0, &cbLabelFontCharacterSet );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3145,7 +3145,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 27, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
+        ret = SQLBindCol( m_hstmt, 26, SQL_C_SSHORT, &labelFontPixelSize, 0, &cbLabelFontPixelSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3154,7 +3154,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 28, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
+        ret = SQLBindCol( m_hstmt, 27, SQL_C_WCHAR, &labelFontName, 44, &cbLabelFontName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3163,7 +3163,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 29, SQL_C_WCHAR, &comments, 225, &cbComment );
+        ret = SQLBindCol( m_hstmt, 28, SQL_C_WCHAR, &comments, 225, &cbComment );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5402,7 +5402,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     if( pimpl.m_subtype == L"PostgreSQL" )
         query4 = L"SELECT indexname FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
     if( pimpl.m_subtype == L"MySQL" )
-        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ? AND table_catalog = ?;";
+        query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ?;";
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM " + catalog + L".sys.indexes i, " + catalog + L".sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
@@ -5665,10 +5665,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        if( pimpl.m_subtype != L"Oracle" )
-                            ret = SQLForeignKeys( m_hstmt, NULL, 0, NULL, 0, NULL, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                        if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Oracle" )
+                            ret = SQLForeignKeys( m_hstmt, nullptr, 0, nullptr, 0, nullptr, 0, nullptr, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                         else
-                            ret = SQLForeignKeys( m_hstmt, NULL, 0, NULL, 0, NULL, 0, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                            ret = SQLForeignKeys( m_hstmt, nullptr, 0, nullptr, 0, nullptr, 0, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -5810,7 +5810,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         else
                         {
-                            result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                            result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                         }
                         if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                         {
@@ -5847,10 +5847,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        if( pimpl.m_subtype != L"Oracle" )
-                            ret = SQLPrimaryKeys( m_hstmt, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
-                        else
+                        if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"OPracle" )
                             ret = SQLPrimaryKeys( m_hstmt, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
+                        else
+                            ret = SQLPrimaryKeys( m_hstmt, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -5878,7 +5878,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                             }
                             else
                             {
-                                result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                             }
                             if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                             {
@@ -5914,10 +5914,10 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 if( !result )
                 {
                     SQLSMALLINT numColumns;
-                    if( pimpl.m_subtype != L"Oracle" )
-                        ret = SQLColumns( m_hstmt, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
+                    if( pimpl.m_subtype == L"Oracle" || pimpl.m_subtype == L"MySQL" )
+                        ret = SQLColumns( m_hstmt, nullptr, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0 );
                     else
-                        ret = SQLColumns( m_hstmt, NULL, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0 );
+                        ret = SQLColumns( m_hstmt, catalog_name, SQL_NTS, schema_name, SQL_NTS, table_name, SQL_NTS, NULL, 0);
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errors, STMT_ERROR );
@@ -6138,7 +6138,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 else
                 {
-                    result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                    result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                 }
                 if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
                 {
