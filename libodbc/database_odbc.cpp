@@ -368,6 +368,19 @@ int ODBCDatabase::GetSQLStringSize(SQLWCHAR *str)
 int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+/*    SQLWCHAR entry[50];
+    memset( entry, '\0', 50 );
+    SQLWCHAR defValue[50];
+    memset( defValue, '\0', 50 );
+    SQLWCHAR retBuffer[256];
+    memset( retBuffer, '\0', 256 );
+    SQLWCHAR fileName[16];
+    memset( fileName, '\0', 16 );
+    uc_to_str_cpy( entry, L"Driver" );
+    uc_to_str_cpy( defValue, L"" );
+    uc_to_str_cpy( retBuffer, L"" );
+    uc_to_str_cpy( fileName, L"odbcinst.ini" );
+    int ret = SQLGetPrivateProfileString( dsn, entry, defValue, retBuffer, 256, fileName );*/
     bool found = false;
     RETCODE ret1;
     SQLUSMALLINT direct = SQL_FETCH_FIRST;
@@ -554,6 +567,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
                 delete[] tempPostgres;
                 tempPostgres = nullptr;
+                std::wstring tempmySQL;
+                str_to_uc_cpy( tempmySQL, driver );
+                if( tempmySQL.find( L"myodbc" ) != std::wstring::npos )
+                    uc_to_str_cpy( connectStrIn, L";NO_SCHEMA=0" );
                 if( user && password )
                 {
                     uc_to_str_cpy( connectStrIn, L";UID=" );
