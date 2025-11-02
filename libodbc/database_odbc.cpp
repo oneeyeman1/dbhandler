@@ -413,7 +413,6 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    SQLWCHAR *query = nullptr;
     std::wstring qry = L"CREATE DATABASE " + name + L" ";
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         qry = L"CREATE DATABASE " + name + L"";
@@ -425,12 +424,10 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
     }
     if( !result )
     {
-        query = new SQLWCHAR[name.length() + 2];
-        memset( query, '\0', name.length() + 2 );
-        uc_to_str_cpy( query, name );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete[] query;
-        query = nullptr;
+        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[name.length() + 2] );
+        memset( query.get(), '\0', name.length() + 2 );
+        uc_to_str_cpy( query.get(), name );
+        ret = SQLExecDirect( m_hstmt, query.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -447,8 +444,6 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstr
         }
         m_hstmt = 0;
     }
-    delete[] query;
-    query = nullptr;
     return result;
 }
 
@@ -456,7 +451,6 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
 {
     int result = 0;
     std::wstring qry = L"DROP DATABASE " + name;
-    SQLWCHAR *query = nullptr;
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -465,12 +459,10 @@ int ODBCDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstrin
     }
     if( !result )
     {
-        query = new SQLWCHAR[qry.length() + 2];
-        memset( query, '\0', qry.length() + 2 );
-        uc_to_str_cpy( query, qry );
-        ret = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        delete[] query;
-        query = nullptr;
+        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry.length() + 2] );
+        memset( query.get(), '\0', qry.length() + 2 );
+        uc_to_str_cpy( query.get(), qry );
+        ret = SQLExecDirect( m_hstmt, query.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -643,9 +635,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     else
                     {
                         std::wstring dbNameQuery = L"SELECT sys_context( 'userenv', 'current_schema' ) FROM dual";
-                        SQLWCHAR *qry = new SQLWCHAR[dbNameQuery.length() + 2];
-                        memset( qry, '\0', dbNameQuery.length() + 2 );
-                        uc_to_str_cpy( qry, dbNameQuery );
+                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[dbNameQuery.length() + 2] );
+                        memset( qry.get(), '\0', dbNameQuery.length() + 2 );
+                        uc_to_str_cpy( qry.get(), dbNameQuery );
                         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
@@ -654,9 +646,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         }
                         else
                         {
-                            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                            delete[] qry;
-                            qry = nullptr;
+                            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, 1, m_hstmt );
@@ -710,22 +700,18 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     else
                     {
                         std::wstring userQuery = L"SELECT user FROM dual";
-                        SQLWCHAR *qry = new SQLWCHAR[userQuery.length() + 2];
-                        memset( qry, '\0', userQuery.length() + 2 );
-                        uc_to_str_cpy( qry, userQuery );
+                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[userQuery.length() + 2] );
+                        memset( qry.get(), '\0', userQuery.length() + 2 );
+                        uc_to_str_cpy( qry.get(), userQuery );
                         ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, CONN_ERROR );
-                            delete[] qry;
-                            qry = nullptr;
                             result = 1;
                         }
                         else
                         {
-                            ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                            delete[] qry;
-                            qry = nullptr;
+                            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -794,12 +780,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                     if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
                     {
-                        auto qry1 = new SQLWCHAR[200];
-                        memset( qry1, '\0', 200 );
-                        uc_to_str_cpy( qry1, L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION ON" );
-                        ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-                        delete[] qry1;
-                        qry1 = nullptr;
+                        std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[200] );
+                        memset( qry1.get(), '\0', 200 );
+                        uc_to_str_cpy( qry1.get(), L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION ON" );
+                        ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -1736,15 +1720,12 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     {
         if( pimpl.m_subtype != L"Oracle" || ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
         {
-            SQLWCHAR *qry = nullptr;
             for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                qry = new SQLWCHAR[(*it).length() + 2];
-                memset( qry, '\0', (*it).length() + 2 );
-                uc_to_str_cpy( qry, (*it) );
-                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-                delete[] qry;
-                qry = nullptr;
+                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                memset( qry.get(), '\0', (*it).length() + 2 );
+                uc_to_str_cpy( qry.get(), (*it) );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -1757,13 +1738,12 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         else
         {
             int i = 1;
-            SQLWCHAR *qry = nullptr;
             for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
             {
-                qry = new SQLWCHAR[(*it).length() + 2];
-                memset( qry, '\0', (*it).length() + 2 );
-                uc_to_str_cpy( qry, (*it) );
-                ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                memset( qry.get(), '\0', (*it).length() + 2 );
+                uc_to_str_cpy( qry.get(), (*it) );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                 if( i % 2 != 0 )
                 {
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -1810,8 +1790,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                         break;
                     }
             }
-            delete[] qry;
-            qry = nullptr;
         }
         if( !result )
         {
@@ -2286,14 +2264,12 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            auto qry1 = new SQLWCHAR[30];
-            memset( qry1, '\0', 30 );
-            uc_to_str_cpy( qry1, L"BEGIN" );
+            std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+            memset( qry1.get(), '\0', 30 );
+            uc_to_str_cpy( qry1.get(), L"BEGIN" );
             if( pimpl.m_subtype == L"Microsoft SQL Server" )
-                uc_to_str_cpy( qry1, L" TRANSACTION" );
-            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-            delete[] qry1;
-            qry1 = nullptr;
+                uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
+            ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
