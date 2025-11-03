@@ -2162,10 +2162,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         }
     }
-    SQLWCHAR *qry = new SQLWCHAR[qry2.length() + 2];
-    memset( qry, '\0', qry2.length() + 2 );
-    uc_to_str_cpy( qry, qry2 );
-    SQLWCHAR *catalogName = nullptr, *schemaName = nullptr, *tableName = nullptr;
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[qry2.length() + 2] );
+    memset( qry.get(), '\0', qry2.length() + 2 );
+    uc_to_str_cpy( qry.get(), qry2 );
+    SQLWCHAR *catalogName = nullptr;
     SQLTablesDataBinding *catalog = (SQLTablesDataBinding *) malloc( 5 * sizeof( SQLTablesDataBinding ) );
     if( !result )
     {
@@ -2208,6 +2208,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 catalogDB = nullptr;
                 for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                 {
+                    SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
                     if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
                         catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
                     if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
@@ -2280,12 +2281,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
             {
-                auto qry1 = new SQLWCHAR[30];
-                memset( qry1, '\0', 30 );
-                uc_to_str_cpy( qry1, L"SET NOCOUNT ON" );
-                ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-                delete[] qry1;
-                qry1 = nullptr;
+                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+                memset( qry1.get(), '\0', 30 );
+                uc_to_str_cpy( qry1.get(), L"SET NOCOUNT ON" );
+                ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2293,12 +2292,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
-                    qry1 = new SQLWCHAR[50];
-                    memset( qry1, '\0', 50 );
-                    uc_to_str_cpy( qry1, L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
-                    ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-                    delete[] qry1;
-                    qry1 = nullptr;
+                    std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[50] );
+                    memset( qry1.get(), '\0', 50 );
+                    uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
+                    ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2309,7 +2306,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+            ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2330,17 +2327,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( auto it = pimpl.m_tableDefinitions[cat].begin(); it < pimpl.m_tableDefinitions[cat].end(); ++it )
             {
                 cbParam[0] = cbParam[2] = cbParam[3] = cbParam[4] = cbParam[5] = SQL_NTS;
-                schemaName = new SQLWCHAR[(*it).schemaName.length() + 2];
-                tableName = new SQLWCHAR[(*it).tableName.length() + 2];
-                memset( schemaName, '\0', (*it).schemaName.length() + 2 );
-                memset( tableName, '\0', (*it).tableName.length() + 2 );
-                uc_to_str_cpy( schemaName, (*it).schemaName );
-                uc_to_str_cpy( tableName, (*it).tableName );
+                std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[(*it).schemaName.length() + 2] );
+                std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[(*it).tableName.length() + 2] );
+                memset( schemaName.get(), '\0', (*it).schemaName.length() + 2 );
+                memset( tableName.get(), '\0', (*it).tableName.length() + 2 );
+                uc_to_str_cpy( schemaName.get(), (*it).schemaName );
+                uc_to_str_cpy( tableName.get(), (*it).tableName );
                 if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                 {
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[0] );
+                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[0] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2350,7 +2347,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[2] );
+                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[2] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2360,7 +2357,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName, 0, &cbParam[3] );
+                        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[3] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2370,7 +2367,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName, 0, &cbParam[4] );
+                        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[4] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2380,7 +2377,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[4] );
+                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[4] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2390,7 +2387,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName, 0, &cbParam[5] );
+                        ret = SQLBindParameter( m_hstmt, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[5] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2403,7 +2400,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 {
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[1] );
+                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[1] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2413,7 +2410,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName, 0, &cbParam[2] );
+                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[2] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2423,7 +2420,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[3] );
+                        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[3] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2433,7 +2430,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName, 0, &cbParam[3] );
+                        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[3] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2443,7 +2440,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName, 0, &cbParam[2] );
+                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[2] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2462,10 +2459,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         break;
                     }
                 }
-                delete[] schemaName;
-                delete[] tableName;
-                schemaName = nullptr;
-                tableName = nullptr;
             }
         }
     }
@@ -2529,8 +2522,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
         m_hstmt = 0;
-    delete[] qry;
-    qry = nullptr;
     if( !result )
         m_numOfTables = count;
     return result;
