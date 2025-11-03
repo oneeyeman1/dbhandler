@@ -72,7 +72,7 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
         else
         {
             m_fields->SetItemState( item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
-            newKey.push_back( label );
+            newKey.push_back( label.ToStdWstring() );
             m_foreignKeyColumnsFields->AddField( label );
         }
     }
