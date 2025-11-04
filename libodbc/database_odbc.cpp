@@ -2326,18 +2326,22 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             for( auto it = pimpl.m_tableDefinitions[cat].begin(); it < pimpl.m_tableDefinitions[cat].end(); ++it )
             {
+                auto fullName = (*it).schemaName + L"." + (*it).tableName;
                 cbParam[0] = cbParam[2] = cbParam[3] = cbParam[4] = cbParam[5] = SQL_NTS;
                 std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[(*it).schemaName.length() + 2] );
                 std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[(*it).tableName.length() + 2] );
+                std::unique_ptr<SQLWCHAR[]> fullTableName( new SQLWCHAR[fullName.length() + 2] );
+                memset( fullTableName.get(), '\0', fullName.length() + 2 );
                 memset( schemaName.get(), '\0', (*it).schemaName.length() + 2 );
                 memset( tableName.get(), '\0', (*it).tableName.length() + 2 );
                 uc_to_str_cpy( schemaName.get(), (*it).schemaName );
                 uc_to_str_cpy( tableName.get(), (*it).tableName );
+                uc_to_str_cpy( fullTableName.get(), fullName );
                 if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                 {
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[0] );
+                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fullName.length() + 2, 0, fullTableName.get(), 0, &cbParam[0] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2377,7 +2381,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[4] );
+                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fullName.length() + 2, 0, fullTableName.get(), 0, &cbParam[4] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2400,7 +2404,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 {
                     if( !result )
                     {
-                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[1] );
+                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fullName.length() + 2, 0, fullTableName.get(), 0, &cbParam[1] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3264,11 +3268,11 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     if( !result )
     {
-        std::wstring tableName = const_cast<DatabaseTable *>( table )->GetTableName();
-        std::wstring schemaName = const_cast<DatabaseTable *>( table )->GetSchemaName();
-        std::wstring comment = const_cast<DatabaseTable *>( table )->GetTableProperties().m_comment;
-        std::wstring tableOwner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-        unsigned long tableId = const_cast<DatabaseTable *>( table )->GetTableId();
+        std::wstring tableName = table->GetTableName();
+        std::wstring schemaName = table->GetSchemaName();
+        std::wstring comment = table->GetTableProperties().m_comment;
+        std::wstring tableOwner = table->GetTableOwner();
+        unsigned long tableId = table->GetTableId();
         exist = IsTablePropertiesExist( table, errorMsg );
         if( errorMsg.size() != 0 )
             result = 1;
@@ -3594,16 +3598,18 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 #endif // __DBGTK__
     }
     std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
-    std::wstring tname = const_cast<DatabaseTable *>( table )->GetSchemaName() + L".";
-    tname += const_cast<DatabaseTable *>( table )->GetTableName();
-    std::wstring ownerName = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2], *table_name = new SQLWCHAR[tname.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2];
-    memset( owner_name, '\0', ownerName.length() + 2 );
-    memset( table_name, '\0', tname.length() + 2 );
-    uc_to_str_cpy( owner_name, ownerName );
-    uc_to_str_cpy( table_name, tname );
-    memset( qry, '\0', query.size() + 2 );
-    uc_to_str_cpy( qry, query );
+    std::wstring tname = table->GetSchemaName() + L".";
+    tname += table->GetTableName();
+    std::wstring ownerName = table->GetTableOwner();
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> table_name( new SQLWCHAR[tname.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> owner_name( new SQLWCHAR[ownerName.length() + 2] );
+    memset( owner_name.get(), '\0', ownerName.length() + 2 );
+    memset( table_name.get(), '\0', tname.length() + 2 );
+    uc_to_str_cpy( owner_name.get(), ownerName );
+    uc_to_str_cpy( table_name.get(), tname );
+    memset( qry.get(), '\0', query.size() + 2 );
+    uc_to_str_cpy( qry.get(), query );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3611,14 +3617,14 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
     }
     else
     {
-        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name, 0, &cbTableName );
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tname.length(), 0, table_name.get(), 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
         }
         else
         {
-            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbSchemaName );
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name.get(), 0, &cbSchemaName );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3632,7 +3638,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
                 }
                 else
                 {
-                    ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+                    ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3665,25 +3671,12 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
             }
         }
     }
-    if( result == 1 )
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-    }
-    else
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-    }
+    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, STMT_ERROR );
         result = 1;
     }
-    delete[] qry;
-    qry = nullptr;
-    delete[] table_name;
-    table_name = nullptr;
-    delete[] owner_name;
-    owner_name = nullptr;
     return result;
 }
 
