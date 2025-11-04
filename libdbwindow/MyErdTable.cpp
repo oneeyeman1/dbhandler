@@ -546,7 +546,30 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
 {
     std::vector<std::wstring> errorMsg;
     TableProperties prop = any.As<TableProperties>();
-    auto result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+    auto result = 0;
+    auto table = GetDatabaseTable();
+    if( prop.m_comment != m_comment->GetText() || 
+        prop.m_dataFontName != table->GetTableProperties().m_dataFontName || 
+        prop.m_dataFontItalic != table->GetTableProperties().m_dataFontItalic ||
+        prop.m_dataFontWeight != table->GetTableProperties().m_dataFontWeight ||
+        prop.m_dataFontStrikethrough != table->GetTableProperties().m_dataFontStrikethrough ||
+        prop.m_dataFontUnderline != table->GetTableProperties().m_dataFontUnderline ||
+        prop.m_dataFontSize != table->GetTableProperties().m_dataFontSize ||
+        prop.m_headingFontName != table->GetTableProperties().m_headingFontName ||
+        prop.m_headingFontItalic != table->GetTableProperties().m_headingFontItalic ||
+        prop.m_headingFontWeight != table->GetTableProperties().m_headingFontWeight ||
+        prop.m_headingFontStrikethrough != table->GetTableProperties().m_headingFontStrikethrough ||
+        prop.m_headingFontUnderline != table->GetTableProperties().m_headingFontUnderline ||
+        prop.m_headingFontSize != table->GetTableProperties().m_headingFontSize ||
+        prop.m_labelFontName != table->GetTableProperties().m_labelFontName ||
+        prop.m_labelFontItalic != table->GetTableProperties().m_labelFontItalic ||
+        prop.m_labelFontWeight != table->GetTableProperties().m_labelFontWeight ||
+        prop.m_labelFontStrikethrough != table->GetTableProperties().m_labelFontStrikethrough ||
+        prop.m_labelFontUnderline != table->GetTableProperties().m_labelFontUnderline ||
+        prop.m_labelFontSize != table->GetTableProperties().m_labelFontSize )
+        result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+    if( prop.primaryKey != table->GetPKFelds() )
+        result = m_db->EditPrimaryKey( GetTableName().ToStdWstring(), prop.primaryKey, logOnly, command, errorMsg );
     if( !result )
     {
         if( !logOnly )
