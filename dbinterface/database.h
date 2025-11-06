@@ -444,7 +444,7 @@ public:
     void SetTableId(unsigned long id) { m_objectId = id; }
     const std::wstring &GetTableOwner() const { return m_owner; }
     void SetTableOwner(const std::wstring &owner) { m_owner = owner; }
-    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; }
+    void SetIndexNames(const std::vector<std::wstring> &indexes) { m_indexes = indexes; m_numIndex = m_indexes.size(); }
     const std::vector<std::wstring> &GetIndexNames() const { return m_indexes; }
     void SetNumberOfFields(size_t count) { m_numFields = count; }
     size_t GetNumberOfFields() const { return m_numFields; }
