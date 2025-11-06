@@ -260,8 +260,8 @@ public:
         return *this;
     }
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
-    int m_dataFontSize, m_dataFontEncoding, m_headingFontSize, m_headingFontEncoding, m_labelFontSize, m_labelFontEncoding;
-    int m_dataFontPixelSize, m_headingFontPixelSize, m_labelFontPixelSize, m_osId;
+    int m_dataFontSize, m_dataFontEncoding = 0, m_headingFontSize, m_headingFontEncoding = 0, m_labelFontSize, m_labelFontEncoding = 0;
+    int m_dataFontPixelSize = 0, m_headingFontPixelSize = 0, m_labelFontPixelSize = 0, m_osId;
     int m_dataFontWeight, m_headingFontWeight, m_labelFontWeight, m_dataFontCharacterSet, m_labelFontCharacterSer, m_headingFontCharacterSet;
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
@@ -489,7 +489,7 @@ private:
     std::vector<TableField *> table_fields;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     size_t m_numFields;
-    int m_numIndex;
+    int m_numIndex = 0;
     unsigned long m_objectId;
     std::vector<std::wstring> m_indexes;
     TableProperties m_props;
