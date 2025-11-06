@@ -2116,7 +2116,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         if( osid == WINDOWS )
-            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, \'N\', 0, 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', 0, 0, 1, 0, \'MS Sans Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
         else if( osid == GTK )
             qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, \'N\', 0, 0, 34, 0, \'Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'Serif\', 8, 400, \'N\', 0, 0, 34, 0, \'Serif\', \'\' WHERE NOT EXISTS(SELECT * FROM dbo.abcattbl WHERE abt_tnam=? AND abt_ownr=?);";
         else if( osid == QT )
@@ -2129,7 +2129,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 )
         {
             if( osid == WINDOWS )
-                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' );";
             else if( osid == GTK )
                 qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' );";
             else if( osid == QT )
@@ -2140,7 +2140,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else
         {
             if( osid == WINDOWS )
-                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+                qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' );";
             else if( osid == GTK )
                 qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' );";
             else if( osid == QT )
@@ -2154,7 +2154,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
         {
             if( osid == WINDOWS )
-                qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+                qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         }
         else
         {
@@ -2861,7 +2861,6 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, id;
-    SQLWCHAR *qry = nullptr;
     unsigned short dataFontSize = 0, dataFontWeight = 0, dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontUnderline = 0, labelFontStriken = 0;
     unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
     SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
@@ -2897,9 +2896,9 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     query += L"\' AND abt_os = ";
     query += std::to_wstring( id );
     query += L";";
-    qry = new SQLWCHAR[query.length() + 2];
-    memset( qry, '\0', query.size() + 2 );
-    uc_to_str_cpy( qry, query );
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.size() + 2 );
+    uc_to_str_cpy( qry.get(), query );
     TableProperties prop;
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2909,7 +2908,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3213,8 +3212,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         m_hstmt = 0;
     }
-    delete[] qry;
-    qry = nullptr;
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;
 }
@@ -3237,9 +3234,9 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     std::wostringstream istr;
     std::wstring query = L"BEGIN TRANSACTION";
-    SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-    memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( qry, query );
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3248,9 +3245,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
     }
     if( !result )
     {
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        delete[] qry;
-        qry = nullptr;
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3280,11 +3275,11 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
         {
             if( exist )
             {
-                command = L"UPDATE \"abcattbl\" SET \n\"abt_tnam\" = \'";
+                command = L"UPDATE \"abcattbl\" SET \"abt_tnam\" = \'";
                 command += schemaName;
                 command += L".";
                 command += tableName;
-                command += L"\',\n \"abt_tid\" = ";
+                command += L"\', \"abt_tid\" = ";
                 istr << tableId;
                 command += istr.str();
                 istr.clear();
@@ -3313,11 +3308,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fchr\" = ";
-                istr << properties.m_dataFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += L",\n \"abd_fchr\" = 1";
                 command += L",\n \"abd_fptc\" = ";
                 istr << properties.m_dataFontPixelSize;
                 command += istr.str();
@@ -3347,11 +3338,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_fchr\" = ";
-                istr << properties.m_headingFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += L",\n \"abh_fchr\" = 1";
                 command += L",\n \"abh_fptc\" = ";
                 istr << properties.m_headingFontPixelSize;
                 command += istr.str();
@@ -3381,11 +3368,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 comment += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fchr\" = ";
-                istr << properties.m_labelFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += L",\n \"abl_fchr\" = 1";
                 command += L",\n \"abl_fptc\" = ";
                 istr << properties.m_labelFontPixelSize;
                 command += istr.str();
@@ -3399,8 +3382,8 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 command += schemaName;
                 command += L".";
                 command += tableName;
-                command += L"\' AND \"abt_tid\" = ";
-                istr << tableId;
+                command += L"\' AND \"abt_os\" = ";
+                istr << id;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
@@ -3445,7 +3428,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 istr.str( L"" );
                 command += L", ";
                 istr << properties.m_dataFontEncoding;
-                command += istr.str();
+                command += L"1";
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
@@ -3478,10 +3461,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_headingFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += L"1";
                 command += L", ";
                 istr << properties.m_headingFontPixelSize;
                 command += istr.str();
@@ -3512,10 +3492,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 istr.clear();
                 istr.str( L"" );
                 command += L", ";
-                istr << properties.m_labelFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                istr << L"1";
                 command += L", ";
                 istr << properties.m_labelFontPixelSize;
                 command += istr.str();
@@ -3529,9 +3506,9 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
             }
             if( !isLog )
             {
-                qry = new SQLWCHAR[command.length() + 2];
-                memset( qry, '\0', command.length() + 2 );
-                uc_to_str_cpy( qry, command );
+                qry.reset( new SQLWCHAR[command.length() + 2] );
+                memset( qry.get(), '\0', command.length() + 2 );
+                uc_to_str_cpy( qry.get(), command );
                 ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -3540,7 +3517,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 }
                 if( !result )
                 {
-                    ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3553,7 +3530,7 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
                 }
                 else
                 {
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
@@ -3575,8 +3552,6 @@ int ODBCDatabase::SetTableProperties(const DatabaseTable *table, const TableProp
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
-    delete[] qry;
-    qry = nullptr;
     return result;
 }
 
