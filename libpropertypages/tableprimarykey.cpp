@@ -62,6 +62,7 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
     auto item = m_fields->HitTest( event.GetPosition(), flags );
     if( item != wxNOT_FOUND )
     {
+        m_isModified = true;
         auto label = m_fields->GetItemText( item );
         if( m_fields->GetItemState( item, wxLIST_STATE_SELECTED ) == wxLIST_STATE_SELECTED )
         {
@@ -76,6 +77,4 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
             m_foreignKeyColumnsFields->AddField( label );
         }
     }
-    else
-        event.Skip();
 }
