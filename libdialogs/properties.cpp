@@ -103,13 +103,13 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
                 prop = ( handler )->GetProperties().As<TableProperties>();
             else
                 prop = table->GetTableProperties();
-            wxFont data_font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, prop.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_dataFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_dataFontUnderline, prop.m_dataFontName );
+            wxFont data_font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, prop.m_dataFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_dataFontWeight >= 700 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_dataFontUnderline, prop.m_dataFontName );
             if( prop.m_dataFontStrikethrough )
                 data_font.SetStrikethrough( true );
-            wxFont heading_font( prop.m_headingFontSize, wxFONTFAMILY_DEFAULT, prop.m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_headingFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_headingFontUnderline, prop.m_headingFontName );
+            wxFont heading_font( prop.m_headingFontSize, wxFONTFAMILY_DEFAULT, prop.m_headingFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_headingFontWeight >= 700 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_headingFontUnderline, prop.m_headingFontName );
             if( prop.m_headingFontStrikethrough )
                 heading_font.SetStrikethrough( true );
-            wxFont label_font( prop.m_labelFontSize, wxFONTFAMILY_DEFAULT, prop.m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_labelFontWeight ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_labelFontUnderline, prop.m_labelFontName );
+            wxFont label_font( prop.m_labelFontSize, wxFONTFAMILY_DEFAULT, prop.m_labelFontItalic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL, prop.m_labelFontWeight >= 700 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, prop.m_labelFontUnderline, prop.m_labelFontName );
             if( prop.m_labelFontStrikethrough )
                 label_font.SetStrikethrough( true );
             FontPropertyPage dataFont;
