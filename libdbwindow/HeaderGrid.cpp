@@ -46,10 +46,10 @@ void HeaderGrid::DoChildrenLayout()
             else
                 nCol++;
             if( nCol == 0 )
-                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ) * m_nCellSpace,
+                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ),
                                             maxRect0.GetWidth(), maxRect0.GetHeight() ) );
             if( nCol == 1 )
-                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ) * m_nCellSpace,
+                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ),
                                             maxRect1.GetWidth(), maxRect1.GetHeight() ) );
         }
     }
