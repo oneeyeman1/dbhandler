@@ -41,13 +41,14 @@ protected:
     wxPanel* m_panel;
     // end wxGlade
 
-    DECLARE_EVENT_TABLE();
-
-    void OnSelectingLBItem(wxCommandEvent &event); // wxGlade: <event_handler>
+    void OnOpenUpdateUI(wxUpdateUIEvent &event);
     void OnOpenTables(wxCommandEvent &event);
     void OnCancel(wxCommandEvent &event);
     void OnShowSystemTables(wxCommandEvent &event);
     void OnListDClick(wxCommandEvent &event);
+
+private:
+    bool m_single;
 }; // wxGlade: end class
 
 

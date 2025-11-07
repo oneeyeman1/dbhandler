@@ -37,6 +37,10 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     m_readOnly = NULL;
     m_panel = new wxPanel( this, wxID_ANY );
     m_tables = new wxListBox( m_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, isTableView ? wxLB_SINGLE : wxLB_MULTIPLE );
+    if( isTableView )
+        m_single = true;
+    else
+        m_single = false;
     m_showSystem = new wxCheckBox( m_panel, wxID_ANY, _( "&Show system tables" ) );
     if( m_isTableView )
         m_readOnly = new wxCheckBox( m_panel, wxID_ANY, _( "&Read-Only" ) );
@@ -53,6 +57,7 @@ SelectTables::SelectTables(wxWindow* parent, wxWindowID id, const wxString& titl
     do_layout();
     // end wxGlade
     m_open->Bind( wxEVT_BUTTON, &SelectTables::OnOpenTables, this );
+    m_open->Bind( wxEVT_UPDATE_UI, &SelectTables::OnOpenUpdateUI, this );
     m_cancel->Bind( wxEVT_BUTTON, &SelectTables::OnCancel, this );
     m_showSystem->Bind( wxEVT_CHECKBOX, &SelectTables::OnShowSystemTables, this );
     m_tables->Bind( wxEVT_LISTBOX_DCLICK, &SelectTables::OnListDClick, this );
@@ -129,16 +134,21 @@ void SelectTables::do_layout()
     // end wxGlade
 }
 
-BEGIN_EVENT_TABLE(SelectTables, wxDialog)
-    // begin wxGlade: SelectTables::event_table
-    EVT_LISTBOX(wxID_ANY, SelectTables::OnSelectingLBItem)
-    // end wxGlade
-END_EVENT_TABLE();
-
-
-void SelectTables::OnSelectingLBItem(wxCommandEvent &WXUNUSED(event))
+void SelectTables::OnOpenUpdateUI(wxUpdateUIEvent &event)
 {
-    m_open->Enable( true );
+    if(  m_single && m_tables->GetSelection() ) 
+        event.Enable( true );
+    else if( !m_single )
+    {
+        wxArrayInt sel;
+        m_tables->GetSelections( sel );
+        if( sel.size() > 0 )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
+    else
+        event.Enable( false );
 }
 
 void SelectTables::OnOpenTables(wxCommandEvent &event)
