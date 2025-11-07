@@ -3661,26 +3661,25 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     short justify = 0;
     std::wstring fieldFormat = L"";
     SQLWCHAR *commentField = nullptr, *label = nullptr, *heading = nullptr, *fF = nullptr;
-    SQLWCHAR *qry = nullptr;
     unsigned short labelAlignment = 0, headingAlignment = 0;
-    SQLWCHAR *table = new SQLWCHAR[schemaName.length() + tableName.length() + 3], *owner = new SQLWCHAR[ownerName.length() + 2], *fieldNameReq = new SQLWCHAR[fieldName.length() + 2];
-    memset( table, '\0', schemaName.length() + tableName.length() + 3 );
-    memset( owner, '\0', ownerName.length() + 2 );
-    memset( fieldNameReq, '\0', fieldName.length() + 2);
-    uc_to_str_cpy( table, schemaName );
-    uc_to_str_cpy( table, L"." );
-    uc_to_str_cpy( table, tableName );
-    uc_to_str_cpy( owner, ownerName );
-    uc_to_str_cpy( fieldNameReq, fieldName );
+    std::unique_ptr<SQLWCHAR[]> table( new SQLWCHAR[schemaName.length() + tableName.length() + 3] ), owner( new SQLWCHAR[ownerName.length() + 2] ), fieldNameReq( new SQLWCHAR[fieldName.length() + 2] );
+    memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
+    memset( owner.get(), '\0', ownerName.length() + 2 );
+    memset( fieldNameReq.get(), '\0', fieldName.length() + 2);
+    uc_to_str_cpy( table.get(), schemaName );
+    uc_to_str_cpy( table.get(), L"." );
+    uc_to_str_cpy( table.get(), tableName );
+    uc_to_str_cpy( owner.get(), ownerName );
+    uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
     SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0, cbFieldFormat = 0;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
     std::wstring query = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     std::wstring query1 = L"SELECT * FROM \"abcatfmt\" WHERE \"abf_type\" = ?";
-    qry = new SQLWCHAR[query.length() + 2];
-    memset( qry, '\0', query.length() + 2 );
-    uc_to_str_cpy( qry, query );
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3689,7 +3688,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3753,8 +3752,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     if( !result )
     {
         ret = SQLExecute( m_hstmt );
-        delete[] qry;
-        qry = nullptr;
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3877,9 +3874,9 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         result = 1;
     }
     m_hstmt = 0;
-    qry = new SQLWCHAR[query1.length() + 2];
-    memset( qry, '\0', query1.length() + 2 );
-    uc_to_str_cpy( qry, query1 );
+    qry.reset( new SQLWCHAR[query1.length() + 2] );
+    memset( qry.get(), '\0', query1.length() + 2 );
+    uc_to_str_cpy( qry.get(), query1 );
     SQLWCHAR formatNameField[40], formatField[260];
     ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3889,7 +3886,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3981,14 +3978,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         result = 1;
     }
     m_hstmt = 0;
-    delete[] qry;
-    qry = nullptr;
-    delete[] table;
-    table = nullptr;
-    delete[] owner;
-    owner = nullptr;
-    delete[] fieldNameReq;
-    fieldNameReq = nullptr;
     return result;
 }
 
