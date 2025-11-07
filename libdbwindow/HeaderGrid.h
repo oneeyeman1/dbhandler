@@ -7,5 +7,8 @@ public:
     bool InsertToTableGrid(wxSFShapeBase *shape);
     virtual void DoChildrenLayout();
     void ShowComments(bool show);
+private:
+    bool m_showComments = true;
+    int m_numCol = 2;
 };
 

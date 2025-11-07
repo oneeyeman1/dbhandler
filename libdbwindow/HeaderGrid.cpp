@@ -23,14 +23,14 @@ bool HeaderGrid::InsertToTableGrid( wxSFShapeBase *shape )
     {
         if( wxDynamicCast( shape, NameTableShape ) )
             col = 0;
-        else if( wxDynamicCast( shape, CommentTableShape ) )
+        else if( wxDynamicCast( shape, CommentTableShape ) && m_showComments )
             col = 1;
     }
     else
     {
         if( wxDynamicCast( shape, NameTableShape ) )
             col = 1;
-        else if( wxDynamicCast( shape, CommentTableShape ) )
+        else if( wxDynamicCast( shape, CommentTableShape ) && m_showComments )
             col = 0;
     }
     return InsertToGrid( row, col, shape );
@@ -41,18 +41,32 @@ void HeaderGrid::DoChildrenLayout()
     if( !m_nCols || !m_nRows )
         return;
     wxSFShapeBase *pShape;
-    wxRect currRect1, currRect2, maxRect0 = wxRect( 0, 0, 0, 0 ), maxRect1 = wxRect( 0, 0, 0, 0 );
+    wxRect currRect2, maxRect0 = wxRect( 0, 0, 0, 0 ), maxRect1 = wxRect( 0, 0, 0, 0 );
     int nIndex = 0, nCol = 0, nRow = -1;
-    wxRect maxRect;
     SerializableList::compatibility_iterator node = GetFirstChildNode();
     if( node )
     {
         pShape = (wxSFShapeBase*) node->GetData();
         currRect2 = pShape->GetBoundingBox();
-        if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect2.GetWidth() > maxRect1.GetWidth() ) )
-            maxRect1.SetWidth( currRect2.GetWidth() );
-        if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect1.GetHeight() ) )
-            maxRect1.SetHeight( currRect2.GetHeight() );
+        NameTableShape *temp1 = wxDynamicCast( pShape, NameTableShape );
+        if( temp1 )
+        {
+            if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect2.GetWidth() > maxRect0.GetWidth() ) )
+                maxRect0.SetWidth( currRect2.GetWidth() );
+            if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect0.GetHeight() ) )
+                maxRect0.SetHeight( currRect2.GetHeight() );
+        }
+        else
+        {
+            CommentTableShape *temp2 = wxDynamicCast( pShape, CommentTableShape );
+            if( temp2 )
+            {
+                if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect2.GetWidth() > maxRect1.GetWidth() ) )
+                    maxRect1.SetWidth( currRect2.GetWidth() );
+                if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect1.GetHeight() ) )
+                    maxRect1.SetHeight( currRect2.GetHeight() );
+            }
+        }
         node = node->GetNext();
     }
     for( size_t i = 0; i < m_arrCells.GetCount(); i++ )
@@ -70,7 +84,7 @@ void HeaderGrid::DoChildrenLayout()
                 FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ),
                                             maxRect0.GetWidth(), maxRect0.GetHeight() ) );
             if( nCol == 1 )
-                FitShapeToRect( pShape, wxRect( nCol * maxRect0.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect0.GetHeight() + ( nRow + 1 ),
+                FitShapeToRect( pShape, wxRect( nCol * maxRect1.GetWidth() + ( nCol + 1 ) * m_nCellSpace, nRow * maxRect1.GetHeight() + ( nRow + 1 ),
                                             maxRect1.GetWidth(), maxRect1.GetHeight() ) );
         }
     }
