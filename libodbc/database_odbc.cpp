@@ -2292,7 +2292,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[50] );
+                    qry1.reset( new SQLWCHAR[50] );
                     memset( qry1.get(), '\0', 50 );
                     uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
                     ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
@@ -5318,7 +5318,6 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *schema_name = new SQLWCHAR[schemaName.length() + 2], *catalog_name = new SQLWCHAR[catalog.size() + 2];
     std::wstring owner;
     std::vector<std::wstring> autoinc_fields, indexes;
-    SQLWCHAR **columnNames = nullptr;
     std::wstring query4;
     SQLWCHAR *qry = nullptr;
     int result = 0;
@@ -5424,13 +5423,13 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         }
                         if( !result )
                         {
-                            columnNames = new SQLWCHAR *[numCols];
+                            std::unique_ptr<SQLWCHAR[]> columnNames( new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 2] );
+                            memset( columnNames.get(), '\0', sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 2 );
                             SQLLEN autoincrement;
                             for( unsigned short i = 0; i < numCols; i++ )
                             {
                                 autoincrement = 0;
-                                columnNames[i] = new SQLWCHAR[sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 1];
-                                ret = SQLColAttribute( m_hstmt, i + 1, SQL_DESC_LABEL, columnNames[i], bufferSize, &lenUsed, NULL );
+                                ret = SQLColAttribute( m_hstmt, i + 1, SQL_DESC_LABEL, columnNames.get(), bufferSize, &lenUsed, NULL );
                                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                                 {
                                     GetErrorMessage( errors, STMT_ERROR );
@@ -5449,12 +5448,11 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                                 if( autoincrement == SQL_TRUE )
                                 {
                                     std::wstring colName;
-                                    str_to_uc_cpy( colName, columnNames[i] );
+                                    str_to_uc_cpy( colName, columnNames.get() );
                                     autoinc_fields.push_back( colName );
                                 }
-                                delete[] columnNames[i];
+                                memset( columnNames.get(), '\0', sizeof( SQLWCHAR ) * SQL_MAX_COLUMN_NAME_LEN + 2 );
                             }
-                            delete[] columnNames;
                             if( result == 1 )
                             {
                                 result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
