@@ -2,6 +2,7 @@
 #include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
 #include "wxsf/ShapeBase.h"
+#include "wx/uilocale.h"
 #include "database.h"
 #include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
@@ -26,30 +27,60 @@ GridTableShape::~GridTableShape(void)
 
 bool GridTableShape::InsertToTableGrid(wxSFShapeBase *shape)
 {
-    int col;
+    int col = -1;
     int row = (int) m_arrCells.GetCount() / m_nCols;
-    if( m_type == DatabaseView )
+    if( wxUILocale::GetCurrent().GetLayoutDirection() == wxLayout_Default ||
+        wxUILocale::GetCurrent().GetLayoutDirection() == wxLayout_LeftToRight )
     {
-        if( wxDynamicCast( shape, FieldShape ) )
-            col = 1;
-        else if( wxDynamicCast( shape, wxSFTextShape ) )
-            col = 2;
+        if( m_type == DatabaseView )
+        {
+            if( wxDynamicCast( shape, FieldShape ) )
+                col = 1;
+            else if( wxDynamicCast( shape, CommentFieldShape ) )
+                col = 2;
+            else
+                col = 0;
+        }
         else
-            col = 0;
+        {
+            if( wxDynamicCast( shape, CommentFieldShape ) )
+            {
+                if( m_showdatatypes )
+                    col = 2;
+                else
+                    col = 1;
+            }
+            else if( wxDynamicCast( shape, FieldShape ) )
+                col = 0;
+		    else
+                col = 1;
+        }
     }
     else
     {
-        if( wxDynamicCast( shape, CommentFieldShape ) )
+        if( m_type == DatabaseView )
         {
-            if( m_showdatatypes )
+            if( wxDynamicCast( shape, FieldShape ) )
+                col = 1;
+            else if( wxDynamicCast( shape, CommentFieldShape ) )
                 col = 2;
+            else
+                col = 0;
+        }
+        else
+        {
+            if( wxDynamicCast( shape, CommentFieldShape ) )
+            {
+                if( m_showdatatypes )
+                    col = 2;
+                else
+                    col = 1;
+            }
+            else if( wxDynamicCast( shape, FieldShape ) )
+                col = 0;
             else
                 col = 1;
         }
-        else if( wxDynamicCast( shape, FieldShape ) )
-            col = 0;
-		else
-            col = 1;
     }
     return InsertToGrid( row, col, shape );
 }
