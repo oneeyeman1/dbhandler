@@ -1,4 +1,9 @@
 #include "wxsf/GridShape.h"
+#include "wxsf/TextShape.h"
+#include "wx/uilocale.h"
+#include "database.h"
+#include "commenttableshape.h"
+#include "nametableshape.h"
 #include "HeaderGrid.h"
 
 HeaderGrid::HeaderGrid(void) : wxSFGridShape()
@@ -7,6 +12,28 @@ HeaderGrid::HeaderGrid(void) : wxSFGridShape()
 
 HeaderGrid::~HeaderGrid(void)
 {
+}
+
+bool HeaderGrid::InsertToTableGrid( wxSFShapeBase *shape )
+{
+    int col = -1;
+    int row = (int) m_arrCells.GetCount() / m_nCols;
+    if( wxUILocale::GetCurrent().GetLayoutDirection() == wxLayout_Default ||
+        wxUILocale::GetCurrent().GetLayoutDirection() == wxLayout_LeftToRight )
+    {
+        if( wxDynamicCast( shape, NameTableShape ) )
+            col = 0;
+        else if( wxDynamicCast( shape, CommentTableShape ) )
+            col = 1;
+    }
+    else
+    {
+        if( wxDynamicCast( shape, NameTableShape ) )
+            col = 1;
+        else if( wxDynamicCast( shape, CommentTableShape ) )
+            col = 0;
+    }
+    return InsertToGrid( row, col, shape );
 }
 
 void HeaderGrid::DoChildrenLayout()
@@ -18,13 +45,6 @@ void HeaderGrid::DoChildrenLayout()
     int nIndex = 0, nCol = 0, nRow = -1;
     wxRect maxRect;
     SerializableList::compatibility_iterator node = GetFirstChildNode();
-    pShape = (wxSFShapeBase*) node->GetData();
-    currRect1 = pShape->GetBoundingBox();
-    if( ( pShape->GetHAlign() != halignEXPAND ) && ( currRect1.GetWidth() > maxRect0.GetWidth() ) )
-        maxRect0.SetWidth( currRect1.GetWidth() );
-    if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect1.GetHeight() > maxRect0.GetHeight() ) )
-        maxRect0.SetHeight( currRect1.GetHeight() );
-    node = node->GetNext();
     if( node )
     {
         pShape = (wxSFShapeBase*) node->GetData();
@@ -33,6 +53,7 @@ void HeaderGrid::DoChildrenLayout()
             maxRect1.SetWidth( currRect2.GetWidth() );
         if( ( pShape->GetVAlign() != valignEXPAND ) && ( currRect2.GetHeight() > maxRect1.GetHeight() ) )
             maxRect1.SetHeight( currRect2.GetHeight() );
+        node = node->GetNext();
     }
     for( size_t i = 0; i < m_arrCells.GetCount(); i++ )
     {

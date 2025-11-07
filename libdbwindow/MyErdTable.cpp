@@ -76,7 +76,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
-        if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
+        if( m_header->InsertToTableGrid( m_pLabel ) )
         {
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->GetFont().SetPointSize( 8 );
@@ -84,7 +84,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
             m_pLabel->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
-        if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+        if( m_displayComments && m_header->InsertToTableGrid( m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->GetFont().SetPointSize( 8 );
@@ -160,7 +160,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
         //table name
-        if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
+        if( m_header->InsertToTableGrid( m_pLabel ) )
         {
             m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
             m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -171,7 +171,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
             m_pLabel->Activate( false );
 //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
         }
-        if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+        if( m_displayComments && m_header->InsertToTableGrid( m_comment ) )
         {
             m_comment->SetVAlign( wxSFShapeBase::valignTOP );
             m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
