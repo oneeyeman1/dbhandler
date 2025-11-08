@@ -2327,7 +2327,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( auto it = pimpl.m_tableDefinitions[cat].begin(); it < pimpl.m_tableDefinitions[cat].end(); ++it )
             {
                 auto fullName = (*it).schemaName + L"." + (*it).tableName;
-                cbParam[0] = cbParam[2] = cbParam[3] = cbParam[4] = cbParam[5] = SQL_NTS;
+                cbParam[0] = cbParam[1] = cbParam[2] = cbParam[3] = cbParam[4] = cbParam[5] = SQL_NTS;
                 std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[(*it).schemaName.length() + 2] );
                 std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[(*it).tableName.length() + 2] );
                 std::unique_ptr<SQLWCHAR[]> fullTableName( new SQLWCHAR[fullName.length() + 2] );
