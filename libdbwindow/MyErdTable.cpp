@@ -568,7 +568,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         prop.m_labelFontUnderline != table->GetTableProperties().m_labelFontUnderline ||
         prop.m_labelFontSize != table->GetTableProperties().m_labelFontSize )
         result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
-    if( prop.primaryKey != table->GetPKFelds() )
+    if( !result && prop.primaryKey != table->GetPKFelds() )
         result = m_db->EditPrimaryKey( GetTableName().ToStdWstring(), prop.primaryKey, logOnly, command, errorMsg );
     if( !result )
     {
@@ -580,6 +580,11 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
                 Refresh();
 //                m_header->Refresh();
         }
+    }
+    else
+    {
+        for( auto error: errorMsg )
+            wxMessageBox( error, _( "Error" ), wxICON_EXCLAMATION );
     }
     return result;
 }
