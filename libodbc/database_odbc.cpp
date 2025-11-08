@@ -6371,7 +6371,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     else if( ret == 0 )
     {
         uc_to_str_cpy( entry, L"PWD" );
-        int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
         if( ret > 0 )
             str_to_uc_cpy( connectionPassword, retBuffer );
     }
