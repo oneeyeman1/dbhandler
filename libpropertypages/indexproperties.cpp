@@ -219,7 +219,7 @@ void TableIndex::OnNew(wxCommandEvent &event)
         if( result != wxID_CANCEL )
         {
             std::wstring command;
-            int res = m_db->ApplyForeignKey( command, fkName.ToStdWstring(), *m_table, origFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
+            res = m_db->ApplyForeignKey( command, fkName.ToStdWstring(), *m_table, origFields, refTableName, refKeyFields, deleteProp, updateProp, logOnly, newFK, false, match, errors );
             // new FK creted
             if( res )
             {
