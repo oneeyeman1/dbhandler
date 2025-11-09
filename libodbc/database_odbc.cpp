@@ -2883,8 +2883,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         id = QT;
 #endif
     }
-    if( ownerName.empty() && !schemaName.empty() )
-        ownerName = schemaName;
     std::wstring t = schemaName + L".";
     t += tableName;
     query += L"\'";
