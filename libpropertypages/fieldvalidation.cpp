@@ -116,7 +116,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     }
 }
 
-void FieldValidation::OnChange(wxCommandEvent &event)
+void FieldValidation::OnChange(wxCommandEvent &WXUNUSED(event))
 {
     m_isModified = true;
 }

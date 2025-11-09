@@ -3332,7 +3332,7 @@ void DrawingView::OnDatabasePreferences(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void DrawingView::OnCreateTableSpace(wxCommandEvent &event)
+void DrawingView::OnCreateTableSpace(wxCommandEvent &WXUNUSED(event))
 {
     wxString libName;
     wxDynamicLibrary lib;
@@ -3353,7 +3353,7 @@ void DrawingView::OnCreateTableSpace(wxCommandEvent &event)
     }
 }
 
-void DrawingView::OnEditTableObject(wxCommandEvent &event)
+void DrawingView::OnEditTableObject(wxCommandEvent &WXUNUSED(event))
 {
 
 }

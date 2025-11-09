@@ -203,7 +203,7 @@ void TableIndex::OnDelete(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void TableIndex::OnNew(wxCommandEvent &event)
+void TableIndex::OnNew(wxCommandEvent &WXUNUSED(event))
 {
     int result = wxID_CANCEL;
     wxString fkName;
@@ -232,7 +232,7 @@ void TableIndex::OnNew(wxCommandEvent &event)
     }
 }
 
-void TableIndex::OnEdit(wxCommandEvent &event)
+void TableIndex::OnEdit(wxCommandEvent &WXUNUSED(event))
 {
     int result = wxID_CANCEL;
     wxString fkName;
