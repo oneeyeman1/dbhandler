@@ -52,7 +52,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
     SetFill( wxBrush( wxColour( 210, 225, 245 ) ) );
     SetRadius( 15 );
     m_header = new HeaderGrid();
-    m_header->SetCellSpace( 5 );
+    m_header->SetCellSpace( 3 );
     m_pLabel = new NameTableShape();
     if( m_displayComments )
     {
@@ -60,7 +60,7 @@ MyErdTable::MyErdTable() : wxSFRoundRectShape()
         m_comment->SetId( 1001 );
     }
     m_pGrid = new GridTableShape( m_type );
-    m_pGrid->SetCellSpace( 5 );
+    m_pGrid->SetCellSpace( 3 );
 
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
@@ -138,13 +138,13 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
     AddStyle( sfsLOCK_CHILDREN );
     SetRadius(15);
     m_header = new HeaderGrid();
-    m_header->SetCellSpace( 5 );
+    m_header->SetCellSpace( 3 );
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
     m_comment = new CommentTableShape( table );
     m_comment->SetId( 1001 );
     m_pGrid = new GridTableShape( type );
-    m_pGrid->SetCellSpace( 5 );
+    m_pGrid->SetCellSpace( 3 );
     m_pLabel->SetId( 1000 );
     if( m_header && m_pLabel && m_pGrid )
     {
@@ -185,7 +185,7 @@ MyErdTable::MyErdTable(DatabaseTable *table, ViewType type) : wxSFRoundRectShape
         // set grid
         m_pGrid->SetRelativePosition( 0, 17 );
         m_pGrid->SetStyle( sfsALWAYS_INSIDE | sfsPROCESS_DEL |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION | sfsLOCK_CHILDREN );
-        m_pGrid->SetCellSpace( 8 );
+        m_pGrid->SetCellSpace( 3 );
         m_pGrid->SetDimensions( 1, m_columns );
         m_pGrid->SetFill( *wxTRANSPARENT_BRUSH );
         m_pGrid->SetBorder( *wxTRANSPARENT_PEN);
@@ -238,7 +238,7 @@ void MyErdTable::UpdateTable()
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
     m_header = new HeaderGrid; 
-    m_header->SetCellSpace( 5 );
+    m_header->SetCellSpace( 3 );
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
     m_comment = new CommentTableShape();
