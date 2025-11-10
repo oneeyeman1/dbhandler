@@ -129,7 +129,7 @@ DropIndexOptionsDialog::DropIndexOptionsDialog(wxWindow *parent, const std::wstr
         m_restrict->Bind( wxEVT_CHECKBOX, &DropIndexOptionsDialog::OnPGOptions, this );
 }
 
-void DropIndexOptionsDialog::OnApply(wxCommandEvent &event)
+void DropIndexOptionsDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
     if( m_maxdop )
         m_options.m_maxdop = m_maxdop->GetValue();

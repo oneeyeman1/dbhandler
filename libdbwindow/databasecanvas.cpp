@@ -1186,7 +1186,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
-                std::vector<FKField *> newFK, oldFK;
+                std::vector<FKField *> oldFK;
                 auto i = 0;
                 for( auto keyField : foreignKeyFields )
                 {

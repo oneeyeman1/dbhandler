@@ -78,7 +78,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     grid_sizer_3->Add( m_case, 0, 0, 0 );
     wxFlexGridSizer* grid_sizer_4 = new wxFlexGridSizer( 2, 3, 5, 5 );
     grid_sizer_2->Add( grid_sizer_4, 0, 0, 0 );
-    wxStaticText* m_label4 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Display Height" ) );
+    m_label4 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Display Height" ) );
     grid_sizer_4->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_displayHeight = new wxTextCtrl( sizer_5->GetStaticBox(), wxID_ANY, "" );
     m_displayHeight->SetValue( wxString::Format( "%.2f", (double) prop.m_height / (double) ppi ) );

@@ -116,7 +116,7 @@ wxComboBox *FieldHeader::GetHeaderAlignmentCtrl ()
     return m_headingPos;
 }
 
-void FieldHeader::OnChanged(wxCommandEvent &event)
+void FieldHeader::OnChanged(wxCommandEvent &WXUNUSED(event))
 {
     m_isModified = true;
 }
