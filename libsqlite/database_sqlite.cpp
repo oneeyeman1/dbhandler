@@ -2799,7 +2799,7 @@ int SQLiteDatabase::GetTableFields(const std::wstring &UNUSED(catalog), const st
     return result;
 }
 
-int SQLiteDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res = SQLITE_OK;
     std::vector<std::wstring> createCommands;

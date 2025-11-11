@@ -2840,7 +2840,7 @@ int MySQLDatabase::GetTableFields(const std::wstring &catalog, const std::wstrin
     return result;
 }
 
-int MySQLDatabase::EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

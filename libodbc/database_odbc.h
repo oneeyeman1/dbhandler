@@ -64,7 +64,7 @@ public:
     virtual int AddUpdateFormat() override;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) override;
-    virtual int EditPrimaryKey(const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
+    virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
 ;protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
