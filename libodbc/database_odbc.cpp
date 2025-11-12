@@ -7896,42 +7896,96 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     return result;
 }
 
-int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    SQLLEN cbLen[6];
+    SQLRETURN ret = SQL_SUCCESS;
     std::wstring query1, query2, query3, query4, query5;
+    std::unique_ptr<SQLWCHAR[]> catalog( new SQLWCHAR[catalogName.length() + 2] ), schema( new SQLWCHAR[schemaName.length() + 2] ), table( new SQLWCHAR[tableName.length() + 2] );
+    memset( catalog.get(), '\0', catalogName.length() + 2 );
+    memset( schema.get(), '\0', schemaName.length() + 2 );
+    memset( table.get(), '\0', tableName.length() + 2 );
+    uc_to_str_cpy( catalog.get(), catalogName );
+    uc_to_str_cpy( schema.get(), schemaName );
+    uc_to_str_cpy( table.get(), tableName );
+    SQLWCHAR pkName[256];
+    memset( pkName, '\0', 256 );
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
-        // 1. Find constraint name
-        query3 = L"SELECT name FROM sys.key_constraints WHERE [type] = 'PK' AND parent_object_id = OBJECT_ID('?.?.?');";
-        // 2. Drop PK
-        query4 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT ?;";
-        // 3. Re-add PK
-        query5 = L"ALTER TABLE " + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+        m_maxIdLen = 128;
+        if( isLog )
+        {
+            // 1. Find constraint name
+            query1 = L"SELECT name FROM sys.key_constraints WHERE [type] = 'PK' AND parent_object_id = OBJECT_ID(" + catalogName + L"." + schemaName + L"." + tableName + L"); + \n\r";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT ";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+        }
+        else
+        {
+            // 1. Find constraint name
+            query1= L"SELECT name FROM sys.key_constraints WHERE [type] = 'PK' AND parent_object_id = OBJECT_ID('?.?.?');";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT ?;";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+        }
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        // 1. Find constraint name
-        query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY' AND tc.table_name = ?;";
-        // 2. Drop PK
-        query2 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT your_table_name_pkey; CASCADE";
-        // 3. Re-add PK
-        query3 = L"ALTER TABLE " + tableName + L" ADD PRIMARY KEY (column1, column2);";
+        m_maxIdLen = 63;
+        if( isLog )
+        {
+            // 1. Find constraint name
+            query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = " + catalogName + L" AND tc.schema_name = " + schemaName + L"AND tc.table_name = " + tableName + L"; + \n\r";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
+        }
+        else
+        {
+            // 1. Find constraint name
+            query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = ? AND tc.schema_name = ? AND tc.table_name = ?;";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ? CASCADE";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
+        }
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
-        // 1. Find constraint name
-        query3 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY' AND tc.table_name = ?;";
-        // 2. Drop PK
-        query4 = L"ALTER TABLE " + tableName + L" DROP CONSTRAINT your_table_name_pkey; CASCADE";
-        // 3. Re-add PK
-        query5 = L"ALTER TABLE " + tableName + L" ADD PRIMARY KEY (column1, column2);";
+        m_maxIdLen = 64;
+        if( isLog )
+        {
+            // 1. Find constraint name
+            query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.schema_name = " + schemaName + L" AND tc.table_name = " + tableName + L";\n\r";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
+        }
+        else
+        {
+            // 1. Find constraint name
+            query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.schema_name = ? AND tc.table_name = ?;";
+            // 2. Drop PK
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ?";
+            // 3. Re-add PK
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
+
+        }
     }
-    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( !isLog )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
+        ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
     }
     if( !result )
     {
@@ -7940,21 +7994,73 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std::ws
             command += L"BEGIN";
             if( pimpl.m_subtype == L"Microsoft SQL Server" )
                 command += L" TRANSACTION";
+            command += L"\n\r";
         }
         else
         {
-            auto qry1 = new SQLWCHAR[30];
-            memset( qry1, '\0', 30 );
-            uc_to_str_cpy( qry1, L"BEGIN" );
+            std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+            memset( qry1.get(), '\0', 30 );
+            uc_to_str_cpy( qry1.get(), L"BEGIN" );
             if( pimpl.m_subtype == L"Microsoft SQL Server" )
-                uc_to_str_cpy( qry1, L" TRANSACTION" );
-            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-            delete[] qry1;
-            qry1 = nullptr;
+                uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
+            ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
+            }
+        }
+    }
+    if( !result && !isLog )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result && !isLog )
+    {
+        ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"PostgreSQL" )
+    {
+        if( isLog )
+            command += query1;
+        else
+        {
+            if( !result )
+            {
+                ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, catalog.get(), 0, &cbLen[0] );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, schema.get(), 0, &cbLen[2] );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, table.get(), 0, &cbLen[3] );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
             }
         }
     }

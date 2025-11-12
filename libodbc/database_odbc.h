@@ -100,6 +100,7 @@ private:
     SQLUSMALLINT m_statementsNumber;
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
+    int m_maxIdLen;
 };
 
 struct ODBCDatabase::ODBCImpl
