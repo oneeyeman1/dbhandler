@@ -8152,6 +8152,15 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 str_to_uc_cpy( primaryKeyName, pkName );
             }
         }
+        if( !result )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
     }
     if( !result )
     {
@@ -8171,7 +8180,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
         }
     }
-    if( pimpl.m_type != L"PostgreSQL" )
+/*    if( pimpl.m_type != L"PostgreSQL" )
     {
         auto qry = new SQLWCHAR[query1.length() + 2];
         memset( qry, '\0', query1.length() + 2 );
@@ -8182,15 +8191,13 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-    }
+    }*/
     if( !result )
     {
-        auto qry = new SQLWCHAR[10];
-        memset( qry, '\0', 10 );
-        uc_to_str_cpy( qry, L"COMMIT" );
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        delete[] qry;
-        qry = nullptr;
+        qry.reset( new SQLWCHAR[10] );
+        memset( qry.get(), '\0', 10 );
+        uc_to_str_cpy( qry.get(), L"COMMIT" );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -8199,12 +8206,10 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     else
     {
-        auto qry = new SQLWCHAR[10];
-        memset( qry, '\0', 10 );
-        uc_to_str_cpy( qry, L"ROLLBACK" );
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        delete[] qry;
-        qry = nullptr;
+        qry.reset( new SQLWCHAR[10] );
+        memset( qry.get(), '\0', 10 );
+        uc_to_str_cpy( qry.get(), L"ROLLBACK" );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
