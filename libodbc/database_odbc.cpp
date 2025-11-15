@@ -2181,6 +2181,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         auto catalogDB = new SQLWCHAR[pimpl.m_dbName.length() + 2];
         memset( catalogDB, '\0', pimpl.m_dbName.length() + 2 );
         uc_to_str_cpy( catalogDB, pimpl.m_dbName );
+        if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Oracle" )
+            catalogDB = nullptr;
         for( int i = 0; i < 5; i++ )
         {
             catalog[i].TargetType = SQL_C_WCHAR;
@@ -7972,7 +7974,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         else
         {
             // 1. Find constraint name
-            query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.schema_name = ? AND tc.table_name = ?;";
+            query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.table_schema = ? AND tc.table_name = ?;";
             // 2. Drop PK
             query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ?";
             // 3. Re-add PK
