@@ -1796,24 +1796,50 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
+            SQLHSTMT statement1, statement2;
             if( !result )
             {
                 auto i = 1;
                 auto create = false;
                 for( std::vector<std::wstring>::iterator it1 = mysqlQueries.begin(); it1 < mysqlQueries.end(); ++it1, ++i )
                 {
-                    if( i % 2 == 0 && create )
+                    if( i % 2 == 0 )
                     {
-                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
-                        memset( qry.get(), '\0', (*it1).length() + 2 );
-                        uc_to_str_cpy( qry.get(), (*it1) );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        if( create )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                            break;
+                            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
+                            memset( qry.get(), '\0', (*it1).length() + 2 );
+                            uc_to_str_cpy( qry.get(), (*it1) );
+                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement2 );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
+                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                result = 1;
+                                break;
+                            }
+                            if( !result )
+                            {
+                                ret = SQLExecDirect( statement2, qry.get(), SQL_NTS );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
+                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                    result = 1;
+                                    break;
+                                }
+                            }
+                            if( !result )
+                            {
+                                ret = SQLFreeHandle( SQL_HANDLE_STMT, statement2 );
+                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                                {
+                                    GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
+                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                    result = 1;
+                                    break;
+                                }
+                            }
                         }
                     }
                     else
@@ -1821,20 +1847,31 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
                         memset( qry.get(), '\0', (*it1).length() + 2 );
                         uc_to_str_cpy( qry.get(), (*it1) );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement1 );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
                             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                             result = 1;
                             break;
                         }
                         if( !result )
                         {
-                            ret = SQLFetch( m_hstmt );
+                            ret = SQLExecDirect( statement1, qry.get(), SQL_NTS );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                             {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
+                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLFetch( statement1 );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
                                 ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                                 result = 1;
                                 break;
@@ -1842,6 +1879,17 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                             else if( ret == SQL_NO_DATA )
                             {
                                 create = true;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLFreeHandle( SQL_HANDLE_STMT, statement1 );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
+                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                result = 1;
+                                break;
                             }
                         }
                     }
