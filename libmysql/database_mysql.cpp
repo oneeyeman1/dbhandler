@@ -191,19 +191,22 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     int result = 0, res;
     MYSQL_STMT *res_stmt;
     std::wstring err;
-    std::vector<std::wstring> queries;
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
-//    std::wstring query6 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcattbl_tnam_ownr\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcattbl_tnam_ownr ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));";
-//    std::wstring query7 = L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatcol_tnam_ownr_cnam\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE INDEX abcatcol_tnam_ownr_cnam ON abcatcoll(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));";
-    queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));" );
-    queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC)\"));" );
-    queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatf_x\' AND table_name=\'abcatfmt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC)\"));" );
-    queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_tnam ASC, abt_ownr ASC)\"));" );
-    queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC)\"));" );
+    std::vector<std::wstring> queries1, queries2, queries3;
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
+    queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\';" );
+    queries2.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
+    queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\';" );
+    queries2.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
+    queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatf_x\' AND table_name=\'abcatfmt\';" );
+    queries2.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
+    queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\';" );
+    queries2.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
+    queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\'" );
+    queries2.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
     std::wstring query8 = L"SELECT USER()";
     std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_name = ? AND index_name = ?;";
     res_stmt = mysql_stmt_init( m_db );
@@ -222,7 +225,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     }
     else
     {
-        for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+        for( std::vector<std::wstring>::iterator it = queries1.begin(); it < queries1.end(); ++it )
         {
             res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str() );
             if( res )
@@ -231,6 +234,60 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                 errorMsg.push_back( err );
                 errorMsg.push_back( L"Connection to database failed!" );
                 result = 1;
+                break;
+            }
+        }
+        if( !result )
+        {
+            auto i = 1;
+            auto create = false;
+            for( std::vector<std::wstring>::iterator it1 = queries2.begin(); it1 < queries2.end(); ++it1, ++i )
+            {
+                if( i % 2 == 0 )
+                {
+                    if( create )
+                    {
+                        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( (*it1).c_str() ).c_str() );
+                        if( res )
+                        {
+                            err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                            errorMsg.push_back( err );
+                            errorMsg.push_back( L"Connection to database failed!" );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    create = false;
+                }
+                else
+                {
+                    MYSQL_RES *resultset;
+                    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( (*it1).c_str() ).c_str() );
+                    if( res )
+                    {
+                        err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                        errorMsg.push_back( L"Connection to database failed!" );
+                        result = 1;
+                        break;
+                    }
+                    resultset = mysql_store_result( m_db );
+                    if( !resultset && mysql_errno( m_db ) != 0 )
+                    {
+                        err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                        errorMsg.push_back( err );
+                        errorMsg.push_back( L"Connection to database failed!" );
+                        result = 1;
+                        break;
+                    }
+                    else if( resultset )
+                    {
+                        auto count = mysql_num_rows( resultset );
+                        if( !count )
+                            create = true;
+                    }
+                    mysql_free_result( resultset );
+                }
             }
         }
         if( !res )
