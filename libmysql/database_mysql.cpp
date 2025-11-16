@@ -538,7 +538,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW';";
+    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t;";
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
     {
