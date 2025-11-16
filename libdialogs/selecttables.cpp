@@ -200,7 +200,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     if( size > 1 )
                         tableName = catalogName + L"." + schemaName + L"." + tableName;
                 }
-                else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
+                else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"mySQL" )
                 {
                     if( !sysTableIncluded && ( schemaName != dbName || tableName.substr( 0, 5 ) == L"abcat" ) )
                         continue;
