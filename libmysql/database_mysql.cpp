@@ -206,6 +206,113 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\';" );
     queries2.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
     queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\'" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'(General)\', \'(General)\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0\', \'0\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0.00\', \'0.00\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'#.##0\', \'#.##0\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0%\', \'0%\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0.00%\', \'0.00%\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0.00E+00\', \'0.00E+00\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'m/d/yy\', \'m/d/yy\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'d-mmm-yy\', \'d-mmm-yy\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'d-mmm\', \'d-mmm\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'mmm-yy\', \'mmm-yy\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'h:mm AM/PM\', \'h:mm AM/PM\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'h:mm:ss AM/PM\', \'h:mm:ss AM/PM\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'h:mm:ss\', \'h:mm:ss\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'Phone_format\', \'(@@@)) @@@-@@@@\', 80, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'m-d-yy\', \'m-d-yy\', 84, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'soc_sec_number\', \'@@@-@@-@@@@\', 80, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'mm/dd/yyyy\', \'mm/dd/yyyy\', 82, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'salary\', \'$###,##0.00\', 81, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'mm-dd-yyyy\', \'mm-dd-yyyy\', 82, 0 );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\');");
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'###-##-####\', \'###-##-####\', 90, 1, 1, 32, \'00\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'###,###.00\', \'###,###.00\', 90, 1, 1, 32, \'10\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'#####\', \'#####\', 90, 1, 1, 32, \'10\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'BenefitsCheckBox\', NULL, 85, 4, 1, 536870916, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'BenefitsCheckBox\', \'Y\', 85, 4, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'BenefitsCheckBox\', \'N\', 85, 4, 3, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'0\', 87, 3, 1, -201326590, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'White\', 87, 3, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'White\', 87, 3, 3, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Black\', 87, 3, 4, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Black\', 87, 3, 5, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Purple\', 87, 3, 6, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Purple\', 87, 3, 7, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Orange\', 87, 3, 8, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Orange\', 87, 3, 9, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Green\', 87, 3, 10, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Green\', 87, 3, 11, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Blue\', 87, 3, 12, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Blue\', 87, 3, 13, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Yellow\', 87, 3, 14, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Yrllow\', 87, 3, 15, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Red\', 87, 3, 16, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Color List\', \'Red\', 87, 3, 17, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Customers\', \'d_dddw_cust\', 88, 2, 1, 536870928, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Customers\', \'id\', 88, 2, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Customers\', \'id\', 88, 2, 3, 0, \'400\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Day Care\', \'Day Care\', 85, 4, 1, 536870916, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Day Care\', \'Y\', 85, 4, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Day Care\', \'N\', 85, 4, 3, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MM/YY\', \'DD/MM/YY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MM/YY HH:MM:SS\', \'DD/MM/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MM/YY HH:MM:SS:FFFFFF\', \'DD/MM/YY HH:MM:SS:FFFFFF\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MM/YYYY\', \'DD/MM/YYYY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MM/YYYY HH:MM:SS\', \'DD/MM/YY HH::MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MMM/YY\', \'DD/MMM/YY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DD/MMM/YY HH:MM:SS\', \'DD/MMM/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DDD/YY\', \'DDD/YY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DDD/YY HH:MM:SS\', \'DDD/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DDD/YYYY\', \'DDD/YYYY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'DDD/YYYY HH:MM:SS\', \'DDD/YYYY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Department List\', \'d_dddw_dept\', 88, 10, 1, 536870928, \'0\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Department List\', \'dept_id\', 88, 10, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Department List\', \'dept_d\', 88, 10, 3, 0, \'300\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Dollars with cents\', \'$###,###,###.00\', 90, 2, 1, 32, \'00\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'1\', 86, 3, 1, 1073741832, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'Active\', 86, 3, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'A\', 86, 3, 3, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'Terminated\', 86, 3, 4, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'T\', 86, 3, 5, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'On Leave\', 86, 3, 6, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Employee Status\', \'L\', 86, 3, 7, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'employees\', \'d_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'employees\', \'emp_id\', 88, 3, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'employees\', \'emp_id\', 88, 3, 3, 0, \'400\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Financial Codes\', \'d_dddw_fin_code\', 88, 3, 1, 536870928, \'0\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Financial Codes\', \'code\', 88, 3, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Financial Codes\', \'code\', 88, 3, 3, 0, \'700\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Health Insurance\', \'health insurance\', 85, 3, 1, 536870928, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Health Insurance\', \'Y\', 85, 3, 2, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'Health Insurance\', \'N\', 85, 3, 3, 0, NULL );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS:FFF\', \'HH:MM:SS:FFF\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS:FFFFFF\', \'HH:MM:SS:FFFFFF\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'JJJ/YY\', \'JJJ/YY\', 90, 1, 1, 32, \'20\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'JJJ/YY HH:MM:SS\', \'JJJ/YY HH:MM:SS\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'JJJ/YYYY\', \'JJJ/YYYY\', 90, 1, 1, 32, \'40\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
+    queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
     queries2.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
     std::wstring query8 = L"SELECT USER()";
     std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_name = ? AND index_name = ?;";
@@ -290,7 +397,22 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                 }
             }
         }
-        if( !res )
+        if( !result )
+        {
+            for( std::vector<std::wstring>::iterator it = queries3.begin(); it < queries3.end(); ++it )
+            {
+                res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str() );
+                if( res )
+                {
+                    err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    errorMsg.push_back( L"Connection to database failed!" );
+                    result = 1;
+                    break;
+                }
+            }
+        }
+        if( !result )
         {
             res = mysql_commit( m_db );
             if( res )
@@ -2839,7 +2961,7 @@ int MySQLDatabase::AddUpdateFormat()
 int MySQLDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT * FROM acatvld;";
+    std::wstring query = L"SELECT * FROM abcatvld;";
     int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     if( res )
     {
