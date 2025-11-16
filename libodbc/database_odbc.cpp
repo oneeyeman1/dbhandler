@@ -486,7 +486,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
-    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024], *query = nullptr;
+    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024];
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
@@ -844,15 +844,13 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     }
     else
         m_isConnected = true;
-    delete[] query;
-    query = nullptr;
     return result;
 }
 
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::vector<std::wstring> queries;
+    std::vector<std::wstring> queries, mysqlQueries;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         queries.push_back( L"BEGIN TRANSACTION" );
@@ -991,11 +989,16 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         if( pimpl.m_subtype == L"MySQL" )
         {
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os tinyint, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\"));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC)\"));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatf_x\' AND table_name=\'abcatfmt\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC)\"));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC)\"));" );
-            queries.push_back( L"SELECT( IF( ( SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\' ) > 0, \"SELECT 0\", \"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC)\"));" );
+            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\';" );
+            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
+            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\';" );
+            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
+            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatf_x\' AND table_name=\'abcatfmt\';" );
+            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
+            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatt_x\' AND table_name=\'abcattbl\';" );
+            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
+            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatv_x\' AND table_name=\'abcatvld\'" );
+            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
             queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'(General)\', \'(General)\', 81, 0 );" );
             queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0\', \'0\', 81, 0 );" );
             queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( \'0.00\', \'0.00\', 81, 0 );" );
@@ -1791,6 +1794,60 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     }
             }
         }
+        if( pimpl.m_subtype == L"MySQL" )
+        {
+            if( !result )
+            {
+                auto i = 1;
+                auto create = false;
+                for( std::vector<std::wstring>::iterator it1 = mysqlQueries.begin(); it1 < mysqlQueries.end(); ++it1, ++i )
+                {
+                    if( i % 2 == 0 && create )
+                    {
+                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
+                        memset( qry.get(), '\0', (*it1).length() + 2 );
+                        uc_to_str_cpy( qry.get(), (*it1) );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
+                        memset( qry.get(), '\0', (*it1).length() + 2 );
+                        uc_to_str_cpy( qry.get(), (*it1) );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                            result = 1;
+                            break;
+                        }
+                        if( !result )
+                        {
+                            ret = SQLFetch( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                                result = 1;
+                                break;
+                            }
+                            else if( ret == SQL_NO_DATA )
+                            {
+                                create = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if( !result )
         {
             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
@@ -2179,10 +2236,18 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( !result )
     {
         auto catalogDB = new SQLWCHAR[pimpl.m_dbName.length() + 2];
+        SQLWCHAR *schemaDB = nullptr;
+        auto schemaLength = 0;
         memset( catalogDB, '\0', pimpl.m_dbName.length() + 2 );
         uc_to_str_cpy( catalogDB, pimpl.m_dbName );
         if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Oracle" )
-            catalogDB = nullptr;
+        {
+            schemaDB = new SQLWCHAR[5];
+            memset( schemaDB, '\0', 5 );
+            uc_to_str_cpy( catalogDB, L"%" );
+            uc_to_str_cpy( schemaDB, L"%" );
+            schemaLength = SQL_NTS;
+        }
         for( int i = 0; i < 5; i++ )
         {
             catalog[i].TargetType = SQL_C_WCHAR;
@@ -2198,7 +2263,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            ret = SQLTables( m_hstmt, catalogDB, SQL_NTS, NULL, 0, NULL, 0, NULL, 0 );
+            ret = SQLTables( m_hstmt, catalogDB, SQL_NTS, schemaDB, 0, nullptr, 0, nullptr, 0 );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2208,6 +2273,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             {
                 delete[] catalogDB;
                 catalogDB = nullptr;
+                delete[] schemaDB;
+                schemaDB = nullptr;
                 for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
                 {
                     SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
