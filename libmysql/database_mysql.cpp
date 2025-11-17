@@ -8,6 +8,7 @@
 #endif
 
 #include <stdio.h>
+#include <memory>
 #include <map>
 #include <vector>
 #include <string.h>
@@ -2852,23 +2853,24 @@ int MySQLDatabase::GetTableId(const std::wstring &catalog, const std::wstring &s
         else
         {
             MYSQL_BIND params[2];
-            unsigned long str_length1, str_length2;
-            str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + 1;
-            str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 1;
-            char *str_data1 = new char[str_length1], *str_data2 = new char[str_length2];
-            memset( str_data1, '\0', str_length1 );
-            memset( str_data2, '\0', str_length2 );
             memset( params, 0, sizeof( params ) );
-            strncpy( str_data1, m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str(), str_length1 );
-            strncpy( str_data2, m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), str_length2 );
+            unsigned long str_length1, str_length2;
+            str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() );
+            str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
+            std::unique_ptr<char[]> str_data1( new char[str_length1] ), str_data2( new char[str_length2] );
+            memset( str_data1.get(), '\0', str_length1 );
+            memset( str_data2.get(), '\0', str_length2 );
+            memset( params, 0, sizeof( params ) );
+            strncpy( str_data1.get(), m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str(), str_length1 );
+            strncpy( str_data2.get(), m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), str_length2 );
             params[0].buffer_type = MYSQL_TYPE_STRING;
-            params[0].buffer = (char *) str_data1;
-            params[0].buffer_length = strlen( str_data1 );
+            params[0].buffer = (char *) str_data1.get();
+            params[0].buffer_length = strlen( str_data1.get() );
             params[0].is_null = 0;
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
-            params[1].buffer = (char *) str_data2;
-            params[1].buffer_length = strlen( str_data2 );
+            params[1].buffer = (char *) str_data2.get();
+            params[1].buffer_length = strlen( str_data2.get() );
             params[1].is_null = 0;
             params[1].length = &str_length2;
             if( mysql_stmt_bind_param( res1, params ) )
@@ -2919,23 +2921,20 @@ int MySQLDatabase::GetTableId(const std::wstring &catalog, const std::wstring &s
                         }
                         else
                         {
-                            while( true )
+                            auto dataset = mysql_stmt_fetch( res1 );
+                            if( dataset == 1 )
                             {
-                                auto dataset = mysql_stmt_fetch( res1 );
-                                if( dataset == 1 || dataset == MYSQL_NO_DATA )
-                                    break;
-                                else
-                                    id = tableId;
+                                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                                errors.push_back( err );
+                                result = 1;
                             }
+                            else
+                                id = tableId;
                             mysql_free_result( prepare_meta_result );
                         }
                     }
                 }
             }
-            delete[] str_data1;
-            str_data1 = nullptr;
-            delete[] str_data2;
-            str_data2 = nullptr;
         }
     }
     if( mysql_stmt_close( res1 ) )
