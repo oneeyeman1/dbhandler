@@ -2893,7 +2893,7 @@ int SQLiteDatabase::StartAlterTable(std::wstring &command, std::wstring &createC
     if( !result )
     {
         if( isLog )
-            command += L"SELECT type, sql FROM sqlite_schema WHERE tbl_name=" + tableName + L"\n\r";
+            command += L"SELECT type, sql FROM sqlite_schema WHERE tbl_name=" + tableName + L";\n\r";
         else
         {
             res = sqlite3_prepare_v2( m_db, "SELECT type, sql FROM sqlite_master WHERE tbl_name=?", -1, &stmt, NULL );
