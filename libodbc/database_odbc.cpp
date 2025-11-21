@@ -8038,18 +8038,18 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 1. Find constraint name
             query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(" + catalogName + L"." + schemaName + L"." + tableName + L"); + \n\r";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
+            query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
-            query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD CONSTRAINT "; //name PRIMARY KEY(";
         }
         else
         {
             // 1. Find constraint name
-            query1= L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(?.?.?);";
+            query1= L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(CONCAT(?,'.',?,'.',?));";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ?;";
+            query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
-            query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD CONSTRAINT name PRIMARY KEY(";
+            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD CONSTRAINT "; //name PRIMARY KEY(";
         }
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -8069,7 +8069,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 1. Find constraint name
             query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = ? AND tc.schema_name = ? AND tc.table_name = ?;";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ? CASCADE";
+            query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
             // 3. Re-add PK
             query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
         }
@@ -8091,7 +8091,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 1. Find constraint name
             query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.table_schema = ? AND tc.table_name = ?;";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ?";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
             // 3. Re-add PK
             query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
 
@@ -8283,32 +8283,75 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     {
         if( !primaryKeyName.empty() )
         {
+            query2 += primaryKeyName;
             if( isLog )
             {
-                command += primaryKeyName;
-                if( pimpl.m_subtype == L"PostgreSQL" )
-                    command += L" CASCADE\n\r";
+                command += query2 + L"\n\r";
             }
             else
             {
                 qry.reset( new SQLWCHAR[query2.length() + 2] );
                 memset( qry.get(), '\0', query2.length() + 2 );
                 uc_to_str_cpy( qry.get(), query2 );
+                ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+                if( !result )
+                {
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                }
             }
         }
     }
-/*    if( pimpl.m_type != L"PostgreSQL" )
+    if( newKey.size() > 0 )
     {
-        auto qry = new SQLWCHAR[query1.length() + 2];
-        memset( qry, '\0', query1.length() + 2 );
-        uc_to_str_cpy( qry, query1 );
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        query3 += primaryKeyName;
+        query3 += L" PRIMARY KEY(";
+        for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
         {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
+            query3 += (*it);
+            if( it == newKey.end() - 1 )
+                query3 += L")";
+            else
+                query3 += L",";
         }
-    }*/
+        if( isLog )
+        {
+            command += query3 + L"\n\r";
+        }
+        else
+        {
+            qry.reset( new SQLWCHAR[query3.length() + 2] );
+            memset( qry.get(), '\0', query3.length() + 2 );
+            uc_to_str_cpy( qry.get(), query3 );
+            if( !result )
+            {
+                ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+        }
+    }
     if( !result )
     {
         qry.reset( new SQLWCHAR[10] );
