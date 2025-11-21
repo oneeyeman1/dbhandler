@@ -494,28 +494,68 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    PGresult *res, *res1, *res2, *res3, *res4, *res5;
+    int osid;
+    PGresult *res, *res1, *res2, *res3, *res4, *res5, *res6;
     std::vector<TableField *> fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, origSchema, origTable, origField, refSchema, refTable, refField, fkName, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     int result = 0, count = 0;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    {
+        osid = WINDOWS;
+    }
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+    {
+        osid = OSX;
+    }
+    else // *nix
+    {
+#ifdef __DBGTK__
+        osid = GTK;
+#elif __DBQT__
+        osid = QT;
+#endif // __DBGTK__
+    }
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
     std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abt_fhgt, abt_fwgt, abt_fitl, abt_funl, abt_fstr, abt_fchr, abt_fptc, rtrim(abt_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
+    std::wstring query7;
+    if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+    {
+        if( osid == WINDOWS )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == OSX )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == GTK )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == QT )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+    }
+    else
+    {
+        if( osid == WINDOWS )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        else if( osid == OSX )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+        else if( osid == GTK )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == QT )
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 3, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+    }
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res ); 
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( err );
-        PQclear( res );
         result = 1;
     }
-    else
+    PQclear( res );
+    if( !result )
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
         status = PQresultStatus( res1 );
@@ -523,83 +563,117 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( err );
-            PQclear( res1 );
             result = 1;
         }
-        else
+    }
+    PQclear( res1 );
+    if( !result )
+    {
+        res2 = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
         {
-            PQclear( res1 );
-            res2 = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), 2, NULL );
-            if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                errorMsg.push_back( L"Error executing query: " + err );
-                PQclear( res2 );
-                result = 1;
-            }
-            else
-            {
-                PQclear( res2 );
-                res4 = PQprepare( m_db, "get_indexes", m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), 2, NULL );
-                if( PQresultStatus( res4 ) != PGRES_COMMAND_OK )
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                    errorMsg.push_back( L"Error executing query: " + err );
-                    PQclear( res2 );
-                    PQclear( res4 );
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    result = 1;
-                }
-                else
-                {
-                    PQclear( res4 );
-                    res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
-                    if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
-                    {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                        errorMsg.push_back( L"Error executing query: " + err );
-                        PQclear( res3 );
-                        result = 1;
-                    }
-                    else
-                    {
-                        PQclear( res3 );
-                        res5 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
-                        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
-                        {
-                            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                            errorMsg.push_back( L"Error executing query: " + err );
-                            PQclear( res5 );
-                            result = 1;
-                        }
-                        else
-                        {
-                            for( int i = 0; i < PQntuples( res ); i++ )
-                            {
-                                char *catalog_name = PQgetvalue( res, i, 0 );
-                                char *schema_name = PQgetvalue( res, i, 1 );
-                                char *table_name = PQgetvalue( res, i, 2 );
-                                pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
-                                count++;
-/*                                char *table_owner = PQgetvalue( res, i, 3 );
-                                char *tableId = PQgetvalue( res, i, 4 );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+    }
+    PQclear( res2 );
+    if( !result )
+    {
+        res4 = PQprepare( m_db, "get_indexes", m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res4 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            fields.erase( fields.begin(), fields.end() );
+            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+            result = 1;
+        }
+    }
+    PQclear( res2 );
+    PQclear( res4 );
+    if( !result )
+    {
+        res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+    }
+    PQclear( res3 );
+    if( !result )
+    {
+        res5 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        res6 = PQprepare( m_db, "set_table_param", m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+    }
+    PQclear( res6 );
+    if( !result )
+     {
+         const char *params[3];
+         std::wstring paramValues[3];
+         int paramLength[3];
+         int paramFormat[3];
+         for( int i = 0; i < PQntuples( res ); i++ )
+         {
+             std::wstring cat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+             std::wstring schema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+             std::wstring table = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
+             char *table_owner = PQgetvalue( res, i, 3 );
+             pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema,  table ) );
+             count++;
+             paramValues[0] = schema + L"." + table;
+             paramValues[1] = table;
+             paramValues[2] = schema;
+             params[0] = new const char[paramValues[0].length()];
+             params[0] = m_pimpl->m_myconv.to_bytes( paramValues[0] ).c_str();
+             params[1] = new const char[paramValues[1].length()];
+             params[1] = m_pimpl->m_myconv.to_bytes( paramValues[1] ).c_str();
+             params[2] = new const char[paramValues[2].length()];
+             params[2] = m_pimpl->m_myconv.to_bytes( paramValues[2] ).c_str();
+             paramFormat[0] = paramFormat[1] = paramFormat[2] = 0;
+             paramLength[0] = paramValues[0].length();
+             paramLength[1] = paramValues[1].length();
+             paramLength[2] = paramValues[2].length();
+             res = PQexecPrepared( m_db, "set_table_prop", 3, params, paramLength, paramFormat, 0 );
+             if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
+             {
+                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                 errorMsg.push_back( L"Error executing query: " + err );
+                 result = 1;
+             }
+             PQclear( res );
+             delete[] params[0];
+             delete[] params[1];
+             delete[] params[2];
+         }
+    }
+    PQclear( res );
+    PQclear( res5 );
+/*                                char *tableId = PQgetvalue( res, i, 4 );
                                 table_id = strtol( tableId, NULL, 10 );
                                 if( AddDropTable( m_pimpl->m_myconv.from_bytes (catalog_name), m_pimpl->m_myconv.from_bytes (schema_name), m_pimpl->m_myconv.from_bytes (table_name), m_pimpl->m_myconv.from_bytes( table_owner ), table_id, true, errorMsg ) )
                                 {
                                     result = 1;
                                     break;
                                 }*/
-                            }
-                            PQclear( res5 );
-                        }
-                    }
-                }
-            }
-        }
-    }
     m_numOfTables = count;
-    PQclear( res );
     return result;
 }
 
