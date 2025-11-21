@@ -533,6 +533,7 @@ int MySQLDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 
 int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
+    short osid = 0;
     int res, result = 0, count = 0;
     std::vector<TableField *> fields;
     std::vector<std::wstring> fk_names, indexes;
@@ -540,6 +541,45 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring errorMessage;
     std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t;";
+    std::wstring query2;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    {
+        osid = WINDOWS;
+    }
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+    {
+        osid = OSX;
+    }
+    else // *nix
+    {
+#ifdef __DBGTK__
+        osid = GTK;
+#elif __DBQT__
+        osid = QT;
+#endif // __DBGTK__
+    }
+    if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 )
+    {
+        if( osid == WINDOWS )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' );";
+        else if( osid == GTK )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' );";
+        else if( osid == QT )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', \'\' );";
+        else if( osid == OSX )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    }
+    else
+    {
+        if( osid == WINDOWS )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' );";
+        else if( osid == GTK )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' );";
+        else if( osid == QT )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', \'\' );";
+        else if( osid == OSX )
+            query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+    }
     res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( res )
     {
