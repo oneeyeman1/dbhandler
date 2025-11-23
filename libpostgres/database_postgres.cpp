@@ -626,7 +626,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     PQclear( res6 );
     if( !result )
      {
-         const char *params[3];
+         char *params[3];
          std::wstring paramValues[3];
          int paramLength[3];
          int paramFormat[3];
@@ -641,12 +641,12 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
              paramValues[0] = schema + L"." + table;
              paramValues[1] = table;
              paramValues[2] = schema;
-             params[0] = new const char[paramValues[0].length()];
-             params[0] = m_pimpl->m_myconv.to_bytes( paramValues[0] ).c_str();
-             params[1] = new const char[paramValues[1].length()];
-             params[1] = m_pimpl->m_myconv.to_bytes( paramValues[1] ).c_str();
-             params[2] = new const char[paramValues[2].length()];
-             params[2] = m_pimpl->m_myconv.to_bytes( paramValues[2] ).c_str();
+             params[0] = new char[paramValues[0].length()];
+             params[0] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[0] ).c_str() );
+             params[1] = new char[paramValues[1].length()];
+             params[1] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[1] ).c_str() );
+             params[2] = new char[paramValues[2].length()];
+             params[2] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[2] ).c_str() );
              paramFormat[0] = paramFormat[1] = paramFormat[2] = 0;
              paramLength[0] = paramValues[0].length();
              paramLength[1] = paramValues[1].length();
