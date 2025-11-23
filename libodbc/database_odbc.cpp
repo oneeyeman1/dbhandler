@@ -5143,9 +5143,9 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         else
             str_to_uc_cpy( clientVersion, version );
-        pimpl.m_clientVersionMajor = stoi( clientVersion.substr( 0, clientVersion.find( L'.' ) - 1 ) );
-        std::wstring temp = temp.substr( clientVersion.find( L'.' ) );
-        pimpl.m_clientVersionMinor = stoi( temp.substr( 0, temp.find( L'.' ) - 1 ) );;
+        pimpl.m_clientVersionMajor = stoi( clientVersion.substr( 0, clientVersion.find( L'.' ) ) );
+        auto temp = clientVersion.substr( clientVersion.find( L'.' ) + 1 );
+        pimpl.m_clientVersionMinor = stoi( temp.substr( 0, temp.find( L'.' ) ) );;
     }
     return result;
 }
