@@ -612,6 +612,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 if( !result )
                 {
                     str_to_uc_cpy( pimpl.m_subtype, dbType );
+                    bufferSize = 1024;
                     ret = SQLGetInfo( m_hdbc, SQL_DRIVER_NAME, driverName, 1024, (SQLSMALLINT *) &bufferSize );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
@@ -688,6 +689,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 if( !result )
                 {
                     str_to_uc_cpy( pimpl.m_dbName, dbName );
+                    bufferSize = 1024;
                     if( pimpl.m_subtype != L"Oracle" )
                     {
                         ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
@@ -4997,7 +4999,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     std::wstring query;
     unsigned long versionMajor = 0, versionMinor = 0;
     SQLLEN cbVersion = SQL_NTS;
-    SQLWCHAR *qry = nullptr, version[1024];
+    SQLWCHAR version[1024];
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         query = L"SELECT SERVERPROPERTY('productversion') AS version, COALESCE(SERVERPROPERTY('ProductMajorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 4)) AS major, COALESCE(SERVERPROPERTY('ProductMinorVersion'), PARSENAME(CAST(SERVERPROPERTY('productversion') AS varchar(20)), 3)) AS minor;";
@@ -5032,12 +5034,10 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         else
         {
-            qry = new SQLWCHAR[query.length() + 2];
-            memset( qry, '\0', query.length() + 2 );
-            uc_to_str_cpy( qry, query );
-            retcode = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-            delete[] qry;
-            qry = nullptr;
+            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+            memset( qry.get(), '\0', query.length() + 2 );
+            uc_to_str_cpy( qry.get(), query );
+            retcode = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
             if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5135,16 +5135,17 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         int bufferSize = 1024;
         std::wstring clientVersion;
-        SQLRETURN ret = SQLGetInfo( m_hdbc, SQL_DRIVER_VER, version, 1024, (SQLSMALLINT *) &bufferSize );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        retcode = SQLGetInfo( m_hdbc, SQL_DRIVER_VER, version, 1024, (SQLSMALLINT *) &bufferSize );
+        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, 2 );
             result = 1;
         }
         else
             str_to_uc_cpy( clientVersion, version );
-        pimpl.m_clientVersionMajor = 0;
-        pimpl.m_clientVersionMinor = 0;
+        pimpl.m_clientVersionMajor = stoi( clientVersion.substr( 0, clientVersion.find( L'.' ) - 1 ) );
+        std::wstring temp = temp.substr( clientVersion.find( L'.' ) );
+        pimpl.m_clientVersionMinor = stoi( temp.substr( 0, temp.find( L'.' ) - 1 ) );;
     }
     return result;
 }
