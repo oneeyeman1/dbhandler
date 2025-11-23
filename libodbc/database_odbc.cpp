@@ -7849,34 +7849,42 @@ int ODBCDatabase::MonitorSchemaChanges(std::vector<std::wstring> &errorMsg)
         queries.push_back( L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsIndex\') CREATE EVENT NOTIFICATION SchemaChangeEventsIndex ON DATABASE FOR DDL_INDEX_EVENTS TO SERVICE \'//" + pimpl.m_dbName + L"/EventNotificationService\' , \'current database\'" );
         queries.push_back( L"IF NOT EXISTS(SELECT * FROM sys.event_notifications WHERE name = \'SchemaChangeEventsView\') CREATE EVENT NOTIFICATION SchemaChangeEventsView ON DATABASE FOR DDL_VIEW_EVENTS TO SERVICE \'//" + pimpl.m_dbName + L"/EventNotificationService\' , \'current database\'" );
     }
-    if( pimpl.m_subtype == L"PostgreSQL" )
+    else if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor > 3 )
+        if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 3 )
+        {
+        }
+        else
         {
             queries.push_back( L"BEGIN" );
-            queries.push_back( L"CREATE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;" );
+            queries.push_back( L"CREATE OR REPLACE FUNCTION __watch_schema_changes() RETURNS event_trigger LANGUAGE plpgsql AS $$ BEGIN NOTIFY tg_tag; END; $$;" );
             queries.push_back( L"CREATE EVENT TRIGGER schema_change_notify ON ddl_command_end WHEN TAG IN(\'CREATE TABLE\', \'ALTER TABLE\', \'DROP TABLE\', \'CREATE INDEX\', \'DROP INDEX\') EXECUTE PROCEDURE __watch_schema_changes();" );
         }
     }
-    if( pimpl.m_subtype == L"ACCESS" )
+    else if( pimpl.m_subtype == L"ACCESS" )
     {
         queries.push_back( L"BEGIN TRANSACTION" );
         queries.push_back( L"GRANT SELECT ON MSysObjects TO Admin;" );
     }
-    for( auto it = queries.begin(); it < queries.end(); ++it )
+    if( !queries.empty() )
     {
-        auto qry = new SQLWCHAR[(*it).size() + 2];
-        memset( qry, '\0', (*it).size() + 2 );
-        uc_to_str_cpy( qry, (*it) );
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        delete[] qry;
-        qry = nullptr;
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        for( auto it = queries.begin(); it < queries.end(); ++it )
         {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-            break;
+            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).size() + 2] );
+            memset( qry.get(), '\0', (*it).size() + 2 );
+            uc_to_str_cpy( qry.get(), (*it) );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+                break;
+            }
         }
+    }
+    else
+    {
+//        ret = SQLTables( m_hstmt, );
     }
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
