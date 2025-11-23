@@ -758,7 +758,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 }
                 if( !pimpl.m_dbName.empty() )
                     connectToDatabase = true;
-                if( GetServerVersion( errorMsg ) )
+                if( !result && GetServerVersion( errorMsg ) )
                 {
                     result = 1;
                 }
@@ -6658,9 +6658,9 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
 
 void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &connectedUser)
 {
-    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
-    memset( connectDSN, '\0', dsn.length() + 2 );
-    uc_to_str_cpy( connectDSN, dsn );
+    std::unique_ptr<SQLWCHAR[]> connectDSN( new SQLWCHAR[dsn.length() + 2] );
+    memset( connectDSN.get(), '\0', dsn.length() + 2 );
+    uc_to_str_cpy( connectDSN.get(), dsn );
     SQLWCHAR entry[50];
     SQLWCHAR fileName[16];
     SQLWCHAR retBuffer[256];
@@ -6671,19 +6671,21 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"UID" );
     uc_to_str_cpy( fileName, L"odbc.ini" );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
         connectedUser = L"";
     else if( ret == 0 )
     {
-        uc_to_str_cpy( entry, L"UserName" );
-        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        memset( entry, '\0', 50 );
+        uc_to_str_cpy( entry, L"UserId" );
+        ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
         if( ret < 0 )
             connectedUser = L"";
         else if( ret == 0 )
         {
+            memset( entry, '\0', 50 );
             uc_to_str_cpy( entry, L"UID" );
-            ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+            ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
             if( ret < 0 )
                 connectedUser = L"";
             else
@@ -6694,15 +6696,13 @@ void ODBCDatabase::GetConnectedUser(const std::wstring &dsn, std::wstring &conne
     }
     else
         str_to_uc_cpy( connectedUser, retBuffer );
-    delete[] connectDSN;
-    connectDSN = nullptr;
 }
 
 void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &connectionPassword, std::vector<std::wstring> &errorMsg)
 {
-    SQLWCHAR *connectDSN = new SQLWCHAR[dsn.length() + 2];
-    memset( connectDSN, '\0', dsn.length() + 2 );
-    uc_to_str_cpy( connectDSN, dsn );
+    std::unique_ptr<SQLWCHAR[]> connectDSN( new SQLWCHAR[dsn.length() + 2] );
+    memset( connectDSN.get(), '\0', dsn.length() + 2 );
+    uc_to_str_cpy( connectDSN.get(), dsn );
     SQLWCHAR fileName[16];
     SQLWCHAR entry[50];
     SQLWCHAR retBuffer[256];
@@ -6714,7 +6714,7 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
     uc_to_str_cpy( defValue, L" " );
-    int ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+    int ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
     {
         GetDSNErrorMessage( errorMsg );
@@ -6722,12 +6722,14 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     }
     else if( ret == 0 )
     {
+        memset( entry, '\0', 50 );
         uc_to_str_cpy( entry, L"PWD" );
-        ret = SQLGetPrivateProfileString( connectDSN, entry, defValue, retBuffer, 256, fileName );
+        ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
         if( ret > 0 )
             str_to_uc_cpy( connectionPassword, retBuffer );
     }
-    delete[] connectDSN;
+    else
+        str_to_uc_cpy( connectionPassword, retBuffer );
 }
 
 bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
