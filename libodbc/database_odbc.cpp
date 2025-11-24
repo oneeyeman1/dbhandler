@@ -1112,21 +1112,21 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         else
         {
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os smallint, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
-            if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
+            if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor <= 5 )
             {
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_os, abt_name, abt_ownr );" );
-                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatc_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatc_x\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcate_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcate_x\" ON \"abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_os\" ASC, \"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'(General)\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0.00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0,00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ); END IF; END;;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;|RED|[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0,00;[$#.##0,00]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
@@ -1229,19 +1229,19 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
             else
             {
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatc_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatc_x\" ON \"abcatcol\"(\"abc_tnam\" ASC, \"abc_ownr\" ASC, \"abc_cnam\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcate_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcate_x\" ON \"abcatedt\"(\"abe_name\" ASC, \"abe_seqn\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatf_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatf_x\" ON \"abcatfmt\"(\"abf_tnam\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatt_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatt_x\" ON \"abcattbl\"(\"abt_os\" ASC, \"abt_tnam\" ASC, \"abt_ownr\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM pg_class c, pg_namespace n WHERE n.oid = c.relnamespace AND c.relname = \'abcatv_x\' AND n.nspname = \'public\' ) THEN CREATE UNIQUE INDEX \"abcatv_x\" ON \"abcatvld\"(\"abv_name\" ASC); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'(General)\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'0.00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'#.##0,00\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ); END IF; END;;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0;|RED|[$#.##0]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM \"abcatfmt\" WHERE abf_name = \'$#.##0,00;[$#.##0,00]\' ) THEN INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_os, abt_tnam, abt_ownr );" );
+                queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00\', \'0.00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0\', \'#.##0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'#.##0,00\', \'#.##0,00\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;[$#.##0]\', \'$#.##0;[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0;|RED|[$#.##0]\', \'$#.##0;|RED|[$#.##0]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;[$#.##0,00]\', \'$#.##0,00;[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'$#.##0,00;|RED|[$#.##0,00]\', \'$#.##0,00;|RED|[$#.##0,00]\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0%\', \'0%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0.00%\', \'0.00%\', 81, 0 ) ON CONFLICT DO NOTHING;" );
