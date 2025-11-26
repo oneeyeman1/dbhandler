@@ -13,8 +13,8 @@ class AttachDB : public wxDialog
 {
 public:
     AttachDB(wxWindow *parent, Database *db, const std::vector<std::wstring> &names);
-    wxString &GetCatalog() { return m_catalog; }
-    wxString &GetSchea() { return m_schema;; }
+    const wxString &GetCatalog() const { return m_catalog; }
+    const wxString &GetSchea() const { return m_schema; }
 protected:
     void OnFileSelected(wxCommandEvent &event);
     void OnOUpdate(wxUpdateUIEvent &event);
