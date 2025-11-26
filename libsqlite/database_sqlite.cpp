@@ -2588,7 +2588,7 @@ int SQLiteDatabase::AttachDatabase(const std::wstring &catalog, const std::wstri
                 if( res == SQLITE_ROW  )
                 {
                     const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                    pimpl.m_tableDefinitions[catalog].push_back( TableDefinition( catalog, schema, sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
+                    pimpl.m_tableDefinitions[sqlite_pimpl->m_catalog].push_back( TableDefinition( sqlite_pimpl->m_catalog, schema, sqlite_pimpl->m_myconv.from_bytes( tableName ) ) );
                 }
                 else if( res == SQLITE_DONE )
                     break;
