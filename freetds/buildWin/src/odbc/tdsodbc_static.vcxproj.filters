@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\odbc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\connectparams.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\convert_tds2sql.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\descriptor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\prepare_query.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\odbc_util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\bcp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\native.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\sql2tds.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\odbc_checks.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\sqlwchar.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\odbc_data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unixodbc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\winlogin.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\winsetup.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\winmain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\sqlwparams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\odbc_w.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\setup.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{C8B433C9-2302-30DE-930C-31CDC640B513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7D068009-A477-35E9-90F9-8648504E8CD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

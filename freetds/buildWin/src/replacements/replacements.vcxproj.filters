@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\iconv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\gettimeofday.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\poll.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\socketpair.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\getaddrinfo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\asprintf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\vasprintf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\strtok_r.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\readpassphrase.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\strlcpy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\strlcat.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\basename.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\getopt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\strsep.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\setenv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\replacements\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7D068009-A477-35E9-90F9-8648504E8CD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\mem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\token.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\login.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\read.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\write.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\convert.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\numeric.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\query.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\iconv.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\locale.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\vstrbuild.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\getmac.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\data.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\net.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\tls.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\tds_checks.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\log.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\bulk.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\packet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\stream.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\random.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\sec_negotiate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\gssapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\sspi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\sec_negotiate_gnutls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\sec_negotiate_openssl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\tds\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{C8B433C9-2302-30DE-930C-31CDC640B513}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7D068009-A477-35E9-90F9-8648504E8CD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

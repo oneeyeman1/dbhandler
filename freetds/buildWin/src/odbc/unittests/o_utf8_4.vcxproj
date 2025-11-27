@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{65ABCF77-7CB0-3760-9BA6-0EB916BE1199}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>o_utf8_4</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">o_utf8_4.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">utf8_4</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">o_utf8_4.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">utf8_4</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">o_utf8_4.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">utf8_4</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">o_utf8_4.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">utf8_4</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>Debug\o_common.lib;..\Debug\tdsodbc_static.lib;..\..\tds\unittests\Debug\t_common.lib;..\..\tds\Debug\tds.lib;..\..\replacements\Debug\replacements.lib;..\..\utils\Debug\tdsutils.lib;odbccp32.lib;legacy_stdio_definitions.lib;ws2_32.lib;crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/Debug/utf8_4.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/Debug/utf8_4.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>Release\o_common.lib;..\Release\tdsodbc_static.lib;..\..\tds\unittests\Release\t_common.lib;..\..\tds\Release\tds.lib;..\..\replacements\Release\replacements.lib;..\..\utils\Release\tdsutils.lib;odbccp32.lib;legacy_stdio_definitions.lib;ws2_32.lib;crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/Release/utf8_4.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/Release/utf8_4.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>MinSizeRel\o_common.lib;..\MinSizeRel\tdsodbc_static.lib;..\..\tds\unittests\MinSizeRel\t_common.lib;..\..\tds\MinSizeRel\tds.lib;..\..\replacements\MinSizeRel\replacements.lib;..\..\utils\MinSizeRel\tdsutils.lib;odbccp32.lib;legacy_stdio_definitions.lib;ws2_32.lib;crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/MinSizeRel/utf8_4.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/MinSizeRel/utf8_4.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>
+      </ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;UNICODE=1;_UNICODE=1_;_REENTRANT;_THREAD_SAFE;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\..;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <Link>
+      <AdditionalDependencies>RelWithDebInfo\o_common.lib;..\RelWithDebInfo\tdsodbc_static.lib;..\..\tds\unittests\RelWithDebInfo\t_common.lib;..\..\tds\RelWithDebInfo\tds.lib;..\..\replacements\RelWithDebInfo\replacements.lib;..\..\utils\RelWithDebInfo\tdsutils.lib;odbccp32.lib;legacy_stdio_definitions.lib;ws2_32.lib;crypt32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:X86</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/RelWithDebInfo/utf8_4.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/RelWithDebInfo/utf8_4.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/src/odbc/unittests/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/src/odbc/unittests/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/src/odbc/unittests/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/src/odbc/unittests/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/src/odbc/unittests/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\odbc\unittests\utf8_4.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\ZERO_CHECK.vcxproj">
+      <Project>{CA610E31-01C4-3872-9534-1D432B266999}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_common.vcxproj">
+      <Project>{5E9E3839-F533-3B96-94CF-74AA1005F4A6}</Project>
+      <Name>o_common</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements\replacements.vcxproj">
+      <Project>{B8E63BBE-F6DE-3DDD-AAAC-9E71B491C71F}</Project>
+      <Name>replacements</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_common.vcxproj">
+      <Project>{A8793561-CCCA-3127-BFA0-C01F509F4089}</Project>
+      <Name>t_common</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\tds.vcxproj">
+      <Project>{EA2D8EE2-7B3B-3F78-B397-DC71CD2EA550}</Project>
+      <Name>tds</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\tdsodbc_static.vcxproj">
+      <Project>{CB412B31-75F4-38E5-8396-0633D957FA83}</Project>
+      <Name>tdsodbc_static</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\tdsutils.vcxproj">
+      <Project>{6651F261-6C49-30F9-9B47-CEE60A77088D}</Project>
+      <Name>tdsutils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

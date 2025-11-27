@@ -1,0 +1,1070 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|Win32">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|Win32">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F3846EEE-3D77-3CAB-A736-9C0A3DD821A6}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>check</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3a359fda80dcacf12b8b6781ddc21a70\check.rule">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+ctest
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+ctest
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+ctest
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"></Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+ctest
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeConfigurableFile.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitIncludeInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseLibraryArchitecture.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystem.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVHPC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.23\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\SelectLibraryConfigurations.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_ODBCSS_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQLEXT_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQL_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_CHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_FLOAT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_INT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SHORT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLLEN.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWOFFSET.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWSETSIZE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLSETPOSIROW.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLWCHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_VOID_P.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_WCHAR_T.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT128.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT64.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include\config.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\sysdep_types.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\version.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\tds_sysdep_public.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\misc\cmake_checks.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeConfigurableFile.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitIncludeInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseLibraryArchitecture.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystem.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVHPC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.23\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\SelectLibraryConfigurations.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_ODBCSS_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQLEXT_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQL_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_CHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_FLOAT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_INT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SHORT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLLEN.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWOFFSET.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWSETSIZE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLSETPOSIROW.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLWCHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_VOID_P.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_WCHAR_T.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT128.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT64.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include\config.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\sysdep_types.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\version.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\tds_sysdep_public.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\misc\cmake_checks.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeConfigurableFile.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitIncludeInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseLibraryArchitecture.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystem.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVHPC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.23\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\SelectLibraryConfigurations.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_ODBCSS_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQLEXT_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQL_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_CHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_FLOAT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_INT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SHORT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLLEN.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWOFFSET.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWSETSIZE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLSETPOSIROW.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLWCHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_VOID_P.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_WCHAR_T.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT128.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT64.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include\config.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\sysdep_types.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\version.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\tds_sysdep_public.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\misc\cmake_checks.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds -BC:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin --check-stamp-file C:/Users/Igor/OneDrive/Documents/dbhandler_app/freetds/buildWin/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCCompilerABI.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXCompilerABI.cpp;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCompilerIdDetection.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeConfigurableFile.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompileFeatures.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerABI.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineCompilerId.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeDetermineSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeFindBinUtils.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitIncludeInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeParseLibraryArchitecture.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCCompiler.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystem.cmake.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestCompilerCommon.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeTestRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckCXXSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.c;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckFunctionExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFileCXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckIncludeFiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckPrototypeDefinition.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckStructHasMember.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.c.in;C:\Program Files\CMake\share\cmake-3.23\Modules\CheckTypeSize.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ADSP-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMCC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\ARMClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\AppleClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Borland-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Bruce-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Clang-DetermineCompilerInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Comeau-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Compaq-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Cray-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Embarcadero-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Fujitsu-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\FujitsuClang-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GHS-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\GNU-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\HP-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IAR-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-C-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMCPP-CXX-DetermineVersionInternal.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IBMClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Intel-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\IntelLLVM-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\LCC-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVHPC-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\NVIDIA-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\OpenWatcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PGI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\PathScale-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SCO-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SDCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\SunPro-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TI-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\TinyCC-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\VisualAge-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\Watcom-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XL-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\XLClang-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-C-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\zOS-CXX-DetermineCompiler.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CompilerId\VS-10.vcxproj.in;C:\Program Files\CMake\share\cmake-3.23\Modules\FindCygwin.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindMsys.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindOpenSSL.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPerl.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Internal\FeatureTesting.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-Determine-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\SelectLibraryConfigurations.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeCXXCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeRCCompiler.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3.23.1\CMakeSystem.cmake;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_ODBCSS_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQLEXT_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckIncludeFiles\HAVE_SQL_H.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_CHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_FLOAT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_INT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_DOUBLE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_LONG_LONG.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SHORT.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLLEN.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWOFFSET.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLROWSETSIZE.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLSETPOSIROW.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_SQLWCHAR.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_VOID_P.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF_WCHAR_T.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT128.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\CheckTypeSize\SIZEOF___INT64.c;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\include\config.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\sysdep_types.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\freetds\version.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\include\tds_sysdep_public.h.in;C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\misc\cmake_checks.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check">
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\ZERO_CHECK.vcxproj">
+      <Project>{CA610E31-01C4-3872-9534-1D432B266999}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\apps\unittests\a_defncopy.vcxproj">
+      <Project>{6D6C0B54-BD4C-3669-987C-903E46824311}</Project>
+      <Name>a_defncopy</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_all_types.vcxproj">
+      <Project>{628D397D-5DF0-39E9-AA9B-F8208771F7A8}</Project>
+      <Name>c_all_types</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_array_bind.vcxproj">
+      <Project>{6DA10329-49D0-325D-A4A0-61582193EECC}</Project>
+      <Name>c_array_bind</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_blk_in.vcxproj">
+      <Project>{491DF55B-6FEA-3B80-BC12-47908F55C431}</Project>
+      <Name>c_blk_in</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_blk_in2.vcxproj">
+      <Project>{F25F19E4-3300-3EE2-BDB2-E96004D67590}</Project>
+      <Name>c_blk_in2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_blk_out.vcxproj">
+      <Project>{C2E55522-7E3A-3B12-AED6-9DB327149D46}</Project>
+      <Name>c_blk_out</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_cancel.vcxproj">
+      <Project>{F6F6A273-C731-33AB-98F7-C9194A9B2480}</Project>
+      <Name>c_cancel</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_connect_fail.vcxproj">
+      <Project>{4E188E85-5077-36DC-8367-B11127A5429D}</Project>
+      <Name>c_connect_fail</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_cs_config.vcxproj">
+      <Project>{F56E668D-7EFE-3991-884A-06A5CED2034D}</Project>
+      <Name>c_cs_config</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_cs_convert.vcxproj">
+      <Project>{D7E41557-5350-3588-85EC-8D2304E661E4}</Project>
+      <Name>c_cs_convert</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_cs_diag.vcxproj">
+      <Project>{61698032-C07D-3B99-8951-D259A65AD47B}</Project>
+      <Name>c_cs_diag</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_command.vcxproj">
+      <Project>{40CA9350-73EE-3410-9BAD-080E699409F2}</Project>
+      <Name>c_ct_command</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_cursor.vcxproj">
+      <Project>{F0BCFA42-47AD-3933-9C22-E6B62BB39197}</Project>
+      <Name>c_ct_cursor</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_cursors.vcxproj">
+      <Project>{02EA5BFB-275D-39D5-8C71-D38720FE2697}</Project>
+      <Name>c_ct_cursors</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_diagall.vcxproj">
+      <Project>{0F68A9E0-B54A-33C2-8ACB-BFAB987854E7}</Project>
+      <Name>c_ct_diagall</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_diagclient.vcxproj">
+      <Project>{FD97EA2C-7874-309D-9870-2C6F40177FE2}</Project>
+      <Name>c_ct_diagclient</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_diagserver.vcxproj">
+      <Project>{C0057C38-CE87-3361-AA54-DB2539155EB9}</Project>
+      <Name>c_ct_diagserver</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_dynamic.vcxproj">
+      <Project>{F8D2F3C3-B9AF-3711-857F-56D660A53E72}</Project>
+      <Name>c_ct_dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_ct_options.vcxproj">
+      <Project>{6B01C8DE-6D47-3E33-95D9-795EC19119C6}</Project>
+      <Name>c_ct_options</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_data.vcxproj">
+      <Project>{09742D23-4293-37DB-AB0E-3EF67395BE72}</Project>
+      <Name>c_data</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_datafmt.vcxproj">
+      <Project>{C194E0C6-E96E-3619-A4AE-6CD72A98C6B8}</Project>
+      <Name>c_datafmt</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_errors.vcxproj">
+      <Project>{6F277472-EA3F-3D17-9CBF-E1E91C19F740}</Project>
+      <Name>c_errors</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_get_send_data.vcxproj">
+      <Project>{81249544-0390-3683-B30E-1E8CCB83FBFD}</Project>
+      <Name>c_get_send_data</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_lang_ct_param.vcxproj">
+      <Project>{77BAAD5C-920B-3F68-90DD-9C006267CF58}</Project>
+      <Name>c_lang_ct_param</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_long_binary.vcxproj">
+      <Project>{85027434-E16A-3303-8EF1-27BCEDF0B424}</Project>
+      <Name>c_long_binary</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_row_count.vcxproj">
+      <Project>{A9963A32-DA5A-306E-AF28-FF913C08BE9A}</Project>
+      <Name>c_row_count</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_rpc_ct_param.vcxproj">
+      <Project>{C2B5C8C3-F484-31C4-8545-3F89000B89FA}</Project>
+      <Name>c_rpc_ct_param</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_rpc_ct_setparam.vcxproj">
+      <Project>{49E4BF6C-B834-309C-99F9-17A31B5ACAAE}</Project>
+      <Name>c_rpc_ct_setparam</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_rpc_fail.vcxproj">
+      <Project>{8AE22C7A-1173-30CE-877F-2C3BCDAE28E8}</Project>
+      <Name>c_rpc_fail</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0001.vcxproj">
+      <Project>{CCBD54FA-2C53-38B7-991D-FE0327988222}</Project>
+      <Name>c_t0001</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0002.vcxproj">
+      <Project>{4CB8D89F-CF30-37C9-9F21-0B687AA94ADF}</Project>
+      <Name>c_t0002</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0003.vcxproj">
+      <Project>{2E1A8BC5-92FF-361E-AB2B-20C9D38F195B}</Project>
+      <Name>c_t0003</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0004.vcxproj">
+      <Project>{615A4D07-E5A4-3B40-99FD-672FE9C2EDD1}</Project>
+      <Name>c_t0004</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0005.vcxproj">
+      <Project>{E07B19B7-8FAA-3E41-B20C-2042793FA1CC}</Project>
+      <Name>c_t0005</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0007.vcxproj">
+      <Project>{E71999D0-3963-3417-B211-4D29272EE771}</Project>
+      <Name>c_t0007</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0008.vcxproj">
+      <Project>{79F88691-FD28-3F39-82C4-1C71833EF9F2}</Project>
+      <Name>c_t0008</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_t0009.vcxproj">
+      <Project>{EAF7A4B5-A56C-3985-A4A9-44FA5AA5A7D1}</Project>
+      <Name>c_t0009</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_timeout.vcxproj">
+      <Project>{3E4EE9BE-A8F9-33A4-9BBF-BA924796D195}</Project>
+      <Name>c_timeout</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_variant.vcxproj">
+      <Project>{A4005645-B9A5-38E5-9B91-82BE4DB1815E}</Project>
+      <Name>c_variant</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\ctlib\unittests\c_will_convert.vcxproj">
+      <Project>{F3F27FFE-C471-3030-88C5-46AC98281714}</Project>
+      <Name>c_will_convert</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_batch_stmt_ins_sel.vcxproj">
+      <Project>{7C5E3C8F-875E-3917-AED2-7D5434C51C1A}</Project>
+      <Name>d_batch_stmt_ins_sel</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_batch_stmt_ins_upd.vcxproj">
+      <Project>{6D9DFF60-A3BA-326E-A12A-572D277EABC0}</Project>
+      <Name>d_batch_stmt_ins_upd</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_bcp.vcxproj">
+      <Project>{2F21816A-2CC5-34DB-954A-54B0508B592F}</Project>
+      <Name>d_bcp</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_bcp2.vcxproj">
+      <Project>{521E429A-C0EF-3AA0-ABFF-85CA96ED4520}</Project>
+      <Name>d_bcp2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_bcp_getl.vcxproj">
+      <Project>{AD2BA650-B2B1-3273-92E4-142637517BED}</Project>
+      <Name>d_bcp_getl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_cancel.vcxproj">
+      <Project>{4B574681-C3D5-3C4B-93DA-D138A29A3E49}</Project>
+      <Name>d_cancel</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_canquery.vcxproj">
+      <Project>{80C6DB80-8A2E-3760-B077-9D9A21ADC294}</Project>
+      <Name>d_canquery</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_colinfo.vcxproj">
+      <Project>{A4639856-AB77-381A-99A5-32EA5248A41F}</Project>
+      <Name>d_colinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_dbmorecmds.vcxproj">
+      <Project>{267384D4-BC92-3F06-A109-90EDD94813C7}</Project>
+      <Name>d_dbmorecmds</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_dbsafestr.vcxproj">
+      <Project>{53A69B0E-9B5C-3F0C-9EEA-E8F0AA1C1CB7}</Project>
+      <Name>d_dbsafestr</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_done_handling.vcxproj">
+      <Project>{8C2C73C7-1EE9-3F42-AFC5-9CF72C86B9CD}</Project>
+      <Name>d_done_handling</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_empty_rowsets.vcxproj">
+      <Project>{DB11EDAA-A5F0-38BE-A646-97268E7769AA}</Project>
+      <Name>d_empty_rowsets</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_hang.vcxproj">
+      <Project>{22A773B2-4736-3297-AF01-342F697ABB4E}</Project>
+      <Name>d_hang</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_null.vcxproj">
+      <Project>{B1BC6D21-7AD6-3F8B-86D7-C154AECA4AD5}</Project>
+      <Name>d_null</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_null2.vcxproj">
+      <Project>{08E6C442-7408-304E-A904-088C6E2D8857}</Project>
+      <Name>d_null2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_numeric.vcxproj">
+      <Project>{818ADF87-6735-3693-A562-0B4A8294BDFA}</Project>
+      <Name>d_numeric</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_pending.vcxproj">
+      <Project>{6C45C1C2-B827-37AC-A0EE-24746DCC9AFC}</Project>
+      <Name>d_pending</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_proc_limit.vcxproj">
+      <Project>{A574C0E8-8918-3AED-911C-7369D205CED4}</Project>
+      <Name>d_proc_limit</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_rpc.vcxproj">
+      <Project>{9644CC6C-627E-34F5-BF2B-999BB1B1CFF1}</Project>
+      <Name>d_rpc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_setnull.vcxproj">
+      <Project>{E62575AE-9A20-364C-BADC-6960F1E4A58A}</Project>
+      <Name>d_setnull</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_spid.vcxproj">
+      <Project>{3E9C0178-E60D-3B3B-A655-1371CA3661DB}</Project>
+      <Name>d_spid</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_string_bind.vcxproj">
+      <Project>{78C53880-E325-30E0-B057-0AB32665FFA4}</Project>
+      <Name>d_string_bind</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0001.vcxproj">
+      <Project>{78B0B3CF-3140-34E0-B920-36AFA0C4C036}</Project>
+      <Name>d_t0001</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0002.vcxproj">
+      <Project>{268F963C-2823-3A21-983B-7EA4B974C1B2}</Project>
+      <Name>d_t0002</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0003.vcxproj">
+      <Project>{9A3B6F95-FBC0-39FB-9CBD-D39A62E9A242}</Project>
+      <Name>d_t0003</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0004.vcxproj">
+      <Project>{4F8C51D3-637C-31CC-B333-725F18F45661}</Project>
+      <Name>d_t0004</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0005.vcxproj">
+      <Project>{46AC4A77-0567-3C28-A0CD-457AB9A5E41B}</Project>
+      <Name>d_t0005</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0006.vcxproj">
+      <Project>{DBAB88BA-86E3-34D4-9EE0-C85635940C43}</Project>
+      <Name>d_t0006</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0007.vcxproj">
+      <Project>{C73AAD9E-AA6A-31FB-B133-5258A32873F8}</Project>
+      <Name>d_t0007</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0008.vcxproj">
+      <Project>{4E7D5D15-0B78-3614-91FF-0AF2F4147B07}</Project>
+      <Name>d_t0008</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0009.vcxproj">
+      <Project>{F90CBA93-DC99-31C0-A52E-E1E70F74D3A3}</Project>
+      <Name>d_t0009</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0011.vcxproj">
+      <Project>{C23ED1A0-CBAA-3D79-95BD-8E4AE24A2EAA}</Project>
+      <Name>d_t0011</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0012.vcxproj">
+      <Project>{A0A053AB-D710-3CE3-95FF-C46A4FDA48FE}</Project>
+      <Name>d_t0012</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0013.vcxproj">
+      <Project>{9A6EE8B6-4882-3AA5-B135-3C689FCE1975}</Project>
+      <Name>d_t0013</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0014.vcxproj">
+      <Project>{60124FAB-B278-341E-8A22-17350C7AE9CA}</Project>
+      <Name>d_t0014</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0015.vcxproj">
+      <Project>{DDC1C833-0A88-39BC-A5BC-426354650FC8}</Project>
+      <Name>d_t0015</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0016.vcxproj">
+      <Project>{5AAF604B-D998-3C26-9A92-3A276C967F63}</Project>
+      <Name>d_t0016</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0017.vcxproj">
+      <Project>{CC97C37E-87DE-36B7-86D6-B9AF93821024}</Project>
+      <Name>d_t0017</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0018.vcxproj">
+      <Project>{D8410467-106C-3961-8868-FC20EA28C617}</Project>
+      <Name>d_t0018</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0019.vcxproj">
+      <Project>{57CFBA4E-872A-3D31-99E8-41BE59D3A7A1}</Project>
+      <Name>d_t0019</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0020.vcxproj">
+      <Project>{F8DA438C-5AA4-3482-978B-061C226BA937}</Project>
+      <Name>d_t0020</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0022.vcxproj">
+      <Project>{3B071B06-7FA6-3CFB-8653-F97C2D981570}</Project>
+      <Name>d_t0022</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_t0023.vcxproj">
+      <Project>{CDCF6FA0-CD2D-3A98-84D2-003BEAF0D1FC}</Project>
+      <Name>d_t0023</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_text_buffer.vcxproj">
+      <Project>{63E1597F-889D-3AA2-9EE7-33A2555EF296}</Project>
+      <Name>d_text_buffer</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_thread.vcxproj">
+      <Project>{DA4B5F44-08A2-3BBB-99E7-D0A585EC8BA0}</Project>
+      <Name>d_thread</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\dblib\unittests\d_timeout.vcxproj">
+      <Project>{28DC0F50-5B40-3417-B463-51F841027E02}</Project>
+      <Name>d_timeout</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_all_types.vcxproj">
+      <Project>{49544453-5276-345C-9E83-442C64CDFB8D}</Project>
+      <Name>o_all_types</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_array.vcxproj">
+      <Project>{26F1EE50-7801-37E6-8832-AB1B20A326FF}</Project>
+      <Name>o_array</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_array_error.vcxproj">
+      <Project>{BC4E543F-F121-318E-8AFD-D6204D886E7D}</Project>
+      <Name>o_array_error</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_array_out.vcxproj">
+      <Project>{6B2931A6-9B9B-382F-8442-F0E41B9506A3}</Project>
+      <Name>o_array_out</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_attributes.vcxproj">
+      <Project>{1CA22603-EBE2-3BF2-AB1A-6946C28F7131}</Project>
+      <Name>o_attributes</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_bcp.vcxproj">
+      <Project>{E1E6458A-7435-3D55-97AA-18F3E47535F7}</Project>
+      <Name>o_bcp</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_binary_test.vcxproj">
+      <Project>{E81E3995-7B45-3894-8918-A51E4BB48620}</Project>
+      <Name>o_binary_test</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_blob1.vcxproj">
+      <Project>{F61DCC0B-A6B6-3EDC-80BB-DFCA311FA977}</Project>
+      <Name>o_blob1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cancel.vcxproj">
+      <Project>{A2FDDCC9-D24B-3E9A-8576-AA33E81D0CB1}</Project>
+      <Name>o_cancel</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_closestmt.vcxproj">
+      <Project>{0E7C10CC-19D5-3797-A585-5C2ACDAFE2F2}</Project>
+      <Name>o_closestmt</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_compute.vcxproj">
+      <Project>{0D4DD443-2FCC-3FAE-886E-D94965315FB0}</Project>
+      <Name>o_compute</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_connect.vcxproj">
+      <Project>{8B0AF5BF-0DF8-3AD2-B520-1B9A61785C08}</Project>
+      <Name>o_connect</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_connect2.vcxproj">
+      <Project>{77488BEA-350A-3CBC-92A9-61A62355F218}</Project>
+      <Name>o_connect2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_connection_string_parse.vcxproj">
+      <Project>{17A0066D-3536-3026-95A1-03244289E7DD}</Project>
+      <Name>o_connection_string_parse</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_const_params.vcxproj">
+      <Project>{88D44BD3-BC25-33BE-8C14-3EB1034CB7A9}</Project>
+      <Name>o_const_params</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_convert_error.vcxproj">
+      <Project>{E410635B-6DC4-3CA2-A69A-BF0F3F2B1F9E}</Project>
+      <Name>o_convert_error</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_copydesc.vcxproj">
+      <Project>{052CAE0C-9ECC-3778-8530-E96684C08BEB}</Project>
+      <Name>o_copydesc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor1.vcxproj">
+      <Project>{2662B632-C772-3955-80ED-08C608635C0A}</Project>
+      <Name>o_cursor1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor2.vcxproj">
+      <Project>{3256D4E9-9E23-36A5-A595-C3FF376A35BC}</Project>
+      <Name>o_cursor2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor3.vcxproj">
+      <Project>{024B0F2E-E040-3370-B509-AB566E87925A}</Project>
+      <Name>o_cursor3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor4.vcxproj">
+      <Project>{FE7E39B6-1AB9-397A-8FEF-870A28E2EAB1}</Project>
+      <Name>o_cursor4</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor5.vcxproj">
+      <Project>{6F321C2C-EC00-3D2F-993E-529FD5B04F37}</Project>
+      <Name>o_cursor5</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor6.vcxproj">
+      <Project>{7032EBAA-6556-3F9B-A032-E555FB98AE03}</Project>
+      <Name>o_cursor6</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_cursor7.vcxproj">
+      <Project>{98E05FC1-6B0E-31C1-BAF9-055C6A176692}</Project>
+      <Name>o_cursor7</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_data.vcxproj">
+      <Project>{9E616A24-5A6C-3E7F-A0B1-32174C0B0AEF}</Project>
+      <Name>o_data</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_date.vcxproj">
+      <Project>{83381802-A8B1-36CC-B73A-BCAAC9D93374}</Project>
+      <Name>o_date</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_descrec.vcxproj">
+      <Project>{4ABBEB42-3A4D-3E69-AF16-7109E48BAB59}</Project>
+      <Name>o_descrec</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_describecol.vcxproj">
+      <Project>{602839BF-EB8C-3FB9-8051-8067AE589833}</Project>
+      <Name>o_describecol</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_describeparam.vcxproj">
+      <Project>{620BD4BD-85C3-3535-BFF7-4A0ED93EC4A7}</Project>
+      <Name>o_describeparam</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_earlybind.vcxproj">
+      <Project>{AC29BA1E-0EB5-31F8-A5E7-D662DA2FCB3A}</Project>
+      <Name>o_earlybind</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_empty_query.vcxproj">
+      <Project>{9AFF8C46-D9AF-330E-8517-4AF5528DD246}</Project>
+      <Name>o_empty_query</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_error.vcxproj">
+      <Project>{2F731735-F1B3-322F-8FD8-B6A608A78B08}</Project>
+      <Name>o_error</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_freeclose.vcxproj">
+      <Project>{0555332C-8487-337A-BD5A-EF9D9035690D}</Project>
+      <Name>o_freeclose</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_funccall.vcxproj">
+      <Project>{F8EA7BAC-421F-38A9-911B-A620C225BC99}</Project>
+      <Name>o_funccall</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_genparams.vcxproj">
+      <Project>{EFB1A05C-656F-327A-9B1A-7DE2F8EC2303}</Project>
+      <Name>o_genparams</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_getdata.vcxproj">
+      <Project>{4CB474E6-39F1-3729-88E8-DD8C1F430627}</Project>
+      <Name>o_getdata</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_hidden.vcxproj">
+      <Project>{CADF5A42-8023-3E2F-9FC1-925DBD4AB9AB}</Project>
+      <Name>o_hidden</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_insert_speed.vcxproj">
+      <Project>{180873E7-C288-38F1-87BE-FEF837E227CF}</Project>
+      <Name>o_insert_speed</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_lang_error.vcxproj">
+      <Project>{C80D17FA-A703-3438-9347-0161B204745E}</Project>
+      <Name>o_lang_error</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_long_error.vcxproj">
+      <Project>{FAA53E1B-8665-30EE-BD4F-37853ECF7BF5}</Project>
+      <Name>o_long_error</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_mars1.vcxproj">
+      <Project>{37446979-1915-3C7E-8B47-E027004CE026}</Project>
+      <Name>o_mars1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_moreandcount.vcxproj">
+      <Project>{9F3BB5A8-9AC5-3CD3-BE6D-21109732BDEF}</Project>
+      <Name>o_moreandcount</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_moreresults.vcxproj">
+      <Project>{80830AC0-FAEC-31A2-8AA8-F5EC5FC4DF81}</Project>
+      <Name>o_moreresults</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_norowset.vcxproj">
+      <Project>{FF403C81-FEF8-3921-8240-6B6214191312}</Project>
+      <Name>o_norowset</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_paramcore.vcxproj">
+      <Project>{85644034-4373-39E6-9EFC-5CCC805C3A25}</Project>
+      <Name>o_paramcore</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_params.vcxproj">
+      <Project>{DF55529B-0DEA-33D3-BA19-E71FF3B79D8C}</Project>
+      <Name>o_params</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_peter.vcxproj">
+      <Project>{A407B7D6-B781-3953-9849-2D68609C6E97}</Project>
+      <Name>o_peter</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_prepare_results.vcxproj">
+      <Project>{39B3C7FB-D949-379A-A632-1185444BACFB}</Project>
+      <Name>o_prepare_results</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_prepare_warn.vcxproj">
+      <Project>{B83E74D2-B435-3D7B-9D5E-AAA4E94CB62F}</Project>
+      <Name>o_prepare_warn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_prepclose.vcxproj">
+      <Project>{B4ECE7BC-1B02-3F11-8173-50A7C7C31919}</Project>
+      <Name>o_prepclose</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_preperror.vcxproj">
+      <Project>{23E4A4C5-A327-35E8-8E99-CDB73EC5C8E3}</Project>
+      <Name>o_preperror</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_print.vcxproj">
+      <Project>{4537E4B5-8B67-380F-910C-4E97052E759F}</Project>
+      <Name>o_print</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_putdata.vcxproj">
+      <Project>{C2BC662E-D584-3FB0-B9D4-65DBB9630B8B}</Project>
+      <Name>o_putdata</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_qn.vcxproj">
+      <Project>{F2A496CF-A4CA-3D21-980E-5E8A67C2759F}</Project>
+      <Name>o_qn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_raiserror.vcxproj">
+      <Project>{A0AF4CA9-FF69-360B-94DC-CEF8214DACAA}</Project>
+      <Name>o_raiserror</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_rebindpar.vcxproj">
+      <Project>{75ECE566-80E0-3B34-9DC4-C573F7F8CC56}</Project>
+      <Name>o_rebindpar</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_rowset.vcxproj">
+      <Project>{C9E60CA9-2FE2-3C31-ABE5-4E00A7B3BE71}</Project>
+      <Name>o_rowset</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_rpc.vcxproj">
+      <Project>{ED6DBA0A-3209-3421-B767-D9391E9E2420}</Project>
+      <Name>o_rpc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_scroll.vcxproj">
+      <Project>{5D139474-ECF7-3E99-A461-7CE45B516A9F}</Project>
+      <Name>o_scroll</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_stats.vcxproj">
+      <Project>{F6B03A30-4CD0-3E81-BDB8-86817E139CEC}</Project>
+      <Name>o_stats</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_t0001.vcxproj">
+      <Project>{73755895-DDCA-3F88-95BD-4B3DC18F8148}</Project>
+      <Name>o_t0001</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_t0002.vcxproj">
+      <Project>{16527145-13D2-3726-A537-2FFB7410EC96}</Project>
+      <Name>o_t0002</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_t0003.vcxproj">
+      <Project>{17C3E139-6B58-309F-A003-BDF6D48F1AF1}</Project>
+      <Name>o_t0003</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_tables.vcxproj">
+      <Project>{AC1BBF38-7C4B-3E86-9AFF-A019B33F47E2}</Project>
+      <Name>o_tables</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_test64.vcxproj">
+      <Project>{E81CB6C8-2E7C-3E74-8F89-712789FA66B1}</Project>
+      <Name>o_test64</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_testodbc.vcxproj">
+      <Project>{609EABB4-5F42-3162-ABE8-C0C6EA547ACC}</Project>
+      <Name>o_testodbc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_timeout.vcxproj">
+      <Project>{D07F39D1-FAC4-3F5D-82EF-EE8EC8EE1047}</Project>
+      <Name>o_timeout</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_timeout2.vcxproj">
+      <Project>{42C4AF44-416D-335D-886A-09261148D165}</Project>
+      <Name>o_timeout2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_timeout3.vcxproj">
+      <Project>{56A1A349-0B2B-34F5-8CCC-C1C426ECA215}</Project>
+      <Name>o_timeout3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_timeout4.vcxproj">
+      <Project>{A9FEFE92-0186-379F-A2E1-ED207956A072}</Project>
+      <Name>o_timeout4</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_tokens.vcxproj">
+      <Project>{E9E5E9E4-98FB-318A-9E1E-C95E43B66CB8}</Project>
+      <Name>o_tokens</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_transaction.vcxproj">
+      <Project>{804B2080-1D6B-3D5D-91B6-A9BAA3F1917E}</Project>
+      <Name>o_transaction</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_transaction2.vcxproj">
+      <Project>{627E9F31-621F-3EA0-BBE6-F4D3B90CC919}</Project>
+      <Name>o_transaction2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_transaction3.vcxproj">
+      <Project>{ABBA90A6-447E-3AAB-AA4D-66514EE9397A}</Project>
+      <Name>o_transaction3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_transaction4.vcxproj">
+      <Project>{59E09C4D-7726-3AFA-9B6E-0A14F138B26B}</Project>
+      <Name>o_transaction4</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_tvp.vcxproj">
+      <Project>{FCD0B569-91E1-3242-8E7C-3D926970F175}</Project>
+      <Name>o_tvp</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_type.vcxproj">
+      <Project>{F2EA93E7-91CD-313B-BD16-A1D0EB9771FF}</Project>
+      <Name>o_type</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_typeinfo.vcxproj">
+      <Project>{C2B2ED4B-4DED-3847-9B2F-4308AC9E018E}</Project>
+      <Name>o_typeinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_utf8.vcxproj">
+      <Project>{301DCC87-197E-393F-B65D-1B0EA3A8B9EC}</Project>
+      <Name>o_utf8</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_utf8_2.vcxproj">
+      <Project>{96F0C13D-9A20-361D-94C1-B6D8AB920D02}</Project>
+      <Name>o_utf8_2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_utf8_3.vcxproj">
+      <Project>{0CCB886C-62D8-3265-B9D8-9CCDCE4EF5DD}</Project>
+      <Name>o_utf8_3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_utf8_4.vcxproj">
+      <Project>{65ABCF77-7CB0-3760-9BA6-0EB916BE1199}</Project>
+      <Name>o_utf8_4</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_warning.vcxproj">
+      <Project>{42D4D39C-C25A-3137-8032-E208C0439582}</Project>
+      <Name>o_warning</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\odbc\unittests\o_wchar.vcxproj">
+      <Project>{000F4E29-C5EF-3F57-9B69-13DD1479399C}</Project>
+      <Name>o_wchar</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements\unittests\r_strings.vcxproj">
+      <Project>{0E752EEF-7A8A-3CC9-AD95-9F1B80EFD010}</Project>
+      <Name>r_strings</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements\unittests\r_strsep.vcxproj">
+      <Project>{2D08F344-1DB0-31B4-BE74-A75B1F00701B}</Project>
+      <Name>r_strsep</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\replacements\unittests\r_strtok_r.vcxproj">
+      <Project>{DF488C46-1881-35B3-B6B0-1CB1270E1A4E}</Project>
+      <Name>r_strtok_r</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_charconv.vcxproj">
+      <Project>{5D418360-56B2-3691-B5ED-6DCC321C7F61}</Project>
+      <Name>t_charconv</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_collations.vcxproj">
+      <Project>{61A6528F-935E-3587-BFBF-09B3B931BC57}</Project>
+      <Name>t_collations</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_convert.vcxproj">
+      <Project>{41F2A0B0-10FD-3C34-AF9B-4D8A823511F7}</Project>
+      <Name>t_convert</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_convert_bounds.vcxproj">
+      <Project>{BD4E1FB7-9486-3C84-A3E0-63201C021513}</Project>
+      <Name>t_convert_bounds</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_corrupt.vcxproj">
+      <Project>{A89A23B0-C2AD-33CC-8605-CB5CCC49B036}</Project>
+      <Name>t_corrupt</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_dataread.vcxproj">
+      <Project>{BFD3AD55-9A88-31BF-934F-12ECCD36B3D2}</Project>
+      <Name>t_dataread</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_declarations.vcxproj">
+      <Project>{877553E8-0705-3F59-93D8-58FE4CAF9481}</Project>
+      <Name>t_declarations</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_dynamic1.vcxproj">
+      <Project>{5D62B322-13BE-36D1-B1D9-19EAFAB6F08F}</Project>
+      <Name>t_dynamic1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_freeze.vcxproj">
+      <Project>{934800D6-1113-3D73-95FE-6797BB0CE3CA}</Project>
+      <Name>t_freeze</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_iconv_fread.vcxproj">
+      <Project>{E1D6B715-34E2-32C8-AD89-775C71734777}</Project>
+      <Name>t_iconv_fread</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_log_elision.vcxproj">
+      <Project>{92DD0412-5CFE-3E77-B0AD-CEDAC9A9CA7D}</Project>
+      <Name>t_log_elision</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_nulls.vcxproj">
+      <Project>{CAC1C81F-F663-33FA-8F28-B48282FCB92B}</Project>
+      <Name>t_nulls</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_numeric.vcxproj">
+      <Project>{D98E447C-3BD1-39CA-84B1-A3284F2D9F3D}</Project>
+      <Name>t_numeric</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_parsing.vcxproj">
+      <Project>{EC45D1CA-1AF6-3074-9979-1E3BCB94F2FB}</Project>
+      <Name>t_parsing</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_portconf.vcxproj">
+      <Project>{4BEB4EB4-5CCB-3F08-A297-67B7BA0CDC90}</Project>
+      <Name>t_portconf</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_readconf.vcxproj">
+      <Project>{5BBD104E-3585-33DF-A2C4-931F57319168}</Project>
+      <Name>t_readconf</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_strftime.vcxproj">
+      <Project>{5E2DE44C-CA3C-3353-BB92-B301989B690C}</Project>
+      <Name>t_strftime</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0001.vcxproj">
+      <Project>{4E43E7F0-50A7-3759-BC4D-431D4BF18F57}</Project>
+      <Name>t_t0001</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0002.vcxproj">
+      <Project>{FC79CBBD-BA6F-3D47-A682-9A7A40D726C0}</Project>
+      <Name>t_t0002</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0003.vcxproj">
+      <Project>{30CB5E0E-ED4C-3D6E-9AAA-6B63D0A2314B}</Project>
+      <Name>t_t0003</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0004.vcxproj">
+      <Project>{8A59C062-FA70-393F-BA99-010EA1A73C83}</Project>
+      <Name>t_t0004</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0005.vcxproj">
+      <Project>{D22A6AD8-2C4A-38A5-A32E-B9F5DD7D61E4}</Project>
+      <Name>t_t0005</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0006.vcxproj">
+      <Project>{800D28EE-CF0C-3CCB-ACF5-DFF44EF070AF}</Project>
+      <Name>t_t0006</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0007.vcxproj">
+      <Project>{E26C0652-D0EA-3906-84F8-D621DA6ABCCB}</Project>
+      <Name>t_t0007</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_t0008.vcxproj">
+      <Project>{8D34E1BA-539D-3C6A-BE24-63F0DC6E6294}</Project>
+      <Name>t_t0008</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_tls.vcxproj">
+      <Project>{292BAF39-348D-3FFC-BD9C-946E0FDFCFBD}</Project>
+      <Name>t_tls</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_toodynamic.vcxproj">
+      <Project>{A2592687-5A9A-3FD4-9A8E-5FBEFB3B8487}</Project>
+      <Name>t_toodynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_utf8_1.vcxproj">
+      <Project>{1098568A-3893-3038-A809-EC2C0567C3E0}</Project>
+      <Name>t_utf8_1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_utf8_2.vcxproj">
+      <Project>{91A801A5-5ADF-3B93-9612-8DAE2D3147F7}</Project>
+      <Name>t_utf8_2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\tds\unittests\t_utf8_3.vcxproj">
+      <Project>{D9537F8D-6F3A-3FC1-8F11-126458882BC1}</Project>
+      <Name>t_utf8_3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_bytes.vcxproj">
+      <Project>{40A21855-02CC-3C64-8FC3-FED1D53A82E9}</Project>
+      <Name>u_bytes</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_condition.vcxproj">
+      <Project>{3DF9A8A4-8A6D-3FFF-8174-0F22DB3815F5}</Project>
+      <Name>u_condition</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_dlist.vcxproj">
+      <Project>{CE82E81A-0090-340A-BABC-D5BDFF0E83CA}</Project>
+      <Name>u_dlist</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_mutex1.vcxproj">
+      <Project>{6CAE9094-AEC0-369D-BDCE-8EF3BCE9BF28}</Project>
+      <Name>u_mutex1</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_passarg.vcxproj">
+      <Project>{6818FA5B-9BF6-3A99-B698-7CE8576DDDAF}</Project>
+      <Name>u_passarg</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_path.vcxproj">
+      <Project>{B9E8BDCC-126C-311A-9461-D26E3B33E2CE}</Project>
+      <Name>u_path</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\src\utils\unittests\u_smp.vcxproj">
+      <Project>{A503F793-8EFC-3921-A288-0914D4926A45}</Project>
+      <Name>u_smp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

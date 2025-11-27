@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\3a359fda80dcacf12b8b6781ddc21a70\check.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\buildWin\CMakeFiles\check" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{B87B15D9-BA73-3F9A-9741-2C3CEED4C0F8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

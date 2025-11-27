@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\member.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\user.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\util.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Igor\OneDrive\Documents\dbhandler_app\freetds\src\pool\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7D068009-A477-35E9-90F9-8648504E8CD5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
