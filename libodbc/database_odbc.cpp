@@ -2259,13 +2259,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         if( osid == WINDOWS )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
     }
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[qry2.length() + 2] );
     memset( qry.get(), '\0', qry2.length() + 2 );
@@ -2562,6 +2562,59 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( !result )
                     {
                         ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[2] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                }
+                if( pimpl.m_subtype == L"PostgreSQL" )
+                {
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fullName.length() + 2, 0, fullTableName.get(), 0, &cbParam[0] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[2] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[3] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).tableName.length() + 2, 0, tableName.get(), 0, &cbParam[2] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( m_hstmt, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, (*it).schemaName.length() + 2, 0, schemaName.get(), 0, &cbParam[3] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
