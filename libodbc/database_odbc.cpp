@@ -2311,7 +2311,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             if( !result )
             {
-                ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
+                ret = SQLBindParameter( statement, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2399,7 +2399,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( schema.empty() && !cat.empty() )
                     {
                         schema = cat;
-                        copy_uc_to_uc( fullName.get(), schemaName );
+                        copy_uc_to_uc( fullName.get(), catalogName );
                         uc_to_str_cpy( fullName.get(), L"." );
                         copy_uc_to_uc( fullName.get(), tableName );
                     }
@@ -2572,6 +2572,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
+                    if( !result )
+                    {
+                        ret = SQLExecute( statement );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                            result = 1;
+                            break;
+                        }
+                    }
                     pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                     count++;
                 }
@@ -2622,16 +2632,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 uc_to_str_cpy( schemaName.get(), (*it).schemaName );
                 uc_to_str_cpy( tableName.get(), (*it).tableName );
                 uc_to_str_cpy( fullTableName.get(), fullName );
-                if( !result )
-                {
-                    ret = SQLExecute( m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
-                        break;
-                    }
-                }
             }
         }
     }
