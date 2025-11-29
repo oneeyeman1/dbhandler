@@ -7933,34 +7933,30 @@ int ODBCDatabase::MonitorSchemaChanges(std::vector<std::wstring> &errorMsg)
                 }
             }
         }
-    }
-    else
-    {
-//        ret = SQLTables( m_hstmt, );
-    }
-    if( result )
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        if( result )
+        {
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        else
+        {
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-    }
-    else
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
     }
     return result;
 }
