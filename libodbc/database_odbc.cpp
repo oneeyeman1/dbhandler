@@ -2362,6 +2362,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                 }
             }
+            if( pimpl.m_subtype == L"MySQL" )
+            {
+                memset( schemaDB.get(), '\0', 5 );
+            }
             if( !result )
             {
                 ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, nullptr, 0, nullptr, 0 );
