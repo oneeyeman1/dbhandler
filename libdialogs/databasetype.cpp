@@ -40,11 +40,15 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     page3 = new ODBCConnect( this, dsn );
     page4 = new PostgresConnect( this );
     page5 = new mySQLConnect( this );
+    page6 = new SybaseSQLServer( this, true );
+    page7 = new SybaseSQLServer( this, false );
     GetPageAreaSizer()->Add( page1 );
     GetPageAreaSizer()->Add( page2 );
     GetPageAreaSizer()->Add( page3 );
     GetPageAreaSizer()->Add( page4 );
     GetPageAreaSizer()->Add( page5 );
+    GetPageAreaSizer()->Add( page6 );
+    GetPageAreaSizer()->Add( page7 );
     if( engine == "SQLite" )
     {
         page1->GetComboBoxTypes()->SetValue( "SQLite" );
@@ -249,12 +253,12 @@ wxString &DatabaseType::GetConnectString() const
 wxTextCtrl *DatabaseType::GetUserControl() const
 {
     if( m_dbEngine == "SQLite" )
-        return NULL;
+        return nullptr;
     if( m_dbEngine == "PostgreSQL" )
         return page4->GetUserID();
     if( m_dbEngine == "mySQL" )
         return page5->GetUserID();
-    return NULL;
+    return nullptr;
 }
 
 DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
@@ -287,7 +291,7 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 
 wxWizardPage *DBType::GetPrev() const
 {
-    return NULL;
+    return nullptr;
 }
 
 wxWizardPage *DBType::GetNext() const
@@ -313,7 +317,17 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetmySQLPage();
     }
-    return NULL;
+    else if( type == "Sybase" )
+    {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetSybasePage();
+    }
+    else if( type == "SQL Server" )
+    {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetSQLServerPage();
+    }
+    return nullptr;
 }
 
 wxComboBox *DBType::GetComboBoxTypes() const
@@ -356,7 +370,7 @@ wxWizardPage *SQLiteConnect::GetPrev() const
 
 wxWizardPage *SQLiteConnect::GetNext() const
 {
-    return NULL;
+    return nullptr;
 }
 
 ODBCConnect::ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn) : wxWizardPage( parent )
@@ -364,7 +378,7 @@ ODBCConnect::ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn)
     wxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
     wxStaticText *label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
-    m_types = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
+    m_types = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
     wxFont font = label->GetFont();
     font.MakeBold();
     label->SetFont( font );
@@ -394,7 +408,7 @@ wxWizardPage *ODBCConnect::GetPrev() const
 
 wxWizardPage *ODBCConnect::GetNext() const
 {
-    return NULL;
+    return nullptr;
 }
 
 void ODBCConnect::OnSelectionDClick(wxCommandEvent &WXUNUSED(event))
@@ -478,7 +492,7 @@ wxWizardPage *PostgresConnect::GetPrev() const
 
 wxWizardPage *PostgresConnect::GetNext() const
 {
-    return NULL;
+    return nullptr;
 }
 
 wxTextCtrl *PostgresConnect::GetDatabaseName()
@@ -589,7 +603,7 @@ wxWizardPage *mySQLConnect::GetPrev() const
 
 wxWizardPage *mySQLConnect::GetNext() const
 {
-    return NULL;
+    return nullptr;
 }
 
 wxTextCtrl *mySQLConnect::GetDatabaseName()
@@ -639,7 +653,7 @@ wxString mySQLConnect::GetOptions() const
 
 void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 {
-    mySQLAdvanced dlg( NULL, m_flags );
+    mySQLAdvanced dlg( nullptr, m_flags );
     dlg.Centre();
     if( dlg.ShowModal() == wxID_OK )
     {
@@ -833,4 +847,48 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     SetSizer( sizer );
     sizer->Fit( this );
     Layout();
+}
+
+SybaseSQLServer::SybaseSQLServer(wxWizard* parent, bool isSQLServer) : wxWizardPage( parent )
+{
+    auto osId = wxPlatformInfo::Get().GetOperatingSystemId();
+    // begin wxGlade: MyDialog::MyDialog
+    auto sizer_1 = new wxBoxSizer( wxVERTICAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    const wxString m_api_choices[] = {
+        "Native",
+        "FreeTDS",
+    };
+    m_api = new wxRadioBox( this, wxID_ANY, "API", wxDefaultPosition, wxDefaultSize, 2, m_api_choices, 0, wxRA_SPECIFY_ROWS );
+    if( isSQLServer )
+    {
+        m_api->Enable( 0, false );
+        m_api->SetSelection( 1 );
+    }
+    else
+        m_api->SetSelection( 0 );
+    sizer_1->Add( m_api, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    const wxString m_library_choices[] = {
+        "ct-lib",
+        "db-lib",
+    };
+    m_library = new wxRadioBox( this, wxID_ANY, "Library", wxDefaultPosition, wxDefaultSize, 2, m_library_choices, 0, wxRA_SPECIFY_ROWS );
+    m_library->SetSelection( 0 );
+    sizer_1->Add( m_library, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
+    // end wxGlade
+}
+
+wxWizardPage *SybaseSQLServer::GetPrev() const
+{
+    return dynamic_cast<DatabaseType *>( GetParent() )->GetFirstPage();
+}
+
+wxWizardPage *SybaseSQLServer::GetNext() const
+{
+    return nullptr;
 }

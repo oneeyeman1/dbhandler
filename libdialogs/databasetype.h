@@ -117,15 +117,31 @@ public:
     wxTextCtrl *m_defaultAuth, *m_initCommand, *m_optBind, *m_connectAttrDelete, *m_connectTimeout;
 };
 
+class SybaseSQLServer : public wxWizardPage
+{
+public:
+    SybaseSQLServer(wxWizard* parent, bool isSQLServer = true);
+    virtual wxWizardPage *GetPrev() const;
+    virtual wxWizardPage *GetNext() const;
+
+protected:
+    // begin wxGlade: MyDialog::attributes
+    wxRadioBox* m_api;
+    wxRadioBox* m_library;
+    // end wxGlade
+};
+
 class DatabaseType : public wxWizard
 {
 public:
     DatabaseType(wxWindow *parent, const wxString &title, const wxString &name, const wxString &engine, const std::vector<std::wstring> &dsn, const std::vector<Profile> &profiles);
     wxWizardPage *GetFirstPage() const { return page1; }
-    SQLiteConnect *GetSQLitePage() { return page2; }
-    ODBCConnect *GetODBCPage() { return page3; }
-    PostgresConnect *GetPostgresPage() { return page4; };
-    mySQLConnect *GetmySQLPage() { return page5; };
+    SQLiteConnect *GetSQLitePage() const { return page2; }
+    ODBCConnect *GetODBCPage() const { return page3; }
+    PostgresConnect *GetPostgresPage() const { return page4; };
+    mySQLConnect *GetmySQLPage() const { return page5; };
+    SybaseSQLServer *GetSybasePage() const { return page6; }
+    SybaseSQLServer *GetSQLServerPage() const { return page7; }
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();
@@ -144,6 +160,8 @@ private:
     ODBCConnect *page3;
     PostgresConnect *page4;
     mySQLConnect *page5;
+    SybaseSQLServer *page6;
+    SybaseSQLServer *page7;
     wxWindow *button;
     wxString m_dbName, m_dbEngine, m_connStr, m_newCurrent;
     bool m_askForConnectParameter;
