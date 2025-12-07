@@ -121,6 +121,8 @@ class SybaseSQLServer : public wxWizardPage
 {
 public:
     SybaseSQLServer(wxWizard* parent, bool isSQLServer = true);
+    int GeDBAPI() { return m_api->GetSelection(); }
+    int GetLibrary() { return m_library->GetSelection(); }
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
 
@@ -128,6 +130,9 @@ protected:
     // begin wxGlade: MyDialog::attributes
     wxRadioBox* m_api;
     wxRadioBox* m_library;
+    wxStaticText *m_label1, *m_label2, *m_label3;
+    wxTextCtrl *m_user, *m_password, *m_serverName; 
+    wxStaticLine *m_divider;
     // end wxGlade
 };
 
@@ -140,8 +145,8 @@ public:
     ODBCConnect *GetODBCPage() const { return page3; }
     PostgresConnect *GetPostgresPage() const { return page4; };
     mySQLConnect *GetmySQLPage() const { return page5; };
-    SybaseSQLServer *GetSybasePage() const { return page6; }
-    SybaseSQLServer *GetSQLServerPage() const { return page7; }
+    SybaseSQLServer *GetSybasePage() const { return page7; }
+    SybaseSQLServer *GetSQLServerPage() const { return page6; }
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
     wxString GetDatabaseName();

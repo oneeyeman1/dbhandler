@@ -322,7 +322,7 @@ wxWizardPage *DBType::GetNext() const
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetSybasePage();
     }
-    else if( type == "SQL Server" )
+    else if( type == "MS SQL Server" )
     {
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetSQLServerPage();
@@ -877,7 +877,24 @@ SybaseSQLServer::SybaseSQLServer(wxWizard* parent, bool isSQLServer) : wxWizardP
     m_library->SetSelection( 0 );
     sizer_1->Add( m_library, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-
+    m_divider = new wxStaticLine( this, wxID_ANY );
+    sizer_1->Add( m_divider, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_label1 = new wxStaticText( this, wxID_ANY, "User Name:" );
+    m_label2 = new wxStaticText( this, wxID_ANY, "Password:" );
+    m_label3 = new wxStaticText( this, wxID_ANY, "Server Name:" );
+    m_user = new wxTextCtrl( this, wxID_ANY );
+    m_password = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_serverName = new wxTextCtrl( this, wxID_ANY );
+    auto sizer = new wxFlexGridSizer( 3, 2, 5, 5 );
+    sizer->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer->Add( m_user, 0, wxEXPAND, 0 );
+    sizer->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer->Add( m_password, 0, wxEXPAND, 0 );
+    sizer->Add( m_label3, 0, wxEXPAND, 0 );
+    sizer->Add( m_serverName, 0, wxEXPAND, 0 );
+    sizer_1->Add( sizer, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
