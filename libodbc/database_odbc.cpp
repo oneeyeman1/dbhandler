@@ -2198,8 +2198,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     SQLLEN cbParam[6] = {0, 0, 0, 0, 0, 0};
     int result = 0, bufferSize = 1024, count = 0;
     std::vector<TableField *> fields;
-    std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, schema, table, origSchema, origTable, origCol, refSchema, refTable, refCol, cat;
-    std::vector<std::wstring> pk_fields, fk_fieldNames;
+    std::wstring schema, table, cat;
     std::vector<std::wstring> indexes;
     std::map<int,std::vector<FKField *> > foreign_keys;
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
@@ -2258,13 +2257,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         if( osid == WINDOWS )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 34, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 34, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 34, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), (SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO \"abcattbl\" VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'),, 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
     }
     std::unique_ptr<SQLWCHAR[]> catalogDB( new SQLWCHAR[pimpl.m_dbName.length() + 2] );
     std::unique_ptr<SQLWCHAR[]> schemaDB( new SQLWCHAR[5] );
@@ -2281,13 +2280,88 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
     {
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        memset( catalogDB.get(), '\0', pimpl.m_dbName.length() + 2 );
+        uc_to_str_cpy( catalogDB.get(), pimpl.m_dbName );
+        memset( schemaDB.get(), '\0', 5 );
+//        uc_to_str_cpy( catalogDB.get(), L"%" );
+        uc_to_str_cpy( schemaDB.get(), L"%" );
+        for( int i = 0; i < 5; i++ )
         {
-            GetErrorMessage( errorMsg, CONN_ERROR );
-            result = 1;
+            catalog[i].TargetType = SQL_C_WCHAR;
+            catalog[i].BufferLength = ( bufferSize + 1 );
+            catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+            ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+                break;
+            }
         }
-        else
+        if( pimpl.m_subtype == L"MySQL" )
+        {
+            memset( schemaDB.get(), '\0', 5 );
+        }
+        if( !result )
+        {
+            ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, nullptr, 0, nullptr, 0 );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+            {
+                SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
+                if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                    catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                    schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                    tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                cat = L"";
+                schema = L"";
+                table = L"";
+                str_to_uc_cpy( cat, catalogName );
+                str_to_uc_cpy( schema, schemaName );
+                str_to_uc_cpy( table, tableName );
+                pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
+                count++;
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            if( !result )
+            {
+                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+            }
+            else
+            {
+                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            }
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            m_hstmt = 0;
+        }
+        if( !result )
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
         {
             std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
             memset( qry1.get(), '\0', 30 );
@@ -2300,108 +2374,76 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( errorMsg, STMT_ERROR, statement );
                 result = 1;
             }
-            if( !result )
+        }
+        if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
+        {
+            std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+            memset( qry1.get(), '\0', 30 );
+            uc_to_str_cpy( qry1.get(), L"SET NOCOUNT ON" );
+            ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLPrepare( statement, qry.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                    result = 1;
-                }
+                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                result = 1;
             }
-            if( !result )
+        }
+        if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
+        {
+            std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[50] );
+            memset( qry1.get(), '\0', 50 );
+            uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
+            ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                ret = SQLBindParameter( statement, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
+                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                result = 1;
             }
-            if( !result )
+        }
+        if( !result )
+        {
+            ret = SQLPrepare( statement, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                memset( catalogDB.get(), '\0', pimpl.m_dbName.length() + 2 );
-                uc_to_str_cpy( catalogDB.get(), pimpl.m_dbName );
-                memset( schemaDB.get(), '\0', 5 );
-                uc_to_str_cpy( catalogDB.get(), L"%" );
-                uc_to_str_cpy( schemaDB.get(), L"%" );
-                for( int i = 0; i < 5; i++ )
-                {
-                    catalog[i].TargetType = SQL_C_WCHAR;
-                    catalog[i].BufferLength = ( bufferSize + 1 );
-                    catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
-                    ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
-                        break;
-                    }
-                }
+                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                result = 1;
             }
-            if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
+        }
+        if( !result )
+        {
+            ret = SQLBindParameter( statement, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
-                memset( qry1.get(), '\0', 30 );
-                uc_to_str_cpy( qry1.get(), L"SET NOCOUNT ON" );
-                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                    result = 1;
-                }
-                if( !result )
-                {
-                    qry1.reset( new SQLWCHAR[50] );
-                    memset( qry1.get(), '\0', 50 );
-                    uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL SERIALIZABLE" );
-                    ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                        result = 1;
-                    }
-                }
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
             }
-            if( pimpl.m_subtype == L"MySQL" )
+        }
+        if( !result )
+        {
+            for( std::map<std::wstring, std::vector<TableDefinition> >::iterator it = pimpl.m_tableDefinitions.begin(); it != pimpl.m_tableDefinitions.end(); ++it )
             {
-                memset( schemaDB.get(), '\0', 5 );
-            }
-            if( !result )
-            {
-                ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, nullptr, 0, nullptr, 0 );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
-            }
-            if( !result )
-            {
-                for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
-                {
-                    SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
-                    if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                        catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-                    if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                        schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-                    if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                        tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                    cat = L"";
-                    schema = L"";
-                    table = L"";
-                    str_to_uc_cpy( cat, catalogName );
-                    str_to_uc_cpy( schema, schemaName );
-                    str_to_uc_cpy( table, tableName );
-                    auto len = schema.length() + 1 + table.length();
-                    auto tableNameLen = table.length() + 2;
-                    auto schemaNameLen = schema.length() + 2;
-                    if( schema.empty() && !cat.empty() )
+                    auto len = (*it1).schemaName.length() + 1 + (*it1).tableName.length() + 2;
+                    auto tableNameLen = (*it1).tableName.length() + 2;
+                    auto schemaNameLen = (*it1).schemaName.length() + 2;
+                    std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[tableNameLen] );
+                    std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[schemaNameLen] );
+                    memset( tableName.get(), '\0', tableNameLen );
+                    memset( schemaName.get(), '\0', schemaNameLen );
+                    uc_to_str_cpy( tableName.get(), (*it1).tableName );
+                    uc_to_str_cpy( schemaName.get(), (*it1).schemaName );
+                    if( (*it1).schemaName.empty() && !cat.empty() )
                     {
                         schema = cat;
                         copy_uc_to_uc( fullName.get(), catalogName );
                         uc_to_str_cpy( fullName.get(), L"." );
-                        copy_uc_to_uc( fullName.get(), tableName );
+                        uc_to_str_cpy( fullName.get(), (*it1).tableName );
+                    }
+                    else
+                    {
+                        uc_to_str_cpy( fullName.get(), (*it1).schemaName );
+                        uc_to_str_cpy( fullName.get(), L"." );
+                        uc_to_str_cpy( fullName.get(), (*it1).tableName );
                     }
                     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                     {
@@ -2417,7 +2459,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName, 0, &cbParam[2] );
+                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2427,7 +2469,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[3] );
+                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2437,7 +2479,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[4] );
+                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[4] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2457,7 +2499,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[5] );
+                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[5] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2480,7 +2522,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[2] );
+                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2490,7 +2532,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName, 0, &cbParam[3] );
+                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2500,7 +2542,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName, 0, &cbParam[3] );
+                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2510,7 +2552,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[2] );
+                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2533,7 +2575,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName, 0, &cbParam[2] );
+                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2543,7 +2585,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[3] );
+                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2553,7 +2595,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName, 0, &cbParam[2] );
+                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2563,7 +2605,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName, 0, &cbParam[3] );
+                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
                                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2582,89 +2624,54 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             break;
                         }
                     }
-                    pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
-                    count++;
+                    memset( fullName.get(), '\0', 256 );
                 }
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
-                if( !result )
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-                else
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
-                m_hstmt = 0;
-                ret = SQLFreeHandle( SQL_HANDLE_STMT, statement );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                    result = 1;
-                }
-                statement = 0;
             }
-        }
-    }
-/*    if( !result )
-        if( !result )
-        {
-            for( auto it = pimpl.m_tableDefinitions[cat].begin(); it < pimpl.m_tableDefinitions[cat].end(); ++it )
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
-                auto fullName = (*it).schemaName + L"." + (*it).tableName;
-                cbParam[0] = cbParam[1] = cbParam[2] = cbParam[3] = cbParam[4] = cbParam[5] = SQL_NTS;
-                std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[(*it).schemaName.length() + 2] );
-                std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[(*it).tableName.length() + 2] );
-                std::unique_ptr<SQLWCHAR[]> fullTableName( new SQLWCHAR[fullName.length() + 2] );
-                memset( fullTableName.get(), '\0', fullName.length() + 2 );
-                memset( schemaName.get(), '\0', (*it).schemaName.length() + 2 );
-                memset( tableName.get(), '\0', (*it).tableName.length() + 2 );
-                uc_to_str_cpy( schemaName.get(), (*it).schemaName );
-                uc_to_str_cpy( tableName.get(), (*it).tableName );
-                uc_to_str_cpy( fullTableName.get(), fullName );
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
             }
-        }
-    }
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
-    if( !result )
-    {
-        if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-        {
-            qry1.reset( new SQLWCHAR[30] );
-            memset( qry1.get(), '\0', 30 );
-            uc_to_str_cpy( qry1.get(), L"SET NOCOUNT OFF" );
-            ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
+            if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
+            {
+                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+                memset( qry1.get(), '\0', 30 );
+                uc_to_str_cpy( qry1.get(), L"SET NOCOUNT OFF" );
+                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
+            {
+                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[50] );
+                memset( qry1.get(), '\0', 50 );
+                uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL READ COMMITTED" );
+                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+            else
+                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
-            if( !result )
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, statement );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
-                qry1.reset( new SQLWCHAR[50] );
-                memset( qry1.get(), '\0', 50 );
-                uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL READ COMMITTED" );
-                ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
+                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                result = 1;
             }
+            statement = 0;
         }
     }
     for( int i = 0; i < 5; i++ )
@@ -2675,24 +2682,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     free( catalog );
     catalog = nullptr;
     if( !result )
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-    else
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
-    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
-    else
-        m_hstmt = 0;
-    if( !result )
-        m_numOfTables = count;*/
+        m_numOfTables = count;
     return result;
 }
 
