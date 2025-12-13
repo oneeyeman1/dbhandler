@@ -69,7 +69,7 @@ void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDef
     m_tables->GetSelections( selections );
     for( size_t i = 0; i < selections.GetCount(); i++ )
     {
-        ClientData *data = (ClientData *) m_tables->GetClientData( i );
+        ClientData *data = (ClientData *) m_tables->GetClientData( selections[i] );
         tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, data->table ) );
     }
     for( size_t i = 0; i < m_tables->GetCount(); ++i )
