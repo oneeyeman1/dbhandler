@@ -18,7 +18,7 @@ public:
 
 struct ClientData
 {
-    std::wstring catalog, schema;
-    ClientData() : catalog( L"" ), schema( L"" ) {}
-    ClientData(const std::wstring &catalogName, const std::wstring &schemaName) : catalog( catalogName ), schema( schemaName ) {}
+    std::wstring catalog, schema, table;
+    ClientData() : catalog( L"" ), schema( L"" ), table( L"" ) {}
+    ClientData(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName) : catalog( catalogName ), schema( schemaName ), table( tableName ) {}
 };

@@ -70,9 +70,7 @@ void SelectTables::GetSelectedTableNames(std::map<wxString, std::vector<TableDef
     for( size_t i = 0; i < selections.GetCount(); i++ )
     {
         ClientData *data = (ClientData *) m_tables->GetClientData( i );
-        auto schemaName = data->schema;
-        auto tableName = m_tables->GetString( selections.Item( i ) ).ToStdWstring();
-        tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, m_tables->GetString( selections.Item( i ) ).ToStdWstring() ) );
+        tableNames[data->catalog].push_back( TableDefinition( data->catalog, data->schema, data->table ) );
     }
     for( size_t i = 0; i < m_tables->GetCount(); ++i )
     {
@@ -180,7 +178,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 if( type == L"SQLite" )
                 {
                     if( schemaName == L"" )
-                        schemaName = L"master";
+                        schemaName = L"main";
                     if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
                         insert = true;
                     else if( sysTableIncluded )
@@ -197,8 +195,8 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     {
                         insert = true;
                     }
-                    if( size > 1 )
-                        tableName = catalogName + L"." + schemaName + L"." + tableName;
+//                    if( size > 1 )
+                    tableName = catalogName + L"." + schemaName + L"." + tableName;
                 }
                 else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"mySQL" )
                 {
@@ -216,7 +214,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 }
                 if( insert )
                 {
-                    m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
+                    m_tables->Append( tableName, new ClientData( catalogName, schemaName, (*it1).tableName ) );
                 }
                 insert = false;
             }

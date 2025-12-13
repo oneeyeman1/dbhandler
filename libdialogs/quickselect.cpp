@@ -207,7 +207,7 @@ void QuickSelect::FillTableListBox()
             {
                 tableName = catalogName + L"." + schemaName + L"." + tableName;
             }
-            m_tables->Append( tableName, new ClientData( catalogName, schemaName ) );
+            m_tables->Append( tableName, new ClientData( catalogName, schemaName, (*it1).tableName ) );
         }
     }
 }
@@ -229,9 +229,10 @@ void QuickSelect::OnSelectingTable(wxMouseEvent &event)
             ClientData *dataItem = (ClientData *) m_tables->GetClientData( item );
             data.catalog = dataItem->catalog;
             data.schema = dataItem->schema;
+            data.table = dataItem->table;
             {
                 wxBusyCursor wait;
-                m_db->AddDropTable( dataItem->catalog, dataItem->schema, selectedTable.ToStdWstring(), true, errors );
+                m_db->AddDropTable( dataItem->catalog, dataItem->schema, dataItem->table, true, errors );
             }
             wxString name;
             auto pos = selectedTable.Find( '.', true );
