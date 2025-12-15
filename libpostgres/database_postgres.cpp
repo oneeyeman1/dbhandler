@@ -101,11 +101,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
         else
         {
             pimpl.m_connectString = selectedDSN;
-            std::wstring temp = selectedDSN.substr( selectedDSN.find( L"user" ) );
-            temp = temp.substr( temp.find( '=' ) );
-            std::wstring user = temp.substr( temp.find( '=' ) + 2 );
-            user = user.substr( 0, user.find( ' ' ) );
-            pimpl.m_connectedUser = user;
+            pimpl.m_connectedUser = m_pimpl->m_myconv.from_bytes( PQuser( m_db ) );
+            pimpl.m_dbName = m_pimpl->m_myconv.from_bytes( PQdb( m_db ) );
             if( !connectToDatabase )
             {
                 if( ServerConnect( dbList, errorMsg ) )
@@ -117,10 +114,6 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
             }
             else
             {
-                temp = selectedDSN.substr( selectedDSN.find( L"dbname = " ) );
-                temp = temp.substr( temp.find( '=' ) + 2 );
-                std::wstring dbname = temp.substr( 0, temp.find( ' ' ) );
-                pimpl.m_dbName = dbname;
                 if( CreateSystemObjectsAndGetDatabaseInfo( errorMsg ) )
                 {
                     result = 1;
@@ -169,14 +162,14 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abt_fhgt smallint, abt_fwgt smallint, abt_fitl char(1), abt_funl integer, abt_fstr integer, abt_fchr smallint, abt_fptc smallint, abt_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os smallint, abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_strke integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_strke integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_strke integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_os, abt_tnam, abt_ownr ));" );
     queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
     if( pimpl.m_versionMajor >= 10 )
     {
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name );" );
-        queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_tnam, abt_ownr );" );
+        queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl( abt_os, abt_tnam, abt_ownr );" );
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld( abv_name );" );
         queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'(General)\', \'(General)\', 81, 0 ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatfmt\" VALUES( \'0\', \'0\', 81, 0 ) ON CONFLICT DO NOTHING;" );
