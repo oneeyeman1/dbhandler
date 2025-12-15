@@ -83,7 +83,6 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     if( !m_pimpl )
         m_pimpl = new PostgresImpl;
     m_db = PQconnectdb( m_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() );
-    m_isConnected = true;
     if( PQstatus( m_db ) != CONNECTION_OK )
     {
         err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -92,6 +91,7 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
     }
     else
     {
+        m_isConnected = true;
         result = GetServerVersion( errorMsg );
         if( result )
         {
