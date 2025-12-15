@@ -18,7 +18,7 @@
 #endif // wxUSE_COMBOBOX
 
 #include "wx/clipbrd.h"
-#include "wx/generic/maskededit.h"
+#include "maskededit.h"
 
 
 //////////////////////////  wxMaskedEdit  ////////////////////////////////

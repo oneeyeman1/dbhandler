@@ -23,8 +23,8 @@
 #include "wx/dynlib.h"
 #include "wx/statline.h"
 #include "database.h"
+#include "maskededit.h"
 #include "dialogs.h"
-//#include "maskededit.h"
 #include "databasetype.h"
 
 //typedef void (*CONNECTTODB)(const wxString &, const wxString &, void *&db, wxString &, WXHWND);
@@ -180,7 +180,13 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString host = page4->GetHost()->GetValue();
         if( !host.empty() )
             m_connStr = "host = " + host + " ";
-        wxString hostAddr = page4->GetHostAddr()->GetValue();
+        wxString hostAddr;
+        for( int i = 0; i < 4; ++i )
+        {
+            hostAddr += page4->GetHostAddr()->GetFieldValue( i ).Trim( false ).Trim();
+            if( i < 3 )
+                hostAddr += ".";
+        }
         if( !hostAddr.empty() )
             m_connStr += "hostaddr = " + hostAddr + " ";
         wxString port = page4->GetPort()->GetValue();
@@ -443,8 +449,21 @@ PostgresConnect::PostgresConnect(wxWizard *parent) : wxWizardPage( parent )
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
-//    m_hostAddr = new wxMaskEdit( this, wxID_ANY, "127.0.0.1" );
-    m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
+    wxMaskedEditFieldFlags fieldFlags;
+    fieldFlags.SetAlignment( wxALIGN_RIGHT );
+    fieldFlags.SetPaddingChar( ' ' );
+    wxRangeParams fparamsIP;
+    fparamsIP.rmin = 0;
+    fparamsIP.rmax = 255;
+    m_hostAddr = new wxMaskedEditText( this, wxID_ANY );
+    m_hostAddr->SetMask( "99#.99#.99#.99#" );
+    m_hostAddr->SetAllFieldsFlags( fieldFlags );
+    m_hostAddr->SetFieldValue( 0, "127" );
+    m_hostAddr->SetFieldValue( 1, "0" );
+    m_hostAddr->SetFieldValue( 2, "0" );
+    m_hostAddr->SetFieldValue( 3, "1" );
+    m_hostAddr->SetAllFieldsFunction( &wxMaskedRangeCheck, &fparamsIP );
+//    m_hostAddr = new wxTextCtrl( this, wxID_ANY, "127.0.0.1" );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
     m_port = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
@@ -505,7 +524,7 @@ wxTextCtrl *PostgresConnect::GetHost() const
     return m_host;
 }
 
-wxTextCtrl *PostgresConnect::GetHostAddr() const
+wxMaskedEditText *PostgresConnect::GetHostAddr() const
 {
     return m_hostAddr;
 }

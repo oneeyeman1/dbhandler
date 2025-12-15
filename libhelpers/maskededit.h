@@ -108,7 +108,7 @@ typedef long wxMaskedFunc(const wxMaskedEdit*, void*);
 // Base class for all masked edit controls
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxMaskedEdit
+class WXEXPORT wxMaskedEdit
 {
 private:
     // All configurable parameters are stored here.
@@ -440,7 +440,7 @@ protected:
 
 #if wxUSE_TEXTCTRL
 //wxMaskedEditText is only for wxTextCtrl
-class WXDLLIMPEXP_CORE wxMaskedEditText : public wxMaskedEdit,
+class WXEXPORT wxMaskedEditText : public wxMaskedEdit,
                                          public wxTextCtrl
 {
 public:
@@ -515,7 +515,7 @@ private:
 
 #if wxUSE_COMBOBOX
 //wxMaskedEditCombo is only for wxComboBox
-class WXDLLIMPEXP_CORE wxMaskedEditCombo : public wxMaskedEdit,
+class WXEXPORT wxMaskedEditCombo : public wxMaskedEdit,
                                           public wxComboBox
 {
 public:
@@ -636,7 +636,7 @@ private:
 // ----------------------------------------------------------------------------
 
 //Range check
-class WXDLLIMPEXP_CORE wxRangeParams
+class WXEXPORT wxRangeParams
 {
 public:
     wxRangeParams()

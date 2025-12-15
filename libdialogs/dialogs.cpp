@@ -49,6 +49,7 @@
 #include "wxsf/ShapeCanvas.h"
 #include "wx/fontenum.h"
 #include "database.h"
+#include "maskededit.h"
 #include "guiobjectsproperties.h"
 #include "configuration.h"
 #include "propertypagebase.h"
