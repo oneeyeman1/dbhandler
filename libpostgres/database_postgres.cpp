@@ -488,7 +488,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int osid;
-    PGresult *res, *res1, *res2, *res3, *res4, *res5, *res6;
+    PGresult *res, *res1, *res2, *res3, *res4, *res5, *res6, *res7;
     std::vector<TableField *> fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
@@ -514,7 +514,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
     std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
-    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abt_fhgt, abt_fwgt, abt_fitl, abt_funl, abt_fstr, abt_fchr, abt_fptc, rtrim(abt_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
     std::wstring query7;
     if( pimpl.m_versionMajor >= 9 && pimpl.m_versionMinor >= 5 )
@@ -531,13 +531,13 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     else
     {
         if( osid == WINDOWS )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         else if( osid == OSX )
             query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         else if( osid == GTK )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 3, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
     }
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res ); 
@@ -547,7 +547,17 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( err );
         result = 1;
     }
-    PQclear( res );
+    if( !result )
+    {
+        res7 = PQprepare( m_db, "set_table_prop", m_pimpl->m_myconv.to_bytes( query7 ).c_str(), 3, nullptr );
+        status = PQresultStatus( res7 );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
     if( !result )
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
@@ -583,8 +593,6 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
-    PQclear( res2 );
-    PQclear( res4 );
     if( !result )
     {
         res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
@@ -620,7 +628,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( !result )
      {
          char *params[3];
-         std::wstring paramValues[3];
+         std::wstring paramValues;
          int paramLength[3];
          int paramFormat[3];
          for( int i = 0; i < PQntuples( res ); i++ )
@@ -631,19 +639,20 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
              char *table_owner = PQgetvalue( res, i, 3 );
              pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema,  table ) );
              count++;
-             paramValues[0] = schema + L"." + table;
-             paramValues[1] = table;
-             paramValues[2] = schema;
-             params[0] = new char[paramValues[0].length()];
-             params[0] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[0] ).c_str() );
-             params[1] = new char[paramValues[1].length()];
-             params[1] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[1] ).c_str() );
-             params[2] = new char[paramValues[2].length()];
-             params[2] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues[2] ).c_str() );
+             paramValues = schema + L"." + table;
+             params[0] = new char[paramValues.length() + 2];
+             memset( params[0], '\0', paramValues.length() + 2 );
+             std::wcstombs( params[0], paramValues.c_str(), paramValues.length() );
+             params[1] = new char[table.length() + 2];
+             memset( params[1], '\0', table.length() + 2 );
+             std::wcstombs( params[1], table.c_str(), table.length() );
+             params[2] = new char[schema.length() + 2];
+             memset( params[2], '\0', schema.length() + 2 );
+             std::wcstombs( params[2], schema.c_str(), schema.length() + 2 );
              paramFormat[0] = paramFormat[1] = paramFormat[2] = 0;
-             paramLength[0] = paramValues[0].length();
-             paramLength[1] = paramValues[1].length();
-             paramLength[2] = paramValues[2].length();
+             paramLength[0] = paramValues.length();
+             paramLength[1] = table.length();
+             paramLength[2] = schema.length();
              res = PQexecPrepared( m_db, "set_table_prop", 3, params, paramLength, paramFormat, 0 );
              if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
              {
@@ -651,21 +660,16 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                  errorMsg.push_back( L"Error executing query: " + err );
                  result = 1;
              }
-             PQclear( res );
              delete[] params[0];
+             params[0] = nullptr;
              delete[] params[1];
+             params[1] = nullptr;
              delete[] params[2];
+             params[2] = nullptr;
          }
     }
     PQclear( res );
     PQclear( res5 );
-/*                                char *tableId = PQgetvalue( res, i, 4 );
-                                table_id = strtol( tableId, NULL, 10 );
-                                if( AddDropTable( m_pimpl->m_myconv.from_bytes (catalog_name), m_pimpl->m_myconv.from_bytes (schema_name), m_pimpl->m_myconv.from_bytes (table_name), m_pimpl->m_myconv.from_bytes( table_owner ), table_id, true, errorMsg ) )
-                                {
-                                    result = 1;
-                                    break;
-                                }*/
     m_numOfTables = count;
     return result;
 }
