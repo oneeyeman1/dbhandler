@@ -76,10 +76,26 @@ class PostgresAdvanced : public wxDialog
 {
 public:
     PostgresAdvanced(wxWindow *parent);
-    wxComboBox *m_encoding;
 private:
-    wxStaticText *m_label1;
-    wxPanel *m_panel;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8, *m_label9, *m_label10, *m_label11, *m_label12;
+    wxPanel* panel_1;
+    wxComboBox* m_clientEncoding;
+    wxFilePickerCtrl* m_passFile;
+    wxTextCtrl* m_authenticate;
+    wxComboBox* m_binding;
+    wxTextCtrl* m_appName;
+    wxTextCtrl* m_fallbackName;
+    wxRadioBox* m_keepAlive;
+    wxTextCtrl* m_idle;
+    wxTextCtrl* m_count;
+    wxTextCtrl* text_ctrl_1;
+    wxTextCtrl* m_timeout;
+    wxRadioBox* m_replication;
+    wxRadioBox* m_gss;
+    wxComboBox* m_ssl;
+    wxRadioBox* m_negotiate;
+    wxRadioBox* m_compression;
+    wxButton *m_ok, *m_cancel, *m_help;
 };
 
 class mySQLConnect : public wxWizardPage
