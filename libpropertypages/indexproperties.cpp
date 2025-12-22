@@ -107,7 +107,7 @@ void TableIndex::InitGui()
     m_delete->Bind( wxEVT_UPDATE_UI, &TableIndex::OnButtonUpdateUI, this );
     m_delete->Bind( wxEVT_BUTTON, &TableIndex::OnDelete, this );
     auto stdPath = wxStandardPaths::Get();
-    wxString libName = "";
+    wxString libName = "", path;
 #ifdef __WXMSW__
     libName = "\\dialogs";
 #elif __WXMAC__
@@ -115,7 +115,17 @@ void TableIndex::InitGui()
 #else
     libName = "/libdialogs";
 #endif
-    m_lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
+#if wxCHECK_VERSION(3, 3, 0)
+    path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
+#else
+#ifdef __WXMSW__
+    wxFileName fn( GetExecutablePath() );
+    path = fn.GetPath();
+#elif defined(__WXGTK__) || defined(__WXQT__)
+    path = GetInstallPrefix() + "/lib";
+#endif
+#endif
+    m_lib.Load( path + libName );
     if( m_lib.IsLoaded() )
         m_initialized = true;
 }

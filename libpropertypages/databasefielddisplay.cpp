@@ -140,8 +140,17 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
         format = reinterpret_cast<wxStringClientData *>( m_formats->GetClientObject( m_formats->GetSelection() ) )->GetData();
         wxMessageBox( format );
     }
-    auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir();
-    wxString libName = "";
+    wxString libName = "", stdPath;
+#if wxCHECK_VERSION(3, 3, 0)
+    stdPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
+#else
+#ifdef __WXMSW__
+    wxFileName fn( GetExecutablePath() );
+    stdPath = fn.GetPath();
+#elif defined(__WXGTK__) || defined(__WXQT__)
+    stdPath = GetInstallPrefix() + "/lib";
+#endif
+#endif
 #ifdef __WXOSX__
     libName = "/liblibdialogs.dylib" ;
 #elif __WXGTK__

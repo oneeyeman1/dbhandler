@@ -1172,8 +1172,18 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 id++;
                 it1++;
             }*/
-            wxString libName;
+            wxString libName, path;
             wxDynamicLibrary lib;
+#if wxCHECK_VERSION(3, 3, 0)
+            path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
+#else
+#ifdef __WXMSW__
+            wxFileName fn( GetExecutablePath() );
+            path = fn.GetPath();
+#elif defined(__WXGTK__) || defined(__WXQT__)
+            path = GetInstallPrefix() + "/lib";
+#endif
+#endif
 #ifdef __WXMSW__
             libName = "\\dialogs";
 #elif __WXMAC__
@@ -1181,8 +1191,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #else
             libName = "/libdialogs";
 #endif
-            lib.Load(  wxStandardPaths::Get().GetSharedLibrariesDir() + libName  );
-//                std::wstring refTableName = constraint->GetRefTable().ToStdWstring();
+            lib.Load(  path + libName  );
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );
@@ -1234,8 +1243,18 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
         }
         else if( sign && type == QueryView )
         {
-            wxString libName;
+            wxString libName, path;
             wxDynamicLibrary lib;
+#if wxCHECK_VERSION(3, 3, 0)
+            path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
+#else
+#ifdef __WXMSW__
+            wxFileName fn( GetExecutablePath() );
+            path = fn.GetPath();
+#elif defined(__WXGTK__) || defined(__WXQT__)
+            path = GetInstallPrefix() + "/lib";
+#endif
+#endif
 #ifdef __WXMSW__
             libName = "\\dialogs";
 #elif __WXMAC__
@@ -1243,7 +1262,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
 #else
             libName = "/libdialogs";
 #endif
-            lib.Load( wxStandardPaths::Get().GetSharedLibrariesDir() + libName );
+            lib.Load( path + libName );
             QueryConstraint *constraint = (QueryConstraint *) sign->GetConstraint();
             long oldSign = 0;
             int constraintSign = oldSign = constraint->GetSign();

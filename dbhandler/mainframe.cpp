@@ -86,7 +86,16 @@ MainFrame::MainFrame(wxDocManager *manager) : wxDocMDIParentFrame(manager, NULL,
 #if defined __WXMSW__ || defined __WXGTK__
     m_tb = NULL;
 #endif
+#if wxCHECK_VERSION(3, 3, 0)
     m_libraryPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
+#else
+#ifdef __WXMSW__
+    wxFileName fn( GetExecutablePath() );
+    m_libraryPath = fn.GetPath();
+#elif defined(__WXGTK__) || defined(__WXQT__)
+    m_libraryPath = GetInstallPrefix() + "/lib";
+#endif
+#endif
     wxTheColourDatabase->AddColour( "SILVER", wxColour( 0xC0C0C0 ) );
     m_config = wxConfigBase::Get( "DBManager" );
     wxString path = m_config->GetPath();
