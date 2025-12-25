@@ -407,7 +407,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     else
     {
         PQclear( res );
-        for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+        for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end() && !result; ++it )
         {
             res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( (*it).c_str() ).c_str() );
             if( PQresultStatus( res ) != PGRES_COMMAND_OK )
@@ -487,8 +487,8 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    int osid;
-    PGresult *res, *res1, *res2, *res3, *res4, *res5, *res6, *res7, *res8;
+    int osid = 0;
+    PGresult *res  = nullptr, *res1  = nullptr, *res2 = nullptr, *res3 = nullptr, *res4 = nullptr, *res5 = nullptr, *res6 = nullptr, *res7 = nullptr, *res8 = nullptr;
     std::vector<TableField *> fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
@@ -636,37 +636,41 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
     }
     PQclear( res6 );
-    res6 = PQexec( m_db, "SHOW client_encoding" );
-    auto value = PQgetvalue( res6, 0, 0 );
-    PQclear( res6 );
     if( !result )
      {
          char *params[3];
          std::wstring paramValues;
          int paramLength[3];
          int paramFormat[3];
-         for( int i = 0; i < PQntuples( res ); i++ )
+         for( int i = 0; i < PQntuples( res ) && !result; i++ )
          {
              std::wstring cat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
              std::wstring schema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
              std::wstring table = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
-             char *table_owner = PQgetvalue( res, i, 3 );
+             std::wstring  table_owner = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 3 ) );
              pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema,  table ) );
              count++;
              paramValues = schema + L"." + table;
              params[0] = new char[paramValues.length() + 2];
              memset( params[0], '\0', paramValues.length() + 2 );
-             std::wcstombs( params[0], paramValues.c_str(), paramValues.length() );
+             auto temp = m_pimpl->m_myconv.to_bytes( paramValues.c_str() ).c_str();
+             params[0] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues.c_str() ).c_str() );
+//             Convert( params[0], paramValues );
+//             std::wcstombs( params[0], paramValues.c_str(), paramValues.length() );
              params[1] = new char[table.length() + 2];
              memset( params[1], '\0', table.length() + 2 );
-             std::wcstombs( params[1], table.c_str(), table.length() );
-             params[2] = new char[schema.length() + 2];
-             memset( params[2], '\0', schema.length() + 2 );
-             std::wcstombs( params[2], schema.c_str(), schema.length() + 2 );
+             params[1] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
+//             Convert( params[1], table );
+//             std::wcstombs( params[1], table.c_str(), table.length() );
+             params[2] = new char[table_owner.length() + 2];
+             memset( params[2], '\0', table_owner.length() + 2 );
+             params[2] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( table_owner.c_str() ).c_str() );
+//             Convert( params[2], table_owner );
+//             std::wcstombs( params[2], schema.c_str(), schema.length() + 2 );
              paramFormat[0] = paramFormat[1] = paramFormat[2] = 0;
              paramLength[0] = paramValues.length();
              paramLength[1] = table.length();
-             paramLength[2] = schema.length();
+             paramLength[2] = table_owner.length();
              res8 = PQexecPrepared( m_db, "set_table_prop", 3, params, paramLength, paramFormat, 0 );
              if( PQresultStatus( res8 ) != PGRES_COMMAND_OK )
              {
@@ -2187,3 +2191,20 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
     int result = 0;
     return result;
 }
+/*
+void PostgresDatabase::Convert(char *dest, const std::wstring &source)
+{
+    const wchar_t *temp = source.c_str();
+     while( *dest )
+     {
+         dest++;
+     }
+     while( *temp )
+     {
+         *dest = *temp;
+         dest++;
+         temp++;
+     }
+     *dest++ = '\0';
+}
+*/

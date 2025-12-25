@@ -584,12 +584,12 @@ PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_AN
         name = "%APPDATA%\\postgresql\\pgpass.conf";
     else
         name = "~/.pgpass";
-    m_passFile = new wxFilePickerCtrl( panel_1, wxID_ANY, name, "", "", wxDefaultPosition, wxDefaultSize, wxFLP_OPEN );
+    m_passFile = new wxFilePickerCtrl( panel_1, wxID_ANY, name, "", "", wxDefaultPosition, wxDefaultSize, wxFLP_OPEN | wxFLP_USE_TEXTCTRL );
     grid_sizer_1->Add( m_passFile, 0, 0, 0 );
     m_label3 = new wxStaticText( panel_1, wxID_ANY, "Require Authenticate" );
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     const wxString *m_authenticate_choices = NULL;
-    m_authenticate = new wxTextCtrl(panel_1, wxID_ANY, "" );
+    m_authenticate = new wxTextCtrl( panel_1, wxID_ANY, "" );
     grid_sizer_1->Add( m_authenticate, 0, 0, 0 );
     m_label4 = new wxStaticText( panel_1, wxID_ANY, "Channel Binding" );
     grid_sizer_1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -698,6 +698,9 @@ PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_AN
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
     panel_1->SetSizer( sizer_1 );
+    sizer_1->Add( panel_1, 0, wxEXPAND, 0 );
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
@@ -1004,7 +1007,6 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
 
 SybaseSQLServer::SybaseSQLServer(wxWizard* parent, bool isSQLServer) : wxWizardPage( parent )
 {
-    auto osId = wxPlatformInfo::Get().GetOperatingSystemId();
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxVERTICAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
