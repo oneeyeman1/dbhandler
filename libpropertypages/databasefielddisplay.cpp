@@ -148,7 +148,7 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     wxFileName fn( GetExecutablePath() );
     stdPath = fn.GetPath();
 #elif defined(__WXGTK__) || defined(__WXQT__)
-    stdPath = GetInstallPrefix() + "/lib";
+    stdPath = wxGetInstallPrefix() + "/lib";
 #endif
 #endif
 #ifdef __WXOSX__
