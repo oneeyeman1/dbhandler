@@ -122,7 +122,7 @@ void TableIndex::InitGui()
     wxFileName fn( GetExecutablePath() );
     path = fn.GetPath();
 #elif defined(__WXGTK__) || defined(__WXQT__)
-    path = GetInstallPrefix() + "/lib";
+    path = wxGetInstallPrefix() + "/lib";
 #endif
 #endif
     m_lib.Load( path + libName );
