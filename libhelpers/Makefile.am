@@ -21,5 +21,6 @@ libhelpers_a_SOURCES =  \
 
 libhelpers_a_CXXFLAGS = -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
+	-DwxUSE_MASKED_EDIT
 
 libhelpers_a_LDFLAGS = @WX_LDFLAGS@
