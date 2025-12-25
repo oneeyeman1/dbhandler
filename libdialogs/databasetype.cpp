@@ -563,21 +563,23 @@ void PostgresConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
 
 PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "Postgres Advanced Options" ) )
 {
-    panel_1 = new wxPanel( this, wxID_ANY );
-    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
-    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto grid_sizer_1 = new wxFlexGridSizer( 16, 2, 5, 5 );
-    sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
-    m_label1 = new wxStaticText( panel_1, wxID_ANY, "Client Encoding" );
-    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString *m_clientEncoding_choices = NULL;
-    m_clientEncoding = new wxComboBox( panel_1, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, m_clientEncoding_choices, wxCB_DROPDOWN );
-    grid_sizer_1->Add( m_clientEncoding, 0, 0, 0 );
-    m_label2 = new wxStaticText( panel_1, wxID_ANY, "Pass File" );
-    grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    SetTitle( "Postgres Advanced Options" );
+    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
+    panel_1 = new wxPanel(this, wxID_ANY);
+    sizer_1->Add(panel_1, 1, wxEXPAND, 0);
+    wxBoxSizer* sizer_2 = new wxBoxSizer(wxHORIZONTAL);
+    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
+    wxBoxSizer* sizer_3 = new wxBoxSizer(wxVERTICAL);
+    sizer_2->Add(sizer_3, 0, wxEXPAND, 0);
+    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    wxFlexGridSizer* grid_sizer_1 = new wxFlexGridSizer(6, 2, 5, 5);
+    sizer_3->Add(grid_sizer_1, 0, wxEXPAND, 0);
+    m_label1 = new wxStaticText(panel_1, wxID_ANY, wxT("client_encoding"));
+    grid_sizer_1->Add(m_label1, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_clientEncoding = new wxTextCtrl(panel_1, wxID_ANY, wxT("UTF8"));
+    grid_sizer_1->Add(m_clientEncoding, 0, 0, 0);
+    m_label2 = new wxStaticText(panel_1, wxID_ANY, wxT("Pass File"));
+    grid_sizer_1->Add(m_label2, 0, wxALIGN_CENTER_VERTICAL, 0);
     auto id = wxPlatformInfo::Get().GetOperatingSystemId();
     wxString name = "";
     if( id & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) )
@@ -585,122 +587,158 @@ PostgresAdvanced::PostgresAdvanced(wxWindow *parent) : wxDialog( parent, wxID_AN
     else
         name = "~/.pgpass";
     m_passFile = new wxFilePickerCtrl( panel_1, wxID_ANY, name, "", "", wxDefaultPosition, wxDefaultSize, wxFLP_OPEN | wxFLP_USE_TEXTCTRL );
-    grid_sizer_1->Add( m_passFile, 0, 0, 0 );
-    m_label3 = new wxStaticText( panel_1, wxID_ANY, "Require Authenticate" );
-    grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString *m_authenticate_choices = NULL;
-    m_authenticate = new wxTextCtrl( panel_1, wxID_ANY, "" );
-    grid_sizer_1->Add( m_authenticate, 0, 0, 0 );
-    m_label4 = new wxStaticText( panel_1, wxID_ANY, "Channel Binding" );
-    grid_sizer_1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_1->Add(m_passFile, 0, 0, 0);
+    m_label3 = new wxStaticText(panel_1, wxID_ANY, wxT("require_authenticate"));
+    grid_sizer_1->Add(m_label3, 0, 0, 0);
+    m_authenticate = new wxTextCtrl(panel_1, wxID_ANY, wxT("passwrd, gss, sspi, scram-sha-256, oauth, none"));
+    m_authenticate->SetToolTip(wxT("Choices are: passwrd, gss, sspi, scram-sha-256, oauth, none"));
+    grid_sizer_1->Add(m_authenticate, 0, 0, 0);
+    m_label4 = new wxStaticText(panel_1, wxID_ANY, wxT("channel_binding"));
+    grid_sizer_1->Add(m_label4, 0, wxALIGN_CENTER_VERTICAL, 0);
     const wxString m_binding_choices[] = {
-        "require",
-        "prefer",
-        "disable"
+        wxT("require"),
+        wxT("prefer"),
+        wxT("disable"),
     };
-    m_binding = new wxComboBox( panel_1, wxID_ANY, "disable", wxDefaultPosition, wxDefaultSize, 3, m_binding_choices, wxCB_DROPDOWN );
-    grid_sizer_1->Add( m_binding, 0, 0, 0 );
-    m_label5 = new wxStaticText( panel_1, wxID_ANY, "Application name" );
-    grid_sizer_1->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_appName = new wxTextCtrl( panel_1, wxID_ANY, "dbhandler" );
-    grid_sizer_1->Add( m_appName, 0, 0, 0 );
-    m_label6 = new wxStaticText( panel_1, wxID_ANY, "Fallback AppName" );
-    grid_sizer_1->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_fallbackName = new wxTextCtrl( panel_1, wxID_ANY, wxEmptyString );
-    grid_sizer_1->Add( m_fallbackName, 0, 0, 0 );
-    m_label7 = new wxStaticText( panel_1, wxID_ANY, "Keep Alive" );
-    grid_sizer_1->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_keepAlive_choices[] = {
-        "On",
-        "Off",
-    };
-    m_keepAlive = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_keepAlive_choices, 2, wxRA_SPECIFY_COLS );
-    m_keepAlive->SetSelection( 0 );
-    grid_sizer_1->Add( m_keepAlive, 0, 0, 0 );
-    m_label8 = new wxStaticText( panel_1, wxID_ANY, "KeepAlive IDLE" );
-    grid_sizer_1->Add( m_label8, 0, 0, 0 );
-    m_idle = new wxTextCtrl( panel_1, wxID_ANY, "0" );
-    grid_sizer_1->Add( m_idle, 0, 0, 0 );
-    m_label9 = new wxStaticText( panel_1, wxID_ANY, "KeepAlive Count" );
-    grid_sizer_1->Add( m_label9, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_count = new wxTextCtrl( panel_1, wxID_ANY, "0" );
-    grid_sizer_1->Add( m_count, 0, 0, 0 );
-    m_label10 = new wxStaticText( panel_1, wxID_ANY, "KeepAlive Interval" );
-    grid_sizer_1->Add( m_label10, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    text_ctrl_1 = new wxTextCtrl( panel_1, wxID_ANY, "0" );
-    grid_sizer_1->Add( text_ctrl_1, 0, 0, 0 );
-    m_label11 = new wxStaticText( panel_1, wxID_ANY, "TCP Timeout" );
-    grid_sizer_1->Add( m_label11, 0, 0, 0 );
-    m_timeout = new wxTextCtrl( panel_1, wxID_ANY, "0" );
-    grid_sizer_1->Add( m_timeout, 0, 0, 0 );
-    m_label12 = new wxStaticText( panel_1, wxID_ANY, "Replication" );
-    grid_sizer_1->Add( m_label12, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_binding = new wxComboBox(panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 3, m_binding_choices, wxCB_DROPDOWN);
+    m_binding->SetSelection(2);
+    grid_sizer_1->Add(m_binding, 0, 0, 0);
+    m_label5 = new wxStaticText(panel_1, wxID_ANY, wxT("application_name"));
+    grid_sizer_1->Add(m_label5, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_appName = new wxTextCtrl(panel_1, wxID_ANY, wxT("dbhandler"));
+    grid_sizer_1->Add(m_appName, 0, 0, 0);
+    m_label6 = new wxStaticText(panel_1, wxID_ANY, wxT("fallback_application_name"));
+    grid_sizer_1->Add(m_label6, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_fallbackName = new wxTextCtrl(panel_1, wxID_ANY, wxT("dbhandler"));
+    grid_sizer_1->Add(m_fallbackName, 0, 0, 0);
+    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    wxStaticBoxSizer* sizer_5 = new wxStaticBoxSizer(new wxStaticBox(panel_1, wxID_ANY, wxT("Keep Alive")), wxVERTICAL);
+    sizer_3->Add(sizer_5, 1, wxEXPAND, 0);
+    wxFlexGridSizer* grid_sizer_2 = new wxFlexGridSizer(4, 2, 5, 5);
+    sizer_5->Add(grid_sizer_2, 1, wxEXPAND, 0);
+    m_label7 = new wxStaticText(sizer_5->GetStaticBox(), wxID_ANY, wxT("keepalves"));
+    grid_sizer_2->Add(m_label7, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_keepAlive = new wxCheckBox(sizer_5->GetStaticBox(), wxID_ANY, wxEmptyString);
+    m_keepAlive->SetValue(1);
+    grid_sizer_2->Add(m_keepAlive, 0, 0, 0);
+    m_label8 = new wxStaticText(sizer_5->GetStaticBox(), wxID_ANY, wxT("keepalives_idle"));
+    grid_sizer_2->Add(m_label8, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_keepAliveIdle = new wxTextCtrl(sizer_5->GetStaticBox(), wxID_ANY, wxT("0"));
+    grid_sizer_2->Add(m_keepAliveIdle, 0, 0, 0);
+    m_label9 = new wxStaticText(sizer_5->GetStaticBox(), wxID_ANY, wxT("keepalives_interval"));
+    grid_sizer_2->Add(m_label9, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_keepAliveInterval = new wxTextCtrl(sizer_5->GetStaticBox(), wxID_ANY, wxT("0"));
+    grid_sizer_2->Add(m_keepAliveInterval, 0, 0, 0);
+    m_label10 = new wxStaticText(sizer_5->GetStaticBox(), wxID_ANY, wxT("keepalives_count"));
+    grid_sizer_2->Add(m_label10, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_keepAliveCount = new wxTextCtrl(sizer_5->GetStaticBox(), wxID_ANY, wxT("0"));
+    grid_sizer_2->Add(m_keepAliveCount, 0, 0, 0);
+    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    wxFlexGridSizer* grid_sizer_3 = new wxFlexGridSizer(3, 2, 5, 5);
+    sizer_3->Add(grid_sizer_3, 0, wxEXPAND, 0);
+    m_label11 = new wxStaticText(panel_1, wxID_ANY, wxT("tcp_user_timeout"));
+    grid_sizer_3->Add(m_label11, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_userTimeout = new wxTextCtrl(panel_1, wxID_ANY, wxT("0"));
+    grid_sizer_3->Add(m_userTimeout, 0, 0, 0);
+    m_label12 = new wxStaticText(panel_1, wxID_ANY, wxT("replicatiom"));
+    grid_sizer_3->Add(m_label12, 0, wxALIGN_CENTER_VERTICAL, 0);
     const wxString m_replication_choices[] = {
-        "On",
-        "Database",
-        "Off",
+        wxT("true"),
+        wxT("database"),
+        wxT("false"),
     };
-    m_replication = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 3, m_replication_choices, 3, wxRA_SPECIFY_COLS );
-    m_replication->SetSelection( 2 );
-    grid_sizer_1->Add( m_replication, 0, 0, 0 );
-    wxStaticText* m_label13 = new wxStaticText( panel_1, wxID_ANY, "GSS" );
-    grid_sizer_1->Add( m_label13, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_gss_choices[] = {
-        "Disable",
-        "Prefer",
-        "Require",
+    m_replication = new wxComboBox(panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 3, m_replication_choices, wxCB_DROPDOWN);
+    m_replication->SetSelection(2);
+    grid_sizer_3->Add(m_replication, 0, 0, 0);
+    m_label13 = new wxStaticText(panel_1, wxID_ANY, wxT("gssencnde"));
+    grid_sizer_3->Add(m_label13, 0, wxALIGN_CENTER_VERTICAL, 0);
+    const wxString m_gssmode_choices[] = {
+        wxT("disable"),
+        wxT("prefer"),
+        wxT("require"),
     };
-    m_gss = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 3, m_gss_choices, 3, wxRA_SPECIFY_COLS );
-    m_gss->SetSelection( 1 );
-    grid_sizer_1->Add( m_gss, 0, 0, 0 );
-    wxStaticText* m_label14 = new wxStaticText( panel_1, wxID_ANY, "SSL" );
-    grid_sizer_1->Add( m_label14, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_ssl_choices[] = {
-        "Disable",
-        "Allow",
-        "Prefer",
-        "Require",
-        "Verify-ca",
-        "Verify-full"
+    m_gssmode = new wxComboBox(panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 3, m_gssmode_choices, wxCB_DROPDOWN);
+    m_gssmode->SetSelection(0);
+    grid_sizer_3->Add(m_gssmode, 0, 0, 0);
+    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    wxStaticBoxSizer* sizer_6 = new wxStaticBoxSizer(new wxStaticBox(panel_1, wxID_ANY, wxT("SSL")), wxHORIZONTAL);
+    sizer_3->Add(sizer_6, 1, wxEXPAND, 0);
+    wxFlexGridSizer* grid_sizer_4 = new wxFlexGridSizer(10, 2, 5, 5);
+    sizer_6->Add(grid_sizer_4, 0, wxEXPAND, 0);
+    m_label14 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslnode"));
+    grid_sizer_4->Add(m_label14, 0, wxALIGN_CENTER_VERTICAL, 0);
+    const wxString m_sslMode_choices[] = {
+        wxT("disable"),
+        wxT("allow"),
+        wxT("prefer"),
+        wxT("require"),
+        wxT("verify-ca"),
+        wxT("verify-full"),
     };
-    m_ssl = new wxComboBox( panel_1, wxID_ANY, "Prefer", wxDefaultPosition, wxDefaultSize, 3, m_ssl_choices, wxCB_DROPDOWN );
-    m_ssl->SetSelection( 2 );
-    grid_sizer_1->Add( m_ssl, 0, 0, 0 );
-    wxStaticText* m_label15 = new wxStaticText( panel_1, wxID_ANY, "SSL negotiation" );
-    grid_sizer_1->Add( m_label15, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_negotiate_choices[] = {
-        "postgres",
-        "direct",
+    m_sslMode = new wxComboBox(sizer_6->GetStaticBox(), wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 6, m_sslMode_choices, wxCB_DROPDOWN);
+    m_sslMode->SetSelection(2);
+    grid_sizer_4->Add(m_sslMode, 0, 0, 0);
+    m_label15 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslnegtiation"));
+    grid_sizer_4->Add(m_label15, 0, wxALIGN_CENTER_VERTICAL, 0);
+    const wxString m_sslnefotiation_choices[] = {
+        wxT("postgres"),
+        wxT("direct"),
     };
-    m_negotiate = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_negotiate_choices, 2, wxRA_SPECIFY_COLS );
-    m_negotiate->SetSelection( 0 );
-    grid_sizer_1->Add( m_negotiate, 0, 0, 0 );
-    wxStaticText* m_label16 = new wxStaticText( panel_1, wxID_ANY, "SSL Compression" );
-    grid_sizer_1->Add( m_label16, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_compression_choices[] = {
-        "On",
-        "Off",
+    m_sslnefotiation = new wxComboBox(sizer_6->GetStaticBox(), wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 2, m_sslnefotiation_choices, wxCB_DROPDOWN);
+    m_sslnefotiation->SetSelection(0);
+    grid_sizer_4->Add(m_sslnefotiation, 0, 0, 0);
+    m_label16 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslcompression"));
+    grid_sizer_4->Add(m_label16, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_sslcompression = new wxCheckBox(sizer_6->GetStaticBox(), wxID_ANY, wxEmptyString);
+    grid_sizer_4->Add(m_sslcompression, 0, 0, 0);
+    m_label17 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslcert"));
+    grid_sizer_4->Add(m_label17, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_sslcert = new wxTextCtrl(sizer_6->GetStaticBox(), wxID_ANY, wxT("~/.postgresql/postgresql.crt"));
+    grid_sizer_4->Add(m_sslcert, 0, 0, 0);
+    m_label18 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslkey"));
+    grid_sizer_4->Add(m_label18, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_sslKey = new wxTextCtrl(sizer_6->GetStaticBox(), wxID_ANY, wxT("~/.postgresql/postgresql.key"));
+    grid_sizer_4->Add(m_sslKey, 0, 0, 0);
+    m_label19 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslkeylogfile"));
+    grid_sizer_4->Add(m_label19, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_sslKeyLogFile = new wxTextCtrl(sizer_6->GetStaticBox(), wxID_ANY, wxEmptyString);
+    grid_sizer_4->Add(m_sslKeyLogFile, 0, 0, 0);
+    m_label20 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslpassword"));
+    grid_sizer_4->Add(m_label20, 0, wxALIGN_CENTER_VERTICAL, 0);
+    m_sslpassword = new wxTextCtrl(sizer_6->GetStaticBox(), wxID_ANY, wxEmptyString);
+    grid_sizer_4->Add(m_sslpassword, 0, 0, 0);
+    m_label21 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslcertmode"));
+    grid_sizer_4->Add(m_label21, 0, wxALIGN_CENTER_VERTICAL, 0);
+    const wxString m_sslcertmode_choices[] = {
+        wxT("disable"),
+        wxT("allow"),
+        wxT("defalt"),
     };
-    m_compression = new wxRadioBox( panel_1, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 2, m_compression_choices, 2, wxRA_SPECIFY_COLS );
-    m_compression->SetSelection( 0 );
-    grid_sizer_1->Add( m_compression, 0, 0, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_3 = new wxStdDialogButtonSizer();
-    // WARNING: Code for instance "sizer_3" of "wxStdDialogButtonSizer" not generated: no suitable writer found
-    m_ok = new wxButton( panel_1, wxID_OK, "OK" );
-    m_cancel = new wxButton( panel_1, wxID_CANCEL, "Cancel" );
-    m_help = new wxButton( panel_1, wxID_HELP, "Help" );
-    sizer_3->Add( m_ok, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_cancel, 0, wxEXPAND, 0 );
-    sizer_3->Add( m_help, 0, wxEXPAND, 0 );
-    sizer_3->Realize();
-    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
-    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_sslcertmode = new wxComboBox(sizer_6->GetStaticBox(), wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 3, m_sslcertmode_choices, wxCB_DROPDOWN);
+    m_sslcertmode->SetSelection(1);
+    grid_sizer_4->Add(m_sslcertmode, 0, 0, 0);
+    m_label22 = new wxStaticText(sizer_6->GetStaticBox(), wxID_ANY, wxT("sslrootcert"));
+    grid_sizer_4->Add(m_label22, 0, 0, 0);
+    m_sslrootcert = new wxTextCtrl(sizer_6->GetStaticBox(), wxID_ANY, wxT("~/.postgresql/root.crt"));
+    grid_sizer_4->Add(m_sslrootcert, 0, 0, 0);
+    grid_sizer_4->Add(0, 0, 0, 0, 0);
+    grid_sizer_4->Add(0, 0, 0, 0, 0);
+    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    auto sizer_4 = new wxStdDialogButtonSizer();
+    // WARNING: Code for instance "sizer_4" of "wxStdDialogButtonSizer" not generated: no suitable writer found
+    m_OK = new wxButton(panel_1, wxID_OK, wxT("OK"));
+    sizer_4->Add( m_OK, 0, wxEXPAND, 0 );
+    m_cancel = new wxButton(panel_1, wxID_CANCEL, wxT("Cancel"));
+    sizer_4->Add( m_cancel, 0, wxEXPAND, 0 );
+    m_help = new wxButton(panel_1, wxID_HELP, wxT("Help"));
+    sizer_4->Add( m_help, 0, wxEXPAND, 0 );
+    sizer_4->Realize();
+    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
 
-    panel_1->SetSizer( sizer_1 );
-    sizer_1->Add( panel_1, 0, wxEXPAND, 0 );
-    SetSizer( sizer_1 );
-    sizer_1->Fit( this );
+    panel_1->SetSizer(sizer_2);
+    SetSizer(sizer_1);
+    sizer_1->Fit(this);
     Layout();
     // end wxGlade
 }

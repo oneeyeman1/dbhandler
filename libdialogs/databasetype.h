@@ -77,25 +77,54 @@ class PostgresAdvanced : public wxDialog
 public:
     PostgresAdvanced(wxWindow *parent);
 private:
-    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8, *m_label9, *m_label10, *m_label11, *m_label12;
+    wxStaticText *m_label1, *m_label2;
     wxPanel* panel_1;
-    wxComboBox* m_clientEncoding;
+    wxTextCtrl* m_clientEncoding;
     wxFilePickerCtrl* m_passFile;
+    wxStaticText* m_label3;
     wxTextCtrl* m_authenticate;
+    wxStaticText* m_label4;
     wxComboBox* m_binding;
+    wxStaticText* m_label5;
     wxTextCtrl* m_appName;
+    wxStaticText* m_label6;
     wxTextCtrl* m_fallbackName;
-    wxRadioBox* m_keepAlive;
-    wxTextCtrl* m_idle;
-    wxTextCtrl* m_count;
-    wxTextCtrl* text_ctrl_1;
-    wxTextCtrl* m_timeout;
-    wxRadioBox* m_replication;
-    wxRadioBox* m_gss;
-    wxComboBox* m_ssl;
-    wxRadioBox* m_negotiate;
-    wxRadioBox* m_compression;
-    wxButton *m_ok, *m_cancel, *m_help;
+    wxStaticText* m_label7;
+    wxCheckBox* m_keepAlive;
+    wxStaticText* m_label8;
+    wxTextCtrl* m_keepAliveIdle;
+    wxStaticText* m_label9;
+    wxTextCtrl* m_keepAliveInterval;
+    wxStaticText* m_label10;
+    wxTextCtrl* m_keepAliveCount;
+    wxStaticText* m_label11;
+    wxTextCtrl* m_userTimeout;
+    wxStaticText* m_label12;
+    wxComboBox* m_replication;
+    wxStaticText* m_label13;
+    wxComboBox* m_gssmode;
+    wxStaticText* m_label14;
+    wxComboBox* m_sslMode;
+    wxStaticText* m_label15;
+    wxComboBox* m_sslnefotiation;
+    wxStaticText* m_label16;
+    wxCheckBox* m_sslcompression;
+    wxStaticText* m_label17;
+    wxTextCtrl* m_sslcert;
+    wxStaticText* m_label18;
+    wxTextCtrl* m_sslKey;
+    wxStaticText* m_label19;
+    wxTextCtrl* m_sslKeyLogFile;
+    wxStaticText* m_label20;
+    wxTextCtrl* m_sslpassword;
+    wxStaticText* m_label21;
+    wxComboBox* m_sslcertmode;
+    wxStaticText* m_label22;
+    wxTextCtrl* m_sslrootcert;
+    wxButton* m_OK;
+    wxButton* m_cancel;
+    wxButton* m_help;
+    // end wxGlade
 };
 
 class mySQLConnect : public wxWizardPage
