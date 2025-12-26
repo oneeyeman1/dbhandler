@@ -520,24 +520,24 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 5 )
     {
         if( osid == WINDOWS )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         else if( osid == OSX )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
         else if( osid == GTK )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
     }
     else
     {
         if( osid == WINDOWS )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), \'\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
     }
     res = PQexec( m_db, "BEGIN" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
@@ -569,6 +569,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
+    PQclear( res7 );
     if( !result )
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
@@ -604,6 +605,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
+    PQclear( res4 );
     if( !result )
     {
         res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
@@ -638,40 +640,39 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     PQclear( res6 );
     if( !result )
      {
-         char *params[3];
+         char *params[4];
          std::wstring paramValues;
-         int paramLength[3];
-         int paramFormat[3];
+         int paramLength[4];
+         int paramFormat[4];
          for( int i = 0; i < PQntuples( res ) && !result; i++ )
          {
-             std::wstring cat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
-             std::wstring schema = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-             std::wstring table = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
-             std::wstring  table_owner = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 3 ) );
-             pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema,  table ) );
+             auto category = PQgetvalue( res, i, 0 );
+             std::wstring cat = m_pimpl->m_myconv.from_bytes( category );
+             char *schema = PQgetvalue( res, i, 1 );
+             char *table = PQgetvalue( res, i, 2 );
+             char *table_owner = PQgetvalue( res, i, 3 );
+             pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ),  m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
              count++;
-             paramValues = schema + L"." + table;
-             params[0] = new char[paramValues.length() + 2];
-             memset( params[0], '\0', paramValues.length() + 2 );
-             auto temp = m_pimpl->m_myconv.to_bytes( paramValues.c_str() ).c_str();
-             params[0] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( paramValues.c_str() ).c_str() );
-//             Convert( params[0], paramValues );
-//             std::wcstombs( params[0], paramValues.c_str(), paramValues.length() );
-             params[1] = new char[table.length() + 2];
-             memset( params[1], '\0', table.length() + 2 );
-             params[1] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
-//             Convert( params[1], table );
-//             std::wcstombs( params[1], table.c_str(), table.length() );
-             params[2] = new char[table_owner.length() + 2];
-             memset( params[2], '\0', table_owner.length() + 2 );
-             params[2] = const_cast<char *>( m_pimpl->m_myconv.to_bytes( table_owner.c_str() ).c_str() );
-//             Convert( params[2], table_owner );
-//             std::wcstombs( params[2], schema.c_str(), schema.length() + 2 );
-             paramFormat[0] = paramFormat[1] = paramFormat[2] = 0;
-             paramLength[0] = paramValues.length();
-             paramLength[1] = table.length();
-             paramLength[2] = table_owner.length();
-             res8 = PQexecPrepared( m_db, "set_table_prop", 3, params, paramLength, paramFormat, 0 );
+             params[0] = new char[strlen( schema ) + strlen( table ) + 2];
+             memset( params[0], '\0', strlen( schema ) + strlen( table ) + 2 );
+             strcpy( params[0], schema );
+             strcat( params[0], "." );
+             strcat( params[0], table );
+             params[1] = new char[strlen( table ) + 2];
+             memset( params[1], '\0', strlen( table ) + 2 );
+             strcpy( params[1], table );
+             params[2] = new char[strlen( schema ) + 2];
+             memset( params[2], '\0', strlen( schema ) + 2 );
+             strcpy( params[2], schema );
+             params[3] = new char[strlen( table_owner ) + 2];
+             memset( params[3], '\0', strlen( table_owner ) + 2 );
+             strcpy( params[3], table_owner );
+             paramFormat[0] = paramFormat[1] = paramFormat[2] = paramFormat[3] = 0;
+             paramLength[0] = strlen( schema ) + strlen( table ) + 1;
+             paramLength[1] = strlen( table );
+             paramLength[2] = strlen( schema );
+             paramLength[3] = strlen( table_owner );
+             res8 = PQexecPrepared( m_db, "set_table_prop", 4, params, paramLength, paramFormat, 0 );
              if( PQresultStatus( res8 ) != PGRES_COMMAND_OK )
              {
                  std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -685,6 +686,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
              params[1] = nullptr;
              delete[] params[2];
              params[2] = nullptr;
+             delete[] params[3];
+             params[3] = nullptr;
          }
     }
     PQclear( res );
