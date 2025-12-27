@@ -367,13 +367,14 @@ protected:
         OKColour,
         InvalidColour
     };
-
+#if wxUSE_ACCESSIBILITY
     //Bell
     void DoBell()
     {
         if( m_bellOnError )
             wxBell();
     }
+#endif
 #endif
 
     //General Test Functions -  -  -  -  -  -  -  -  -
