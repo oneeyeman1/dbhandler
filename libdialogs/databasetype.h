@@ -133,9 +133,9 @@ public:
     mySQLConnect(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const;
     virtual wxWizardPage *GetNext() const;
-    void OnAdvanced(wxCommandEvent &event);
     wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
+    wxMaskedEditText *GetHostAddr() const;
     wxTextCtrl *GetPort() const;
     wxTextCtrl *GetUserID() const;
     wxTextCtrl *GetPassword() const;
@@ -143,9 +143,13 @@ public:
     wxTextCtrl *GetSocket() const;
     int GetFlags();
     wxString GetOptions() const;
+protected:
+    void OnHostAddrUpdateUI(wxUpdateUIEvent &event);
+    void OnAdvanced(wxCommandEvent &event);
 private:
-    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
+    wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8;
     wxTextCtrl *m_host, *m_port, *m_userID, *m_password, *m_dbName, *m_socket;
+    wxMaskedEditText *m_hostAddr;
     wxButton *m_advanced;
     int m_flags;
     unsigned long m_value;

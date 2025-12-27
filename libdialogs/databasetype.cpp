@@ -208,7 +208,17 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         if( !host.empty() )
             m_connStr = "host=" + host + " ";
         else
-            m_connStr = "host=localhost ";
+        {
+            wxString hostAddr;
+            for( int i = 0; i < 4; ++i )
+            {
+                hostAddr += page5->GetHostAddr()->GetFieldValue( i ).Trim( false ).Trim();
+                if( i < 3 )
+                    hostAddr += ".";
+            }
+            if( !hostAddr.empty() )
+                m_connStr += "hostaddr = " + hostAddr + " ";
+        }
         wxString port = page5->GetPort()->GetValue();
         if( !port.empty() )
             m_connStr += "port=" + port + " ";
@@ -752,6 +762,21 @@ mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
     val.SetRange( 1, 65535 );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Host" ) );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
+    m_label8 = new wxStaticText( this, wxID_ANY, _( "Host Address" ) );
+    wxMaskedEditFieldFlags fieldFlags;
+    fieldFlags.SetAlignment( wxALIGN_RIGHT );
+    fieldFlags.SetPaddingChar( ' ' );
+    wxRangeParams fparamsIP;
+    fparamsIP.rmin = 0;
+    fparamsIP.rmax = 255;
+    m_hostAddr = new wxMaskedEditText( this, wxID_ANY );
+    m_hostAddr->SetMask( "99#.99#.99#.99#" );
+    m_hostAddr->SetAllFieldsFlags( fieldFlags );
+    m_hostAddr->SetFieldValue( 0, "127" );
+    m_hostAddr->SetFieldValue( 1, "0" );
+    m_hostAddr->SetFieldValue( 2, "0" );
+    m_hostAddr->SetFieldValue( 3, "1" );
+    m_hostAddr->SetAllFieldsFunction( &wxMaskedRangeCheck, &fparamsIP );
     m_label3 = new wxStaticText( this, wxID_ANY, _( "Port" ) );
     m_port = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
     m_label4 = new wxStaticText( this, wxID_ANY, _( "User ID" ) );
@@ -765,11 +790,13 @@ mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
     m_advanced = new wxButton( this, wxID_ANY, _( "Advaned Option" ) );
     wxBoxSizer *main = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer1 = new wxBoxSizer( wxVERTICAL );
-    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    wxFlexGridSizer *sizer2 = new wxFlexGridSizer( 7, 2, 5, 5 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );
     sizer2->Add( m_host, 0, wxEXPAND, 0 );
+    sizer2->Add( m_label8, 0, wxEXPAND, 0 );
+    sizer2->Add( m_hostAddr, 0, wxEXPAND, 0 );
     sizer2->Add( m_label3, 0, wxEXPAND, 0 );
     sizer2->Add( m_port, 0, wxEXPAND, 0 );
     sizer2->Add( m_label4, 0, wxEXPAND, 0 );
@@ -787,7 +814,9 @@ mySQLConnect::mySQLConnect(wxWizard *parent) : wxWizardPage( parent )
     main->Add( sizer1, 0, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizerAndFit( main );
+    m_hostAddr->Disable();
     m_advanced->Bind( wxEVT_BUTTON, &mySQLConnect::OnAdvanced, this );
+    m_hostAddr->Bind( wxEVT_UPDATE_UI, &mySQLConnect::OnHostAddrUpdateUI, this );
 }
 
 wxWizardPage *mySQLConnect::GetPrev() const
@@ -808,6 +837,11 @@ wxTextCtrl *mySQLConnect::GetDatabaseName()
 wxTextCtrl *mySQLConnect::GetHost() const
 {
     return m_host;
+}
+
+wxMaskedEditText *mySQLConnect::GetHostAddr() const
+{
+    return m_hostAddr;
 }
 
 wxTextCtrl *mySQLConnect::GetPort() const
@@ -843,6 +877,14 @@ int mySQLConnect::GetFlags()
 wxString mySQLConnect::GetOptions() const
 {
     return m_options;
+}
+
+void mySQLConnect::OnHostAddrUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_host->IsEmpty() )
+        event.Enable( true );
+    else
+        event.Enable( false );
 }
 
 void mySQLConnect::OnAdvanced(wxCommandEvent &WXUNUSED(event))
