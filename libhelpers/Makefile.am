@@ -12,6 +12,8 @@ libhelpers_a_SOURCES =  \
 	colorcombobox.h \
 	ablbaseview.cpp \
 	ablbaseview.h \
+	maskededit.cpp \
+	maskededit.h \
 	mycombocelleditor.cpp \
 	mycombocelleditor.h \
 	mycombocellrenderer.cpp \
@@ -19,8 +21,7 @@ libhelpers_a_SOURCES =  \
 	mytabletypeeditor.cpp \
 	mytabletypeeditor.h
 
-libhelpers_a_CXXFLAGS = -fPIC \
+libhelpers_a_CXXFLAGS = -DwxUSE_MASKED_EDIT -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
-	-DwxUSE_MASKED_EDIT
 
 libhelpers_a_LDFLAGS = @WX_LDFLAGS@

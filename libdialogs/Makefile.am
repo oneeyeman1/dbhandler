@@ -60,13 +60,13 @@ libdialogs_la_SOURCES =  \
 	dropindexoptions.cpp \
 	dropindexoptions.h
 
-libdialogs_la_CXXFLAGS = -I../../dbinterface \
+libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
+	-I../../dbinterface \
 	-I../../libfieldswindow \
 	-I../../libshapeframework \
 	-I../../libpropertypages \
 	-I../../libhelpers \
 	@WX_CXXFLAGS@
-	-DwxUSE_MASKED_EDIT
 
 libdialogs_la_LDFLAGS = -L../libsqlite \
 	-L../libshapeframework \
