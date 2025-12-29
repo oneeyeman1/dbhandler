@@ -1274,37 +1274,41 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     }
     else if( status == PGRES_TUPLES_OK )
     {
-        for( int i = 0; i < PQntuples( res ); i++ )
+        auto count = PQntuples( res );
+        if( !count )
         {
-            field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 18 ) );
-            auto heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
-            field->GetFieldProperties().m_heading.m_heading = heading == L"" ? fieldName : heading;
-            field->GetFieldProperties().m_heading.m_headingAlignment = atoi( PQgetvalue( res, i, 9 ) );
-            auto label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
-            field->GetFieldProperties().m_heading.m_label = label == L"" ? fieldName : label;
-            field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 7 ) );
-            field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 10 ) );
-            fieldFormat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
+            field->GetFieldProperties().m_comment = L"";
+            field->GetFieldProperties().m_heading.m_heading = fieldName;
+            field->GetFieldProperties().m_heading.m_headingAlignment = 1;
+            field->GetFieldProperties().m_heading.m_label = fieldName;
+            field->GetFieldProperties().m_heading.m_labelAlignment = 0;
+            field->GetFieldProperties().m_display.m_justify = 0;
+            fieldFormat = L"";
+        }
+        else
+        {
+            for( int i = 0; i < count; i++ )
+            {
+                field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 18 ) );
+                auto heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
+                field->GetFieldProperties().m_heading.m_heading = heading == L"" ? fieldName : heading;
+                field->GetFieldProperties().m_heading.m_headingAlignment = atoi( PQgetvalue( res, i, 9 ) );
+                auto label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
+                field->GetFieldProperties().m_heading.m_label = label == L"" ? fieldName : label;
+                field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 7 ) );
+                field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 10 ) );
+                fieldFormat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
+            }
         }
     }
-    else
-    {
-        field->GetFieldProperties().m_comment = L"";
-        field->GetFieldProperties().m_heading.m_heading = fieldName;
-        field->GetFieldProperties().m_heading.m_headingAlignment = 1;
-        field->GetFieldProperties().m_heading.m_label = fieldName;
-        field->GetFieldProperties().m_heading.m_labelAlignment = 0;
-        field->GetFieldProperties().m_display.m_justify = 0;
-        fieldFormat = L"";
-    }
     delete[] values[0];
-    values[0] = NULL;
+    values[0] = nullptr;
     delete[] values[1];
-    values[1] = NULL;
+    values[1] = nullptr;
     delete[] values[2];
-    values[2] = NULL;
+    values[2] = nullptr;
     delete[] tname;
-    tname = NULL;
+    tname = nullptr;
     PQclear( res );
     int type;
     if( field->GetFieldType() == L"date" )
@@ -1682,7 +1686,6 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
         result = 1;
     else
     {
-        const char *table_owner = m_pimpl->m_myconv.to_bytes( own.c_str() ).c_str();
         values1[0] = new char[schemaName.length() * sizeof( wchar_t ) + 1];
         values1[1] = new char[tableName.length() * sizeof( wchar_t ) + 1];
         memset( values1[0], '\0', schemaName.length()  * sizeof( wchar_t ) + 1 );
@@ -1802,7 +1805,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 if( fieldType == L"serial" || fieldType == L"bigserial" )
                     autoinc = true;
                 TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                if( GetFieldProperties( tableName, schemaName, m_pimpl->m_myconv.from_bytes( table_owner ), m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
+                if( GetFieldProperties( tableName, schemaName, own, m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                     errors.push_back( err );
@@ -1827,7 +1830,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 table->SetFullName( catalog + L"." + schemaName + L"." + tableName );
                 table->SetCatalog( catalog );
                 table->SetNumberOfFields( numFields );
-                table->SetTableOwner( m_pimpl->m_myconv.from_bytes( table_owner ) );
+                table->SetTableOwner( own );
                 if( GetTableProperties( table, errors ) )
                 {
                     char *err = PQerrorMessage( m_db );
