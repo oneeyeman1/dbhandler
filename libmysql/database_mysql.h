@@ -54,10 +54,12 @@ protected:
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
+    int GetCharacterSets(std::vector<std::wstring> &errorMsg);
 private:
     MYSQL_STMT *m_stmt;
     MYSQL *m_db;
     int m_port, m_flags;
+    std::vector<std::tuple<std::wstring, std::wstring> > m_chatacterSets;
 };
 
 struct MySQLDatabase::MySQLImpl
