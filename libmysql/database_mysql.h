@@ -55,11 +55,13 @@ protected:
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
     int GetCharacterSets(std::vector<std::wstring> &errorMsg);
+    int GetCollations(std::vector<std::wstring> &errorMsg);
 private:
     MYSQL_STMT *m_stmt;
     MYSQL *m_db;
     int m_port, m_flags;
     std::vector<std::tuple<std::wstring, std::wstring> > m_chatacterSets;
+    std::vector<std::tuple<std::wstring, std::wstring, bool> > m_collations;
 };
 
 struct MySQLDatabase::MySQLImpl

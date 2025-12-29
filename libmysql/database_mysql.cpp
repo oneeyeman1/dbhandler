@@ -154,6 +154,8 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                 GetServerVersion( errorMsg );
                 if( GetCharacterSets( errorMsg ) )
                     result = 1;
+                if( GetCollations( errorMsg ) )
+                    result = 1;
                 if( !result )
                 {
                     if( !connectToDatabase )
@@ -3085,6 +3087,43 @@ int MySQLDatabase::GetCharacterSets(std::vector<std::wstring> &errorMsg)
         while( row = mysql_fetch_row( res ) )
         {
             m_chatacterSets.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ) ) );
+        }
+        mysql_free_result( res );
+    }
+    return result;
+}
+
+int MySQLDatabase::GetCollations(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    MYSQL_RES *res;
+    if( mysql_query( m_db, "SHOW COLLATION" ) )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        res = mysql_store_result( m_db );
+        if( !res )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        MYSQL_ROW row;
+        while( row = mysql_fetch_row( res ) )
+        {
+            bool def;
+            if( m_pimpl->m_myconv.from_bytes( row[3] ) == L"Yes" )
+                def = true;
+            else
+                def = false;
+            m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ), def ) );
         }
         mysql_free_result( res );
     }
