@@ -1109,9 +1109,9 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                     found2 = true;
                 }
             }
-            int deleteProp, updateProp;
-            FK_ONUPDATE actionUpdate;
-            FK_ONDELETE actionDelete;
+            int deleteProp = 0, updateProp = 0;
+            FK_ONUPDATE actionUpdate = NO_ACTION_UPDATE;
+            FK_ONDELETE actionDelete = NO_ACTION_DELETE;
             Constraint::constraintAction action = constraint->GetOnDelete();
             if( action == Constraint::restrict )
             {
