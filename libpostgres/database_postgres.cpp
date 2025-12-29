@@ -438,7 +438,6 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
             {
                 errorMsg.push_back( L"Problem during connection. Please fix the problem and restart the application" );
                 result = 1;
-                PQclear( res );
             }
         }
     }
@@ -513,8 +512,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
     std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
-    std::wstring query4 = L"SELECT indexname FROM pg_indexes WHERE schemaname = $1 AND tablename = $2;";
-    std::wstring query5 = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2;";
+    std::wstring query4 = L"SELECT indexname FROM pg_indexes pi, information_schema.table_constraints tc WHERE pi.tablename = tc.table_name AND pi.indexname = tc.constraint_name AND tc.constraint_type NOT IN ('PRIMARY KEY') AND pi.schemaname = $1 AND pi.tablename = $2;";
+    std::wstring query5 = L"SELECT abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2 AND abt_os = $3;";
     std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
     std::wstring query7;
     if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 5 )
@@ -829,22 +828,41 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, osid;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+    {
+        osid = WINDOWS;
+    }
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+    {
+        osid = OSX;
+    }
+    else // *nix
+    {
+#ifdef __DBGTK__
+        osid = GTK;
+#elif __DBQT__
+        osid = QT;
+#endif // __DBGTK__
+    }
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
-    char *values[2];
+    char *values[3];
     unsigned long len1 = t.length() * sizeof( wchar_t ) + 1;
     unsigned long len2 = ownerName.length() * sizeof( wchar_t ) + 1;
     values[0] = new char[len1 * 2];
     values[1] = new char[len2 * 2];
+    values[2] = new char[2];
     memset( values[0], '\0', len1 * 2 );
     memset( values[1], '\0', len2 * 2 );
+    memset( values[2], '\0', 2 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
-    int length[2] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ) };
-    int formats[2] = { 1, 1 };
-    PGresult *res = PQexecPrepared( m_db, "get_table_prop", 2, values, length, formats, 1 );
+    values[2] = itoa( osid, values[2], 10 );
+    int length[3] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ), 2 };
+    int formats[3] = { 0, 0, 0 };
+    PGresult *res = PQexecPrepared( m_db, "get_table_prop", 3, values, length, formats, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
@@ -857,39 +875,42 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         for( int i = 0; i < PQntuples( res ); i++ )
         {
             TableProperties prop;
-            prop.m_dataFontSize = atoi( PQgetvalue( res, i, 3 ) );
-            prop.m_dataFontWeight = atoi( PQgetvalue( res, i, 4 ) );
-            prop.m_dataFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 5 ) ) == L"Y" ? true : false;
-            prop.m_dataFontUnderline = atoi( PQgetvalue( res, i, 6 ) );
-            prop.m_dataFontStrikethrough = atoi( PQgetvalue( res, i, 7 ) );
-            prop.m_dataFontCharacterSet = atoi( PQgetvalue( res, i, 8 ) );
-            prop.m_dataFontPixelSize = atoi( PQgetvalue( res, i, 9 ) );
-            prop.m_dataFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) );
-            prop.m_headingFontSize = atoi( PQgetvalue( res, i, 11 ) );
-            prop.m_headingFontWeight = atoi( PQgetvalue( res, i, 12 ) );
-            prop.m_headingFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 13 ) ) == L"Y" ? true : false;
-            prop.m_headingFontUnderline = atoi( PQgetvalue( res, i, 14 ) );
-            prop.m_headingFontStrikethrough = atoi( PQgetvalue( res, i, 15 ) );
-            prop.m_headingFontCharacterSet = atoi( PQgetvalue( res, i, 16 ) );
-            prop.m_headingFontPixelSize = atoi( PQgetvalue( res, i, 17 ) );
-            prop.m_headingFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 18 ) );
-            prop.m_labelFontSize = atoi( PQgetvalue( res, i, 19 ) );
-            prop.m_labelFontWeight = atoi( PQgetvalue( res, i, 20 ) );
-            prop.m_labelFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 21 ) ) == L"Y" ? true : false;
-            prop.m_labelFontUnderline = atoi( PQgetvalue( res, i, 22 ) );
-            prop.m_labelFontStrikethrough = atoi( PQgetvalue( res, i, 23 ) );
-            prop.m_labelFontCharacterSer = atoi( PQgetvalue( res, i, 24 ) );
-            prop.m_labelFontPixelSize = atoi( PQgetvalue( res, i, 25 ) );
-            prop.m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 26 ) );
-            prop.m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 27 ) );
+            prop.m_dataFontSize = atoi( PQgetvalue( res, i, 0 ) );
+            prop.m_dataFontWeight = atoi( PQgetvalue( res, i, 1 ) );
+            prop.m_dataFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 2 ) ) == L"Y" ? true : false;
+            prop.m_dataFontUnderline = atoi( PQgetvalue( res, i, 3 ) );
+            prop.m_dataFontStrikethrough = atoi( PQgetvalue( res, i, 4 ) );
+            prop.m_dataFontCharacterSet = atoi( PQgetvalue( res, i, 5 ) );
+            prop.m_dataFontPixelSize = atoi( PQgetvalue( res, i, 6 ) );
+            prop.m_dataFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 7 ) );
+            prop.m_headingFontSize = atoi( PQgetvalue( res, i, 8 ) );
+            prop.m_headingFontWeight = atoi( PQgetvalue( res, i, 9 ) );
+            prop.m_headingFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 10 ) ) == L"Y" ? true : false;
+            prop.m_headingFontUnderline = atoi( PQgetvalue( res, i, 11 ) );
+            prop.m_headingFontStrikethrough = atoi( PQgetvalue( res, i, 12 ) );
+            prop.m_headingFontCharacterSet = atoi( PQgetvalue( res, i, 13 ) );
+            prop.m_headingFontPixelSize = atoi( PQgetvalue( res, i, 14 ) );
+            prop.m_headingFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 15 ) );
+            prop.m_labelFontSize = atoi( PQgetvalue( res, i, 16 ) );
+            prop.m_labelFontWeight = atoi( PQgetvalue( res, i, 17 ) );
+            prop.m_labelFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 18 ) ) == L"Y" ? true : false;
+            prop.m_labelFontUnderline = atoi( PQgetvalue( res, i, 19 ) );
+            prop.m_labelFontStrikethrough = atoi( PQgetvalue( res, i, 20 ) );
+            prop.m_labelFontCharacterSer = atoi( PQgetvalue( res, i, 21 ) );
+            prop.m_labelFontPixelSize = atoi( PQgetvalue( res, i, 22 ) );
+            prop.m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 23 ) );
+            prop.m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) );
+            table->SetTableProperties( prop );
         }
     }
     PQclear( res );
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     delete[] values[0];
-    values[0] = NULL;
+    values[0] = nullptr;
     delete[] values[1];
-    values[1] = NULL;
+    values[1] = nullptr;
+    delete[] values[2];
+    values[2] = nullptr;
     return result;
 }
 
@@ -1669,7 +1690,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 
 int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors)
 {
-    PGresult *res1, *res2, *res4;
+    PGresult *res1 = nullptr, *res2 = nullptr, *res4 = nullptr;
     int result = 0, fieldIsNull, fieldPK, fkReference, fkId, fkMatch;
     char *values1[2];
     std::vector<std::wstring> fk_names, indexes;
