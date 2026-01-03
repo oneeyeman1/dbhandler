@@ -1549,8 +1549,8 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         }
         auto prop = erdTable->GetDatabaseTable()->GetTableProperties();
         wxCoord w = 0, h = 0;
-        wxFontWeight weigt;
-        wxFontStyle style;
+        wxFontWeight weigt = wxFONTWEIGHT_NORMAL;
+        wxFontStyle style = wxFONTSTYLE_NORMAL;
         if( prop.m_dataFontWeight >= 0 && prop.m_dataFontWeight <= 400 )
             weigt = wxFONTWEIGHT_NORMAL;
         if( prop.m_dataFontWeight >= 500 && prop.m_dataFontWeight <= 1000 )

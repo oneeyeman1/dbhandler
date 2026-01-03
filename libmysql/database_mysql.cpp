@@ -3064,7 +3064,7 @@ int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), cons
 int MySQLDatabase::GetCharacterSets(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    MYSQL_RES *res;
+    MYSQL_RES *res = nullptr;
     if( mysql_query( m_db, "SHOW CHARACTER SET" ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -3084,9 +3084,9 @@ int MySQLDatabase::GetCharacterSets(std::vector<std::wstring> &errorMsg)
     if( !result )
     {
         MYSQL_ROW row;
-        while( row = mysql_fetch_row( res ) )
+        while( ( row = mysql_fetch_row( res ) ) )
         {
-            m_chatacterSets.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ) ) );
+            m_pimpl->m_chatacterSets.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ) ) );
         }
         mysql_free_result( res );
     }
@@ -3096,7 +3096,7 @@ int MySQLDatabase::GetCharacterSets(std::vector<std::wstring> &errorMsg)
 int MySQLDatabase::GetCollations(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    MYSQL_RES *res;
+    MYSQL_RES *res = nullptr;
     if( mysql_query( m_db, "SHOW COLLATION" ) )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
@@ -3116,14 +3116,14 @@ int MySQLDatabase::GetCollations(std::vector<std::wstring> &errorMsg)
     if( !result )
     {
         MYSQL_ROW row;
-        while( row = mysql_fetch_row( res ) )
+        while( ( row = mysql_fetch_row( res ) ) )
         {
             bool def;
             if( m_pimpl->m_myconv.from_bytes( row[3] ) == L"Yes" )
                 def = true;
             else
                 def = false;
-            m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ), def ) );
+            m_pimpl->m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[1] ), def ) );
         }
         mysql_free_result( res );
     }

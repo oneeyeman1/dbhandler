@@ -60,13 +60,13 @@ private:
     MYSQL_STMT *m_stmt;
     MYSQL *m_db;
     int m_port, m_flags;
-    std::vector<std::tuple<std::wstring, std::wstring> > m_chatacterSets;
-    std::vector<std::tuple<std::wstring, std::wstring, bool> > m_collations;
 };
 
 struct MySQLDatabase::MySQLImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
     std::wstring m_host, m_user, m_password, m_dbName, m_socket, m_catalog;
+    std::vector<std::tuple<std::wstring, std::wstring> > m_chatacterSets;
+    std::vector<std::tuple<std::wstring, std::wstring, bool> > m_collations;
 };
 #endif

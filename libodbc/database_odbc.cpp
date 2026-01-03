@@ -2192,7 +2192,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
-    SQLHSTMT statement;
+    SQLHSTMT statement = 0;
     short osid = 0;
     auto ret = SQL_SUCCESS;
     SQLLEN cbParam[6] = {SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS};
