@@ -859,7 +859,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     memset( values[2], '\0', 2 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
-    values[2] = itoa( osid, values[2], 10 );
+    values[2] = const_cast<char *>( std::to_string( osid ).c_str() );
     int length[3] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ), 2 };
     int formats[3] = { 0, 0, 0 };
     PGresult *res = PQexecPrepared( m_db, "get_table_prop", 3, values, length, formats, 0 );
