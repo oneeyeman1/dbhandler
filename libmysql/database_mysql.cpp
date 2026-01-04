@@ -644,14 +644,12 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 char *table_name = row[2] ? row[2] : NULL;
                 pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                 count++;
-                len[0] = strlen( schema_name ) + strlen( table_name ) + 1;
+                len[0] = strlen( schema_name ) + strlen( table_name ) + 2;
                 len[1] = strlen( schema_name );
                 len[2] = strlen( table_name );
-                std::unique_ptr<char[]> fullName( new char( strlen( schema_name ) + strlen( table_name ) + 1 ) );
-                memset( fullName.get(), '\0', strlen( schema_name ) + strlen( table_name ) + 1 );
-                strcpy( fullName.get(), schema_name );
-                strcat( fullName.get(), "/" );
-                strcat( fullName.get(), table_name );
+                std::unique_ptr<char[]> fullName( new char[len[0]] );
+                memset( fullName.get(), '\0', len[0] );
+                snprintf( fullName.get(), len[0], "%s/%s", schema_name, table_name );
                 params[1].buffer_type = MYSQL_TYPE_STRING;
                 params[1].buffer = fullName.get();
                 params[1].buffer_length = 130;
@@ -704,7 +702,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             if( !result )
             {
-                res = mysql_query( m_db, "COMMIT" );
+                if( mysql_query( m_db, "COMMIT" ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                     errorMsg.push_back( err );
@@ -713,7 +711,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-                res = mysql_query( m_db, "ROLLBACK" );
+                if( mysql_query( m_db, "ROLLBACK" ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                     errorMsg.push_back( err );
