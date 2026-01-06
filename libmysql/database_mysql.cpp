@@ -680,7 +680,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 params[5].buffer_length = 64;
                 params[5].is_null = &is_null[5];
                 params[5].length = &len[1];
-#if MYSQL_VERSION_ID > 80000
+#if MYSQL_VERSION_ID < 84000
                 if( mysql_stmt_bind_param( stmt, params ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
