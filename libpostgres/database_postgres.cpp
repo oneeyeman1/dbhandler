@@ -487,7 +487,7 @@ int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     int osid = 0;
-    PGresult *res  = nullptr, *res1  = nullptr, *res2 = nullptr, *res3 = nullptr, *res4 = nullptr, *res5 = nullptr, *res6 = nullptr, *res7 = nullptr, *res8 = nullptr;
+    PGresult *res  = nullptr, *res1  = nullptr;
     std::vector<TableField *> fields;
     std::map<int,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
@@ -559,8 +559,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        res7 = PQprepare( m_db, "set_table_prop", m_pimpl->m_myconv.to_bytes( query7 ).c_str(), 3, nullptr );
-        auto status = PQresultStatus( res7 );
+        res1 = PQprepare( m_db, "set_table_prop", m_pimpl->m_myconv.to_bytes( query7 ).c_str(), 3, nullptr );
+        auto status = PQresultStatus( res1 );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -568,7 +568,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
-    PQclear( res7 );
+    PQclear( res1 );
     if( !result )
     {
         res1 = PQprepare( m_db, "get_fkeys", m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), 2, NULL );
@@ -583,19 +583,19 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     PQclear( res1 );
     if( !result )
     {
-        res2 = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), 2, NULL );
-        if( PQresultStatus( res2 ) != PGRES_COMMAND_OK )
+        res1 = PQprepare( m_db, "get_columns", m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
             result = 1;
         }
     }
-    PQclear( res2 );
+    PQclear( res1 );
     if( !result )
     {
-        res4 = PQprepare( m_db, "get_indexes", m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), 2, NULL );
-        if( PQresultStatus( res4 ) != PGRES_COMMAND_OK )
+        res1 = PQprepare( m_db, "get_indexes", m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str(), 2, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
@@ -604,22 +604,22 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
-    PQclear( res4 );
+    PQclear( res1 );
     if( !result )
     {
-        res3 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
-        if( PQresultStatus( res3 ) != PGRES_COMMAND_OK )
+        res1 = PQprepare( m_db, "get_table_prop", m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
             result = 1;
         }
     }
-    PQclear( res3 );
+    PQclear( res1 );
     if( !result )
     {
-        res5 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
-        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
+        res1 = PQprepare( m_db, "get_field_properties", m_pimpl->m_myconv.to_bytes( query6.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
@@ -628,15 +628,15 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        res6 = PQprepare( m_db, "set_table_param", m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str(), 3, NULL );
-        if( PQresultStatus( res5 ) != PGRES_COMMAND_OK )
+        res1 = PQprepare( m_db, "set_table_param", m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str(), 3, NULL );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
             result = 1;
         }
     }
-    PQclear( res6 );
+    PQclear( res1 );
     if( !result )
      {
          char *params[4];
@@ -671,14 +671,14 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
              paramLength[1] = strlen( table );
              paramLength[2] = strlen( schema );
              paramLength[3] = strlen( table_owner );
-             res8 = PQexecPrepared( m_db, "set_table_prop", 4, params, paramLength, paramFormat, 0 );
-             if( PQresultStatus( res8 ) != PGRES_COMMAND_OK )
+             res1 = PQexecPrepared( m_db, "set_table_prop", 4, params, paramLength, paramFormat, 0 );
+             if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
              {
                  std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                  errorMsg.push_back( L"Error executing query: " + err );
                  result = 1;
              }
-             PQclear( res8 );
+             PQclear( res1 );
              delete[] params[0];
              params[0] = nullptr;
              delete[] params[1];
@@ -700,8 +700,6 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
-    PQclear( res );
-    PQclear( res5 );
     m_numOfTables = count;
     return result;
 }
