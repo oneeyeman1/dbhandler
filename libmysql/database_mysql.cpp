@@ -196,11 +196,11 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     MYSQL_STMT *res_stmt;
     std::wstring err;
     std::vector<std::wstring> queries1, queries2, queries3;
-    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
-    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
-    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
-    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
-    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer);" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254));" );
+    queries1.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254));" );
     queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcatc_x\' AND table_name=\'abcatcol\';" );
     queries2.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
     queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name=\'abcate_x\' AND table_name=\'abcatedt\';" );
@@ -317,7 +317,6 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
     queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
     queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'HH:MM:SS\', \'HH:MM:SS\', 90, 1, 1, 32, \'30\' );" );
-    queries2.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
     std::wstring query8 = L"SELECT USER()";
     std::wstring query = L"SELECT 1 FROM information_schema.statistics WHERE table_name = ? AND index_name = ?;";
     res_stmt = mysql_stmt_init( m_db );
@@ -538,13 +537,19 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
 {
     short osid = 0;
     int res, result = 0, count = 0;
-    std::vector<TableField *> fields;
-    std::vector<std::wstring> fk_names, indexes;
-    std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     std::wstring errorMessage;
-    std::wstring fieldName, fieldType, fieldDefaultValue, fkSchema, fkTable, fkFld, fkTableField, fkUpdateConstraint, fkDeleteConstraint;
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t;";
+    std::wstring query1 = L"SELECT t.table_catalog, t.table_schema, t.table_name, \"\" AS owner, CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t;";
     std::wstring query2;
+    MYSQL_BIND params[6];
+    MYSQL_RES *results = nullptr;
+    const char *names[6] = { "OS", "fullname", "schema", "table", "table", "schema" };
+    long unsigned int len[5];
+#if MYSQL_VERSION_ID > 80001
+    bool is_null[6] = {false, false, false, false, false, false};
+#else
+    char is_null[6];
+#endif
+
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
     {
         osid = WINDOWS;
@@ -583,25 +588,60 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == OSX )
             query2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), \'\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
     }
-    res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
+    res = mysql_query( m_db, "BEGIN" );
     if( res )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
         errorMsg.push_back( err );
         result = 1;
     }
-    else
+    if( !result )
     {
-        MYSQL_RES *results = mysql_store_result( m_db );
+        res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
+        if( res )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        results = mysql_store_result( m_db );
         if( !results )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             result = 1;
         }
-        else
+    }
+    if( !result )
+    {
+        MYSQL_ROW row;
+        MYSQL_STMT *stmt = mysql_stmt_init( m_db );
+        if( !stmt )
         {
-            MYSQL_ROW row;
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        if( !result )
+        {
+            if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), query2.length() ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            memset( params, 0, sizeof( params ) );
+            params[0].buffer_type = MYSQL_TYPE_LONG;
+            params[0].buffer = &osid;
+            params[0].is_null = &is_null[0];
+            params[0].is_unsigned = true;
+            params[0].length = 0;
             while( ( row = mysql_fetch_row( results ) ) != NULL )
             {
                 char *catalog_name = row[0] ? row[0] : NULL;
@@ -609,6 +649,88 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 char *table_name = row[2] ? row[2] : NULL;
                 pimpl.m_tableDefinitions[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( TableDefinition( m_pimpl->m_myconv.from_bytes( catalog_name ), m_pimpl->m_myconv.from_bytes( schema_name ), m_pimpl->m_myconv.from_bytes( table_name ) ) );
                 count++;
+                len[0] = strlen( schema_name ) + strlen( table_name ) + 2;
+                len[1] = strlen( schema_name );
+                len[2] = strlen( table_name );
+                std::unique_ptr<char[]> fullName( new char[len[0]] );
+                memset( fullName.get(), '\0', len[0] );
+                snprintf( fullName.get(), len[0], "%s/%s", schema_name, table_name );
+                params[1].buffer_type = MYSQL_TYPE_STRING;
+                params[1].buffer = fullName.get();
+                params[1].buffer_length = 130;
+                params[1].is_null = &is_null[1];
+                params[1].length = &len[0];
+                params[2].buffer_type = MYSQL_TYPE_STRING;
+                params[2].buffer = schema_name;
+                params[2].buffer_length = 64;
+                params[2].is_null = &is_null[2];
+                params[2].length = &len[1];
+                params[3].buffer_type = MYSQL_TYPE_STRING;
+                params[3].buffer = table_name;
+                params[3].buffer_length = 64;
+                params[3].is_null = &is_null[3];
+                params[3].length = &len[2];
+                params[4].buffer_type = MYSQL_TYPE_STRING;
+                params[4].buffer = table_name;
+                params[4].buffer_length = 64;
+                params[4].is_null = &is_null[4];
+                params[4].length = &len[2];
+                params[5].buffer_type = MYSQL_TYPE_STRING;
+                params[5].buffer = schema_name;
+                params[5].buffer_length = 64;
+                params[5].is_null = &is_null[5];
+                params[5].length = &len[1];
+#if MYSQL_VERSION_ID > 80000
+                if( mysql_stmt_bind_param( stmt, params ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                    break;
+                }
+#else
+                if( mysql_stmt_bind_named_params( stmt, params, 6, names ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                    break;
+                }
+#endif
+                if( mysql_stmt_execute( stmt ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                    break;
+                }
+            }
+            if( !result )
+            {
+                if( mysql_query( m_db, "COMMIT" ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+            }
+            else
+            {
+                if( mysql_query( m_db, "ROLLBACK" ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                if( mysql_stmt_close( stmt ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                }
             }
         }
     }
@@ -1955,9 +2077,9 @@ int MySQLDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
     unsigned long version;
     int result = 0;
     version = mysql_get_server_version( m_db );
-    pimpl.m_versionRevision = version % 100;
     pimpl.m_versionMajor = version / 10000;
-    pimpl.m_versionRevision = ( version - pimpl.m_versionMajor ) / 100;
+    pimpl.m_versionMinor = ( ( version - pimpl.m_versionMajor ) * 10000 ) % 100;
+    pimpl.m_versionRevision = version - ( pimpl.m_versionMajor * 10000 + pimpl.m_versionMinor * 100 );
     version = mysql_get_client_version();
     pimpl.m_clientVersionMajor = version / 10000;
     pimpl.m_clientVersionMinor = ( ( version - pimpl.m_clientVersionMajor ) * 10000 ) % 100;
@@ -2878,6 +3000,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
 //    std::wstring query1 = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st, information_schema.tables t WHERE CONCAT(?,'/', ?) = st.name) ELSE (SELECT 0) END;";/* AS id FROM information_schema.tables t WHERE t.table_catalog = ? AND t.table_schema = ? AND t.table_name = ?;*;*/
     int result = 0;
     long tableId = 0;
+    unsigned long str_length1;
     MYSQL_RES *prepare_meta_result = nullptr;
     auto res1 = mysql_stmt_init( m_db );
     if( !res1 )
@@ -2899,16 +3022,13 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
     {
         MYSQL_BIND params[1];
         memset( params, 0, sizeof( params ) );
-        unsigned long str_length1;
-        str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 1;
+        str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 2;
         std::unique_ptr<char[]> str_data1( new char[str_length1] );
         memset( str_data1.get(), '\0', str_length1 );
-        strcpy( str_data1.get(), m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str()/*, str_length1 */);
-        strcat( str_data1.get(), "/" );
-        strcat( str_data1.get(), m_pimpl->m_myconv.to_bytes( table.c_str() ) .c_str() );
+        snprintf( str_data1.get(), str_length1, "%s/%s", m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str(), m_pimpl->m_myconv.to_bytes( table.c_str() ) .c_str() );
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1.get();
-        params[0].buffer_length = strlen( str_data1.get() );
+        params[0].buffer_length = str_length1;
         params[0].is_null = 0;
         params[0].length = &str_length1;
         if( mysql_stmt_bind_param( res1, params ) )
@@ -2917,24 +3037,24 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
             errors.push_back( err );
             result = 1;
         }
-    }
-    if( !result )
-    {
-        prepare_meta_result = mysql_stmt_result_metadata( res1 );
-        if( !prepare_meta_result )
+        if( !result )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-            errors.push_back( err );
-            result = 1;
+            prepare_meta_result = mysql_stmt_result_metadata( res1 );
+            if( !prepare_meta_result )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errors.push_back( err );
+               result = 1;
+            }
         }
-    }
-    if( !result )
-    {
-        if( mysql_stmt_execute( res1 ) )
+        if( !result )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-            errors.push_back( err );
-            result = 1;
+            if( mysql_stmt_execute( res1 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errors.push_back( err );
+                result = 1;
+            }
         }
     }
     if( !result )
@@ -2961,14 +3081,25 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
     }
     if( !result )
     {
-        if( mysql_stmt_fetch( res1 ) )
+        auto fetch = mysql_stmt_fetch( res1 );
+        switch( fetch )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-            errors.push_back( err );
-            result = 1;
+            case 1:
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errors.push_back( err );
+                result = 1;
+            }
+            break;
+            case 0:
+                id = tableId;
+                break;
+            case MYSQL_NO_DATA:
+                break;
+            case MYSQL_DATA_TRUNCATED:
+                errors.push_back( L"Data truncated" );
+                break;
         }
-        else
-            id = tableId;
         mysql_free_result( prepare_meta_result );
     }
     if( !result )
