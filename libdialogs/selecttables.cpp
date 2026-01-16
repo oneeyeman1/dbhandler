@@ -179,7 +179,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                 {
                     if( schemaName == L"" )
                         schemaName = L"main";
-                    if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 3 ) != L"sys" ) ) )
+                    if( !sysTableIncluded && ( ( tableName.substr( 0, 6 ) != L"sqlite" ) && ( tableName.substr( 0, 5 ) != L"abcat" ) ) )
                         insert = true;
                     else if( sysTableIncluded )
                         insert = true;

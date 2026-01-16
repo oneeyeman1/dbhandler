@@ -678,106 +678,130 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     }
     sqlite3_stmt *stmt = NULL;
     int result = 0;
-    std::wstring query = L"SELECT * FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND abt_os = ?;";
+    std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
-    if( res == SQLITE_OK )
+    if( res != SQLITE_OK )
     {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    if( !result )
+    {
+        std::unique_ptr<char> param( new char[table->GetTableName().length() + 6] );
+        snprintf( param.get(), table->GetTableName().length() + 6, "%s.%s", "main", sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str() );
+        res = sqlite3_bind_text( stmt, 1, param.get(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+        if( !result )
         {
             res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( table->GetTableOwner().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                res = sqlite3_bind_int( stmt, 3, id );
-                if( res == SQLITE_OK )
-                {
-                    for( ; ; )
-                    {
-                        res = sqlite3_step( stmt );
-                        if( res == SQLITE_ROW )
-                        {
-                            TableProperties prop;
-                            prop.m_dataFontSize = sqlite3_column_int( stmt, 4 );
-                            prop.m_dataFontWeight = sqlite3_column_int( stmt, 5 );
-                            char *italic = (char *) sqlite3_column_text( stmt, 6 );
-                            if( italic )
-                                prop.m_dataFontItalic = italic[0] == 'Y';
-                            int underline = sqlite3_column_int( stmt, 7 );
-                            if( underline > 0 )
-                                prop.m_dataFontUnderline = true;
-                            int strikethrough = sqlite3_column_int( stmt, 8 );
-                            if( strikethrough > 0 )
-                                prop.m_dataFontStrikethrough = true;
-                            prop.m_dataFontCharacterSet = sqlite3_column_int( stmt, 9 );
-                            prop.m_dataFontPixelSize = sqlite3_column_int( stmt, 10 );
-                            dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 11 );
-                            if( dataFontName )
-                                prop.m_dataFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName );
-                            prop.m_headingFontSize = sqlite3_column_int( stmt, 12 );
-                            prop.m_headingFontWeight = sqlite3_column_int( stmt, 13 );
-                            italic = (char *) sqlite3_column_text( stmt, 14 );
-                            if( italic )
-                                prop.m_headingFontItalic = italic[0] == 'Y';
-                            underline = sqlite3_column_int( stmt, 15 );
-                            if( underline > 0 )
-                                prop.m_headingFontUnderline = true;
-                            strikethrough = sqlite3_column_int( stmt, 16 );
-                            if( strikethrough > 0 )
-                                prop.m_headingFontStrikethrough = true;
-                            prop.m_headingFontCharacterSet = sqlite3_column_int( stmt, 17 );
-                            prop.m_headingFontPixelSize = sqlite3_column_int( stmt, 18 );
-                            headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 19 );
-                            if( headingFontName )
-                                prop.m_headingFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName );
-                            prop.m_labelFontSize = sqlite3_column_int( stmt, 20 );
-                            prop.m_labelFontWeight = sqlite3_column_int( stmt, 21 );
-                            italic = (char *) sqlite3_column_text( stmt, 22 );
-                            if( italic )
-                                prop.m_labelFontItalic = italic[0] == 'Y';
-                            underline = sqlite3_column_int( stmt, 23 );
-                            if( underline > 0 )
-                                prop.m_labelFontUnderline = true;
-                            strikethrough = sqlite3_column_int( stmt, 24 );
-                            if( strikethrough > 0 )
-                                prop.m_labelFontStrikethrough = true;
-                            prop.m_labelFontCharacterSer = sqlite3_column_int( stmt, 25 );
-                            prop.m_labelFontPixelSize = sqlite3_column_int( stmt, 26 );
-                            labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 27 );
-                            if( labelFontName )
-                                prop.m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
-                            prop.m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
-                            table->SetFullName( table->GetSchemaName() + L"." + table->GetTableName() );
-                            table->SetTableProperties( prop );
-                        }
-                        else if( res == SQLITE_DONE )
-                            break;
-                        else
-                        {
-                            result = 1;
-                            GetErrorMessage( res, errorMsg );
-                        }
-                    }
-                }
-            }
-            else
+            if( res != SQLITE_OK )
             {
                 result = 1;
                 GetErrorMessage( res, errorMsg );
             }
         }
-        else
+        if( !result )
+        {
+            res = sqlite3_bind_int( stmt, 3, id );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+        if( !result )
+        {
+            res = sqlite3_bind_int( stmt, 3, id );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+        if( !result )
+        {
+            for( ; ; )
+            {
+                res = sqlite3_step( stmt );
+                if( res == SQLITE_ROW )
+                {
+                    TableProperties prop;
+                    prop.m_dataFontSize = sqlite3_column_int( stmt, 4 );
+                    prop.m_dataFontWeight = sqlite3_column_int( stmt, 5 );
+                    char *italic = (char *) sqlite3_column_text( stmt, 6 );
+                    if( italic )
+                        prop.m_dataFontItalic = italic[0] == 'Y';
+                    int underline = sqlite3_column_int( stmt, 7 );
+                    if( underline > 0 )
+                        prop.m_dataFontUnderline = true;
+                    int strikethrough = sqlite3_column_int( stmt, 8 );
+                    if( strikethrough > 0 )
+                        prop.m_dataFontStrikethrough = true;
+                    prop.m_dataFontCharacterSet = sqlite3_column_int( stmt, 9 );
+                    prop.m_dataFontPixelSize = sqlite3_column_int( stmt, 10 );
+                    dataFontName = (const unsigned char *) sqlite3_column_text( stmt, 11 );
+                    if( dataFontName )
+                        prop.m_dataFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) dataFontName );
+                    prop.m_headingFontSize = sqlite3_column_int( stmt, 12 );
+                    prop.m_headingFontWeight = sqlite3_column_int( stmt, 13 );
+                    italic = (char *) sqlite3_column_text( stmt, 14 );
+                    if( italic )
+                        prop.m_headingFontItalic = italic[0] == 'Y';
+                    underline = sqlite3_column_int( stmt, 15 );
+                    if( underline > 0 )
+                        prop.m_headingFontUnderline = true;
+                    strikethrough = sqlite3_column_int( stmt, 16 );
+                    if( strikethrough > 0 )
+                        prop.m_headingFontStrikethrough = true;
+                    prop.m_headingFontCharacterSet = sqlite3_column_int( stmt, 17 );
+                    prop.m_headingFontPixelSize = sqlite3_column_int( stmt, 18 );
+                    headingFontName = (const unsigned char *) sqlite3_column_text( stmt, 19 );
+                    if( headingFontName )
+                        prop.m_headingFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) headingFontName );
+                    prop.m_labelFontSize = sqlite3_column_int( stmt, 20 );
+                    prop.m_labelFontWeight = sqlite3_column_int( stmt, 21 );
+                    italic = (char *) sqlite3_column_text( stmt, 22 );
+                    if( italic )
+                        prop.m_labelFontItalic = italic[0] == 'Y';
+                    underline = sqlite3_column_int( stmt, 23 );
+                    if( underline > 0 )
+                        prop.m_labelFontUnderline = true;
+                    strikethrough = sqlite3_column_int( stmt, 24 );
+                    if( strikethrough > 0 )
+                        prop.m_labelFontStrikethrough = true;
+                    prop.m_labelFontCharacterSer = sqlite3_column_int( stmt, 25 );
+                    prop.m_labelFontPixelSize = sqlite3_column_int( stmt, 26 );
+                    labelFontName = (const unsigned char *) sqlite3_column_text( stmt, 27 );
+                    if( labelFontName )
+                        prop.m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
+                    prop.m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
+                    table->SetFullName( table->GetSchemaName() + L"." + table->GetTableName() );
+                    table->SetTableProperties( prop );
+                }
+                else if( res == SQLITE_DONE )
+                    break;
+                else
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMsg );
+                }
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
         {
             result = 1;
             GetErrorMessage( res, errorMsg );
         }
     }
-    else
-    {
-        result = 1;
-        GetErrorMessage( res, errorMsg );
-    }
-    sqlite3_finalize( stmt );
     return result;
 }
 
@@ -815,135 +839,135 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
         {
             if( exist )
             {
-                command = L"UPDATE \"sys.abcattbl\" SET\n \"abt_os\" =";
+                command = L"UPDATE abcattbl SET\n abt_os =";
                 command += std::to_wstring( id );
-                command += L",\n \"abt_tnam\" = \'";
+                command += L",\n abt_tnam = \'";
                 command += tableName;
-                command += L"\',\n \"abt_tid\" = ";
+                command += L"\',\n abt_tid = ";
                 istr << tableId;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abt_ownr\" = \'";
+                command += L",\n abt_ownr = \'";
                 command += tableOwner;
-                command += L"\',\n  \"abd_fhgt\" = ";
+                command += L"\',\n  abd_fhgt = ";
                 istr << properties.m_dataFontSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fwgt\" = ";
+                command += L",\n abd_fwgt\ = ";
                 istr << properties.m_dataFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fitl\" = \'";
+                command += L",\n abd_fitl = \'";
                 command += properties.m_dataFontItalic ? L"Y" : L"N";
-                command += L"\',\n \"abd_funl\" = ";
+                command += L"\',\n abd_funl = ";
                 istr << ( properties.m_dataFontUnderline ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fstr\" = ";
+                command += L",\n abd_fstr = ";
                 istr << ( properties.m_dataFontStrikethrough ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fchr\" = ";
+                command += L",\n abd_fchr = ";
                 istr << properties.m_dataFontEncoding;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fptc\" = ";
+                command += L",\n abd_fptc = ";
                 istr << properties.m_dataFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_ffce\" = \'";
+                command += L",\n abd_ffce = \'";
                 command += properties.m_dataFontName;
-                command += L"\',\n  \"abh_fhgt\" = ";
+                command += L"\',\n  abh_fhgt = ";
                 istr << properties.m_headingFontSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abd_fwgt\" = ";
+                command += L",\n abd_fwgt = ";
                 istr << properties.m_headingFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_fitl\" = \'";
+                command += L",\n abh_fitl = \'";
                 command += properties.m_headingFontItalic ? L"Y" : L"N";
-                command += L"\',\n \"abh_funl\" = ";
+                command += L"\',\n abh_funl = ";
                 istr << ( properties.m_headingFontUnderline ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_fstr\" = ";
+                command += L",\n abh_fstr = ";
                 istr << ( properties.m_headingFontStrikethrough ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_fchr\" = ";
+                command += L",\n abh_fchr = ";
                 istr << properties.m_headingFontEncoding;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_fptc\" = ";
+                command += L",\n abh_fptc = ";
                 istr << properties.m_headingFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abh_ffce\" = \'";
+                command += L",\n abh_ffce = \'";
                 command += properties.m_headingFontName;
-                command += L"\',\n  \"abl_fhgt\" = ";
+                command += L"\',\n  abl_fhgt = ";
                 istr << properties.m_labelFontSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fwgt\" = ";
+                command += L",\n abl_fwgt = ";
                 istr << properties.m_labelFontWeight;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fitl\" = \'";
+                command += L",\n abl_fitl = \'";
                 command += properties.m_labelFontItalic ? L"Y" : L"N";
-                command += L"\',\n \"abl_funl\" = ";
+                command += L"\',\n abl_funl = ";
                 istr << ( properties.m_labelFontUnderline ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fstr\" = ";
+                command += L",\n abl_fstr = ";
                 istr << ( properties.m_labelFontStrikethrough ? 1 : 0 );
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fchr\" = ";
+                command += L",\n abl_fchr = ";
                 istr << properties.m_labelFontEncoding;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_fptc\" = ";
+                command += L",\n abl_fptc = ";
                 istr << properties.m_labelFontPixelSize;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n \"abl_ffce\" = \'";
+                command += L",\n abl_ffce = \'";
                 command += properties.m_labelFontName;
-                command += L"\',\n \"abt_cmnt\" = \'";
+                command += L"\',\n abt_cmnt = \'";
                 command += properties.m_comment;
-                command += L"\'\n WHERE \"abt_tnam\" = \'";
+                command += L"\'\n WHERE abt_tnam = \'";
                 command += tableName;
-                command += L"\' AND \"abt_tid\" = ";
+                command += L"\' AND abt_tid = ";
                 istr << tableId;
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L" AND \"abt_ownr\" = \'";
+                command += L" AND abt_ownr = \'";
                 command += tableOwner;
                 command += L"\';";
             }
             else
             {
-                command = L"INSERT INTO \"sys.abcattbl\" VALUES( \'";
+                command = L"INSERT INTO abcattbl VALUES( \'";
                 command += std::to_wstring( id );
                 command += L"\', \'";
                 command += tableName;
@@ -1122,7 +1146,7 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
     sqlite3_stmt *stmt = NULL;
     std::wstring name = const_cast<DatabaseTable *>( table )->GetTableName();
     std::wstring owner = const_cast<DatabaseTable *>( table )->GetTableOwner();
-    std::wstring query = L"SELECT 1 FROM \"sys.abcattbl\" WHERE \"abt_tnam\" = ? AND \"abt_ownr\" = ? AND abt_os = ?;";
+    std::wstring query = L"SELECT 1 FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -1174,8 +1198,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
     int labelAlignment = 0;
-    std::wstring query = L"SELECT * FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
-    std::wstring query1 = L"SELECT * FROM \"sys.abcatfmt\" WHERE \"abf_type\" = ?";
+    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
@@ -2816,7 +2840,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     if( std::regex_search( createCommand, findings, pattern ) )
     {
         auto start = findings[0].first - createCommand.begin();
-        auto temp1 = createCommand.substr( 0, start );
+        auto temp1 = createCommand.substr( start );
         auto end = temp1.find( L"," );
         if( end == std::wstring::npos )
             end = temp1.length() - 1;
