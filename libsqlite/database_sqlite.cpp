@@ -688,7 +688,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     }
     if( !result )
     {
-        std::unique_ptr<char> param( new char[table->GetTableName().length() + 6] );
+        std::unique_ptr<char[]> param( new char[table->GetTableName().length() + 6] );
         snprintf( param.get(), table->GetTableName().length() + 6, "%s.%s", "main", sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str() );
         res = sqlite3_bind_text( stmt, 1, param.get(), -1, SQLITE_TRANSIENT );
         if( res != SQLITE_OK )
