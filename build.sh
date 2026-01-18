@@ -1,4 +1,4 @@
-export CFLAGS="-O2 -fsanitize=address"
+export CFLAGS="-O0 -fsanitize=address"
 export LDFLAGS="-fsanitize=address"
 rm -rf Debug
 autoreconf -i
