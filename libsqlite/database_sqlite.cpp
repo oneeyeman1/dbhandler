@@ -486,7 +486,7 @@ int SQLiteDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( res == SQLITE_ROW  )
                     {
                         const char *tableName = (char *) sqlite3_column_text( stmt, 0 );
-                        std::unique_ptr<char> param( new char[strlen( tableName ) + 6] );
+                        std::unique_ptr<char[]> param( new char[strlen( tableName ) + 6] );
                         snprintf( param.get(), strlen( tableName ) + 6, "%s.%s", "main", tableName );
                         res = sqlite3_bind_text( stmt1, 1, param.get(), -1, SQLITE_STATIC );
                         if( res != SQLITE_OK )
@@ -855,7 +855,7 @@ int SQLiteDatabase::SetTableProperties(const DatabaseTable *table, const TablePr
                 command += istr.str();
                 istr.clear();
                 istr.str( L"" );
-                command += L",\n abd_fwgt\ = ";
+                command += L",\n abd_fwgt = ";
                 istr << properties.m_dataFontWeight;
                 command += istr.str();
                 istr.clear();
@@ -2868,6 +2868,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     // 6. Populate data in a new table from the old one
     if( !result )
     {
+
         temp = L"INSERT INTO new_" + tableName + L" SELECT * FROM " + tableName;
         if( isLog )
             command += temp + L"\n\r";
