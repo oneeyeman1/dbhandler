@@ -1937,10 +1937,10 @@ void SQLiteDatabase::SetFullType(TableField *field, const std::wstring &type)
 
 int SQLiteDatabase::GetServerVersion(std::vector<std::wstring> &UNUSED(errorMsg))
 {
-    pimpl.m_serverVersion = L"3240";
+    pimpl.m_serverVersion = L"351002";
     pimpl.m_versionMajor = 3;
-    pimpl.m_versionMinor = 40;
-    pimpl.m_versionRevision = 0;
+    pimpl.m_versionMinor = 51;
+    pimpl.m_versionRevision = 02;
     pimpl.m_clientVersionMajor = 0;
     pimpl.m_clientVersionMinor = 0;
     return 0;
@@ -2835,7 +2835,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
         result = 1;
     // 4. Remove foreign key constraint from CREATE TABLE command
     std::wstring resultCommand, temp;
-    std::wregex pattern( L"primary key", std::regex_constants::icase );
+    std::wregex pattern( L"primary key,", std::regex_constants::icase );
     std::wsmatch findings;
     if( std::regex_search( createCommand, findings, pattern ) )
     {
