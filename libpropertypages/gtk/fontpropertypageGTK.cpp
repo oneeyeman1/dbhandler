@@ -121,7 +121,7 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
 #if GTK_CHECK_VERSION(3, 2, 0 )
     m_fontPanel = gtk_font_chooser_widget_new();
     gtk_font_chooser_set_font_desc( (GtkFontChooser *) m_fontPanel, fontDesc );
-    gtk_font_chooser_set_show_preview_entry( (GtkFontChooser *) m_fontPanel, false );
+    gtk_font_chooser_set_show_preview_entry( (GtkFontChooser *) m_fontPanel, true );
 #else
     m_fontPanel = gtk_font_selection_new();
 #endif
@@ -129,7 +129,6 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     m_holder = new wxNativeWindow( this, wxID_ANY, m_fontPanel );
     ResetFont( true );
     itemStaticBox1 = new wxStaticBox( this, wxID_ANY, _( "Effects" ) );
-    itemStaticBox2 = new wxStaticBox( this, wxID_ANY, _( "Preview" ) );
     m_underline = new wxCheckBox( itemStaticBox1, wxID_ANY, _( "Underline" ) );
     m_strikethrough = new wxCheckBox( itemStaticBox1, wxID_ANY, _( "Strikethrough" ) );
     m_textColor = new CColorComboBox( this, wxID_ANY );
@@ -138,13 +137,11 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     m_backColor->SetColourValue( font.back );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Text Color" ) );
     m_label2 = new wxStaticText( this, wxID_ANY, _( "Background Color" ) );
-    m_preview = new wxFontPreviewer( itemStaticBox2, "AaBbYyZz" );
     if( m_font.font.GetUnderlined() )
         m_underline->SetValue( true );
     if( m_font.font.GetStrikethrough() )
         m_strikethrough->SetValue( true );
     auto sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
-    auto sizer_5 = new wxStaticBoxSizer( itemStaticBox2, wxHORIZONTAL );
     auto main = new wxBoxSizer( wxVERTICAL );
     auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer2 = new wxFlexGridSizer( 2, 2, 5, 5 );
@@ -157,8 +154,6 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
     sizer_4->Add( m_strikethrough, 0, wxEXPAND, 0 );
     sizer3->Add( sizer_4, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_5->Add( m_preview, 0, wxEXPAND, 0 );
-    sizer3->Add( sizer_5, 1, wxEXPAND, 0 );
     main->Add( sizer3, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( m_label1, 0, wxEXPAND, 0 );

@@ -39,8 +39,7 @@ private:
 //#endif
     wxCheckBox *m_underline, *m_strikethrough;
     bool m_isUnderlined, m_isStriken;
-    wxStaticBox *itemStaticBox1, *itemStaticBox2;
-    wxFontPreviewer *m_preview;
+    wxStaticBox *itemStaticBox1/*, /*itemStaticBox2*/;
     CColorComboBox *m_textColor, *m_backColor;
     wxStaticText *m_label1, *m_label2;
 };
