@@ -644,65 +644,10 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     str_to_uc_cpy( pimpl.m_dbName, dbName );
                     bufferSize = 1024;
                     ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                    if( pimpl.m_subtype != L"Oracle" )
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
-                            result = 1;
-                        }
-                    }
-                    else
-                    {
-                        std::wstring userQuery = L"SELECT user FROM dual";
-                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[userQuery.length() + 2] );
-                        memset( qry.get(), '\0', userQuery.length() + 2 );
-                        uc_to_str_cpy( qry.get(), userQuery );
-                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
-                            result = 1;
-                        }
-                        else
-                        {
-                            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                            }
-                            else
-                            {
-                                SQLLEN cbUserName;
-                                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, userName, 1024, &cbUserName );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    ret = SQLFetch( m_hstmt );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage( errorMsg, STMT_ERROR );
-                                        result = 1;
-                                    }
-                                }
-                            }
-                            if( m_hstmt )
-                            {
-                                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
-                                    result = 1;
-                                }
-                                m_hstmt = 0;
-                            }
-                        }
+                        GetErrorMessage( errorMsg, CONN_ERROR );
+                        result = 1;
                     }
                 }
                 if( !result )
@@ -5007,6 +4952,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
         }
         int bufferSize = 1024;
         std::wstring clientVersion;
+        memset( version, '\0', 1024 );
         retcode = SQLGetInfo( m_hdbc, SQL_DRIVER_VER, version, 1024, (SQLSMALLINT *) &bufferSize );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
