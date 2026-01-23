@@ -622,65 +622,20 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 {
                     str_to_uc_cpy( odbc_pimpl->m_driverName, driverName );
                     bufferSize = 1024;
-                    if( pimpl.m_subtype != L"Oracle" )
+                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
-                            result = 1;
-                        }
+                        GetErrorMessage( errorMsg, CONN_ERROR );
+                        result = 1;
                     }
-                    else
+                    else if( pimpl.m_subtype == L"Oracle" && dbName[0] == '\0' )
                     {
-                        std::wstring dbNameQuery = L"SELECT sys_context( 'userenv', 'current_schema' ) FROM dual";
-                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[dbNameQuery.length() + 2] );
-                        memset( qry.get(), '\0', dbNameQuery.length() + 2 );
-                        uc_to_str_cpy( qry.get(), dbNameQuery );
-                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                        bufferSize = 1024;
+                        ret = SQLGetInfo( m_hdbc, SQL_SERVER_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, CONN_ERROR );
                             result = 1;
-                        }
-                        else
-                        {
-                            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                                result = 1;
-                            }
-                            else
-                            {
-                                SQLULEN columnSizePtr = 0;
-                                SQLLEN cDatabaseName;
-                                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, dbName, columnSizePtr, &cDatabaseName );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage(errorMsg, 1, m_hstmt);
-                                    result = 1;
-                                }
-                                else
-                                {
-                                    ret = SQLFetch( m_hstmt );
-                                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                    {
-                                        GetErrorMessage(errorMsg, 1, m_hstmt);
-                                        result = 1;
-                                    }
-                                }
-                            }
-                            if( m_hstmt )
-                            {
-                                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, STMT_ERROR );
-                                    result = 1;
-                                }
-                                m_hstmt = 0;
-                            }
                         }
                     }
                 }
@@ -688,6 +643,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 {
                     str_to_uc_cpy( pimpl.m_dbName, dbName );
                     bufferSize = 1024;
+                    ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
                     if( pimpl.m_subtype != L"Oracle" )
                     {
                         ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
