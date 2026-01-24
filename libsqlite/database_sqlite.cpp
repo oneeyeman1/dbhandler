@@ -2834,27 +2834,30 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     if( ret )
         result = 1;
     // 4. Remove foreign key constraint from CREATE TABLE command
-    std::wregex pattern( L"primary key,", std::regex_constants::icase );
-    std::wsmatch findings;
-    std::wstring newCommand;
-    if( std::regex_search( createCommand, findings, pattern ) )
+    if( !result )
     {
-        auto start = findings[0].first - createCommand.begin();
-        auto temp1 = createCommand.substr( 0, start );
-        auto temp2 = createCommand.substr( start );
-        auto end = temp2.find( L"," );
-        if( end == std::wstring::npos )
-            end = temp1.length() - 1;
-        temp2 = temp2.substr( end );
-        newCommand = temp1 + temp2;
-    }
-    else
-    {
+        std::wregex pattern( L"primary key,", std::regex_constants::icase );
+        std::wsmatch findings;
+        std::wstring newCommand;
+        if( std::regex_search( createCommand, findings, pattern ) )
+        {
+            auto start = findings[0].first - createCommand.begin();
+            auto temp1 = createCommand.substr( 0, start );
+            auto temp2 = createCommand.substr( start );
+            auto end = temp2.find( L"," );
+            if( end == std::wstring::npos )
+                end = temp1.length() - 1;
+            temp2 = temp2.substr( end );
+            newCommand = temp1 + temp2;
+        }
+        else
+        {
+        }
     }
     // 5. Create new table with revised format
     auto pos = createCommand.find( tableName );
     if( pos != std::wstring::npos )
-        createCommand.replace( pos, tableName.length(), L"new_" + tableName );
+        createCommand.replace( pos, tableName.length(), L"__" + tableName + L"__" );
     if( !result )
     {
         if( isLog )
