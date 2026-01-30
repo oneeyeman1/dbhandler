@@ -2451,11 +2451,14 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            ret = SQLBindParameter( statement, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( pimpl.m_subtype != L"Oracle" )
             {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
+                ret = SQLBindParameter( statement, 1, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
             }
         }
         if( !result )
