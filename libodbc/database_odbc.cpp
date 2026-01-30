@@ -2285,6 +2285,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == OSX )
             qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'),, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
     }
+    if( pimpl.m_subtype == L"Oracle" )
+    {
+        if( osid == WINDOWS )
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT 0 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 0, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == GTK )
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT 1 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 1, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == QT )
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT 2 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 2, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'), 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 34, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+        else if( osid == OSX )
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT 3 AS abr_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 3, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), \'postgres\'),, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+    }
     std::unique_ptr<SQLWCHAR[]> catalogDB( new SQLWCHAR[pimpl.m_dbName.length() + 2] );
     std::unique_ptr<SQLWCHAR[]> schemaDB( new SQLWCHAR[5] );
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[qry2.length() + 2] );
@@ -2300,6 +2311,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     else
     {
+        std::unique_ptr<SQLWCHAR[]> tableDB( new SQLWCHAR[5] );
+        memset( tableDB.get(), '\0', 5 );
+        uc_to_str_cpy( tableDB.get(), L"%" );
         memset( catalogDB.get(), '\0', pimpl.m_dbName.length() + 2 );
         uc_to_str_cpy( catalogDB.get(), pimpl.m_dbName );
         memset( schemaDB.get(), '\0', 5 );
@@ -2322,9 +2336,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             memset( schemaDB.get(), '\0', 5 );
         }
+        if(  pimpl.m_subtype == L"Oracle"  )
+        {
+            memset( catalogDB.get(), '\0', 5 );
+        }
         if( !result )
         {
-            ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, nullptr, 0, nullptr, 0 );
+            ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, tableDB.get(), SQL_NTS, nullptr, 0 );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2383,16 +2401,19 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
         if( !result )
         {
-            std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
-            memset( qry1.get(), '\0', 30 );
-            uc_to_str_cpy( qry1.get(), L"BEGIN" );
-            if( pimpl.m_subtype == L"Microsoft SQL Server" )
-                uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
-            ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( pimpl.m_subtype != L"Oracle" )
             {
-                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                result = 1;
+                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
+                memset( qry1.get(), '\0', 30 );
+                uc_to_str_cpy( qry1.get(), L"BEGIN" );
+                if( pimpl.m_subtype == L"Microsoft SQL Server" )
+                    uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
+                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                    result = 1;
+                }
             }
         }
         if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
