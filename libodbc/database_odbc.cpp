@@ -1539,66 +1539,96 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os, abt_tnam, abt_ownr);" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254));" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name);" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###-##-####'              AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###,###.00'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '#####'                    AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  8 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  9 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 10 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 11 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 12 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 13 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 14 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 15 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 16 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 17 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS:FFFFFF' AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/NN/YYYY'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/NN/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YYYY HH:MM:SS'      AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY HH:MM:SS'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY'                   AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY HH:MM:SS'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Dollars with cents'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###-##-####'              AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###,###.00'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT '#####'                    AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  8 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  9 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 10 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 11 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 12 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 13 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 14 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 15 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 16 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 17 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS:FFFFFF' AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/NN/YYYY'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/NN/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YYYY HH:MM:SS'      AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY HH:MM:SS'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY'                   AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY HH:MM:SS'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Dollars with cents'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '(General)'                  AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '(General)',                  '(General)',                  81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0'                          AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0',                          '0',                          81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00'                       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00',                       '0.00',                       81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0',                      '#.##0',                      81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0,00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0,00',                   '#.##0,00',                   81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;[$#.##0]'            AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;[$#.##0]',            '$#.##0;[$#.##0]',            81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;|RED|[$#.##0]'       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;|RED|[$#.##0]',       '$#.##0;|RED|[$#.##0]',       81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;[$#.##0,00]'      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;[$#.##0,00]',      '$#.##0,00;[$#.##0,00]',      81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;|RED|[$#.##0,00]' AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0%'                         AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0%',                         '0%',                         81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00%'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00%',                      '0.00%',                      81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00E+00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00E+00',                   '0.00E+00',                   81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm/d/yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm/d/yy',                     'm/d/yy',                     84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm-yy'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm-yy',                   'd-mmm-yy',                   84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm',                      'd-mmm',                      84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mmm-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mmm-yy',                     'mmm-yy',                     84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm AM/PM'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm AM/PM',                 'h:mm AM/PM',                 84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss AM/PM'              AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss AM/PM',              'h:mm:ss AM/PM',              84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss'                    AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss',                    'h:mm:ss',                    84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'Phone_format'               AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Phone_format',               '(@@@)) @@@-@@@@',            80, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm-d-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm-d-yy',                     'm-d-yy',                     84, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'soc_sec_number'             AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'soc_sec_number',             '@@@-@@-@@@@',                80, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm/dd/yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm/dd/yyyy',                 'mm/dd/yyyy',                 82, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'salary'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'salary',                     '$###,##0.00',                81, 0 );" );
+            queries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm-dd-yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm-dd-yyyy',                 'mm-dd-yyyy',                 82, 0 );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Multple_of_100'             AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Multple_of_100',  'CHECK( mod( @column, 100 ) = 0 )',                 81, 3, 'The department number must be ' );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Positive_number'            AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Positive_number', 'CHECK( @column > 0 )',                             81, 6, 'Sorry! The value must be greater than 0' );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Y_or_N'                     AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Y_or_N',          'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_numer'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'valid status'               AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'valid status',    'CHECK( @status == \"ALT*\" )',                     80, 3, '' );" );
         }
         else
         {
@@ -2345,21 +2375,32 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 break;
             }
         }
-        if( pimpl.m_subtype == L"MySQL" )
-        {
-            memset( schemaDB.get(), '\0', 5 );
-        }
         if(  pimpl.m_subtype == L"Oracle"  )
         {
             memset( catalogDB.get(), '\0', 5 );
         }
         if( !result )
         {
-            ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, tableDB.get(), SQL_NTS, nullptr, 0 );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( pimpl.m_subtype != L"MySQL" )
             {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
+                ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, tableDB.get(), SQL_NTS, nullptr, 0 );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            else
+            {
+                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[512] );
+                memset( qry.get(), '\0', 512 );
+                uc_to_str_cpy( qry.get(), L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema = 'information_schema' OR table_schema = 'mysql' OR table_schema = 'performance_schema' OR table_schema = 'sys' OR table_schema = '" + pimpl.m_dbName + L"'" );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
             }
         }
         if( !result )
@@ -2367,20 +2408,51 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
             {
                 SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
-                if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                    catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-                if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                    schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-                if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                    tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                cat = L"";
+                if( pimpl.m_subtype != L"MySQL" )
+                {
+                    if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                        catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                    if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                        schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                    if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                        tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                    cat = L"";
+                    str_to_uc_cpy( cat, catalogName );
+                }
+                else
+                {
+                    schemaName = new SQLWCHAR[70];
+                    tableName = new SQLWCHAR[70];
+                    cat = L"def";
+                    ret = SQLGetData( m_hstmt, 1, SQL_C_WCHAR,schemaName, 70, nullptr );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                    if( !result )
+                    {
+                        ret = SQLGetData( m_hstmt, 2, SQL_C_WCHAR, tableName, 70, nullptr );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                }
                 schema = L"";
                 table = L"";
-                str_to_uc_cpy( cat, catalogName );
                 str_to_uc_cpy( schema, schemaName );
                 str_to_uc_cpy( table, tableName );
                 pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                 count++;
+                if( pimpl.m_subtype == L"MySQL" )
+                {
+                    delete[] schemaName;
+                    schemaName = nullptr;
+                    delete[] tableName;
+                    tableName = nullptr;
+                }
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -6687,7 +6759,6 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
     uc_to_str_cpy( fileName, L"odbc.ini" );
     uc_to_str_cpy( retBuffer, L"" );
     uc_to_str_cpy( entry, L"Password" );
-    uc_to_str_cpy( defValue, L" " );
     int ret = SQLGetPrivateProfileString( connectDSN.get(), entry, defValue, retBuffer, 256, fileName );
     if( ret < 0 )
     {
