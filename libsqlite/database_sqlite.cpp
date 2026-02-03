@@ -1884,7 +1884,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
         if( exist )
         {
-            command = L"INSERT INTO \"sys.abcatcol\"(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_lpos\", \"abc_hdr\", \"abc_hpos\", \"abc_cmnt\") VALUES(";
+            command = L"INSERT INTO abcatcol(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_lpos\", \"abc_hdr\", \"abc_hpos\", \"abc_cmnt\") VALUES(";
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
@@ -1896,7 +1896,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         }
         else
         {
-            command = L"UPDATE \"sys.abcatcol\" SET \"abc_labl\" = ";
+            command = L"UPDATE abcatcol SET \"abc_labl\" = ";
             command += props.m_heading.m_label + L", \"abc_lpos\" = ";
             command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", \"abc_hdr\" = ";
             command += props.m_heading.m_heading + L", \"abc_hpos\" = ";
@@ -2372,7 +2372,7 @@ int SQLiteDatabase::GetFieldProperties (const std::wstring &table, TableField *f
 bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
-    std::wstring query = L"SELECT 1 FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt1, NULL );
     if( res == SQLITE_OK )
     {
@@ -2418,7 +2418,7 @@ int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wst
     sqlite3_stmt *stmt;
     headerStr = fieldName;
     std::wstring error;
-    std::wstring query = L"SEECT pbc_hdr FROM \"sys.abcatcol\" WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
+    std::wstring query = L"SEECT pbc_hdr FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
     if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == SQLITE_OK )
     {
         res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
@@ -2696,9 +2696,9 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
     int result = 0;
     std::wstring query = L"";
     if( isNew )
-        query = L"INSERT INTO \"sys.abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( ?, ?, ?, 0, ?)";
+        query = L"INSERT INTO abcatvld(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( ?, ?, ?, 0, ?)";
     else
-        query = L"UPDATE \"sys.abcatvld\" SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_cntr\" = 0, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
+        query = L"UPDATE abcatvld SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_cntr\" = 0, \"abv_msg\" = ? WHERE \"abv_name\" = ?1";
     auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, nullptr );
     if( res != SQLITE_OK )
     {
