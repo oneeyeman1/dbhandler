@@ -179,29 +179,28 @@ public:
     }
     void Init(const int id)
     {
-        int osId = -1;
         if( id >= 0 && id <= 4 )
-            osId = id;
+            m_osId = id;
         else
         {
             if( id & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
             {
-                osId = WINDOWS;
+                m_osId = WINDOWS;
             }
             else if( id & ( 1 << 0 | 1 << 1 ) ) // Mac
             {
-                osId = OSX;
+                m_osId = OSX;
             }
             else // *nix
             {
 #ifdef __DBGTK__
-                osId = GTK;
+                m_osId = GTK;
 #elif __DBQT__
-                osId = QT;
+                m_osId = QT;
 #endif // __DBGTK__
             }
         }
-        switch( osId )
+        switch( m_osId )
         {
         case WINDOWS:
             m_dataFontName = L"MS Sans Serif";
