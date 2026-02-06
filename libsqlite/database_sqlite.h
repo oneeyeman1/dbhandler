@@ -54,6 +54,7 @@ protected:
 //    int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
     int StartAlterTable(std::wstring &command, std::wstring &createCommand, std::vector<std::wstring> &createCommands, bool isLog, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
+    int EndAlterTable(std::wstring &command, std::vector<std::wstring> &createCommands, const std::wstring &tableName, bool isLog, std::vector<std::wstring> &errorMsg);
 private:
     sqlite3 *m_db;
     sqlite3_stmt *m_stmt1, *m_stmt2, *m_stmt3, *m_stmt;

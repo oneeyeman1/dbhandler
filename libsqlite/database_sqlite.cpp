@@ -270,7 +270,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                 }
                 else
                 {
-                    if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &stmt, NULL ) == SQLITE_OK )
+                    if( sqlite3_prepare_v2( m_db, "PRAGMA schema_version", -1, &stmt, nullptr ) == SQLITE_OK )
                     {
                         if( ( res = sqlite3_step( stmt ) ) == SQLITE_ROW )
                         {
@@ -2830,15 +2830,15 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     int result = 0, res = SQLITE_OK;
     std::vector<std::wstring> createCommands;
     std::wstring createCommand;
+    std::wstring newCommand;
     auto ret = StartAlterTable( command, createCommand, createCommands, isLog, tableName, errorMsg );
     if( ret )
         result = 1;
     // 4. Remove foreign key constraint from CREATE TABLE command
     if( !result )
     {
-        std::wregex pattern( L"primary key,", std::regex_constants::icase );
+        std::wregex pattern( L"primary key[(,]", std::regex_constants::icase );
         std::wsmatch findings;
-        std::wstring newCommand;
         if( std::regex_search( createCommand, findings, pattern ) )
         {
             auto start = findings[0].first - createCommand.begin();
@@ -2849,22 +2849,35 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
                 end = temp1.length() - 1;
             temp2 = temp2.substr( end );
             newCommand = temp1 + temp2;
+            if( newKey.size() > 0 )
+            {
+                std::wstring newKeyString = L", PRIMARY KEY(";
+                for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
+                {
+                    newKeyString += (*it);
+                    if( it == newKey.end() - 1 )
+                        newKeyString += L")";
+                    else
+                        newKeyString += L",";
+                }
+                newCommand.insert( newCommand.length() - 1, newKeyString );
+            }
         }
         else
         {
         }
     }
     // 5. Create new table with revised format
-    auto pos = createCommand.find( tableName );
+    auto pos = newCommand.find( tableName );
     if( pos != std::wstring::npos )
-        createCommand.replace( pos, tableName.length(), L"__" + tableName + L"__" );
+        newCommand.replace( pos, tableName.length(), L"__" + tableName + L"__" );
     if( !result )
     {
         if( isLog )
             command += createCommand + L"\n\r";
         else
         {
-            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( createCommand.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( newCommand.c_str() ).c_str(), nullptr, nullptr, nullptr );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -2872,23 +2885,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
             }
         }
     }
-    // 6. Populate data in a new table from the old one
-    if( !result )
-    {
-
-/*        temp = L"INSERT INTO new_" + tableName + L" SELECT * FROM " + tableName;
-        if( isLog )
-            command += temp + L"\n\r";
-        else
-        {
-            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
-            if( res != SQLITE_OK )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-            }
-        }*/
-    }
+    EndAlterTable( command, createCommands, tableName, isLog, errorMsg );
     return result;
 }
 
@@ -2987,6 +2984,147 @@ int SQLiteDatabase::StartAlterTable(std::wstring &command, std::wstring &createC
                 GetErrorMessage( res, errorMsg );
             }
         }
+    }
+    return result;
+}
+
+int SQLiteDatabase::EndAlterTable(std::wstring &command, std::vector<std::wstring> &createCommands, const std::wstring &tableName, bool isLog, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, res = SQLITE_OK;
+    // 6. Populate data in a new table from the old one
+    if( !result )
+    {
+        auto temp = L"INSERT INTO __" + tableName + L"__ SELECT * FROM " + tableName;
+        if( isLog )
+            command += temp + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 7. Drop the old table
+    if( !result )
+    {
+        auto temp = L"DROP TABLE " + tableName;
+        if( isLog )
+            command += temp + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 8. Convert the table name
+    if( !result )
+    {
+        auto temp = L"ALTER TABLE __" + tableName + L"__ RENAME TO " + tableName;
+        if( isLog )
+            command += temp + L"\n\r";
+        else
+        {
+            res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    // 9. Redo all other commands
+    if( !result )
+    {
+        for( auto comm : createCommands )
+        {
+            if( comm.substr( 0, 12 ) == L"CREATE TABLE" )
+                continue;
+            if( isLog )
+                command += comm + L"\n\r";
+            else
+            {
+                res = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( comm.c_str() ).c_str(), nullptr, nullptr, nullptr );
+                if( res != SQLITE_OK )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMsg );
+                }
+            }
+        }
+    }
+    // 10. Run the DB check
+    if( !result )
+    {
+        std::wstring temp = L"SELECT * FROM pragma_foreign_key_check";
+        sqlite3_stmt *stmt = nullptr;
+        if( isLog )
+            command += L"PRAGMA foreign_key_check\n\r";
+        else
+        {
+            if( sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( temp.c_str() ).c_str(), -1, &stmt, nullptr ) != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+            else
+            {
+                for( ; ; )
+                {
+                    res = sqlite3_step( stmt );
+                    if( res == SQLITE_ROW )
+                    {
+                        char *name = (char *) sqlite3_column_text( stmt, 0 );
+                        int id = sqlite3_column_int( stmt, 1 );
+                        char *refname = (char *) sqlite3_column_text( stmt, 2 );
+                    }
+                    else if( res == SQLITE_DONE )
+                        break;
+                    else
+                    {
+                        result = 1;
+                        GetErrorMessage( res, errorMsg );
+                        break;
+                    }
+                }
+                res = sqlite3_finalize( stmt );
+                if( res != SQLITE_OK )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMsg );
+                }
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_exec( m_db, "COMMIT", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    else
+    {
+        res = sqlite3_exec( m_db, "ROLLBACK", nullptr, nullptr, nullptr );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    res = sqlite3_exec( m_db, "PRAGMA foreign_keys = ON", nullptr, nullptr, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
     }
     return result;
 }
