@@ -256,7 +256,7 @@ void MyErdTable::UpdateTable()
         m_header->Activate( false );
         SF_ADD_COMPONENT( m_header, wxT( "header" ) );
     }
-    if( m_header->InsertToGrid( 0, 0, m_pLabel ) )
+    if( m_header && m_header->InsertToGrid( 0, 0, m_pLabel ) )
     {
         m_pLabel->SetVAlign( wxSFShapeBase::valignTOP );
         m_pLabel->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -267,7 +267,9 @@ void MyErdTable::UpdateTable()
         m_pLabel->Activate( false );
         //            SF_ADD_COMPONENT( m_pLabel, wxT( "title" ) );
     }
-    if( m_displayComments && m_header->InsertToGrid( 0, 0, m_comment ) )
+    else
+        delete m_pLabel;
+    if( m_header && m_displayComments && m_header->InsertToGrid( 0, 1, m_comment ) )
     {
         m_comment->SetVAlign( wxSFShapeBase::valignTOP );
         m_comment->SetHAlign( wxSFShapeBase::halignLEFT );
@@ -278,6 +280,8 @@ void MyErdTable::UpdateTable()
         m_comment->Activate( false );
         //            SF_ADD_COMPONENT( m_comment, wxT( "comment" ) );
     }
+    else
+        delete m_comment;
     for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); it++ )
     {
         AddColumn( (*it), i, (*it)->IsPrimaryKey() ? Constraint::primaryKey : (*it)->IsForeignKey() ? Constraint::foreignKey : Constraint::noKey );
@@ -576,8 +580,9 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         {
             m_table->SetTableProperties( prop );
             m_comment->SetText( prop.m_comment );
-            if( m_displayComments )
-                Refresh();
+            UpdateTable();
+//            if( m_displayComments )
+//                Refresh();
 //                m_header->Refresh();
         }
     }
