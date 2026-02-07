@@ -8127,7 +8127,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 2. Drop PK
             query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
-            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD CONSTRAINT "; //name PRIMARY KEY(";
+            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD"; //name PRIMARY KEY(";
         }
         else
         {
@@ -8141,7 +8141,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 2. Drop PK
             query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
-            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD CONSTRAINT "; //name PRIMARY KEY(";
+            query3 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] ADD"; //name PRIMARY KEY(";
         }
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -8384,7 +8384,8 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     if( !result && newKey.size() > 0 )
     {
-        query3 += primaryKeyName;
+        if( !primaryKeyName.empty() )
+            query3 += L" CONSTRAINT " + primaryKeyName;
         query3 += L" PRIMARY KEY(";
         for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
         {
