@@ -8118,7 +8118,12 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         if( isLog )
         {
             // 1. Find constraint name
-            query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(" + catalogName + L"." + schemaName + L"." + tableName + L"); + \n\r";
+            if( pimpl.m_versionMajor >= 14 )
+                query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID( CONCAT_WS( '.', ?, ?, ? ) )";
+            else if( pimpl.m_versionMajor > 11 && pimpl.m_versionMajor < 14 )
+                query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID( CONCAT( ?, '.', ?, '.', ? ) )";
+            else
+                query1= L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = (SELECT t.object_id FROM sys.tables t, sys.schemas s WHERE t.schema_id = s.schema_id AND t.name = ? AND s.name = ?)";
             // 2. Drop PK
             query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
@@ -8127,7 +8132,12 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         else
         {
             // 1. Find constraint name
-            query1= L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(CONCAT(?,'.',?,'.',?));";
+            if( pimpl.m_versionMajor >= 14 )
+                query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(" + catalogName + L"." + schemaName + L"." + tableName + L") )";
+            else if( pimpl.m_versionMajor > 11 && pimpl.m_versionMajor < 14 )
+                query1 = L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = OBJECT_ID(" + catalogName + L"." + schemaName + L"." + tableName + L")";
+            else
+                query1= L"SELECT name FROM sys.key_constraints WHERE type = 'PK' AND parent_object_id = (SELECT t.object_id FROM sys.tables t, sys.schemas s WHERE t.schema_id = s.schema_id AND s.name = ? AND t.name = ?)";
             // 2. Drop PK
             query2 = L"ALTER TABLE [" + catalogName + L"].[" + schemaName + L"].[" + tableName + L"] DROP CONSTRAINT ";
             // 3. Re-add PK
@@ -8233,43 +8243,28 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
         }
     }
-    if( !result && !isLog )
+    if( !result )
     {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
+        memset( qry.get(), '\0', query1.length() + 2 );
+        uc_to_str_cpy( qry.get(), query1 );
+        if( isLog )
+            command += query1;
+        else
         {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result && !isLog )
-    {
-        ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
-    memset( qry.get(), '\0', query1.length() + 2 );
-    uc_to_str_cpy( qry.get(), query1 );
-    if( isLog )
-        command += query1;
-    else
-    {
-        if( !result )
-        {
-            ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( !result )
             {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
+                ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
             }
         }
         if( !result )
         {
-            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" )
+            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
             {
                 ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, catalog.get(), 0, &cbLen[0] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8290,7 +8285,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         }
         if( !result )
         {
-            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" )
+            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
             {
                 ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, schema.get(), 0, &cbLen[2] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8309,7 +8304,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 }
             }
         }
-        if( !result && pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" )
+        if( !result && pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
         {
             ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, table.get(), 0, &cbLen[3] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8351,14 +8346,14 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 str_to_uc_cpy( primaryKeyName, pkName );
             }
         }
-        if( !result )
+    }
+    if( !result )
+    {
+        ret = SQLCloseCursor( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
         {
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
         }
     }
     if( !result )
@@ -8372,15 +8367,9 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
             else
             {
-                qry.reset( new SQLWCHAR[query2.length() + 2] );
+                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query2.length() + 2] );
                 memset( qry.get(), '\0', query2.length() + 2 );
                 uc_to_str_cpy( qry.get(), query2 );
-                ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
                 if( !result )
                 {
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -8393,7 +8382,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
         }
     }
-    if( newKey.size() > 0 )
+    if( !result && newKey.size() > 0 )
     {
         query3 += primaryKeyName;
         query3 += L" PRIMARY KEY(";
@@ -8411,18 +8400,9 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         }
         else
         {
-            qry.reset( new SQLWCHAR[query3.length() + 2] );
+            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query3.length() + 2] );
             memset( qry.get(), '\0', query3.length() + 2 );
             uc_to_str_cpy( qry.get(), query3 );
-            if( !result )
-            {
-                ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    result = 1;
-                }
-            }
             if( !result )
             {
                 ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -8436,7 +8416,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     if( !result )
     {
-        qry.reset( new SQLWCHAR[10] );
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[10] );
         memset( qry.get(), '\0', 10 );
         uc_to_str_cpy( qry.get(), L"COMMIT" );
         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -8448,7 +8428,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     else
     {
-        qry.reset( new SQLWCHAR[10] );
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[10] );
         memset( qry.get(), '\0', 10 );
         uc_to_str_cpy( qry.get(), L"ROLLBACK" );
         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
