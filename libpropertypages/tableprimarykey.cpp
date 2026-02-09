@@ -44,13 +44,18 @@ void TablePrimaryKey::do_layout()
 {
     auto main = new wxBoxSizer( wxHORIZONTAL );
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
+    auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
+    auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
     sizer1->Add( 60, 60, 0, wxEXPAND, 0 );
     sizer1->Add( m_label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( m_fields, 0, wxEXPAND, 0 );
+    sizer3->Add( m_fields, 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
