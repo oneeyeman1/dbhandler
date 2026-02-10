@@ -17,14 +17,15 @@
 #include "propertypagebase.h"
 #include "tableprimarykey.h"
 
-TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) : PropertyPageBase( parent, wxID_ANY )
+TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseTable *table) : PropertyPageBase( parent, wxID_ANY )
 {
     m_isModified = false;
     m_table = table;
+    m_db = db;
     m_foreignKeyColumnsFields = new FieldWindow( this/*, pt1, width1*/ );
     m_label = new wxStaticText( this, wxID_ANY, _( "Table Columns" ) );
     m_fields = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
-    m_fields->AppendColumn( m_table->GetTableName() );
+    m_fields->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
     int row = 0;
     for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
     {
@@ -36,6 +37,7 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, const DatabaseTable *table) :
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
     }
+    m_fields->SetColumnWidth( 0, wxLIST_AUTOSIZE );
     m_fields->Bind( wxEVT_LEFT_DOWN, &TablePrimaryKey::OnLeftDown, this );
     do_layout();
 }
@@ -46,6 +48,7 @@ void TablePrimaryKey::do_layout()
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
     auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
@@ -54,6 +57,27 @@ void TablePrimaryKey::do_layout()
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_fields, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        const wxString selections[] =
+        {
+            "ROLLBACK",
+            "ABORT",
+            "FAIL",
+            "IGNORE",
+            "REPLACE"
+        };
+        m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "ON CONFLICT" );
+        m_conflict = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 5, selections );
+        m_conflict->SetValue( "ABORT" );
+        m_autoincrement = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "AUTOINCREMENT" );
+        sizer4->Add( m_label1, 0, wxEXPAND, 0 );
+        sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer4->Add( m_conflict, 0, wxEXPAND, 0 );
+        sizer2->Add( sizer4, 0, wxEXPAND, 0 );
+        sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer2->Add( m_autoincrement, 0, wxEXPAND, 0 );
+    }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );

@@ -45,6 +45,15 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
+struct PKOptions
+{
+};
+
+struct SQLServerPKOptions : public PKOptions
+{
+    bool m_isClustered;
+};
+
 struct DropIndexOption
 {
     int m_maxdop = 0, m_algorythm = 0, m_locks = 0, m_force = false, m_immediate = true;
@@ -227,7 +236,12 @@ public:
             break;
         }
     }
-    TableProperties &operator=( const TableProperties &right )
+    ~TableProperties()
+    {
+        delete pkOptions;
+        pkOptions = nullptr;
+    }
+    TableProperties &operator=(const TableProperties &right)
     {
         if( this == &right )
             return *this;
@@ -255,6 +269,7 @@ public:
             this->m_dataFontCharacterSet = right.m_dataFontCharacterSet;
             this->m_headingFontCharacterSet = right.m_headingFontCharacterSet;
             this->m_labelFontCharacterSer = right.m_labelFontCharacterSer;
+            this->pkOptions = right.pkOptions;
         }
         return *this;
     }
@@ -265,6 +280,7 @@ public:
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
     std::vector<std::wstring> primaryKey;
+    PKOptions *pkOptions = nullptr;
 };
 
 struct FieldTableHeadingProperties

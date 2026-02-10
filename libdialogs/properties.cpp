@@ -129,7 +129,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
             m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
-            m_page5 = new TablePrimaryKey( m_properties, table );
+            m_page5 = new TablePrimaryKey( m_properties, handler->GetDatabase(), table );
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
