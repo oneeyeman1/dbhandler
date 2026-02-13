@@ -44,6 +44,8 @@ protected:
     struct SQLiteImpl;
     SQLiteImpl *sqlite_pimpl;
     void GetErrorMessage(int code, std::vector<std::wstring> &errorMsg);
+    bool CompareNoCase(const std::wstring &a, const std::wstring &b);
+    bool FindNoCase(const std::wstring &a, const std::wstring &b);
     void SetFullType(TableField *field, const std::wstring &type);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;

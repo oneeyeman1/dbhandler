@@ -47,10 +47,21 @@ enum FK_ONDELETE
 
 struct PKOptions
 {
+    virtual ~PKOptions() {}
+};
+
+struct SQLitePKOptions : public PKOptions
+{
+public:
+    int m_conflict;
+    bool m_autoincrement;
+    SQLitePKOptions(int conflict, bool autoinc) : m_conflict( conflict), m_autoincrement( autoinc ) { }
+    virtual ~SQLitePKOptions() { }
 };
 
 struct SQLServerPKOptions : public PKOptions
 {
+    virtual ~SQLServerPKOptions() {}
     bool m_isClustered;
 };
 
@@ -185,6 +196,7 @@ public:
         m_dataFontCharacterSet = -1;
         m_headingFontCharacterSet = -1;
         m_labelFontCharacterSer = -1;
+        pkOptions = nullptr;
     }
     void Init(const int id)
     {
@@ -236,11 +248,6 @@ public:
             break;
         }
     }
-    ~TableProperties()
-    {
-        delete pkOptions;
-        pkOptions = nullptr;
-    }
     TableProperties &operator=(const TableProperties &right)
     {
         if( this == &right )
@@ -273,6 +280,7 @@ public:
         }
         return *this;
     }
+    void SetPKOptions(const std::shared_ptr<PKOptions> &opt) { pkOptions = opt; }
     std::wstring m_comment, m_dataFontName, m_headingFontName, m_labelFontName;
     int m_dataFontSize, m_dataFontEncoding = 0, m_headingFontSize, m_headingFontEncoding = 0, m_labelFontSize, m_labelFontEncoding = 0;
     int m_dataFontPixelSize = 0, m_headingFontPixelSize = 0, m_labelFontPixelSize = 0, m_osId;
@@ -280,7 +288,7 @@ public:
     bool m_dataFontUnderline, m_dataFontStrikethrough, m_headingFontUnderline, m_headingFontStrikethrough, m_labelFontUnderline, m_labelFontStrikethrough;
     bool m_dataFontItalic, m_headingFontItalic, m_labelFontItalic;
     std::vector<std::wstring> primaryKey;
-    PKOptions *pkOptions = nullptr;
+    std::shared_ptr<PKOptions> pkOptions = nullptr;
 };
 
 struct FieldTableHeadingProperties

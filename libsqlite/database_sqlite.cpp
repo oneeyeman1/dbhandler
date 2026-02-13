@@ -18,6 +18,7 @@
 #include <sstream>
 #include <algorithm>
 #include <cwctype>
+#include <memory>
 #include "sqlite3.h"
 #include "database.h"
 #include "database_sqlite.h"
@@ -678,7 +679,9 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
     }
     sqlite3_stmt *stmt = NULL;
     int result = 0;
+    TableProperties prop;
     std::wstring query = L"SELECT * FROM abcattbl WHERE abt_tnam = ? AND abt_ownr = ? AND abt_os = ?;";
+    std::wstring query1 = L"SELECT sql FROM " + table->GetSchemaName() + L".sqlite_master WHERE tbl_name = ?;";
     const unsigned char *dataFontName, *headingFontName, *labelFontName;
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res != SQLITE_OK )
@@ -730,7 +733,6 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                 res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
                 {
-                    TableProperties prop;
                     prop.m_dataFontSize = sqlite3_column_int( stmt, 4 );
                     prop.m_dataFontWeight = sqlite3_column_int( stmt, 5 );
                     char *italic = (char *) sqlite3_column_text( stmt, 6 );
@@ -781,7 +783,6 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         prop.m_labelFontName = sqlite_pimpl->m_myconv.from_bytes( (const char *) labelFontName );
                     prop.m_comment = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 28 ) );
                     table->SetFullName( table->GetSchemaName() + L"." + table->GetTableName() );
-                    table->SetTableProperties( prop );
                 }
                 else if( res == SQLITE_DONE )
                     break;
@@ -802,6 +803,85 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             GetErrorMessage( res, errorMsg );
         }
     }
+    if( sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query.length(), &stmt, 0 ) != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table->GetTableName().c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    std::wstring command;
+    if( !result )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( stmt );
+            if( res == SQLITE_ROW )
+            {
+                auto sql = (char *) sqlite3_column_text( stmt, 0 );
+                command = sqlite_pimpl->m_myconv.from_bytes( sql );
+                auto temp1 = command.substr( 0, 12 );
+                if( !CompareNoCase( temp1, L"CREATE TABLE" ) )
+                    continue;
+                else
+                {
+                    bool autoinc = false;
+                    int conflict = 1;
+                    std::wregex pattern( L"PRIMARY KEY\s*((ON CONFLICT \w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
+                    std::wsmatch findings;
+                    if( std::regex_search( command, findings, pattern ) )
+                    {
+                        auto start = findings[0].first - command.begin();
+                        auto temp1 = command.substr( start );
+                        auto end = temp1.find( L"," );
+                        if( end == std::wstring::npos )
+                            end = temp1.length() - 1;
+                        temp1 = temp1.substr( 0, end );
+                        if( FindNoCase( temp1, L"AUTOINCREMENT" ) )
+                            autoinc = true;
+                        if( FindNoCase( temp1, L"ON CONFLICT" ) )
+                        {
+                            auto res = temp1.substr( temp1.find_last_of( ' ' ) + 1 );
+                            if( res == L"ROLLBACK" )
+                                conflict = 0;
+                            else if( res == L"FAIL" )
+                                conflict = 2;
+                            else if( res == L"IGNORE" )
+                                conflict = 3;
+                            else if( res == L"REPLACE" )
+                                conflict = 4;
+                        }
+                    }
+                    prop.pkOptions = std::make_shared<SQLitePKOptions>( conflict, autoinc );
+                }
+            }
+            else if( res == SQLITE_DONE )
+                break;
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+        table->SetTableProperties( prop );
     return result;
 }
 
@@ -3126,5 +3206,22 @@ int SQLiteDatabase::EndAlterTable(std::wstring &command, std::vector<std::wstrin
         result = 1;
         GetErrorMessage( res, errorMsg );
     }
+    return result;
+}
+
+bool SQLiteDatabase::CompareNoCase(const std::wstring &a, const std::wstring &b)
+{
+    return std::equal( a.begin(), a.end(), b.begin(), [](wchar_t ch1, wchar_t ch2)
+    {
+        return std::toupper( static_cast<unsigned wchar_t>( ch1 ) ) == std::toupper( static_cast<unsigned wchar_t>( ch2 ) );
+    } );
+}
+
+bool SQLiteDatabase::FindNoCase(const std::wstring &a, const std::wstring &b)
+{
+    auto result = false;
+    std::wregex pattern( b, std::regex_constants::icase );
+    if( std::regex_search( a, pattern ) )
+        result = true;
     return result;
 }
