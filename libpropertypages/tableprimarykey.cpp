@@ -22,6 +22,7 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
     m_isModified = false;
     m_table = table;
     m_db = db;
+    m_options = table->GetTableProperties().pkOptions;
     m_foreignKeyColumnsFields = new FieldWindow( this/*, pt1, width1*/ );
     m_label = new wxStaticText( this, wxID_ANY, _( "Table Columns" ) );
     m_fields = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
@@ -69,7 +70,7 @@ void TablePrimaryKey::do_layout()
         };
         m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "ON CONFLICT" );
         m_conflict = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 5, selections );
-        m_conflict->SetValue( "ABORT" );
+        m_conflict->SetSelection( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_conflict );
         m_autoincrement = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "AUTOINCREMENT" );
         sizer4->Add( m_label1, 0, wxEXPAND, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
