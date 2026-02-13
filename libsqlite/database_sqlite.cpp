@@ -2051,6 +2051,7 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 if( schema == m_schema )
                 {
                     sqlite3_finalize( m_stmt1 );
+                    sqlite3_close( db );
                     m_stmt1 = nullptr;
                     return result;
                 }
@@ -2123,11 +2124,18 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         m_numOfTables = count;
                     }
                 }
-                sqlite3_finalize( m_stmt3 );
+                res = sqlite3_finalize( m_stmt3 );
+                if( res != SQLITE_OK )
+                {
+                    result = 1;
+                    GetErrorMessage( res, errorMsg );
+                }
                 m_stmt3 = nullptr;
             }
         }
     }
+    if( !result )
+        sqlite3_close( db );
     return result;
 }
 
