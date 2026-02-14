@@ -72,6 +72,7 @@ void TablePrimaryKey::do_layout()
         m_conflict = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 5, selections );
         m_conflict->SetSelection( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_conflict );
         m_autoincrement = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "AUTOINCREMENT" );
+        m_autoincrement->SetValue( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_autoincrement );
         sizer4->Add( m_label1, 0, wxEXPAND, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer4->Add( m_conflict, 0, wxEXPAND, 0 );
