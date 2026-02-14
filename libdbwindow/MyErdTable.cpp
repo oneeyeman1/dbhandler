@@ -1,4 +1,5 @@
 #include <string>
+#include <memory>
 #include <algorithm>
 #include "database.h"
 #include "wxsf/RoundRectShape.h"

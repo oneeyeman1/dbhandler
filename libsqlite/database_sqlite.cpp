@@ -3221,7 +3221,7 @@ bool SQLiteDatabase::CompareNoCase(const std::wstring &a, const std::wstring &b)
 {
     return std::equal( a.begin(), a.end(), b.begin(), [](wchar_t ch1, wchar_t ch2)
     {
-        return std::toupper( static_cast<unsigned wchar_t>( ch1 ) ) == std::toupper( static_cast<unsigned wchar_t>( ch2 ) );
+        return std::toupper( static_cast<wchar_t>( ch1 ) ) == std::toupper( static_cast<wchar_t>( ch2 ) );
     } );
 }
 

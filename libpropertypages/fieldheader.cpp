@@ -6,6 +6,7 @@
 #endif
 
 #include <string>
+#include <memory>
 #include <algorithm>
 #include "database.h"
 #include "propertypagebase.h"

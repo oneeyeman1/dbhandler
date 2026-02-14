@@ -3534,7 +3534,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
-    SQLINTEGER ind[2] = { SQL_NTS, SQL_NTS };
+    SQLLEN ind[2] = { SQL_NTS, SQL_NTS };
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         if( !result )
@@ -3574,7 +3574,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
-    SQLINTEGER ind1 = SQL_NTS;
+    SQLLEN ind1 = SQL_NTS;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[30] );
