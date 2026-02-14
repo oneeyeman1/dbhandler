@@ -3164,6 +3164,9 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(abt_tnam) = ";
+    std::wstring query1;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+        query1 = L"SELECT i.type_desc FROM sys.schemas s, sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND t.schema_id = s.schema_id AND s.name = ? AND t.name = ? AND i.is_primary_key = 1;";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = WINDOWS;
@@ -3503,6 +3506,85 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
         m_hstmt = 0;
+    }
+    if( !result )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
+    }
+    qry.reset( new SQLWCHAR[query1.length() + 2] );
+    memset( qry.get(), '\0', query1.size() + 2 );
+    uc_to_str_cpy( qry.get(), query1 );
+    std::unique_ptr<SQLWCHAR[]> param1( new SQLWCHAR[schemaName.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> param2( new SQLWCHAR[tableName.length() + 2] );
+    memset( param1.get(), '\0', schemaName.length() + 2 );
+    memset( param2.get(), '\0', tableName.length() + 2 );
+    uc_to_str_cpy( param1.get(), schemaName );
+    uc_to_str_cpy( param2.get(), tableName );
+    if( !result )
+    {
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
+    }
+    SQLINTEGER ind[2] = { SQL_NTS, SQL_NTS };
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        if( !result )
+        {
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, param1.get(), schemaName.length(), &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, param2.get(), tableName.length(), &ind[1] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR  );
+                result = 1;
+            }
+        }
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLFetch( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
+    }
+    SQLINTEGER ind1 = SQL_NTS;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[30] );
+        memset( clustered.get(), '\0', 30 );
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, clustered.get(), 30, &ind1 );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
     }
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;

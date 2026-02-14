@@ -61,6 +61,7 @@ public:
 
 struct SQLServerPKOptions : public PKOptions
 {
+    SQLServerPKOptions(bool isClustered) : m_isClustered( isClustered ) { }
     virtual ~SQLServerPKOptions() {}
     bool m_isClustered;
 };
