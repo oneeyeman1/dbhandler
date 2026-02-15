@@ -80,6 +80,12 @@ void TablePrimaryKey::do_layout()
         sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer2->Add( m_autoincrement, 0, wxEXPAND, 0 );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) ||
+        ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
+    {
+        m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CLUSTERED" );
+        sizer4->Add( m_clustered, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 0 );
+    }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );
