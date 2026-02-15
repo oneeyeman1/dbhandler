@@ -233,6 +233,8 @@ void CFontPropertyPage::ResetFont(bool init)
     GtkWidget *sizes = gtk_font_selection_get_size_entry( (GtkFontSelection *) m_fontPanel );
 //    gtk_container_forall( GTK_CONTAINER( m_fontPanel ), (GtkCallback) find_widgets, this );
 #endif
+    PangoContext *context = gtk_widget_get_pango_context( m_fontPanel );
+    PangoLayout *layout = pango_layout_new( context );
     PangoAttrList* attrs = pango_attr_list_new();
     PangoAttribute* a;
 
@@ -246,8 +248,7 @@ void CFontPropertyPage::ResetFont(bool init)
         a = pango_attr_strikethrough_new( true );
         pango_attr_list_insert( attrs, a );
     }
-
-//    pango_layout_set_attributes( layout, attrs );
-//    pango_attr_list_unref( attrs );
+    pango_layout_set_attributes( layout, attrs );
+    pango_attr_list_unref( attrs );
 }
 #endif
