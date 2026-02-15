@@ -17,5 +17,6 @@ private:
     wxStaticText *m_label1;
     wxComboBox *m_conflict = nullptr;
     wxCheckBox *m_autoincrement = nullptr;
+    wxCheckBox *m_clustered = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };
