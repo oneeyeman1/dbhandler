@@ -304,6 +304,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         else
             GetServerVersion( errorMsg );
     }
+    m_isConnected = true;
     if( result && m_db )
         Disconnect( errorMsg );
     else
