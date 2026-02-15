@@ -143,7 +143,6 @@ CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bo
         m_strikethrough->SetValue( true );
     auto sizer_4 = new wxStaticBoxSizer( itemStaticBox1, wxVERTICAL );
     auto main = new wxBoxSizer( wxVERTICAL );
-    auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer2 = new wxFlexGridSizer( 2, 2, 5, 5 );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
