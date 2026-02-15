@@ -3167,6 +3167,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring query1;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query1 = L"SELECT i.type_desc FROM sys.schemas s, sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND t.schema_id = s.schema_id AND s.name = ? AND t.name = ? AND i.is_primary_key = 1;";
+    if( pimpl.m_subtype == L"MySQL" )
+        query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = WINDOWS;
@@ -3473,7 +3475,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             name = L"";
             str_to_uc_cpy( name, comments );
             prop.m_comment = name;
-            table->SetTableProperties( prop );
             name = L"";
         }
         else if( ret == SQL_NO_DATA )
@@ -3586,6 +3587,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
+    if( !result )
+        table->SetTableProperties( prop );
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;
 }
