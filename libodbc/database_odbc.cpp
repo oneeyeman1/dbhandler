@@ -3546,6 +3546,21 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
+    SQLLEN ind1 = SQL_NTS;
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[30] );
+    memset( clustered.get(), '\0', 30 );
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, clustered.get(), 30, &ind1 );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
+    }
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+    }
     if( !result )
     {
         ret = SQLFetch( m_hstmt );
@@ -3555,20 +3570,19 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
-    SQLLEN ind1 = SQL_NTS;
-    if( pimpl.m_subtype == L"Microsoft SQL Server" )
-    {
-        std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[30] );
-        memset( clustered.get(), '\0', 30 );
-        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, clustered.get(), 30, &ind1 );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, CONN_ERROR  );
-            result = 1;
-        }
-    }
     if( !result )
+    {
+        if( pimpl.m_subtype == L"Microsoft SQL Server" )
+        {
+            std::wstring option;
+            str_to_uc_cpy( option, clustered.get() );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( option == L"CLUSTERED" );
+        }
+        if( pimpl.m_subtype == L"MySQL" )
+        {
+        }
         table->SetTableProperties( prop );
+    }
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;
 }
