@@ -86,6 +86,21 @@ void TablePrimaryKey::do_layout()
         m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CLUSTERED" );
         sizer4->Add( m_clustered, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 0 );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostreSQL" ) ||
+        ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
+    {
+        m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "INCLUDED" );
+        sizer4->Add( m_label1, 0, wxEXPAND, 0 );
+        m_included = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+        m_included->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+        int row = 0;
+        for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+        {
+            m_included->InsertItem( row++, (*it)->GetFieldName() );
+        }
+        m_included->SetColumnWidth( 0, wxLIST_AUTOSIZE );
+        sizer4->Add( m_included, 0, wxEXPAND, 0 );
+    }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );

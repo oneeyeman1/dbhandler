@@ -18,5 +18,6 @@ private:
     wxComboBox *m_conflict = nullptr;
     wxCheckBox *m_autoincrement = nullptr;
     wxCheckBox *m_clustered = nullptr;
+    wxListCtrl *m_included = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };
