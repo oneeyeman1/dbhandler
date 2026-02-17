@@ -66,6 +66,17 @@ struct SQLServerPKOptions : public PKOptions
     bool m_isClustered;
 };
 
+struct PostgresPKOptions : public PKOptions
+{
+    std::vector<std::wstring> m_includeColumns;
+    std::wstring m_tablespace;
+    struct Storage
+    {
+        int m_fillFactor;
+    };
+    PostgresPKOptions(const std::vector<std::wstring> &columns, const std::wstring tablespace) : m_includeColumns( columns ), m_tablespace( tablespace ) {}
+};
+
 struct DropIndexOption
 {
     int m_maxdop = 0, m_algorythm = 0, m_locks = 0, m_force = false, m_immediate = true;
