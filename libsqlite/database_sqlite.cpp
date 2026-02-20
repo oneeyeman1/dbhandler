@@ -828,8 +828,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
             {
                 auto sql = (char *) sqlite3_column_text( stmt, 0 );
                 command = sqlite_pimpl->m_myconv.from_bytes( sql );
-                auto temp1 = command.substr( 0, 12 );
-                if( !CompareNoCase( temp1, L"CREATE TABLE" ) )
+                auto temp = command.substr( 0, 12 );
+                if( !CompareNoCase( temp, L"CREATE TABLE" ) )
                     continue;
                 else
                 {
@@ -849,14 +849,14 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                             autoinc = true;
                         if( FindNoCase( temp1, L"ON CONFLICT" ) )
                         {
-                            auto res = temp1.substr( temp1.find_last_of( ' ' ) + 1 );
-                            if( res == L"ROLLBACK" )
+                            auto substr = temp1.substr( temp1.find_last_of( ' ' ) + 1 );
+                            if( substr == L"ROLLBACK" )
                                 conflict = 0;
-                            else if( res == L"FAIL" )
+                            else if( substr == L"FAIL" )
                                 conflict = 2;
-                            else if( res == L"IGNORE" )
+                            else if( substr == L"IGNORE" )
                                 conflict = 3;
-                            else if( res == L"REPLACE" )
+                            else if( substr == L"REPLACE" )
                                 conflict = 4;
                         }
                     }
@@ -1651,7 +1651,6 @@ int SQLiteDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &k
 
 int SQLiteDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg)
 {
-    sqlite3_stmt *stmt = nullptr;
     int result = 0, res = SQLITE_OK;
     std::wstring createCommand;
     std::vector<std::wstring> createCommands;
