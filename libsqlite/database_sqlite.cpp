@@ -3233,3 +3233,47 @@ bool SQLiteDatabase::FindNoCase(const std::wstring &a, const std::wstring &b)
         result = true;
     return result;
 }
+
+int SQLiteDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT sql FROM " + schema + L".sqlite_master WHERE tbl_name = ?";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, 0 );
+    if( res != SQLITE_OK )
+    {
+        GetErrorMessage( res, errorMsg );
+        result = 1;
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( table.c_str() ).c_str(), table.length(), nullptr );
+        if( res != SQLITE_OK )
+        {
+            GetErrorMessage( res, errorMsg );
+            result = 1;
+        }
+        if( !result )
+        {
+            for( ; ; )
+            {
+                res = sqlite3_step( m_stmt );
+                if( res == SQLITE_DONE )
+                    break;
+                else if( res == SQLITE_ROW )
+                    commands.push_back( sqlite_pimpl->m_myconv.from_bytes( (char ) sqlite3_column_text( m_stmt, 0 ) ) );
+                else
+                {
+                    GetErrorMessage( res, errorMsg );
+                    result = 1;
+                }
+            }
+            res = sqlite3_finalize( m_stmt );
+            if( res != SQLITE_OK )
+            {
+                GetErrorMessage( res, errorMsg );
+                result = 1;
+            }
+        }
+    }
+    return result;
+}

@@ -3149,7 +3149,17 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring query = L"SELECT abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(abt_tnam) = ";
     std::wstring query1;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        query1 = L"SELECT i.type_desc FROM sys.schemas s, sys.indexes i, sys.tables t WHERE i.object_id = t.object_id AND t.schema_id = s.schema_id AND s.name = ? AND t.name = ? AND i.is_primary_key = 1;";
+    {
+        query1 = L"SELECT i.type_desc, i.is_padded, i.fill_factor, i.ignore_dup_key, stat.no_recompute, ";
+        if( pimpl.m_versionMajor >= 12 )
+            query1 += L"stat.is_incremental, ";
+        query1 += L"i.allow_row_locks, i.allow_page_locks, ";
+        if( pimpl.m_versionMajor >= 15 )
+            query1 += L"i.optimize_for_sequential_key, ";
+        if( pimpl.m_versionMajor >= 13 )
+            query1 += L"i.compression_delay, ";
+        query1 += L"p.data_compression FROM sys.schemas s, sys.indexes i, sys.tables t, sys.stats stat, , sys.partitions p WHERE i.object_id = t.object_id AND t.schema_id = s.schema_id AND s.name = ? AND t.name = ? AND i.is_primary_key = 1 AND i.object_id = stat.object_id;";
+    }
     if( pimpl.m_subtype == L"MySQL" )
         query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
@@ -8417,6 +8427,24 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
+    }
+    return result;
+}
+
+int ODBCDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query;
+    if( pimpl.m_subtype == L"MySQL" )
+        query = L"SHOW CREATE TABLE ?.?";
+    std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[query.length() + 2] );
+    memset( qry1.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry1.get(), query );
+    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
     }
     return result;
 }
