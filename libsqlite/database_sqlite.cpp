@@ -3234,7 +3234,7 @@ bool SQLiteDatabase::FindNoCase(const std::wstring &a, const std::wstring &b)
     return result;
 }
 
-int SQLiteDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"SELECT sql FROM " + schema + L".sqlite_master WHERE tbl_name = ?";
@@ -3260,7 +3260,7 @@ int SQLiteDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::ws
                 if( res == SQLITE_DONE )
                     break;
                 else if( res == SQLITE_ROW )
-                    commands.push_back( sqlite_pimpl->m_myconv.from_bytes( (char ) sqlite3_column_text( m_stmt, 0 ) ) );
+                    commands.push_back( sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( m_stmt, 0 ) ) );
                 else
                 {
                     GetErrorMessage( res, errorMsg );

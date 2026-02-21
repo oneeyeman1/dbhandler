@@ -8431,7 +8431,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     return result;
 }
 
-int ODBCDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query;
@@ -8448,3 +8448,4 @@ int ODBCDatabase::ExportSybtaxToLog(const std::wstring &catalog, const std::wstr
     }
     return result;
 }
+
