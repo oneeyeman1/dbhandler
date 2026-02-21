@@ -2218,3 +2218,10 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
     int result = 0;
     return result;
 }
+
+int PostgresDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+

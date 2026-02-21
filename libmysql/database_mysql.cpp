@@ -2252,7 +2252,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     {
         if( mysql_stmt_execute( res1 ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errorMsg.push_back( err );
             result = 1;
         }
@@ -2996,11 +2996,10 @@ int MySQLDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::ve
 
 int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wstring &schema, const std::wstring &table, long &id, std::vector<std::wstring> &errors)
 {
-    std::wstring query1 = L"SELECT st.table_id FROM information_schema.INNODB_TABLES st  WHERE st.name = ?;";
-//    std::wstring query1 = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st, information_schema.tables t WHERE CONCAT(?,'/', ?) = st.name) ELSE (SELECT 0) END;";/* AS id FROM information_schema.tables t WHERE t.table_catalog = ? AND t.table_schema = ? AND t.table_name = ?;*;*/
+    std::wstring query1 = L"SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE st.name = CONCAT( ?, '/', ? );";
     int result = 0;
     long tableId = 0;
-    unsigned long str_length1;
+    unsigned long str_length1 = 0, str_length2 = 0;
     MYSQL_RES *prepare_meta_result = nullptr;
     auto res1 = mysql_stmt_init( m_db );
     if( !res1 )
@@ -3020,22 +3019,40 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
     }
     if( !result )
     {
-        MYSQL_BIND params[1];
+        MYSQL_BIND params[2];
         memset( params, 0, sizeof( params ) );
-        str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str() ) + strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 2;
+        str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() ) + 1;
+        str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 1;
         std::unique_ptr<char[]> str_data1( new char[str_length1] );
+        std::unique_ptr<char[]> str_data2( new char[str_length2] );
         memset( str_data1.get(), '\0', str_length1 );
-        snprintf( str_data1.get(), str_length1, "%s/%s", m_pimpl->m_myconv.to_bytes( schema.c_str() ) .c_str(), m_pimpl->m_myconv.to_bytes( table.c_str() ) .c_str() );
+        memset( str_data2.get(), '\0', str_length2 );
+        snprintf( str_data1.get(), str_length1, "%s", m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() );
+        snprintf( str_data2.get(), str_length2, "%s", m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1.get();
         params[0].buffer_length = str_length1;
         params[0].is_null = 0;
         params[0].length = &str_length1;
+        params[1].buffer_type = MYSQL_TYPE_STRING;
+        params[1].buffer = (char *) str_data2.get();
+        params[1].buffer_length = str_length2;
+        params[1].is_null = 0;
+        params[1].length = &str_length2;
         if( mysql_stmt_bind_param( res1, params ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errors.push_back( err );
             result = 1;
+        }
+        if( !result )
+        {
+            if( mysql_stmt_execute( res1 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errors.push_back( err );
+                result = 1;
+            }
         }
         if( !result )
         {
@@ -3045,15 +3062,6 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                 errors.push_back( err );
                result = 1;
-            }
-        }
-        if( !result )
-        {
-            if( mysql_stmt_execute( res1 ) )
-            {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                errors.push_back( err );
-                result = 1;
             }
         }
     }
@@ -3078,27 +3086,37 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
             errors.push_back( err );
             result = 1;
         }
-    }
-    if( !result )
-    {
-        auto fetch = mysql_stmt_fetch( res1 );
-        switch( fetch )
+        if( !result )
         {
-            case 1:
+            if( mysql_stmt_store_result( res1 ) )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                 errors.push_back( err );
                 result = 1;
             }
-            break;
-            case 0:
-                id = tableId;
+        }
+        auto rows = mysql_stmt_num_rows( res1 );
+        if( !result )
+        {
+            auto fetch = mysql_stmt_fetch( res1 );
+            switch( fetch )
+            {
+                case 1:
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                    errors.push_back( err );
+                    result = 1;
+                }
                 break;
-            case MYSQL_NO_DATA:
-                break;
-            case MYSQL_DATA_TRUNCATED:
-                errors.push_back( L"Data truncated" );
-                break;
+                case 0:
+                    id = tableId;
+                    break;
+                case MYSQL_NO_DATA:
+                    break;
+                case MYSQL_DATA_TRUNCATED:
+                    errors.push_back( L"Data truncated" );
+                    break;
+            }
         }
         mysql_free_result( prepare_meta_result );
     }
@@ -3258,6 +3276,13 @@ int MySQLDatabase::GetCollations(std::vector<std::wstring> &errorMsg)
         }
         mysql_free_result( res );
     }
+    return result;
+}
+
+
+int MySQLDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
     return result;
 }
 
