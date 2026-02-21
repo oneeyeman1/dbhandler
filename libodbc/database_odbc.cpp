@@ -28,6 +28,7 @@
 #include <sqlext.h>
 #include <odbcinst.h>
 #endif
+#include "sqlserverscript.h"
 #include "string.h"
 #include "database.h"
 #include "database_odbc.h"
@@ -8435,11 +8436,24 @@ int ODBCDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstr
 {
     int result = 0;
     std::wstring query;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+        query = createtable;
     if( pimpl.m_subtype == L"MySQL" )
         query = L"SHOW CREATE TABLE ?.?";
+    if( pimpl.m_subtype == L"Oracle" )
+        query = L"SELECT DBMS_METADATA.GET_DDL('TABLE', ?, ?) FROM DUAL;";
     std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[query.length() + 2] );
     memset( qry1.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry1.get(), query );
+    std::unique_ptr<SQLWCHAR[]> cat( new SQLWCHAR[catalog.length() + 2] );
+    memset( cat.get(), '\0', catalog.length() + 2 );
+    uc_to_str_cpy( cat.get(), catalog );
+    std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[schema.length() + 2] );
+    memset( schemaName.get(), '\0', schema.length() + 2 );
+    uc_to_str_cpy( schemaName.get(), schema );
+    std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[table.length() + 2] );
+    memset( tableName.get(), '\0', table.length() + 2 );
+    uc_to_str_cpy( tableName.get(), table );
     auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
