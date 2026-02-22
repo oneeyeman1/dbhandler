@@ -238,6 +238,7 @@ bool DrawingView::OnCreate(wxDocument *doc, long flags)
     m_fontName = nullptr;
     m_fontSize = nullptr;
     m_dbFrame = nullptr;
+    m_libPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
     if( !wxView::OnCreate( doc, flags ) )
         return false;
     if( m_type != DatabaseView )
@@ -3111,8 +3112,8 @@ void DrawingView::OnExportSyntax(wxCommandEvent &WXUNUSED(event))
             std::vector<std::wstring> errors;
             for( std::vector<DatabaseTable *>::iterator it = tables.begin(); it < tables.end(); ++it )
             {
-                std::wstring syntax;
-                dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetTableCreationSyntax( (*it)->GetSchemaName() + L"." + (*it)->GetTableName(), syntax, errors );
+                std::vector<std::wstring> syntax;
+                dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetTableCreationSyntax( (*it)->GetCatalog(), (*it)->GetSchemaName(), (*it)->GetTableName(), syntax, errors );
 
             }
         }
