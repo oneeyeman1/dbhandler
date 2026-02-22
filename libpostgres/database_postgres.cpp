@@ -2029,7 +2029,7 @@ int PostgresDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int PostgresDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetTableCreationSyntax(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &syntax, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;
@@ -2214,12 +2214,6 @@ int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wst
 }
 
 int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    return result;
-}
-
-int PostgresDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

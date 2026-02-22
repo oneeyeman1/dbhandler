@@ -2976,7 +2976,7 @@ int MySQLDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
 
 }
 
-int MySQLDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetTableCreationSyntax(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &syntax, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;
@@ -3276,13 +3276,6 @@ int MySQLDatabase::GetCollations(std::vector<std::wstring> &errorMsg)
         }
         mysql_free_result( res );
     }
-    return result;
-}
-
-
-int MySQLDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
     return result;
 }
 

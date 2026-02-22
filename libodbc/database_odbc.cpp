@@ -7328,110 +7328,135 @@ int ODBCDatabase::FinalizeStatement(std::vector<std::wstring> &errorMsg)
     return result;
 }
 
-int ODBCDatabase::GetTableCreationSyntax(const std::wstring tableName, std::wstring &syntax, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetTableCreationSyntax(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &syntax, std::vector<std::wstring> &errorMsg)
 {
-    std::wstring query;
-    if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        query = L"SELECT  'CREATE TABLE [' + so.name + '] (' + o.list + ')' + CASE WHEN tc.Constraint_Name IS NULL THEN '' ELSE 'ALTER TABLE ' + so.Name + ' ADD CONSTRAINT ' + tc.Constraint_Name  + ' PRIMARY KEY ' + ' (' + LEFT(j.List, Len(j.List)-1) + ')' END " \
-        "from    sysobjects so" \
-        "cross apply" \
-        " (SELECT '  ['+column_name+'] ' + "\
-         "data_type + case data_type" \
-         "when 'sql_variant' then ''" \
-         "when 'text' then ''" \
-         "when 'ntext' then ''" \
-         "when 'xml' then ''"  \
-         "when 'decimal' then '(' + cast(numeric_precision as varchar) + ', ' + cast(numeric_scale as varchar) + ')'" \
-            "else coalesce('('+case when character_maximum_length = -1 then 'MAX' else cast(character_maximum_length as varchar) end +')','') end + ' ' +" \
-            "case when exists ( " \
-            "select id from syscolumns" \
-            "where object_name(id)=so.name" \
-            "and name=column_name" \
-                "and columnproperty(id,name,'IsIdentity') = 1 " \
-                ") then" \
-                "'IDENTITY(' + " \
-                "cast(ident_seed(so.name) as varchar) + ',' + " \
-                "cast(ident_incr(so.name) as varchar) + ')'" \
-        "else ''" \
-        "end + ' ' +" \
-        "(case when UPPER(IS_NULLABLE) = 'NO' then 'NOT ' else '' end ) + 'NULL ' + " \
-        "case when information_schema.columns.COLUMN_DEFAULT IS NOT NULL THEN 'DEFAULT '+ information_schema.columns.COLUMN_DEFAULT ELSE '' END + ', ' " \
-        "from information_schema.columns where table_name = so.name "
-        "order by ordinal_position" \
-        "FOR XML PATH('')) o (list)" \
-        "left join information_schema.table_constraints tc " \
-        "on  tc.Table_name       = so.Name AND tc.Constraint_Type  = 'PRIMARY KEY'" \
-        "cross apply" \
-        "(select '[' + Column_Name + '], '" \
-        "FROM   information_schema.key_column_usage kcu" \
-        "WHERE  kcu.Constraint_Name = tc.Constraint_Name" \
-        "ORDER BY" \
-        "ORDINAL_POSITION  FOR XML PATH('')) j (list)" \
-        "where   xtype = 'U'" \
-            "AND name    NOT IN ('dtproperties')";
-    if( pimpl.m_subtype == L"MySQL" )
-        query = L"SHOW CREATE TABLE " + tableName;
     int result = 0;
-    auto qry = new SQLWCHAR[query.length() + 2];
-    memset( qry, '\0', query.size() + 2 );
-    uc_to_str_cpy( qry, query );
-    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    std::wstring query;
+    SQLLEN cbParam[2] = {SQL_NTS, SQL_NTS};
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+        query = createtable;
+    if( pimpl.m_subtype == L"MySQL" )
+        query = L"SHOW CREATE TABLE " + schema + L"." + table;
+    if( pimpl.m_subtype == L"Oracle" )
+        query = L"SELECT DBMS_METADATA.GET_DDL('TABLE', ?, ?) FROM DUAL;";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    std::unique_ptr<SQLWCHAR[]> cat( new SQLWCHAR[catalog.length() + 2] );
+    memset( cat.get(), '\0', catalog.length() + 2 );
+    uc_to_str_cpy( cat.get(), catalog );
+    std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[schema.length() + 2] );
+    memset( schemaName.get(), '\0', schema.length() + 2 );
+    uc_to_str_cpy( schemaName.get(), schema );
+    std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[table.length() + 2] );
+    memset( tableName.get(), '\0', table.length() + 2 );
+    uc_to_str_cpy( tableName.get(), table );
+    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR );
+        GetErrorMessage( errorMsg, STMT_ERROR );
         result = 1;
     }
-    else
+    if( !result )
     {
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-        else
+    }
+    if( !result )
+    {
+        if( pimpl.m_subtype == L"Oracle" )
         {
-            SQLLEN cSyntax;
-            SQLSMALLINT dataTypePtr, decimalDigitsPtr, isNullable, nameLengthPtr;
-            SQLULEN columnSizePtr;
-            ret = SQLDescribeCol( m_hstmt, 1, NULL, 0, &nameLengthPtr, &dataTypePtr, &columnSizePtr, &decimalDigitsPtr, &isNullable );
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schema.length() + 2, 0, tableName.get(), 0, &cbParam[0] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
-            else
+            if( !result )
             {
-                SQLWCHAR *tableCreation = new SQLWCHAR[columnSizePtr + 1];
-                ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &tableCreation, columnSizePtr, &cSyntax );
+                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, table.length() + 2, 0, schemaName.get(), 0, &cbParam[1] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
                     result = 1;
                 }
-                else
-                {
-                    ret = SQLFetch( m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
-                    }
-                    else
-                        str_to_uc_cpy( syntax, tableCreation );
-                }
             }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        }
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    SQLSMALLINT nameLen, dataType, decimal, nullable;
+    SQLULEN colSize;
+    if( !result )
+    {
+        if( pimpl.m_subtype == L"MySQL" )
+        {
+            ret = SQLDescribeCol( m_hstmt, 2, nullptr, 0, &nameLen, &dataType, &colSize, &decimal, &nullable );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
-            m_hstmt = 0;
         }
     }
-    delete[] qry;
-    qry = NULL;
+    std::unique_ptr<SQLWCHAR[]> value( new SQLWCHAR[colSize + 2] );
+    memset( value.get(), '\0', colSize + 2 );
+    if( !result )
+    {
+        if( pimpl.m_subtype == L"MySQL" )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, value.get(), colSize + 2, &cbParam[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+    }
+    if( !result )
+    {
+        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+        {
+            if( pimpl.m_subtype == L"MySQL" )
+            {
+                std::wstring command;
+                str_to_uc_cpy( command, value.get() );
+                memset( value.get(), '\0', colSize + 2 );
+                syntax.push_back( command );
+            }
+        }
+    }
+    if( result )
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    }
+    else
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    }
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    m_hstmt = 0;
     return result;
 }
 
@@ -8428,37 +8453,6 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-    }
-    return result;
-}
-
-int ODBCDatabase::ExportSyntaxToLog(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &commands, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    std::wstring query;
-    if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        query = createtable;
-    if( pimpl.m_subtype == L"MySQL" )
-        query = L"SHOW CREATE TABLE ?.?";
-    if( pimpl.m_subtype == L"Oracle" )
-        query = L"SELECT DBMS_METADATA.GET_DDL('TABLE', ?, ?) FROM DUAL;";
-    std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[query.length() + 2] );
-    memset( qry1.get(), '\0', query.length() + 2 );
-    uc_to_str_cpy( qry1.get(), query );
-    std::unique_ptr<SQLWCHAR[]> cat( new SQLWCHAR[catalog.length() + 2] );
-    memset( cat.get(), '\0', catalog.length() + 2 );
-    uc_to_str_cpy( cat.get(), catalog );
-    std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[schema.length() + 2] );
-    memset( schemaName.get(), '\0', schema.length() + 2 );
-    uc_to_str_cpy( schemaName.get(), schema );
-    std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[table.length() + 2] );
-    memset( tableName.get(), '\0', table.length() + 2 );
-    uc_to_str_cpy( tableName.get(), table );
-    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
     }
     return result;
 }
