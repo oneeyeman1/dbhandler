@@ -47,6 +47,7 @@ enum FK_ONDELETE
 
 struct PKOptions
 {
+    std::wstring m_name;
     virtual ~PKOptions() {}
 };
 
@@ -55,15 +56,16 @@ struct SQLitePKOptions : public PKOptions
 public:
     int m_conflict;
     bool m_autoincrement;
-    SQLitePKOptions(int conflict, bool autoinc) : m_conflict( conflict), m_autoincrement( autoinc ) { }
+    SQLitePKOptions(const std::wstring &name, int conflict, bool autoinc) : m_conflict( conflict), m_autoincrement( autoinc ) { m_name = name; }
     virtual ~SQLitePKOptions() { }
 };
 
 struct SQLServerPKOptions : public PKOptions
 {
-    SQLServerPKOptions(bool isClustered) : m_isClustered( isClustered ) { }
+    SQLServerPKOptions(const std::wstring name, bool isClustered, bool padIndex, int fill) : m_isClustered( isClustered ), m_pad( padIndex ), m_fill( fill ) { m_name = name; }
     virtual ~SQLServerPKOptions() {}
-    bool m_isClustered;
+    bool m_isClustered, m_pad;
+    int m_fill;
 };
 
 struct PostgresPKOptions : public PKOptions

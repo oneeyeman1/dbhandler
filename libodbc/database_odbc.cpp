@@ -2376,7 +2376,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             }
             else
             {
-                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[512] );
+                qry.reset( new SQLWCHAR[512] );
                 memset( qry.get(), '\0', 512 );
                 uc_to_str_cpy( qry.get(), L"SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema = 'information_schema' OR table_schema = 'mysql' OR table_schema = 'performance_schema' OR table_schema = 'sys' OR table_schema = '" + pimpl.m_dbName + L"'" );
                 ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -3151,15 +3151,18 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring query1;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
-        query1 = L"SELECT i.type_desc, i.is_padded, i.fill_factor, i.ignore_dup_key, stat.no_recompute, ";
+        query1 = L"SELECT i.name, i.type_desc, i.is_padded, i.fill_factor, i.ignore_dup_key, st.no_recompute";
         if( pimpl.m_versionMajor >= 12 )
-            query1 += L"stat.is_incremental, ";
-        query1 += L"i.allow_row_locks, i.allow_page_locks, ";
+            query1 += L", st.is_incremental";
+        query1 += L", i.allow_row_locks, i.allow_page_locks";
         if( pimpl.m_versionMajor >= 15 )
-            query1 += L"i.optimize_for_sequential_key, ";
+            query1 += L", i.optimize_for_sequential_key";
         if( pimpl.m_versionMajor >= 13 )
-            query1 += L"i.compression_delay, ";
-        query1 += L"p.data_compression FROM sys.schemas s, sys.indexes i, sys.tables t, sys.stats stat, , sys.partitions p WHERE i.object_id = t.object_id AND t.schema_id = s.schema_id AND s.name = ? AND t.name = ? AND i.is_primary_key = 1 AND i.object_id = stat.object_id;";
+            query1 += L", i.compression_delay";
+        query1 += L", p.data_compression_desc, p.partition_number";
+        if( pimpl.m_versionMajor >= 16 )
+            query1 += L", p.xml_compression";
+        query1 += L" FROM sys.indexes i, sys.tables t, sys.schemas s, sys.stats st, sys.partitions p WHERE i.object_id = t.object_id AND i.is_primary_key = 1 AND s.name = ? AND t.name = ? AND t.schema_id = s.schema_id AND i.object_id = st.object_id AND i.index_id = st.stats_id AND i.object_id = p.object_id AND i.index_id = p.index_id;";
     }
     if( pimpl.m_subtype == L"MySQL" )
         query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
@@ -3557,16 +3560,46 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
-    SQLLEN ind1 = SQL_NTS;
-    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[30] );
-    memset( clustered.get(), '\0', 30 );
+    SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] );
+    memset( clustered.get(), '\0', 60 );
+    memset( name.get(), '\0', 256 );
+    unsigned char padIndex;
+    short int fill;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
-        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, clustered.get(), 30, &ind1 );
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR  );
             result = 1;
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, clustered.get(), 30, &ind1[1] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_BIT, &padIndex, 0, &ind[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &fill, 0, &ind[3] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR  );
+                result = 1;
+            }
         }
     }
     if( pimpl.m_subtype == L"MySQL" )
@@ -3575,7 +3608,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     if( !result )
     {
         ret = SQLFetch( m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        if( ret != SQL_SUCCESS/* && ret != SQL_SUCCESS_WITH_INFO*/ )
         {
             GetErrorMessage( errorMsg, CONN_ERROR  );
             result = 1;
@@ -3585,9 +3618,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            std::wstring option;
+            std::wstring option, pkName;
             str_to_uc_cpy( option, clustered.get() );
-            prop.pkOptions = std::make_shared<SQLServerPKOptions>( option == L"CLUSTERED" );
+            str_to_uc_cpy( pkName, name.get() );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {

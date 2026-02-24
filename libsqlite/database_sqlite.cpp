@@ -835,7 +835,8 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                 {
                     bool autoinc = false;
                     int conflict = 1;
-                    std::wregex pattern( L"PRIMARY KEY\\s*((ON CONFLICT \\w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
+                    std::wstring name = L"";
+                    std::wregex pattern( L"(CONSTRAINT \w)* PRIMARY KEY\\s*((ON CONFLICT \\w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
                     std::wsmatch findings;
                     if( std::regex_search( command, findings, pattern ) )
                     {
@@ -845,6 +846,11 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                         if( end == std::wstring::npos )
                             end = temp1.length() - 1;
                         temp1 = temp1.substr( 0, end );
+                        if( FindNoCase( temp1, L"CONSTRAINT") )
+                        {
+                            name = temp1.substr( temp1.find( ' ' ) + 1 );
+                            name = name.substr( 0, name.find( ' ') );
+                        }
                         if( FindNoCase( temp1, L"AUTOINCREMENT" ) )
                             autoinc = true;
                         if( FindNoCase( temp1, L"ON CONFLICT" ) )
@@ -860,7 +866,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                                 conflict = 4;
                         }
                     }
-                    prop.pkOptions = std::make_shared<SQLitePKOptions>( conflict, autoinc );
+                    prop.pkOptions = std::make_shared<SQLitePKOptions>( name, conflict, autoinc );
                 }
             }
             else if( res == SQLITE_DONE )
