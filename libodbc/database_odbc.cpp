@@ -7451,7 +7451,7 @@ int ODBCDatabase::GetTableCreationSyntax(const std::wstring &catalog, const std:
         }
     }
     SQLSMALLINT nameLen, dataType, decimal, nullable;
-    SQLULEN colSize;
+    SQLULEN colSize = 0;
     if( !result )
     {
         if( pimpl.m_subtype == L"MySQL" )
