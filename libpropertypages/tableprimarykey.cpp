@@ -50,6 +50,8 @@ void TablePrimaryKey::do_layout()
     auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
@@ -58,6 +60,12 @@ void TablePrimaryKey::do_layout()
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_fields, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "Name" );
+    m_pkName = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, m_options->m_name );
+    sizer5->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer5->Add( m_pkName, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
         const wxString selections[] =
@@ -85,6 +93,11 @@ void TablePrimaryKey::do_layout()
     {
         m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CLUSTERED" );
         sizer4->Add( m_clustered, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 0 );
+        sizer2->Add( sizer4, 0, wxEXPAND, 0 );
+        m_padIndex = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "PAD_INDEX" );
+        sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer6->Add( m_padIndex, 0, wxEXPAND, 0 );
+        sizer2->Add( sizer6, 0, wxEXPAND, 0 );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
