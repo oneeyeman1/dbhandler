@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <map>
+#include <memory>
 #include "wx/bmpcbox.h"
 #include "wx/gdicmn.h"
 #include "database.h"

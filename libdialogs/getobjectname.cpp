@@ -7,6 +7,7 @@
 #endif
 
 #include <map>
+#include <memory>
 #include "wx/dir.h"
 #include "wx/listctrl.h"
 #include "wx/dynlib.h"

@@ -10,6 +10,8 @@
 //
 
 #include <wx/wx.h>
+
+#include <memory>
 #include <wx/dynlib.h>
 #include "wx/filename.h"
 #include "wx/stdpaths.h"

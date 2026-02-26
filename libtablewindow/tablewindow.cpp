@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <memory>
 #include "wx/grid.h"
 #include "wx/docmdi.h"
 #include "wx/docview.h"

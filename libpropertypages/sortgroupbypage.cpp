@@ -20,6 +20,7 @@
 #include "wx/mdi.h"
 #endif
 
+#include <memory>
 #include "wx/listctrl.h"
 #include "wx/dataview.h"
 #include "wx/renderer.h"

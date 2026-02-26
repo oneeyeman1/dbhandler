@@ -1,3 +1,4 @@
+#include <memory>
 #include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
 #include "wx/uilocale.h"

@@ -22,6 +22,7 @@
     #include "wx/stockitem.h"
 #endif
 
+#include <memory>
 #include "database.h"
 #include "guiobjectsproperties.h"
 #include "configuration.h"

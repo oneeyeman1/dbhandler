@@ -13,6 +13,7 @@
 #pragma hdrstop
 #endif
 
+#include <memory>
 #include "wxsf/TextShape.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/GridShape.h"

@@ -16,6 +16,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/bmpcbox.h"
 #include "database.h"
 #include "propertypagebase.h"

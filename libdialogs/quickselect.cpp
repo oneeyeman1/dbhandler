@@ -19,6 +19,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/dialog.h"
 #include "wx/grid.h"
 #include "wx/gdicmn.h"

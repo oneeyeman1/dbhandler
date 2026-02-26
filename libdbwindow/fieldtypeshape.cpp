@@ -1,6 +1,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
+#include <memory>
 #include "database.h"
 #include "wxsf/TextShape.h"
 #include "propertieshandlerbase.h"

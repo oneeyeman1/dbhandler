@@ -36,6 +36,7 @@
 #endif
 
 #include <map>
+#include <memory>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/artprov.h"

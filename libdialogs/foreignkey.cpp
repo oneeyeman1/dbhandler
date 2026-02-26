@@ -19,6 +19,7 @@
     #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/gbsizer.h"
 #include "database.h"
 #include "wxsf/ShapeCanvas.h"

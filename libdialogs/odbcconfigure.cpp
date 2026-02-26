@@ -27,6 +27,7 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 #include "wx/config.h"
 #include "wx/dynlib.h"
 #include "wx/stdpaths.h"

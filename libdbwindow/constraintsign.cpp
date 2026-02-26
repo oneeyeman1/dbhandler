@@ -18,6 +18,7 @@
 #include "wx/mdi.h"
 #endif
 
+#include <memory>
 #include "wxsf/RectShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"

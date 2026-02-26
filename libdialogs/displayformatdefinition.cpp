@@ -10,6 +10,8 @@
 //
 
 #include <wx/wx.h>
+
+#include <memory>
 #include "database.h"
 #include "displayformatdefinition.h"
 

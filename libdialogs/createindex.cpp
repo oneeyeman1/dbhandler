@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <memory>
 #include "wx/listctrl.h"
 #include "wx/propgrid/manager.h"
 #include "wx/propgrid/props.h"

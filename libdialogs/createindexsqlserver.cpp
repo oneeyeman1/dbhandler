@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <memory>
 #include "wx/listctrl.h"
 #include "wx/grid.h"
 #include "wx/spinctrl.h"

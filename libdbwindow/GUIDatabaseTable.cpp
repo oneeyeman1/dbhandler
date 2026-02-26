@@ -1,4 +1,5 @@
 #include <string>
+#include <memory>
 #include "wxsf/BitmapShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "wxsf/TextShape.h"

@@ -9,6 +9,7 @@
     #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wxsf/ShapeCanvas.h"

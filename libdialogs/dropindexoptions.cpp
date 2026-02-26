@@ -19,6 +19,7 @@
     #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "database.h"
 #include "wx/spinctrl.h"
 #include "dropindexoptions.h"

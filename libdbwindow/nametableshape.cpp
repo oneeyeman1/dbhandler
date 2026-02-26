@@ -1,3 +1,4 @@
+#include <memory>
 #include "wxsf/TextShape.h"
 #include "database.h"
 #include "nametableshape.h"

@@ -1,3 +1,4 @@
+#include <memory>
 #include "wxsf/TextShape.h"
 #include "wxsf/FlexGridShape.h"
 #include "database.h"

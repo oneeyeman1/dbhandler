@@ -13,6 +13,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/docview.h"
 #if wxUSE_STD_IOSTREAM
 #include "wx/ioswrap.h"

@@ -9,6 +9,8 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
+
+#include <memory>
 #include "wx/listctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"

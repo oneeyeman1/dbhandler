@@ -20,6 +20,7 @@
 #endif
 
 #include <string>
+#include <memory>
 #include "wx/docview.h"
 #include "wx/grid.h"
 #include "wx/docmdi.h"

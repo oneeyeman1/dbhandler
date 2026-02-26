@@ -15,6 +15,7 @@
 #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/filepicker.h"
 #include "database.h"
 #include "attachdb.h"

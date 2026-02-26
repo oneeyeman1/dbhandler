@@ -11,11 +11,7 @@
 #endif
 
 #include <map>
-/*#ifdef _IODBCUNIX_H
-#include "iODBC/sqlext.h"
-#else
-#include <sqlext.h>
-#endif*/
+#include <memory>
 #include "wx/valnum.h"
 #include "wx/spinctrl.h"
 #include "wx/wizard.h"

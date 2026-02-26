@@ -32,6 +32,7 @@
 #endif
 
 #include <map>
+#include <memory>
 #include "wx/docview.h"
 #include "database.h"
 #include "tableeditdocument.h"

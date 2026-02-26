@@ -11,6 +11,7 @@
 #include <wx/wx.h>
 #include <map>
 #include <vector>
+#include <memory>
 #include "wx/dynlib.h"
 #include "wx/stdpaths.h"
 #include "database.h"

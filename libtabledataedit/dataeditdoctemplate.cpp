@@ -21,6 +21,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <memory>
 #include "wx/except.h"
 #include "wx/scopedptr.h"
 #include "wx/docview.h"

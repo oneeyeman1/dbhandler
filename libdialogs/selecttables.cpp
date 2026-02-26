@@ -21,6 +21,7 @@
 #endif
 
 #include <string>
+#include <memory>
 #include "database.h"
 #include "dialogs.h"
 #include "selecttables.h"

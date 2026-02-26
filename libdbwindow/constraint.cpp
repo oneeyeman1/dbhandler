@@ -24,6 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <wx/wx.h>
+
+#include <memory>
 #include <wxxmlserializer/XmlSerializer.h>
 #include "wxsf/BitmapShape.h"
 #include "wxsf/FlexGridShape.h"

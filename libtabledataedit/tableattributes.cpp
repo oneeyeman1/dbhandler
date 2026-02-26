@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <tuple>
+#include <memory>
 #include <wx/wx.h>
 #include <wx/image.h>
 #include <wx/intl.h>

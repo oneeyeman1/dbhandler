@@ -11,6 +11,7 @@
 #include <wx/wx.h>
 
 #include <map>
+#include <memory>
 #include "wx/checkbox.h"
 #include "wx/filepicker.h"
 #include "database.h"

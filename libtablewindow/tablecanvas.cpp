@@ -27,6 +27,7 @@
     #include "wx/wx.h"
 #endif
 
+#include <memory>
 #include "wx/grid.h"
 #include "wx/arrstr.h"
 #include "wx/docmdi.h"

@@ -11,6 +11,7 @@
 #include <wx/wx.h>
 #include <wx/image.h>
 
+#include <memory>
 #include "wx/bmpcbox.h"
 #include "wx/valnum.h"
 #include "database.h"

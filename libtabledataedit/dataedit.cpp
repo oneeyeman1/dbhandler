@@ -15,6 +15,7 @@
 #endif
 
 #include <list>
+#include <memory>
 #include "wx/docview.h"
 #include "wx/docmdi.h"
 #include "wx/grid.h"

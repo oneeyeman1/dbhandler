@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <map>
+#include <memory>
 #include <wx/wx.h>
 #include "wx/filepicker.h"
 #include "wx/valnum.h"

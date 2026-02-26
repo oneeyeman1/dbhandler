@@ -1,3 +1,4 @@
+#include <memory>
 #include "wxsf/BitmapShape.h"
 #include "wxsf/GridShape.h"
 #include "wxsf/TextShape.h"
