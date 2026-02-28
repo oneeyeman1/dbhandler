@@ -3165,7 +3165,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         query1 += L" FROM sys.indexes i, sys.tables t, sys.schemas s, sys.stats st, sys.partitions p WHERE i.object_id = t.object_id AND i.is_primary_key = 1 AND s.name = ? AND t.name = ? AND t.schema_id = s.schema_id AND i.object_id = st.object_id AND i.index_id = st.stats_id AND i.object_id = p.object_id AND i.index_id = p.index_id;";
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
-        query1 = L"SELECT co.conname AS namw, cl.reloptions AS include, n.nspname AS tablespace, cl.reloptions AS with FROM pg_constraint co, pg_namespace n, pg_class cl WHERE co.contype = 'p' AND n.nspname = ? AND cl.relname = ? AND cl.oid = co.conrelid AND n.oid = cl.relnamespace";
+        query1 = L"SELECT co.conname AS namw, ( WITH idx AS(  SELECT i.indexrelid, i.indrelid, i.indnkeyatts, i.indkey::int2[] AS indkey FROM pg_index i, pg_class ic, pg_namespace ns WHERE ic.oid = i.indexrelid AND ns.oid = ic.relnamespace AND ns.nspname = ? AND ic.relname = ? ), ords AS ( SELECT idx.indexrelid, idx.indrelid, idx.indnkeyatts, s.ord, idx.indkey[s.ord] AS attnum FROM idx CROSS JOIN LATERAL generate_subscripts(idx.indkey, 1) AS s(ord) ) SELECT a.attname FROM pg_attribute a, ords WHERE a.attrelid = ords.indrelid AND a.attnum = ords.attnum AND NOT a.attisdropped AND ords.ord > ords.indnkeyatts ) AS include, n.nspname AS tablespace, cl.reloptions AS with FROM pg_constraint co, pg_namespace n, pg_class cl WHERE co.contype = 'p' AND n.nspname = ? AND cl.relname = ? AND cl.oid = co.conrelid AND n.oid = cl.relnamespace";
     if( pimpl.m_subtype == L"MySQL" )
         query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
@@ -3534,7 +3534,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             result = 1;
         }
     }
-    SQLLEN ind[2] = { SQL_NTS, SQL_NTS };
+    SQLLEN ind[4] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
     if( !result )
     {
         ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, param1.get(), schemaName.length(), &ind[0] );
@@ -3551,6 +3551,27 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         {
             GetErrorMessage( errorMsg, STMT_ERROR  );
             result = 1;
+        }
+    }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        if( !result )
+        {
+            ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaName.length(), 0, param1.get(), schemaName.length(), &ind[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, param2.get(), tableName.length(), &ind[3] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
         }
     }
     if( !result )
