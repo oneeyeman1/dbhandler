@@ -836,7 +836,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     bool autoinc = false;
                     int conflict = 1;
                     std::wstring name = L"";
-                    std::wregex pattern( L"(CONSTRAINT \w)* PRIMARY KEY\\s*((ON CONFLICT \\w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
+                    std::wregex pattern( L"(CONSTRAINT \\w)* PRIMARY KEY\\s*((ON CONFLICT \\w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
                     std::wsmatch findings;
                     if( std::regex_search( command, findings, pattern ) )
                     {
