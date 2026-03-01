@@ -5464,7 +5464,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC dbc;
     SQLWCHAR outConnect[1024];
-    SQLWCHAR *command = new SQLWCHAR[1024];
+    std::unique_ptr<SQLWCHAR[]> command( new SQLWCHAR[1024] );
     int result = 0, ret;
     if( !m_isConnected )
         return result;
@@ -5521,14 +5521,12 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
     }
     if( !result )
     {
-        SQLWCHAR *qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+        memset( qry.get(), '\0', query.length() + 2 );
+        uc_to_str_cpy( qry.get(), query );
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            ret = SQLExecDirect( stmt, qry, SQL_NTS );
-            delete[] qry;
-            qry = nullptr;
+            ret = SQLExecDirect( stmt, qry.get(), SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5546,14 +5544,14 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             if( !result && ret != SQL_NO_DATA )
             {
                 SQLLEN indicator;
-                ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, 1024, &indicator );
+                ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command.get(), 1024, &indicator );
                 while( ret == SQL_SUCCESS_WITH_INFO )
                 {
-                    str_to_uc_cpy( strCommand, command );
+                    str_to_uc_cpy( strCommand, command.get() );
                     if( indicator == SQL_NO_TOTAL )
                         indicator = 1024;
-                    memset( command, '\0', 1024 );
-                    ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command, 1024, &indicator );
+                    memset( command.get(), '\0', 1024 );
+                    ret = SQLGetData( stmt, 1, SQL_C_WCHAR, command.get(), 1024, &indicator );
                     count++;
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -5561,8 +5559,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
                     result = 1;
                 }
-                delete[] command;
-                command = nullptr;
             }
             if( !result )
             {
@@ -5584,12 +5580,10 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             }
             if( !result )
             {
-                qry = new SQLWCHAR[query1.length() + 2];
-                memset( qry, '\0', query1.length() + 2 );
-                uc_to_str_cpy( qry, query1 );
-                ret = SQLExecDirect( stmt, qry, SQL_NTS );
-                delete[] qry;
-                qry = nullptr;
+                qry.reset( new SQLWCHAR[query1.length() + 2] );
+                memset( qry.get(), '\0', query1.length() + 2 );
+                uc_to_str_cpy( qry.get(), query1 );
+                ret = SQLExecDirect( stmt, qry.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5782,8 +5776,6 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         GetErrorMessage( errorMsg, CONN_ERROR, dbc );
         result = 1;
     }
-    delete[] command;
-    command = nullptr;
     return result;
 }
 
