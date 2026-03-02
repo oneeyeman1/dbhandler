@@ -3667,7 +3667,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     result = 1;
                 }
             }
-            includedCol = includedCol.substr( 1, includedCol.length() - 1 );
+            includedCol.erase( 0, 1 );
+            includedCol.pop_back();
             while( ( ret = SQLGetData( m_hstmt, 4, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
             {
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
