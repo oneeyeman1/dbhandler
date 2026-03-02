@@ -3565,9 +3565,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
     }
     SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
-    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] );
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] );
     memset( clustered.get(), '\0', 60 );
     memset( name.get(), '\0', 256 );
+    memset( included.get(), '\0', 256 );
     memset( index_param.get(), '\0', 255 );
     memset( tablespace.get(), '\0', 64 );
     unsigned char padIndex;
@@ -3643,13 +3644,30 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
-            std::wstring options, pkName, tbSpace;
+            std::wstring options, pkName, tbSpace, included;
             SQLWCHAR columnName[64];
             SQLSMALLINT nameLengthPtr, dataTypePtr, decimalDigitsPtr, nullablePtr;
             SQLULEN columnSIzePtr;
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( tbSpace, tablespace.get() );
-
+            while( ( ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
+            {
+                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                {
+                    auto numBytes = ind[2];
+                    if( ind[2] == SQL_NO_TOTAL )
+                        numBytes = 255;
+                    else if( ind[2] > 255 )
+                        numBytes = 255;
+                    str_to_uc_cpy( included, included.get() );
+                }
+                else
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR  );
+                    result = 1;
+                }
+            }
+            included = included.substr( 1, included.length() - 1 );
             while( ( ret = SQLGetData( m_hstmt, 4, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
             {
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -3667,7 +3685,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     result = 1;
                 }
             }
-//            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, tbSpace );
+            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, included, tbSpace );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
