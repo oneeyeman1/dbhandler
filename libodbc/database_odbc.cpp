@@ -3653,26 +3653,34 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             SQLULEN columnSIzePtr;
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( tbSpace, tablespace.get() );
-            while( ( ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
+            if( pimpl.m_versionMajor >= 11 )
             {
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                while( ( ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
                 {
-                    auto numBytes = ind[2];
-                    if( ind[2] == SQL_NO_TOTAL )
-                        numBytes = 255;
-                    else if( ind[2] > 255 )
-                        numBytes = 255;
-                    str_to_uc_cpy( includedCol, included.get() );
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        auto numBytes = ind[2];
+                        if( ind[2] == SQL_NO_TOTAL )
+                            numBytes = 255;
+                        else if( ind[2] > 255 )
+                            numBytes = 255;
+                        str_to_uc_cpy( includedCol, included.get() );
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
                 }
-                else
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR  );
-                    result = 1;
-                }
+                includedCol.erase( 0, 1 );
+                includedCol.pop_back();
             }
-            includedCol.erase( 0, 1 );
-            includedCol.pop_back();
-            while( ( ret = SQLGetData( m_hstmt, 4, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
+            int pos = 0;
+            if( pimpl.m_versionMajor >= 11 )
+                pos = 4;
+            else
+                pos = 3;
+            while( ( ret = SQLGetData( m_hstmt, pos, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
             {
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
