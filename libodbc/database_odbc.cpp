@@ -3644,7 +3644,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
-            std::wstring options, pkName, tbSpace, included;
+            std::wstring options, pkName, tbSpace, includedCol;
             SQLWCHAR columnName[64];
             SQLSMALLINT nameLengthPtr, dataTypePtr, decimalDigitsPtr, nullablePtr;
             SQLULEN columnSIzePtr;
@@ -3659,7 +3659,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                         numBytes = 255;
                     else if( ind[2] > 255 )
                         numBytes = 255;
-                    str_to_uc_cpy( included, included.get() );
+                    str_to_uc_cpy( includedCol, included.get() );
                 }
                 else
                 {
@@ -3667,7 +3667,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     result = 1;
                 }
             }
-            included = included.substr( 1, included.length() - 1 );
+            includedCol = includedCol.substr( 1, includedCol.length() - 1 );
             while( ( ret = SQLGetData( m_hstmt, 4, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
             {
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -3685,7 +3685,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     result = 1;
                 }
             }
-            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, included, tbSpace );
+            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, includedCol, tbSpace );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
