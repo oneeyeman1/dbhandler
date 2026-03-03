@@ -62,9 +62,9 @@ public:
 
 struct SQLServerPKOptions : public PKOptions
 {
-    SQLServerPKOptions(const std::wstring name, bool isClustered, bool padIndex, int fill) : m_isClustered( isClustered ), m_pad( padIndex ), m_fill( fill ) { m_name = name; }
+    SQLServerPKOptions(const std::wstring name, bool isClustered, bool padIndex, int fill, bool ignoreDup, bool noRecomp) : m_isClustered( isClustered ), m_pad( padIndex ), m_fill( fill ), m_ignoreDup( ignoreDup ), m_norecomp( noRecomp ) { m_name = name; }
     virtual ~SQLServerPKOptions() {}
-    bool m_isClustered, m_pad;
+    bool m_isClustered, m_pad, m_ignoreDup, m_norecomp;
     int m_fill;
 };
 

@@ -3575,7 +3575,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     memset( index_param.get(), '\0', 255 );
     memset( tablespace.get(), '\0', 64 );
     unsigned char padIndex;
-    short int fill;
+    short int fill, ignoreDup, noRecomp;
     ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3584,9 +3584,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
+        SQLUSMALLINT i = 1;
+        int ind = 0;
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, clustered.get(), 30, &ind1[1] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, clustered.get(), 30, &ind1[++ind] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3595,7 +3597,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, 3, SQL_C_BIT, &padIndex, 0, &ind[2] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_BIT, &padIndex, 0, &ind1[++ind] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3604,7 +3606,25 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, 4, SQL_C_SSHORT, &fill, 0, &ind[3] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &fill, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &ignoreDup, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &noRecomp, 0, &ind1[++ind] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3643,7 +3663,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             std::wstring option, pkName;
             str_to_uc_cpy( option, clustered.get() );
             str_to_uc_cpy( pkName, name.get() );
-            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill, ignoreDup, noRecomp );
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
