@@ -62,10 +62,11 @@ public:
 
 struct SQLServerPKOptions : public PKOptions
 {
-    SQLServerPKOptions(const std::wstring name, bool isClustered, bool padIndex, int fill, bool ignoreDup, bool noRecomp) : m_isClustered( isClustered ), m_pad( padIndex ), m_fill( fill ), m_ignoreDup( ignoreDup ), m_norecomp( noRecomp ) { m_name = name; }
+    SQLServerPKOptions(const std::wstring name, bool isClustered, bool padIndex, int fill, bool ignoreDup, bool noRecomp, bool incr, bool rowLocks, bool pageLocks, bool sequential, int delay, const std::wstring &desc, int partition, bool xml) : m_isClustered( isClustered ), m_pad( padIndex ), m_fill( fill ), m_ignoreDup( ignoreDup ), m_norecomp( noRecomp ), m_incremental( incr ), m_rowLocks( rowLocks ), m_pageLocks( pageLocks ), m_sequential( sequential ), m_delay( delay ), m_desc( desc ), m_partitionRegular( partition ), m_xml( xml ) { m_name = name; }
     virtual ~SQLServerPKOptions() {}
-    bool m_isClustered, m_pad, m_ignoreDup, m_norecomp;
-    int m_fill;
+    bool m_isClustered, m_pad, m_ignoreDup, m_norecomp, m_incremental, m_rowLocks, m_pageLocks, m_sequential, m_xml;
+    int m_fill, m_delay, m_partitionRegular, m_partitionXML;
+    std::wstring m_desc;
 };
 
 struct PostgresPKOptions : public PKOptions

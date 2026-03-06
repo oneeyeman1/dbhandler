@@ -3568,14 +3568,16 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
     }
     SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
-    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] );
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] );
     memset( clustered.get(), '\0', 60 );
     memset( name.get(), '\0', 256 );
     memset( included.get(), '\0', 256 );
     memset( index_param.get(), '\0', 255 );
     memset( tablespace.get(), '\0', 64 );
+    memset( desc.get(), '\0', 60 );
     unsigned char padIndex;
-    short int fill, ignoreDup, noRecomp;
+    short int fill, ignoreDup, noRecomp, incremental = 0, rowLocks, pageLocks, sequential = 0, xml = 0;
+    int delay = 0, partition;
     ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -3631,6 +3633,78 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 result = 1;
             }
         }
+        if( !result && pimpl.m_versionMajor >= 12 )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &incremental, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &rowLocks, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &pageLocks, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result && pimpl.m_versionMajor >= 15 )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &sequential, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result && pimpl.m_versionMajor >= 13 )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_SLONG, &delay, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, desc.get(), 30, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &partition, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result && pimpl.m_versionMajor >= 16  )
+        {
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &xml, 0, &ind1[++ind] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
@@ -3660,10 +3734,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            std::wstring option, pkName;
+            std::wstring option, pkName, description;
             str_to_uc_cpy( option, clustered.get() );
             str_to_uc_cpy( pkName, name.get() );
-            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill, ignoreDup, noRecomp );
+            str_to_uc_cpy( description, desc.get() );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {

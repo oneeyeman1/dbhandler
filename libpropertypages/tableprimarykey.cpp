@@ -12,6 +12,7 @@
 
 #include <memory>
 #include "wx/listctrl.h"
+#include "wx/spinctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "database.h"
 #include "field.h"
@@ -52,12 +53,15 @@ void TablePrimaryKey::do_layout()
     auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
-    auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
-    auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
+    auto sizer5 = new wxBoxSizer( wxVERTICAL );
+    auto sizer6 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    wxBoxSizer *sizer7 = nullptr;
+    wxBoxSizer *sizer8 = nullptr;
+    wxBoxSizer *sizer9 = nullptr;
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
-    sizer1->Add( 60, 60, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_label, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_fields, 0, wxEXPAND, 0 );
@@ -67,6 +71,7 @@ void TablePrimaryKey::do_layout()
     sizer5->Add( m_label2, 0, wxEXPAND, 0 );
     sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer5->Add( m_pkName, 0, wxEXPAND, 0 );
+    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
@@ -94,12 +99,89 @@ void TablePrimaryKey::do_layout()
         ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
     {
         m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CLUSTERED" );
-        sizer4->Add( m_clustered, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 0 );
-        sizer2->Add( sizer4, 0, wxEXPAND, 0 );
+        m_clustered->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_isClustered );
+        sizer5->Add( m_clustered, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         m_padIndex = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "PAD_INDEX" );
-        sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer6->Add( m_padIndex, 0, wxEXPAND, 0 );
-        sizer2->Add( sizer6, 0, wxEXPAND, 0 );
+        m_padIndex->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_pad );
+        m_padIndex->SetToolTip( _( "When ON, the percentage of free space specified by FILLFACTOR is applied to the intermediate level pages of the index" ) );
+        sizer6->Add( m_padIndex, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_ignoreDup = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "IGNORE_DUP_KEY" );
+        m_ignoreDup->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_ignoreDup );
+        m_ignoreDup->SetToolTip( _( "When ON a warning message occurs when duplicate key values are inserted into a unique index. Only the rows violating the uniqueness constraint fail" ) );
+        sizer6->Add( m_ignoreDup, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_norecompute = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "NORECOMPUTE" );
+        m_norecompute->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_norecomp );
+        m_norecompute->SetToolTip( _( "When ON, out-of-date index statistics aren't automatically recomputed" ) );
+        sizer6->Add( m_norecompute, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_incremental = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "INCREMENTAL" );
+        m_incremental->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_incremental );
+        m_incremental->SetToolTip( _("STATISTICS_INCREMENTAL" ) );
+        sizer6->Add( m_incremental, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_rowLocks = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "ROW_LOCKS" );
+        m_rowLocks->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_rowLocks );
+        m_rowLocks->SetToolTip( _( "When ON, row locks are allowed when you access the index" ) );
+        sizer6->Add( m_rowLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_pageLocks = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "PAGE_LOCKS" );
+        m_pageLocks->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_pageLocks );
+        m_pageLocks->SetToolTip( _( "When ON, page locks are allowed when you access the index" ) );
+        sizer6->Add( m_pageLocks, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        if( m_db->GetTableVector().m_versionMajor >= 15 )
+        {
+            m_sequential = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "SEQUENTIAL_KEY" );
+            m_sequential->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_sequential );
+            m_sequential->SetToolTip( _( "OPTIMIZE_FOR_SEQUENTIAL_KEYS - Specifies whether or not to optimize for last-page insert contention" ) );
+            sizer6->Add( m_sequential, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer6->Add( 5, 5, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        }
+        if( m_db->GetTableVector().m_versionMajor >= 16 )
+        {
+            m_xml = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "XML_COMPRESSION" );
+            m_xml->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_xml );
+            m_xml->SetToolTip( _( "Specifies the XML compression option for any xml data type columns in the table" ) );
+            sizer6->Add( m_xml, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer6->Add( 5, 5, 0 , wxALIGN_CENTER_VERTICAL, 0 );
+        }
+        sizer7 = new wxBoxSizer( wxHORIZONTAL );
+        m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "FILLFACTOR" );
+        sizer7->Add( m_label3, 0, wxEXPAND, 0 );
+        sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_fillFactor = new wxSpinCtrl(  sizer2->GetStaticBox(), wxID_ANY, wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_fill ), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
+        m_fillFactor->SetToolTip( _( "Specifies how full the Database Engine should make each index page that is used to store the index data" ) );
+        sizer7->Add( m_fillFactor, 0, wxEXPAND, 0 );
+        sizer6->Add( sizer7, 0, wxEXPAND, 0 );
+        sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
+        if( m_db->GetTableVector().m_versionMajor >= 13 )
+        {
+            sizer8 = new wxBoxSizer( wxHORIZONTAL );
+            m_label4 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "COMPRESSION_DELAY" );
+            sizer8->Add( m_label4, 0, wxEXPAND, 0 );
+            sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_delay = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_delay ) );
+            m_delay->SetToolTip( _( "For a memory-optimized, delay specifies the minimum number of minutes a row must remain in the table, unchanged, before it's eligible for compression into the columnstore index; For a disk-based table, delay specifies the minimum number of minutes a delta rowgroup in the CLOSED state must remain in the delta rowgroup" ) );
+            sizer8->Add( m_delay, 0, wxEXPAND, 0 );
+            m_label5 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "min" );
+            sizer8->Add( m_label5, 0, wxEXPAND, 0 );
+            sizer6->Add( sizer8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+        }
+        sizer9 = new wxBoxSizer( wxHORIZONTAL );
+        m_label6 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "DATA_COMPRESSION" );
+        sizer9->Add( m_label6, 0, wxEXPAND,  0 );
+        sizer9->Add( 5, 5, 0, wxEXPAND, 0 );
+        const wxString choices[] =
+        {
+            "NONE",
+            "ROW",
+            "PAGE",
+            "COLUMNSTORE",
+            "COLUMNSTORE_ARCHIVE"
+        };
+        m_compression = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_desc, wxDefaultPosition, wxDefaultSize, 5, choices  );
+        m_compression->SetToolTip( _( "Specifies the data compression option for the specified table, partition number, or range of partitions" ) );
+        sizer9->Add( m_compression, 0, wxEXPAND, 0 );
+        sizer6->Add( sizer9, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
