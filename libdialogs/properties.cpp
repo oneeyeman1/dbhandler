@@ -29,6 +29,7 @@
 #include "wx/filepicker.h"
 #include "wx/fontenum.h"
 #include "wx/listctrl.h"
+#include "wx/spinctrl.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
