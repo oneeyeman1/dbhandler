@@ -71,13 +71,9 @@ struct SQLServerPKOptions : public PKOptions
 
 struct PostgresPKOptions : public PKOptions
 {
-    std::wstring m_includeColumns;
+    std::wstring m_includeColumns, m_storage;
     std::wstring m_tablespace;
-    struct Storage
-    {
-        int m_fillFactor;
-    };
-    PostgresPKOptions(const std::wstring &name, const std::wstring &columns, const std::wstring tablespace) : m_includeColumns( columns ), m_tablespace( tablespace ) { m_name = name; }
+    PostgresPKOptions(const std::wstring &name, const std::wstring &columns, const std::wstring &storage, const std::wstring tablespace) : m_includeColumns( columns ), m_storage( storage ), m_tablespace( tablespace ) { m_name = name; }
 };
 
 struct DropIndexOption

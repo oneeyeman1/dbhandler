@@ -3796,8 +3796,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                     GetErrorMessage( errorMsg, STMT_ERROR  );
                     result = 1;
                 }
+                options.erase( 0, 1 );
+                options.pop_back();
             }
-            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, includedCol, tbSpace );
+            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, includedCol, options, tbSpace );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
