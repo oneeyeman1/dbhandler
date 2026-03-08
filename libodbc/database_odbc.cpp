@@ -3749,6 +3749,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             SQLULEN columnSIzePtr;
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( tbSpace, tablespace.get() );
+            if( tbSpace.empty() )
+                tbSpace = L"default";
             if( pimpl.m_versionMajor >= 11 )
             {
                 while( ( ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
