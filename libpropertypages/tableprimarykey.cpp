@@ -55,6 +55,7 @@ void TablePrimaryKey::do_layout()
     auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer5 = new wxBoxSizer( wxVERTICAL );
     auto sizer6 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer7 = nullptr;
     wxBoxSizer *sizer8 = nullptr;
     wxBoxSizer *sizer9 = nullptr;
@@ -68,10 +69,10 @@ void TablePrimaryKey::do_layout()
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "Name" );
     m_pkName = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, m_options->m_name );
-    sizer5->Add( m_label2, 0, wxEXPAND, 0 );
-    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer5->Add( m_pkName, 0, wxEXPAND, 0 );
-    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer10->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer10->Add( m_pkName, 0, wxEXPAND, 0 );
+    sizer5->Add( sizer10, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
@@ -183,12 +184,21 @@ void TablePrimaryKey::do_layout()
         sizer6->Add( sizer9, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
-    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostreSQL" ) ||
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
     {
+        wxString includedCols( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_includeColumns );
+        auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
+        m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "TABLESPACE" );
+        sizer10->Add( m_label2, 0, wxEXPAND, 0 );
+        sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_tableSpace = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_tablespace );
+        sizer10->Add( m_tableSpace, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer10, 0, wxEXPAND, 0 );
         m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "INCLUDED" );
         sizer4->Add( m_label1, 0, wxEXPAND, 0 );
-        m_included = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+        m_included = new wxListCtrl( sizer2->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
         m_included->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
         int row = 0;
         for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
@@ -196,7 +206,12 @@ void TablePrimaryKey::do_layout()
             m_included->InsertItem( row++, (*it)->GetFieldName() );
         }
         m_included->SetColumnWidth( 0, wxLIST_AUTOSIZE );
+        wxArrayString parsed = wxSplit( includedCols, ',' );
+        for( auto incl : parsed )
+            m_included->SetItemState( m_included->FindItem( -1, incl ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
         sizer4->Add( m_included, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer4, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );

@@ -31,5 +31,6 @@ private:
     wxSpinCtrl *m_fillFactor = nullptr;
     wxTextCtrl *m_delay = nullptr;
     wxComboBox *m_compression = nullptr;
+    wxTextCtrl *m_tableSpace = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };
