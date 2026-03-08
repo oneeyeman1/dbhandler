@@ -3169,6 +3169,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         query1 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace";
         if( pimpl.m_versionMajor >= 11 )
             query1 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
+//        query1 += L", NULLIF( TRIM( BOTH FROM c.reloptions ), '' ) AS storage FROM pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
         query1 += L", c.reloptions AS storage FROM pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
     }
     if( pimpl.m_subtype == L"MySQL" )
@@ -3742,7 +3743,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
-            std::wstring options, pkName, tbSpace, includedCol;
+            std::wstring options = L"", pkName, tbSpace, includedCol;
             SQLWCHAR columnName[64];
             SQLSMALLINT nameLengthPtr, dataTypePtr, decimalDigitsPtr, nullablePtr;
             SQLULEN columnSIzePtr;
@@ -3780,6 +3781,8 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                 {
                     auto numBytes = ind[3];
+                    if( numBytes == SQL_NULL_DATA )
+                        break;
                     if( ind[3] == SQL_NO_TOTAL )
                         numBytes = 255;
                     else if( ind[3] > 255 )
