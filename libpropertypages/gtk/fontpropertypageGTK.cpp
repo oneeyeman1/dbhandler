@@ -250,5 +250,6 @@ void CFontPropertyPage::ResetFont(bool init)
     }
     pango_layout_set_attributes( layout, attrs );
     pango_attr_list_unref( attrs );
+    g_object_unref( layout );
 }
 #endif
