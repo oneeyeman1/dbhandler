@@ -188,6 +188,7 @@ void TablePrimaryKey::do_layout()
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
     {
         wxString includedCols( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_includeColumns );
+        wxArrayString tokens = wxSplit( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_storage, ',' );
         auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "TABLESPACE" );
         sizer10->Add( m_label2, 0, wxEXPAND, 0 );
@@ -200,8 +201,16 @@ void TablePrimaryKey::do_layout()
         sizer4->Add( m_label1, 0, wxEXPAND, 0 );
         m_included = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, includedCols );
         sizer4->Add( m_included, 0, wxEXPAND, 0 );
+        sizer7 = new wxBoxSizer( wxHORIZONTAL );
+        m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "fillfactor" );
+        sizer7->Add( m_label2, 0, wxEXPAND, 0 );
+        sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_fillFactor = new wxSpinCtrl( sizer2->GetStaticBox(), wxID_ANY, "100"/*wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_fill )*/, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
+        sizer7->Add( m_fillFactor, 0, wxEXPAND, 0 );
+        sizer6->Add( sizer7, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
