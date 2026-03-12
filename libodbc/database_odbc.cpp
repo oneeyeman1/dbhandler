@@ -3166,11 +3166,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        query1 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace";
+        query1 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace, am.amname AS type";
         if( pimpl.m_versionMajor >= 11 )
             query1 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
-//        query1 += L", NULLIF( TRIM( BOTH FROM c.reloptions ), '' ) AS storage FROM pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
-        query1 += L", c.reloptions AS storage FROM pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
+        query1 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
     }
     if( pimpl.m_subtype == L"MySQL" )
         query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
@@ -3569,8 +3568,9 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
     }
     SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
-    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] );
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] ), type( new SQLWCHAR[20] );
     memset( clustered.get(), '\0', 60 );
+    memset( type.get(), '\0', 20 );
     memset( name.get(), '\0', 256 );
     memset( included.get(), '\0', 256 );
     memset( index_param.get(), '\0', 255 );
@@ -3718,6 +3718,15 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 result = 1;
             }
         }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, type.get(), 20, &ind1[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -3743,17 +3752,18 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
-            std::wstring options = L"", pkName, tbSpace, includedCol;
+            std::wstring options = L"", pkName, tbSpace, includedCol, indType;
             SQLWCHAR columnName[64];
             SQLSMALLINT nameLengthPtr, dataTypePtr, decimalDigitsPtr, nullablePtr;
             SQLULEN columnSIzePtr;
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( tbSpace, tablespace.get() );
+            str_to_uc_cpy( indType, type.get() );
             if( tbSpace.empty() )
                 tbSpace = L"default";
             if( pimpl.m_versionMajor >= 11 )
             {
-                while( ( ret = SQLGetData( m_hstmt, 3, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
+                while( ( ret = SQLGetData( m_hstmt, 4, SQL_C_WCHAR, included.get(), 255, &ind[2] ) ) != SQL_NO_DATA )
                 {
                     if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                     {
@@ -3775,9 +3785,9 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             }
             int pos = 0;
             if( pimpl.m_versionMajor >= 11 )
-                pos = 4;
+                pos = 5;
             else
-                pos = 3;
+                pos = 4;
             while( ( ret = SQLGetData( m_hstmt, pos, SQL_C_WCHAR, index_param.get(), 255, &ind[3] ) ) != SQL_NO_DATA )
             {
                 if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
@@ -3799,7 +3809,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 options.erase( 0, 1 );
                 options.pop_back();
             }
-            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, includedCol, options, tbSpace );
+            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
