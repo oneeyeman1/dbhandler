@@ -77,6 +77,7 @@
 #include "wx/colordlg.h"
 #include "wx/filepicker.h"
 #include "wx/propgrid/propgrid.h"
+#include "wx/spinctrl.h"
 #include "wxsf/ShapeCanvas.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/RoundRectShape.h"

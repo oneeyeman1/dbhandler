@@ -21,7 +21,7 @@ private:
     wxCheckBox *m_clustered = nullptr;
     wxTextCtrl *m_included = nullptr;
     wxCheckBox *m_padIndex = nullptr;
-    wxCheckBox *m_xml;
+    wxCheckBox *m_xml = nullptr;
     wxCheckBox *m_ignoreDup = nullptr;
     wxCheckBox *m_norecompute = nullptr;
     wxCheckBox *m_incremental = nullptr;
@@ -32,5 +32,9 @@ private:
     wxTextCtrl *m_delay = nullptr;
     wxComboBox *m_compression = nullptr;
     wxTextCtrl *m_tableSpace = nullptr;
+    wxCheckBox *m_fastUpdate = nullptr;
+    wxCheckBox *m_buffering = nullptr;
+    wxSpinCtrlDouble *m_vacuumCleanup = nullptr;
+    wxCheckBox *m_deduplicate = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };

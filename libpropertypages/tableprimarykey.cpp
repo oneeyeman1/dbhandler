@@ -189,6 +189,13 @@ void TablePrimaryKey::do_layout()
     {
         wxString includedCols( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_includeColumns );
         wxArrayString tokens = wxSplit( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_storage, ',' );
+        std::map<wxString, wxString> params;
+        for( auto token : tokens )
+        {
+            auto paran = wxSplit( token, '=' );
+            params[paran[0]] = paran[1];
+        }
+        wxString type( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_type );
         auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "TABLESPACE" );
         sizer10->Add( m_label2, 0, wxEXPAND, 0 );
@@ -205,8 +212,40 @@ void TablePrimaryKey::do_layout()
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "fillfactor" );
         sizer7->Add( m_label2, 0, wxEXPAND, 0 );
         sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
-        m_fillFactor = new wxSpinCtrl( sizer2->GetStaticBox(), wxID_ANY, "100"/*wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_fill )*/, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
+        m_fillFactor = new wxSpinCtrl( sizer2->GetStaticBox(), wxID_ANY, params.find( "fillfactor" ) == params.end() ? "100" : params["fillfactor"], wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
         sizer7->Add( m_fillFactor, 0, wxEXPAND, 0 );
+        if( type == "GIST" && ( m_db->GetTableVector().m_versionMajor >= 9 && m_db->GetTableVector().m_versionMinor >= 2 ) )
+        {
+            wxCheckBoxState value = wxCHK_UNDETERMINED;
+            if( params.find( "buffering" ) != params.end() )
+            {
+                if( params["buffering"] == "ON" )
+                    value = wxCHK_CHECKED;
+                if( params["buffering"] == "OFF" )
+                    value = wxCHK_UNCHECKED;
+            }
+            m_buffering = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "buffering", wxDefaultPosition, wxDefaultSize, wxCHK_3STATE );
+            m_buffering->Set3StateValue( value );
+        }
+        if( type == "btree" && ( m_db->GetTableVector().m_versionMajor >= 11 && m_db->GetTableVector().m_versionMajor <= 12 ) )
+        {
+            sizer8 = new wxBoxSizer( wxHORIZONTAL );
+            m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "vacuum_cleanup_index_scale_factor" );
+            sizer8->Add( m_label3, 0, wxEXPAND, 0 );
+            sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_vacuumCleanup = new wxSpinCtrlDouble( sizer2->GetStaticBox(), wxID_ANY, params.find( "vacuum_cleanup_index_scale_factor" ) == params.end() ? "0.1" : params["vacuum_cleanup_index_scale_factor"], wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 10000000000 );
+            sizer8->Add( m_vacuumCleanup, 0, wxEXPAND, 0 );
+            sizer6->Add( sizer8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        }
+        if( type == "btree" && m_db->GetTableVector().m_versionMajor >= 13 )
+        {
+            auto value = true;
+            if( params.find( "deduplicate_items" ) != params.end() && params["deduplicate_items"] == "off" )
+                value = false;
+            m_deduplicate = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "deduplicate_items" );
+            m_deduplicate->SetValue( value );
+            sizer6->Add( m_deduplicate, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        }
         sizer6->Add( sizer7, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
