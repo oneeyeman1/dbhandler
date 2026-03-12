@@ -631,6 +631,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
     }
+    PQclear( res1 );
     if( !result )
     {
         res1 = PQprepare( m_db, "set_table_param", m_pimpl->m_myconv.to_bytes( query7.c_str() ).c_str(), 3, NULL );
