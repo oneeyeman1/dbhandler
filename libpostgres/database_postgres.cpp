@@ -539,6 +539,10 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == QT )
             query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
     }
+    std::wstring query8 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace, am.amname AS type";
+    if( pimpl.m_versionMajor >= 11 )
+        query8 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
+    query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
     res = PQexec( m_db, "BEGIN" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
@@ -639,7 +643,19 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     PQclear( res1 );
     if( !result )
-     {
+    {
+        res1 = PQprepare( m_db, "get_pk_prop", m_pimpl->m_myconv.to_bytes( query8 ).c_str(), 3, nullptr );
+        auto status = PQresultStatus( res1 );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    PQclear( res1 );
+    if( !result )
+    {
          char *params[4];
          std::wstring paramValues;
          int paramLength[4];
@@ -847,20 +863,29 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
-    char *values[3];
+    char *values[3], *values1[2];
     unsigned long len1 = t.length() * sizeof( wchar_t ) + 1;
     unsigned long len2 = ownerName.length() * sizeof( wchar_t ) + 1;
     values[0] = new char[len1 * 2];
     values[1] = new char[len2 * 2];
     values[2] = new char[2];
+    values1[0] = new char[schemaName.length() + 2];
+    values1[1] = new char[tableName.length() + 2];
     memset( values[0], '\0', len1 * 2 );
     memset( values[1], '\0', len2 * 2 );
     memset( values[2], '\0', 2 );
+    memset( values1[0], '\0', schemaName.length() + 2 );
+    memset( values1[2], '\0', tableName.length() + 2 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
     values[2] = const_cast<char *>( std::to_string( osid ).c_str() );
+    strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     int length[3] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ), 2 };
+    int length1[2] = { schemaName.length() + 2, tableName.length() + 2 };
     int formats[3] = { 0, 0, 0 };
+    int formats1[2] = { 0, 0 };
+    TableProperties prop;
     PGresult *res = PQexecPrepared( m_db, "get_table_prop", 3, values, length, formats, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -873,7 +898,6 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
-            TableProperties prop;
             prop.m_dataFontSize = atoi( PQgetvalue( res, i, 0 ) );
             prop.m_dataFontWeight = atoi( PQgetvalue( res, i, 1 ) );
             prop.m_dataFontItalic = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 2 ) ) == L"Y" ? true : false;
@@ -903,11 +927,49 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         }
     }
     PQclear( res );
+    if( !result )
+    {
+        PGresult *res = PQexecPrepared( m_db, "get_pk_prop", 2, values1, length1, formats1, 0 );
+        ExecStatusType status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+        else if( status == PGRES_TUPLES_OK )
+        {
+            for( int i = 0; i < PQntuples( res ); i++ )
+            {
+                std::wstring includedCol = L"";
+                int nextCol;
+                std::wstring pkName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 0 ) );
+                std::wstring tbSpace = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 1 ) );
+                if( tbSpace.empty() )
+                    tbSpace = L"default";
+                std::wstring indType = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 2 ) );
+                if( pimpl.m_versionMajor >= 11 )
+                {
+                    includedCol = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 3 ) );
+                    nextCol = 4;
+                }
+                else
+                    nextCol = 3;
+                std::wstring options = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, nextCol ) );
+                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace );
+            }
+        }
+    }
+    table->SetTableProperties( prop );
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     delete[] values[0];
     values[0] = nullptr;
+    delete[] values1[0];
+    values1[0] = nullptr;
     delete[] values[1];
     values[1] = nullptr;
+    delete[] values1[1];
+    values1[1] = nullptr;
     delete[] values[2];
     values[2] = nullptr;
     return result;
