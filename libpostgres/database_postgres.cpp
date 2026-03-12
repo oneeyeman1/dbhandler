@@ -843,7 +843,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
 
 int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, osid;
+    int result = 0, osid = -1;
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
     {
         osid = WINDOWS;
@@ -929,8 +929,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     PQclear( res );
     if( !result )
     {
-        PGresult *res = PQexecPrepared( m_db, "get_pk_prop", 2, values1, length1, formats1, 0 );
-        ExecStatusType status = PQresultStatus( res );
+        res = PQexecPrepared( m_db, "get_pk_prop", 2, values1, length1, formats1, 0 );
+        status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
