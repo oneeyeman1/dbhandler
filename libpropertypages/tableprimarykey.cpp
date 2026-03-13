@@ -72,6 +72,8 @@ void TablePrimaryKey::do_layout()
     sizer10->Add( m_label2, 0, wxEXPAND, 0 );
     sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer10->Add( m_pkName, 0, wxEXPAND, 0 );
+    m_label2->Enable( false );
+    m_pkName->Enable( false );
     sizer5->Add( sizer10, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
     if( m_db->GetTableVector().m_type == L"SQLite" )
