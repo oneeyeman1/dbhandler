@@ -542,7 +542,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     std::wstring query8 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace, am.amname AS type";
     if( pimpl.m_versionMajor >= 11 )
         query8 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
-    query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = ? AND t.relname = ?;";
+    query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = $1 AND t.relname = $2;";
     res = PQexec( m_db, "BEGIN" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
