@@ -79,7 +79,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     pos = wxDefaultPosition;
 #endif
     wxArrayString vs;
-#ifndef __WXGTK__
+#if !(defined __WXGTK__ || defined __WXQT__ )
     auto volumes = wxFSVolume::GetVolumes();
 #else
     vs.Add( "/" );
@@ -90,7 +90,7 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, _( "Library" ), pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     auto sizer = new wxBoxSizer( wxVERTICAL );
     m_drive = new wxBitmapComboBox( m_frame, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, vs, wxCB_READONLY  );
-#ifndef __WXGTK__
+#if !( defined __WXGTK__ || defined __WXQT__ )
     for( auto volume : volumes )
     {
         wxFSVolume vol( volume );
