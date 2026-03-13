@@ -888,14 +888,13 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     int formats1[2] = { 0, 0 };
     TableProperties prop;
     PGresult *res = PQexecPrepared( m_db, "get_table_prop", 3, values, length, formats, 0 );
-    ExecStatusType status = PQresultStatus( res );
-    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errorMsg.push_back( L"Error executing query: " + err );
         result = 1;
     }
-    else if( status == PGRES_TUPLES_OK )
+    else
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
@@ -931,14 +930,13 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     if( !result )
     {
         res = PQexecPrepared( m_db, "get_pk_prop", 2, values1, length1, formats1, 0 );
-        status = PQresultStatus( res );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        if( PQresultStatus( res ) != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errorMsg.push_back( L"Error executing query: " + err );
             result = 1;
         }
-        else if( status == PGRES_TUPLES_OK )
+        else
         {
             for( int i = 0; i < PQntuples( res ); i++ )
             {
