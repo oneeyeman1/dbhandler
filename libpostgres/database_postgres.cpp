@@ -959,6 +959,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             }
         }
     }
+    PQclear( res );
     table->SetTableProperties( prop );
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     delete[] values[0];
