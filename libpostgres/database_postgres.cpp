@@ -299,7 +299,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '0%' ) THEN INSERT INTO abcatfmt VALUES( '0%', '0%', 81, 0 ) END IF; END; $$;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '0.00%' ) THEN INSERT INTO abcatfmt VALUES( '0.00%', '0.00%', 81, 0 ) END IF; END; $$;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '0.00E+00' ) THEN INSERT INTO abcatfmt VALUES( '0.00E+00', '0.00E+00', 81, 0 ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'm/d/yy' ) THEN INSERT INTO abcatfmt VALUES( 'm/d/yy', 'm/d/yy\, 84, 0 ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'm/d/yy' ) THEN INSERT INTO abcatfmt VALUES( 'm/d/yy', 'm/d/yy, 84, 0 ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'd-mmm-yy' ) THEN INSERT INTO abcatfmt VALUES( 'd-mmm-yy', 'd-mmm-yy', 84, 0 ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'md-mm' ) THEN INSERT INTO abcatfmt VALUES( 'md-mm', 'd-mmm', 84, 0 ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'mmm-yy' ) THEN INSERT INTO abcatfmt VALUES( 'mmm-yy', 'mmm-yy', 84, 0 ) ON CONFLICT DO NOTHING;" );
@@ -1954,6 +1954,8 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             }
         }
     }
+    delete[] catalog_name;
+    catalog_name = nullptr;
     delete[] values1[0];
     values1[0] = NULL;
     delete[] values1[1];
