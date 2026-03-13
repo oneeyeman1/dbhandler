@@ -879,7 +879,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     memset( values1[1], '\0', tableName.length() + 2 );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( t.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
-    values[2] = const_cast<char *>( std::to_string( osid ).c_str() );
+    sprintf( values[2], "%d", osid );
     strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     int length[3] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ), 2 };
