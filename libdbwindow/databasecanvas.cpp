@@ -126,17 +126,7 @@ DatabaseCanvas::DatabaseCanvas(wxView *view, const wxPoint &pt, const wxString &
     startPoint.x = 10;
     startPoint.y = 10;
     m_conf = conf;
-    auto stdPath = wxStandardPaths::Get();
-#ifdef __WXOSX__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    fn.RemoveLastDir();
-    m_libPath = fn.GetPathWithSep() + "Frameworks/";
-#elif __WXGTK__
-    m_libPath = stdPath.GetInstallPrefix() + "/";
-#elif __WXMSW__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    m_libPath = fn.GetPathWithSep();
-#endif
+    m_libPath = wxStandardPaths::Get().GetSharedLibrariesDir();
     auto root = new QueryRoot();
     root->SetDbName( dbName );
     root->SetDbType( dbType );
@@ -1172,26 +1162,16 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
                 id++;
                 it1++;
             }*/
-            wxString libName, path;
+            wxString libName;
             wxDynamicLibrary lib;
-#if wxCHECK_VERSION(3, 3, 0)
-            path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
-#else
 #ifdef __WXMSW__
-            wxFileName fn( GetExecutablePath() );
-            path = fn.GetPath();
-#elif defined(__WXGTK__) || defined(__WXQT__)
-            path = GetInstallPrefix() + "/lib";
-#endif
-#endif
-#ifdef __WXMSW__
-            libName = "\\dialogs";
+            libName = "dialogs";
 #elif __WXMAC__
             libName = "/liblibdialogs.dylib";
 #else
-            libName = "/libdialogs";
+            libName = "libdialogs";
 #endif
-            lib.Load(  path + libName  );
+            lib.Load( m_libPath + libName  );
             if( lib.IsLoaded() )
             {
                 CREATEFOREIGNKEY func = (CREATEFOREIGNKEY) lib.GetSymbol( "CreateForeignKey" );

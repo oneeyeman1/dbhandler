@@ -28,6 +28,10 @@
 #ifndef __WXGTK__
 #include "wx/volume.h"
 #endif
+#ifdef __WXQT__
+#include <QStorageInfo>
+#endif // __WXQT__
+
 #include "wx/dynlib.h"
 #include "wx/artprov.h"
 #include "wx/docview.h"
@@ -79,8 +83,13 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     pos = wxDefaultPosition;
 #endif
     wxArrayString vs;
-#if !(defined __WXGTK__ || defined __WXQT__ )
-    auto volumes = wxFSVolume::GetVolumes();
+#ifdef __WXQT__
+    auto v = QStorageInfo::mountedVolumes();
+    for( auto volume : v )
+        vs.Add( volume.displayName() );
+#endif
+#ifndef __WXGTK__
+    vs = wxFSVolume::GetVolumes();
 #else
     vs.Add( "/" );
 #endif
@@ -90,8 +99,8 @@ bool LibraryViewPainter::OnCreate(wxDocument *doc, long flags)
     m_frame = new wxDocMDIChildFrame( doc, this, m_parent, wxID_ANY, _( "Library" ), pos, wxSize( clientRect.GetWidth(), clientRect.GetHeight() ) );
     auto sizer = new wxBoxSizer( wxVERTICAL );
     m_drive = new wxBitmapComboBox( m_frame, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, vs, wxCB_READONLY  );
-#if !( defined __WXGTK__ || defined __WXQT__ )
-    for( auto volume : volumes )
+#ifndef __WXGTK__
+    for( auto volume : vs )
     {
         wxFSVolume vol( volume );
         m_drive->Append( volume, vol.GetIcon( wxFS_VOL_ICO_SMALL ) );
