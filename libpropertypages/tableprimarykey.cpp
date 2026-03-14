@@ -44,6 +44,9 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
     m_fields->SetColumnWidth( 0, wxLIST_AUTOSIZE );
     m_fields->Bind( wxEVT_LEFT_DOWN, &TablePrimaryKey::OnLeftDown, this );
     do_layout();
+    m_fields->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnOptionChanged, this );
+    m_fields->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnOptionChanged, this );
+    m_tableSpace->Bind( wxEVT_TEXT, &TablePrimaryKey::OnOptionChanged, this );
 }
 
 void TablePrimaryKey::do_layout()
@@ -282,3 +285,9 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
         }
     }
 }
+
+void TablePrimaryKey::OnOptionChanged(wxCommandEvent &WXUNUSED(event))
+{
+    m_isModified = true;
+}
+
