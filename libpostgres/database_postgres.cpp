@@ -520,24 +520,24 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 5 )
     {
         if( osid == WINDOWS )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query7 = L"INSERT INTO abcattbl VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' );";
         else if( osid == OSX )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 34, 0, \'MS Sans Serif\', \'\' );";
+            query7 = L"INSERT INTO abcattbl VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' );";
         else if( osid == GTK )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'Serif', 8, 400, 'N', 'N', 0, 1, 0, 'Serif', 8, 400, 'N', 'N', 0, 1, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
     }
     else
     {
         if( osid == WINDOWS )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 0, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'MS Sans Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 4, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Serif\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 1, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'Serif', 8, 400, 'N', 'N', 0, 1, 0, 'Serif', 8, 400, 'N', 'N', 0, 1, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            query7 = L"INSERT INTO \"abcattbl\" VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', 8, 400, \'N\', \'N\', 0, 1, 0, \'Cantrell\', \'\' ) ON CONFLICT DO NOTHING;";
+            query7 = L"INSERT INTO abcattbl VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
     }
     std::wstring query8 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace, am.amname AS type";
     if( pimpl.m_versionMajor >= 11 )
@@ -883,7 +883,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
     strcpy( values1[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values1[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     int length[3] = { static_cast<int>( strlen( values[0] ) ), static_cast<int>( strlen( values[1] ) ), 2 };
-    int length1[2] = { schemaName.length() + 2, tableName.length() + 2 };
+    int length1[2] = { static_cast<int>( schemaName.length() + 2 ), static_cast<int>( tableName.length() + 2 ) };
     int formats[3] = { 0, 0, 0 };
     int formats1[2] = { 0, 0 };
     TableProperties prop;
