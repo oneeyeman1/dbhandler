@@ -923,7 +923,6 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             prop.m_labelFontPixelSize = atoi( PQgetvalue( res, i, 22 ) );
             prop.m_labelFontName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 23 ) );
             prop.m_comment = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 24 ) );
-            table->SetTableProperties( prop );
         }
     }
     PQclear( res );
@@ -960,8 +959,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         }
     }
     PQclear( res );
-    table->SetTableProperties( prop );
-    table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
+    if( !result )
+        table->SetTableProperties( prop );
     delete[] values[0];
     values[0] = nullptr;
     delete[] values1[0];
@@ -1779,17 +1778,13 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
         int length1[2] = { len1, len2 };
         int formats1[2] = { 0, 0 };
         res1 = PQexecPrepared( m_db, "get_fkeys", 2, values1, length1, formats1, 0 );
-        status = PQresultStatus( res1 );
-        if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+        if( PQresultStatus( res1 ) != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
             errors.push_back( L"Error executing query: " + err );
-            PQclear( res1 );
-            fields.erase( fields.begin(), fields.end() );
-            foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
             result = 1;
         }
-        if( !result  )
+        else
         {
             for( int j = 0; j < PQntuples( res1 ); j++ )
             {
@@ -1845,69 +1840,66 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                 foreign_keys[fkId].push_back( new FKField( fkReference, fkName, origSchema, origTable, origField, refSchema, refTable, refField, origFields[fkId], refFields[fkId], update_constraint, delete_constraint, fkMatch ) );
                 fk_names.push_back( origField );
             }
-            PQclear( res1 );
+        }
+        PQclear( res1 );
+        std::vector<std::wstring> pk;
+        int numFields = 0;
+        if( !result )
+        {
             res2 = PQexecPrepared( m_db, "get_columns", 2, values1, length1, formats1, 0 );
-            status = PQresultStatus( res2 );
-            if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+            if( PQresultStatus( res2 ) != PGRES_TUPLES_OK )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                 errors.push_back( L"Error executing query: " + err );
                 PQclear( res2 );
-                fields.erase( fields.begin(), fields.end() );
-                foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                 result = 1;
             }
-        }
-        if( !result )
-        {
-            int numFields = 0;
-            for( int j = 0; j < PQntuples( res2 ); j++ )
+            else
             {
-                int size, precision;
-                bool autoinc = false;
-                const char *field_name = PQgetvalue( res2, j, 0 );
-                fieldName = m_pimpl->m_myconv.from_bytes( field_name );
-                fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
-                char *char_length = PQgetvalue( res2, j, 2 );
-                char *numeric_length = PQgetvalue( res2, j, 4 );
-                char *numeric_scale = PQgetvalue( res2, j, 6 );
-                fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
-                fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
-                fieldPK = !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) ? 1 : 0;
-                if( *char_length == '0' )
+                for( int j = 0; j < PQntuples( res2 ); j++ )
                 {
-                    size = atoi( numeric_length );
-                    precision = atoi( numeric_scale );
+                    int size, precision;
+                    bool autoinc = false;
+                    const char *field_name = PQgetvalue( res2, j, 0 );
+                    fieldName = m_pimpl->m_myconv.from_bytes( field_name );
+                    fieldType = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 1 ) );
+                    char *char_length = PQgetvalue( res2, j, 2 );
+                    char *numeric_length = PQgetvalue( res2, j, 4 );
+                    char *numeric_scale = PQgetvalue( res2, j, 6 );
+                    fieldDefaultValue = m_pimpl->m_myconv.from_bytes( PQgetvalue( res2, j, 8 ) );
+                    fieldIsNull = !strcmp( PQgetvalue( res2, j, 7 ), "YES" ) ? 1 : 0;
+                    fieldPK = !strcmp( PQgetvalue( res2, j, 9 ), "YES" ) ? 1 : 0;
+                    if( *char_length == '0' )
+                    {
+                        size = atoi( numeric_length );
+                        precision = atoi( numeric_scale );
+                    }
+                    else
+                    {
+                        size = atoi( char_length );
+                        precision = 0;
+                    }
+                    if( fieldType == L"serial" || fieldType == L"bigserial" )
+                        autoinc = true;
+                    TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                    if( GetFieldProperties( tableName, schemaName, own, m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                        errors.push_back( err );
+                        fields.erase( fields.begin(), fields.end() );
+                        foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                        result = 1;
+                        break;
+                    }
+                    fields.push_back( field );
+                    if( fieldPK )
+                        pk.push_back( fieldName );
+                    numFields++;
                 }
-                else
-                {
-                    size = atoi( char_length );
-                    precision = 0;
-                }
-                if( fieldType == L"serial" || fieldType == L"bigserial" )
-                    autoinc = true;
-                TableField *field = new TableField( fieldName, fieldType, size, precision, catalog + L"." + schemaName + L"." + tableName + L"." + fieldName, fieldDefaultValue, fieldIsNull, autoinc, fieldPK, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
-                if( GetFieldProperties( tableName, schemaName, own, m_pimpl->m_myconv.from_bytes( field_name ), field, errors ) )
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-                    errors.push_back( err );
-                    fields.erase( fields.begin(), fields.end() );
-                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
-                    result = 1;
-                    break;
-                }
-                fields.push_back( field );
-                numFields++;
             }
             PQclear( res2 );
             if( !result )
             {
-                std::vector<std::wstring> pk;
-                for( std::vector<TableField *>::iterator it = fields.begin(); it < fields.end(); ++it )
-                {
-                    if( (*it)->IsPrimaryKey() )
-                        pk.push_back( (*it)->GetFieldName() );
-                }
                 DatabaseTable *table = new DatabaseTable( tableName, schemaName, fields, pk, foreign_keys );
                 table->SetFullName( catalog + L"." + schemaName + L"." + tableName );
                 table->SetCatalog( catalog );
@@ -1919,14 +1911,15 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                     errors.push_back( m_pimpl->m_myconv.from_bytes( err ) );
                     fields.erase( fields.begin(), fields.end() );
                     foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    delete table;
+                    table = nullptr;
                     result = 1;
                 }
                 else
                 {
                     int numIndexes = 0;
                     res4 = PQexecPrepared( m_db, "get_indexes", 2, values1, length1, formats1, 1 );
-                    status = PQresultStatus( res4 );
-                    if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
+                    if( PQresultStatus( res4 ) != PGRES_TUPLES_OK )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
                         errors.push_back( L"Error executing query: " + err );
@@ -1944,7 +1937,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
                         }
                         table->SetIndexNames( indexes );
                         table->SetNumberOfIndexes( numIndexes );
-                        pimpl.m_tables[m_pimpl->m_myconv.from_bytes( catalog_name )].push_back( table );
+                        pimpl.m_tables[catalog].push_back( table );
                         fields.erase( fields.begin(), fields.end() );
                         foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
                         fk_names.clear();
@@ -1954,8 +1947,6 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
             }
         }
     }
-    delete[] catalog_name;
-    catalog_name = nullptr;
     delete[] values1[0];
     values1[0] = NULL;
     delete[] values1[1];
