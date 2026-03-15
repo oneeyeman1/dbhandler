@@ -192,7 +192,7 @@ void TablePrimaryKey::do_layout()
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
     {
-        wxString includedCols( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_includeColumns );
+        wxArrayString included = wxSplit( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_includeColumns, ',' );
         wxArrayString tokens = wxSplit( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_storage, ',' );
         std::map<wxString, wxString> params;
         for( auto token : tokens )
@@ -211,7 +211,18 @@ void TablePrimaryKey::do_layout()
         sizer5->Add( sizer10, 0, wxEXPAND, 0 );
         m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "INCLUDED" );
         sizer4->Add( m_label1, 0, wxEXPAND, 0 );
-        m_included = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, includedCols );
+        m_included = new wxListCtrl( sizer2->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER );
+        m_included->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
+        int row = 0;
+        for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
+        {
+            m_included->InsertItem( row++, (*it)->GetFieldName() );
+            if( included.Index( (*it)->GetFieldName() ) != wxNOT_FOUND )
+            {
+                m_included->SetItemState( m_fields->FindItem( -1, (*it)->GetFieldName() ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            }
+        }
+        m_included->SetColumnWidth( 0, wxLIST_AUTOSIZE );
         sizer4->Add( m_included, 0, wxEXPAND, 0 );
         sizer7 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "fillfactor" );

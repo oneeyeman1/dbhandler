@@ -20,7 +20,7 @@ private:
     wxComboBox *m_conflict = nullptr;
     wxCheckBox *m_autoincrement = nullptr;
     wxCheckBox *m_clustered = nullptr;
-    wxTextCtrl *m_included = nullptr;
+    wxListCtrl *m_included = nullptr;
     wxCheckBox *m_padIndex = nullptr;
     wxCheckBox *m_xml = nullptr;
     wxCheckBox *m_ignoreDup = nullptr;

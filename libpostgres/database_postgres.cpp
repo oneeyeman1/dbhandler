@@ -949,6 +949,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 if( pimpl.m_versionMajor >= 11 )
                 {
                     includedCol = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 3 ) );
+                    includedCol.erase( 0, 1 );
+                    includedCol.pop_back();
                     nextCol = 4;
                 }
                 else
