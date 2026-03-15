@@ -956,6 +956,8 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 else
                     nextCol = 3;
                 std::wstring options = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, nextCol ) );
+                options.erase( 0, 1 );
+                options.pop_back();
                 prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace );
             }
         }
