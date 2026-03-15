@@ -46,7 +46,19 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
     do_layout();
     m_fields->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnOptionChanged, this );
     m_fields->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnOptionChanged, this );
-    m_tableSpace->Bind( wxEVT_TEXT, &TablePrimaryKey::OnOptionChanged, this );
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
+        ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
+    {
+        m_tableSpace->Bind( wxEVT_TEXT, &TablePrimaryKey::OnOptionChanged, this );
+        m_included->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnOptionChanged, this );
+        m_included->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnOptionChanged, this );
+        m_fillFactor->Bind( wxEVT_SPINCTRL,&TablePrimaryKey::OnOptionChanged, this );
+    }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) ||
+        ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
+    {
+        m_fastUpdate->Bind( wxEVT_CHECKBOX, &TablePrimaryKey::OnOptionChanged, this );
+    }
 }
 
 void TablePrimaryKey::do_layout()
