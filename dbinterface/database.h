@@ -259,6 +259,7 @@ public:
             break;
         }
     }
+    TableProperties(const TableProperties &prop) = default;
     TableProperties &operator=(const TableProperties &right)
     {
         if( this == &right )
