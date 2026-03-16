@@ -44,6 +44,11 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
     m_fields->SetColumnWidth( 0, wxLIST_AUTOSIZE );
     m_fields->Bind( wxEVT_LEFT_DOWN, &TablePrimaryKey::OnLeftDown, this );
     do_layout();
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        m_conflict->Bind( wxEVT_COMBOBOX, &TablePrimaryKey::OnOptionChange, this );
+        m_autoincrement->Bind( wxEVT_CHECKBOX, &TablePrimaryKey::OnOptionChange, this );
+    }
 }
 
 void TablePrimaryKey::do_layout()
@@ -281,4 +286,9 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
             m_foreignKeyColumnsFields->AddField( label );
         }
     }
+}
+
+void TablePrimaryKey::OnOptionChange(wxCommandEvent &WXUNUSED(event))
+{
+    this->m_isModified = true;
 }
