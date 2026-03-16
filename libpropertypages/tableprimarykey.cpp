@@ -53,6 +53,12 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
         m_included->Bind( wxEVT_LIST_ITEM_SELECTED, &TablePrimaryKey::OnOptionChanged, this );
         m_included->Bind( wxEVT_LIST_ITEM_DESELECTED, &TablePrimaryKey::OnOptionChanged, this );
         m_fillFactor->Bind( wxEVT_SPINCTRL,&TablePrimaryKey::OnOptionChanged, this );
+        if( m_buffering )
+            m_buffering->Bind( wxEVT_CHECKBOX, &TablePrimaryKey::OnOptionChanged, this );
+        if( m_vacuumCleanup )
+            m_vacuumCleanup->Bind( wxEVT_SPINCTRL,&TablePrimaryKey::OnOptionChanged, this );
+        if( m_deduplicate )
+            m_deduplicate->Bind( wxEVT_CHECKBOX, &TablePrimaryKey::OnOptionChanged, this );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) ||
         ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
@@ -215,14 +221,14 @@ void TablePrimaryKey::do_layout()
         wxString type( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_type );
         auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "TABLESPACE" );
-        sizer10->Add( m_label2, 0, wxEXPAND, 0 );
+        sizer10->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
         m_tableSpace = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_tablespace );
         sizer10->Add( m_tableSpace, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer10, 0, wxEXPAND, 0 );
         m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "INCLUDED" );
-        sizer4->Add( m_label1, 0, wxEXPAND, 0 );
+        sizer4->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
         m_included = new wxListCtrl( sizer2->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER );
         m_included->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
         int row = 0;
@@ -238,7 +244,7 @@ void TablePrimaryKey::do_layout()
         sizer4->Add( m_included, 0, wxEXPAND, 0 );
         sizer7 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "fillfactor" );
-        sizer7->Add( m_label2, 0, wxEXPAND, 0 );
+        sizer7->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
         m_fillFactor = new wxSpinCtrl( sizer2->GetStaticBox(), wxID_ANY, params.find( "fillfactor" ) == params.end() ? "100" : params["fillfactor"], wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
         sizer7->Add( m_fillFactor, 0, wxEXPAND, 0 );
@@ -259,7 +265,7 @@ void TablePrimaryKey::do_layout()
         {
             sizer8 = new wxBoxSizer( wxHORIZONTAL );
             m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "vacuum_cleanup_index_scale_factor" );
-            sizer8->Add( m_label3, 0, wxEXPAND, 0 );
+            sizer8->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
             sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
             m_vacuumCleanup = new wxSpinCtrlDouble( sizer2->GetStaticBox(), wxID_ANY, params.find( "vacuum_cleanup_index_scale_factor" ) == params.end() ? "0.1" : params["vacuum_cleanup_index_scale_factor"], wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 10000000000 );
             sizer8->Add( m_vacuumCleanup, 0, wxEXPAND, 0 );
