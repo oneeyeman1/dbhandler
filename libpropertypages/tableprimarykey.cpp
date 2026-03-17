@@ -348,5 +348,15 @@ std::shared_ptr<PKOptions> &TablePrimaryKey::GetPKOptions()
     {
         options = std::make_shared<SQLitePKOptions>( name, m_conflict->GetSelection(), m_autoincrement->GetValue() );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) ||
+        ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
+    {
+        bool sequental = m_sequential ? m_sequential->GetValue() : false;
+        int delay = m_delay ? wxAtoi( m_delay->GetValue() ) : 0;
+        options = std::make_shared<SQLServerPKOptions>( name, m_clustered->GetValue(), m_padIndex->GetValue(), m_fillFactor->GetValue(), 
+                                                       m_ignoreDup->GetValue(), m_norecompute->GetValue(), m_incremental->GetValue(), 
+                                                       m_rowLocks->GetValue(), m_pageLocks->GetValue(), sequental, delay, 
+                                                       L"", 1, false );
+    }
     return options;
 }
