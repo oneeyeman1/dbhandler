@@ -339,3 +339,13 @@ void TablePrimaryKey::OnOptionChanged(wxCommandEvent &WXUNUSED(event))
 {
     m_isModified = true;
 }
+
+std::shared_ptr<PKOptions> &TablePrimaryKey::GetPKOptions()
+{
+    const std::wstring name( m_pkName->GetValue().ToStdWstring() );
+    std::shared_ptr<PKOptions> options;
+    if( m_db->GetTableVector().m_type == L"SQLite" )
+    {
+        options = std::shared_ptr<SQLitePKOptions>( name, m_conflict->GetSelection(), m_autoincrement->GetValue() );
+    }
+}

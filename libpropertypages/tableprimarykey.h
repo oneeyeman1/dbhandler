@@ -4,6 +4,7 @@ class WXEXPORT TablePrimaryKey : public PropertyPageBase
 public:
     TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseTable *table);
     const std::vector<std::wstring> &GetNewKey() const { return newKey; }
+    std::shared_ptr<PKOptions> &GetPKOptions();
 protected:
     void do_layout();
     void OnLeftDown(wxMouseEvent &event);
