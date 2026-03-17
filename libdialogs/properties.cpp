@@ -253,7 +253,7 @@ void PropertiesDialog::do_layout()
     // end wxGlade
 }
 
-void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
+void PropertiesDialog::OnApply(wxCommandEvent &event)
 {
     if( ApplyProperties() )
     {
@@ -274,6 +274,9 @@ void PropertiesDialog::OnOk(wxCommandEvent &WXUNUSED(event))
 
 bool PropertiesDialog::ApplyProperties()
 {
+    wxButton *apply = dynamic_cast<wxButton *>( FindWindowById( wxID_APPLY ) );
+    if( apply && !apply->IsEnabled() )
+        return false;
     wxAny any;
     bool logOnly = false;
     switch( m_handler->GetType() )
