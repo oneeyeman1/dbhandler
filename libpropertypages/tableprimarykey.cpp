@@ -239,7 +239,7 @@ void TablePrimaryKey::do_layout()
             params[paran[0]] = paran[1];
         }
         wxString type( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_type );
-        auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
+        sizer10 = new wxBoxSizer( wxHORIZONTAL );
         m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "TABLESPACE" );
         sizer10->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -346,6 +346,7 @@ std::shared_ptr<PKOptions> &TablePrimaryKey::GetPKOptions()
     std::shared_ptr<PKOptions> options;
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
-        options = std::shared_ptr<SQLitePKOptions>( name, m_conflict->GetSelection(), m_autoincrement->GetValue() );
+        options = std::make_shared<SQLitePKOptions>( name, m_conflict->GetSelection(), m_autoincrement->GetValue() );
     }
+    return options;
 }
