@@ -318,6 +318,7 @@ bool PropertiesDialog::ApplyProperties()
             prop.m_labelFontUnderline = m_page4->GetFont().font.GetUnderlined();
             prop.m_labelFontWeight = m_page4->GetFont().font.GetWeight();
             prop.primaryKey = m_page5->GetNewKey();
+            prop.SetPKOptions( m_page5->GetPKOptions() );
             any = prop;
         }
     }
