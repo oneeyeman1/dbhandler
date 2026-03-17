@@ -1,4 +1,5 @@
 .DS_Store
+configure
 Debug/
 dbhandler/vc_mswuddll/
 dbhandler/vc_mswudll/

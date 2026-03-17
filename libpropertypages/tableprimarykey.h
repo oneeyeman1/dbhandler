@@ -7,7 +7,7 @@ public:
 protected:
     void do_layout();
     void OnLeftDown(wxMouseEvent &event);
-    void OnOptionChange(wxCommandEvent &event);
+    void OnOptionChanged(wxCommandEvent &event);
 private:
     Database *m_db;
     FieldWindow* m_foreignKeyColumnsFields;
@@ -20,7 +20,7 @@ private:
     wxComboBox *m_conflict = nullptr;
     wxCheckBox *m_autoincrement = nullptr;
     wxCheckBox *m_clustered = nullptr;
-    wxTextCtrl *m_included = nullptr;
+    wxListCtrl *m_included = nullptr;
     wxCheckBox *m_padIndex = nullptr;
     wxCheckBox *m_xml = nullptr;
     wxCheckBox *m_ignoreDup = nullptr;
