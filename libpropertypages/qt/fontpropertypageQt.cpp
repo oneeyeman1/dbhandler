@@ -40,36 +40,40 @@
 CFontPropertyPage::CFontPropertyPage(wxWindow* parent, FontPropertyPage font, bool colorEnabled)
  : CFontPropertyPageBase(parent, font)
 {
+    bool ok;
     auto foreground = new CColorComboBox( this, wxID_ANY );
     auto background = new CColorComboBox( this, wxID_ANY );
     fontInfo = font;
-/*    auto sizerMain = new wxBoxSizer( wxHORIZONTAL );
+    auto sizerMain = new wxBoxSizer( wxHORIZONTAL );
     sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizerPage = new wxBoxSizer( wxVERTICAL );
-    sizerPage->Add( 5, 5, 0, wxEXPAND, 0 );*/
+    auto sizer = new wxBoxSizer( wxVERTICAL );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel = new QFontDialog( font.font.GetHandle(), parent->GetHandle() );
     m_panel->setOptions( QFontDialog::NoButtons );
-//    sizerPage->Add( m_panel, 0, wxEXPAND, 0 );
-    if( colorEnabled )
+    fontInfo.font = m_panel->getFont( &ok, fontInfo.font.GetHandle() );
+    sizer->Add( m_panel, 0, wxEXPAND, 0 );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizerMain->Add( sizer, 0, wxEXPAND, 0 );
+/*    if( colorEnabled )
     {
-/*        sizerPage->Add( 5, 5, 0, wxEXPAND, 0 );
-        auto colorSizer = new wxBoxSizer( wxHORIZONTAL );*/
+        sizerPage->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto colorSizer = new wxBoxSizer( wxHORIZONTAL );
         foreground->Enable() ;
-/*        colorSizer->Add( foreground, 0, wxEXPAND, 0 );
-        colorSizer->Add( 5, 5, 0, wxEXPAND, 0 );*/
+        colorSizer->Add( foreground, 0, wxEXPAND, 0 );
+        colorSizer->Add( 5, 5, 0, wxEXPAND, 0 );
         background->Enable();
-/*        colorSizer->Add( background, 0, wxEXPAND, 0 );
-        sizerPage->Add( colorSizer, 0, wxEXPAND, 0 );*/
+        colorSizer->Add( background, 0, wxEXPAND, 0 );
+        sizerPage->Add( colorSizer, 0, wxEXPAND, 0 );
     }
     else
     {
         foreground->Disable();
         background->Disable();
     }
-/*    sizerMain->Add( sizerPage, 0, wxEXPAND, 0 );
-    sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizerMain->Add( sizerPage, 0, wxEXPAND, 0 );
+    sizerMain->Add( 5, 5, 0, wxEXPAND, 0 );*/
     SetSizer( sizerMain );
-    Layout();*/
+    Layout();
 }
 
 CFontPropertyPage::~CFontPropertyPage()
