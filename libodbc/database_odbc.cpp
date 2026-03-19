@@ -8344,7 +8344,7 @@ int ODBCDatabase::GetTableFields(const std::wstring &catalog, const std::wstring
     return result;
 }
 
-int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     SQLLEN cbLen[6];
