@@ -253,7 +253,7 @@ void PropertiesDialog::do_layout()
     // end wxGlade
 }
 
-void PropertiesDialog::OnApply(wxCommandEvent &event)
+void PropertiesDialog::OnApply(wxCommandEvent &WXUNUSED(event))
 {
     if( ApplyProperties() )
     {
@@ -318,7 +318,6 @@ bool PropertiesDialog::ApplyProperties()
             prop.m_labelFontUnderline = m_page4->GetFont().font.GetUnderlined();
             prop.m_labelFontWeight = m_page4->GetFont().font.GetWeight();
             prop.primaryKey = m_page5->GetNewKey();
-            std::shared_ptr<PKOptions> opts = m_page5->GetPKOptions();
             prop.SetPKOptions( m_page5->GetPKOptions() );
             any = prop;
         }
