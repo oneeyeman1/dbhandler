@@ -836,7 +836,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     bool autoinc = false;
                     int conflict = 1;
                     std::wstring name = L"";
-                    std::wregex pattern( L"(CONSTRAINT \\w)* PRIMARY KEY\\s*((ON CONFLICT \\w+)* (AUTOINCREMENT)*)*", std::regex_constants::icase );
+                    std::wregex pattern( L"(CONSTRAINT \w)*primary key\s*((ON CONFLICT \w)*\s*(AUTOINCREMENT)*)*", std::regex_constants::icase );
                     std::wsmatch findings;
                     if( std::regex_search( command, findings, pattern ) )
                     {
@@ -2935,7 +2935,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     // 4. Remove foreign key constraint from CREATE TABLE command
     if( !result )
     {
-        std::wregex pattern( L"primary key[(,]", std::regex_constants::icase );
+        std::wregex pattern( L"(CONSTRAINT \w)*primary key\s*((ON CONFLICT \w)*\s*(AUTOINCREMENT)*)", std::regex_constants::icase );
         std::wsmatch findings;
         if( std::regex_search( createCommand, findings, pattern ) )
         {
@@ -2946,10 +2946,20 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
             if( end == std::wstring::npos )
                 end = temp1.length() - 1;
             temp2 = temp2.substr( end );
+            std::wstring name = L"";
+            auto oldKey = temp2.substr( 0, end );
+            if( FindNoCase( oldKey, L"CONSTRAINT") )
+            {
+                name = oldKey.substr( oldKey.find( ' ' ) + 1 );
+                name = name.substr( 0, name.find( ' ') );
+            }
             newCommand = temp1 + temp2;
             if( newKey.size() > 0 )
             {
-                std::wstring newKeyString = L", PRIMARY KEY(";
+                std::wstring newKeyString = L",";
+                if( !name.empty() )
+                    newKeyString += L" CONSTRAINT " + name;
+                newKeyString += L" PRIMARY KEY(";
                 for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
                 {
                     newKeyString += (*it);
@@ -2958,6 +2968,27 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
                     else
                         newKeyString += L",";
                 }
+                auto action = std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_conflict;
+                switch( action )
+                {
+                case 0:
+                    newKeyString += L" ON CONFLICT ROLLBACK";
+                    break;
+                case 2:
+                    newKeyString += L" ON CONFLICT FAIL";
+                    break;
+                case 3:
+                    newKeyString += L" ON CONFLICT IGNORE";
+                    break;
+                case 4:
+                    newKeyString += L" ON CONFLICT REPLACE";
+                    break;
+                case 1:
+                default:
+                    break;
+                }
+                if( std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_autoincrement )
+                    newKeyString += L" AUTOINCREMENT";
                 newCommand.insert( newCommand.length() - 1, newKeyString );
             }
         }
