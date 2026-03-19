@@ -91,7 +91,7 @@ void TablePrimaryKey::do_layout()
 {
     auto main = new wxBoxSizer( wxHORIZONTAL );
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
-    auto sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
+    sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer5 = new wxBoxSizer( wxVERTICAL );
@@ -333,11 +333,19 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
             m_foreignKeyColumnsFields->AddField( label );
         }
     }
+    if( newKey.size() == 0 )
+    {
+        m_isModified = false;
+        sizer2->GetStaticBox()->Enable( false );
+    }
+    else
+        sizer2->GetStaticBox()->Enable( true );
 }
 
 void TablePrimaryKey::OnOptionChanged(wxCommandEvent &WXUNUSED(event))
 {
-    m_isModified = true;
+    if( newKey.size() == 0 )
+        m_isModified = false;
 }
 
 const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const

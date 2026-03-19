@@ -12,6 +12,7 @@ protected:
 private:
     Database *m_db;
     FieldWindow* m_foreignKeyColumnsFields;
+    wxStaticBoxSizer *sizer2 = nullptr;
     wxStaticText *m_label;
     wxListCtrl *m_fields;
     const DatabaseTable *m_table;
