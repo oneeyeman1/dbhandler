@@ -49,6 +49,8 @@ struct PKOptions
 {
     std::wstring m_name;
     virtual ~PKOptions() {}
+    virtual bool equal(const PKOptions &opts) const { return m_name == opts.m_name; }
+    virtual bool notequal(const PKOptions &opts) const { return !( this->equal( opts ) ); }
 };
 
 struct SQLitePKOptions : public PKOptions
@@ -58,6 +60,16 @@ public:
     bool m_autoincrement;
     SQLitePKOptions(const std::wstring &name, int conflict, bool autoinc) : m_conflict( conflict), m_autoincrement( autoinc ) { m_name = name; }
     virtual ~SQLitePKOptions() { }
+    virtual bool equal(const PKOptions &opt) const override
+    {
+        const SQLitePKOptions *options = dynamic_cast<const SQLitePKOptions*>( &opt );
+        return m_name == options->m_name && m_conflict == options->m_conflict && m_autoincrement == options->m_autoincrement;
+    }
+    virtual bool notequal(const PKOptions &opt) const override
+    {
+        const SQLitePKOptions *options = dynamic_cast<const SQLitePKOptions*>( &opt );
+        return !( this->equal( *options ) );
+    }
 };
 
 struct SQLServerPKOptions : public PKOptions
@@ -67,6 +79,19 @@ struct SQLServerPKOptions : public PKOptions
     bool m_isClustered, m_pad, m_ignoreDup, m_norecomp, m_incremental, m_rowLocks, m_pageLocks, m_sequential, m_xml;
     int m_fill, m_delay, m_partitionRegular, m_partitionXML;
     std::wstring m_desc;
+    virtual bool equal(const PKOptions &opt) const override
+    {
+        const SQLServerPKOptions *options = dynamic_cast<const SQLServerPKOptions*>( &opt );
+        return m_name == options->m_name && m_isClustered == options->m_isClustered && m_pad == options->m_pad && m_ignoreDup == options->m_ignoreDup &&
+               m_norecomp == options->m_norecomp && m_incremental == options->m_incremental && m_rowLocks == options->m_rowLocks &&
+               m_pageLocks == options->m_pageLocks && m_sequential == options->m_sequential && m_xml == options->m_xml &&
+               m_fill == options->m_fill && m_delay == options->m_delay && m_partitionRegular == options->m_partitionRegular &&
+               m_partitionXML == options->m_partitionXML && m_desc == options->m_desc; }
+    virtual bool notequal(const PKOptions &opt) const override
+    {
+        const SQLServerPKOptions *options = dynamic_cast<const SQLServerPKOptions*>( &opt );
+        return !( this->equal( *options ) );
+    }
 };
 
 struct PostgresPKOptions : public PKOptions
@@ -74,6 +99,18 @@ struct PostgresPKOptions : public PKOptions
     std::wstring m_includeColumns, m_storage, m_type;
     std::wstring m_tablespace;
     PostgresPKOptions(const std::wstring &name, const std::wstring type, const std::wstring &columns, const std::wstring &storage, const std::wstring tablespace) : m_includeColumns( columns ), m_type( type ), m_storage( storage ), m_tablespace( tablespace ) { m_name = name; }
+    virtual ~PostgresPKOptions() { }
+    virtual bool equal(const PKOptions &opt) const override
+    {
+        const PostgresPKOptions *options = dynamic_cast<const PostgresPKOptions*>( &opt );
+        return m_name == options->m_name && m_includeColumns == options->m_includeColumns && m_storage == options->m_storage &&
+               m_type == options->m_type && m_tablespace == options->m_tablespace;
+    }
+    virtual bool notequal(const PKOptions &opt) const override
+    {
+        const PostgresPKOptions *options = dynamic_cast<const PostgresPKOptions*>( &opt );
+        return !( this->equal( *options ) );
+    }
 };
 
 struct DropIndexOption
@@ -487,6 +524,7 @@ public:
     int GetNumberOfIndexes() const { return m_numIndex; }
     void SetFullName(const std::wstring &fullName) { m_fullName = fullName; }
     const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
+    PKOptions &GetPKOptions() const { return *m_props.pkOptions.get(); }
     void DropForeignKey(const std::vector<FKField *> &fieldToRemove)
     {
         for( auto elem = foreign_keys.begin(); elem != foreign_keys.end(); ++elem )

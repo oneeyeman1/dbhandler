@@ -4,7 +4,7 @@ class WXEXPORT TablePrimaryKey : public PropertyPageBase
 public:
     TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseTable *table);
     const std::vector<std::wstring> &GetNewKey() const { return newKey; }
-    std::shared_ptr<PKOptions> &GetPKOptions();
+    const std::shared_ptr<PKOptions> GetPKOptions() const;
 protected:
     void do_layout();
     void OnLeftDown(wxMouseEvent &event);
@@ -32,7 +32,7 @@ private:
     wxCheckBox *m_sequential = nullptr;
     wxSpinCtrl *m_fillFactor = nullptr;
     wxTextCtrl *m_delay = nullptr;
-    wxComboBox *m_compression = nullptr;
+    wxRadioBox *m_compression = nullptr;
     wxTextCtrl *m_tableSpace = nullptr;
     wxCheckBox *m_fastUpdate = nullptr;
     wxCheckBox *m_buffering = nullptr;

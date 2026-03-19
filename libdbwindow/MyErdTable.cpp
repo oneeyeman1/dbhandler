@@ -573,7 +573,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         prop.m_labelFontUnderline != table->GetTableProperties().m_labelFontUnderline ||
         prop.m_labelFontSize != table->GetTableProperties().m_labelFontSize )
         result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
-    if( !result && prop.primaryKey != table->GetPKFelds() )
+    if( !result && ( prop.primaryKey != table->GetPKFelds() || prop.pkOptions.get()->notequal( table->GetPKOptions() ) ) )
         result = m_db->EditPrimaryKey( GetCatalogName().ToStdWstring(), GetSchemaName().ToStdWstring(), GetTableName().ToStdWstring(), prop.primaryKey, logOnly, command, errorMsg );
     if( !result )
     {

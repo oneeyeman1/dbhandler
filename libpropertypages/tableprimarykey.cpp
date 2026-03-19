@@ -99,7 +99,6 @@ void TablePrimaryKey::do_layout()
     auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer7 = nullptr;
     wxBoxSizer *sizer8 = nullptr;
-    wxBoxSizer *sizer9 = nullptr;
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_foreignKeyColumnsFields, 0, wxEXPAND, 0 );
@@ -110,7 +109,7 @@ void TablePrimaryKey::do_layout()
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "Name" );
     m_pkName = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, m_options->m_name );
-    sizer10->Add( m_label2, 0, wxEXPAND, 0 );
+    sizer10->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer10->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer10->Add( m_pkName, 0, wxEXPAND, 0 );
     m_label2->Enable( false );
@@ -132,7 +131,7 @@ void TablePrimaryKey::do_layout()
         m_conflict->SetSelection( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_conflict );
         m_autoincrement = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "AUTOINCREMENT" );
         m_autoincrement->SetValue( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_autoincrement );
-        sizer4->Add( m_label1, 0, wxEXPAND, 0 );
+        sizer4->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer4->Add( m_conflict, 0, wxEXPAND, 0 );
         sizer2->Add( sizer4, 0, wxEXPAND, 0 );
@@ -188,7 +187,7 @@ void TablePrimaryKey::do_layout()
         }
         sizer7 = new wxBoxSizer( wxHORIZONTAL );
         m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "FILLFACTOR" );
-        sizer7->Add( m_label3, 0, wxEXPAND, 0 );
+        sizer7->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
         m_fillFactor = new wxSpinCtrl(  sizer2->GetStaticBox(), wxID_ANY, wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_fill ), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 100 );
         m_fillFactor->SetToolTip( _( "Specifies how full the Database Engine should make each index page that is used to store the index data" ) );
@@ -199,7 +198,7 @@ void TablePrimaryKey::do_layout()
         {
             sizer8 = new wxBoxSizer( wxHORIZONTAL );
             m_label4 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "COMPRESSION_DELAY" );
-            sizer8->Add( m_label4, 0, wxEXPAND, 0 );
+            sizer8->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
             sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
             m_delay = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, wxString::Format( "%d", std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_delay ) );
             m_delay->SetToolTip( _( "For a memory-optimized, delay specifies the minimum number of minutes a row must remain in the table, unchanged, before it's eligible for compression into the columnstore index; For a disk-based table, delay specifies the minimum number of minutes a delta rowgroup in the CLOSED state must remain in the delta rowgroup" ) );
@@ -209,10 +208,10 @@ void TablePrimaryKey::do_layout()
             sizer6->Add( sizer8, 0, wxALIGN_CENTER_VERTICAL, 0 );
             sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
         }
-        sizer9 = new wxBoxSizer( wxHORIZONTAL );
+/*        sizer9 = new wxBoxSizer( wxHORIZONTAL );
         m_label6 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "DATA_COMPRESSION" );
         sizer9->Add( m_label6, 0, wxEXPAND,  0 );
-        sizer9->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer9->Add( 5, 5, 0, wxEXPAND, 0 );*/
         const wxString choices[] =
         {
             "NONE",
@@ -221,10 +220,11 @@ void TablePrimaryKey::do_layout()
             "COLUMNSTORE",
             "COLUMNSTORE_ARCHIVE"
         };
-        m_compression = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_desc, wxDefaultPosition, wxDefaultSize, 5, choices  );
+        m_compression = new wxRadioBox( sizer2->GetStaticBox(), wxID_ANY, "DATA_COMPRESSION", wxDefaultPosition, wxDefaultSize, 5, choices, 0, wxRA_SPECIFY_ROWS );
+        m_compression->SetSelection( m_compression->FindString( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_desc ) );
         m_compression->SetToolTip( _( "Specifies the data compression option for the specified table, partition number, or range of partitions" ) );
-        sizer9->Add( m_compression, 0, wxEXPAND, 0 );
-        sizer6->Add( sizer9, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer6->Add( m_compression, 0, wxEXPAND, 0 );
+//        sizer6->Add( sizer9, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
@@ -340,7 +340,7 @@ void TablePrimaryKey::OnOptionChanged(wxCommandEvent &WXUNUSED(event))
     m_isModified = true;
 }
 
-std::shared_ptr<PKOptions> &TablePrimaryKey::GetPKOptions()
+const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
 {
     const std::wstring name( m_pkName->GetValue().ToStdWstring() );
     std::shared_ptr<PKOptions> options;
