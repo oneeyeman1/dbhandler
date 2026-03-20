@@ -836,7 +836,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     bool autoinc = false;
                     int conflict = 1;
                     std::wstring name = L"";
-                    std::wregex pattern( L"(CONSTRAINT \w)*primary key\s*((ON CONFLICT \w)*\s*(AUTOINCREMENT)*)*", std::regex_constants::icase );
+                    std::wregex pattern( L"(CONSTRAINT \\w)*primary key\\s*((ON CONFLICT \\w)*\\s*(AUTOINCREMENT)*)*", std::regex_constants::icase );
                     std::wsmatch findings;
                     if( std::regex_search( command, findings, pattern ) )
                     {
@@ -2935,7 +2935,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     // 4. Remove foreign key constraint from CREATE TABLE command
     if( !result )
     {
-        std::wregex pattern( L"(CONSTRAINT \w)*primary key\s*((ON CONFLICT \w)*\s*(AUTOINCREMENT)*)", std::regex_constants::icase );
+        std::wregex pattern( L"(CONSTRAINT \\w)*primary key\\s*((ON CONFLICT \\w)*\\s*(AUTOINCREMENT)*)", std::regex_constants::icase );
         std::wsmatch findings;
         if( std::regex_search( createCommand, findings, pattern ) )
         {
@@ -2963,6 +2963,8 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
                 for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
                 {
                     newKeyString += (*it);
+                    if( std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_autoincrement )
+                        newKeyString += L" AUTOINCREMENT";
                     if( it == newKey.end() - 1 )
                         newKeyString += L")";
                     else
@@ -2987,8 +2989,6 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
                 default:
                     break;
                 }
-                if( std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_autoincrement )
-                    newKeyString += L" AUTOINCREMENT";
                 newCommand.insert( newCommand.length() - 1, newKeyString );
             }
         }
