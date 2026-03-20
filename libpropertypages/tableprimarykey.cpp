@@ -36,7 +36,7 @@ TablePrimaryKey::TablePrimaryKey(wxWindow *parent, Database *db, const DatabaseT
         m_fields->InsertItem( row++, (*it)->GetFieldName() );
         if( (*it)->IsPrimaryKey() )
         {
-            m_fields->SetItemState( m_fields->FindItem( -1, (*it)->GetFieldName() ), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            m_fields->SetItemState( m_fields->FindItem( -1, (*it)->GetFieldName() ), wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED );
             newKey.push_back( (*it)->GetFieldName() );
             m_foreignKeyColumnsFields->AddField( (*it)->GetFieldName() );
         }
@@ -116,6 +116,7 @@ void TablePrimaryKey::do_layout()
     m_pkName->Enable( false );
     sizer5->Add( sizer10, 0, wxEXPAND, 0 );
     sizer2->Add( sizer5, 0, wxEXPAND, 0 );
+    sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     if( m_db->GetTableVector().m_type == L"SQLite" )
     {
         const wxString selections[] =
@@ -131,6 +132,7 @@ void TablePrimaryKey::do_layout()
         m_conflict->SetSelection( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_conflict );
         m_autoincrement = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "AUTOINCREMENT" );
         m_autoincrement->SetValue( std::dynamic_pointer_cast<SQLitePKOptions>( m_options )->m_autoincrement );
+        m_autoincrement->Bind( wxEVT_UPDATE_UI, &TablePrimaryKey::OnAutoincrementUpdateUI, this );
         sizer4->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer4->Add( m_conflict, 0, wxEXPAND, 0 );
@@ -312,6 +314,16 @@ void TablePrimaryKey::do_layout()
     SetSizer( main );
 }
 
+void TablePrimaryKey::OnAutoincrementUpdateUI( wxUpdateUIEvent &event )
+{
+    if( newKey.size() > 1 )
+    {
+        event.Enable( false );
+        m_autoincrement->SetValue( false );
+    }
+    else
+        event.Enable( true );
+}
 void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
 {
     auto flags = wxLIST_HITTEST_ONITEM;
@@ -322,13 +334,13 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
         auto label = m_fields->GetItemText( item );
         if( m_fields->GetItemState( item, wxLIST_STATE_SELECTED ) == wxLIST_STATE_SELECTED )
         {
-            m_fields->SetItemState( item, 0, wxLIST_STATE_SELECTED );
+            m_fields->SetItemState( item, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED );
             newKey.erase( std::remove( newKey.begin(), newKey.end(), label ), newKey.end() );
             m_foreignKeyColumnsFields->RemoveField( label );
         }
         else
         {
-            m_fields->SetItemState( item, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED );
+            m_fields->SetItemState( item, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED );
             newKey.push_back( label.ToStdWstring() );
             m_foreignKeyColumnsFields->AddField( label );
         }
@@ -339,13 +351,18 @@ void TablePrimaryKey::OnLeftDown(wxMouseEvent &event)
         sizer2->GetStaticBox()->Enable( false );
     }
     else
+    {
+        m_isModified = true;
         sizer2->GetStaticBox()->Enable( true );
+    }
 }
 
 void TablePrimaryKey::OnOptionChanged(wxCommandEvent &WXUNUSED(event))
 {
     if( newKey.size() == 0 )
         m_isModified = false;
+    else
+        m_isModified = true;
 }
 
 const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const

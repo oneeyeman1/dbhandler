@@ -8,6 +8,7 @@ public:
 protected:
     void do_layout();
     void OnLeftDown(wxMouseEvent &event);
+    void OnAutoincrementUpdateUI(wxUpdateUIEvent &event);
     void OnOptionChanged(wxCommandEvent &event);
 private:
     Database *m_db;
