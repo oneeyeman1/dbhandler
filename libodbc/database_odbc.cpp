@@ -3588,10 +3588,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         SQLUSMALLINT i = 1;
-        int ind = 0;
+        int lenInd = 0;
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, clustered.get(), 30, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, clustered.get(), 30, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3600,7 +3600,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_BIT, &padIndex, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_BIT, &padIndex, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3609,7 +3609,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &fill, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &fill, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3618,7 +3618,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &ignoreDup, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &ignoreDup, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3627,7 +3627,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &noRecomp, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &noRecomp, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3636,7 +3636,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result && pimpl.m_versionMajor >= 12 )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &incremental, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &incremental, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3645,7 +3645,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &rowLocks, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &rowLocks, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3654,7 +3654,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &pageLocks, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &pageLocks, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3663,7 +3663,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result && pimpl.m_versionMajor >= 15 )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &sequential, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &sequential, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3672,7 +3672,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result && pimpl.m_versionMajor >= 13 )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_SLONG, &delay, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_SLONG, &delay, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3681,7 +3681,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, desc.get(), 30, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_WCHAR, desc.get(), 30, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3690,7 +3690,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &partition, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &partition, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3699,7 +3699,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( !result && pimpl.m_versionMajor >= 16  )
         {
-            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &xml, 0, &ind1[++ind] );
+            ret = SQLBindCol( m_hstmt, ++i, SQL_C_USHORT, &xml, 0, &ind1[++lenInd] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
