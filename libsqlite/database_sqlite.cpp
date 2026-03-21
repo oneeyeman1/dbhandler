@@ -2937,6 +2937,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     {
         std::wregex pattern( L"(CONSTRAINT \\w)*primary key\\s*((ON CONFLICT \\w)*\\s*(AUTOINCREMENT)*)", std::regex_constants::icase );
         std::wsmatch findings;
+        std::wstring name = L"";
         if( std::regex_search( createCommand, findings, pattern ) )
         {
             auto start = findings[0].first - createCommand.begin();
@@ -2954,48 +2955,51 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
                 name = name.substr( 0, name.find( ' ') );
             }
             newCommand = temp1 + temp2;
-            if( newKey.size() > 0 )
+        }
+        else
+            newCommand = createCommand;
+        if( newKey.size() > 0 )
+        {
+            std::wstring newKeyString = L",";
+            if( !name.empty() )
+                newKeyString += L" CONSTRAINT " + name;
+            newKeyString += L" PRIMARY KEY(";
+            for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
             {
-                std::wstring newKeyString = L",";
-                if( !name.empty() )
-                    newKeyString += L" CONSTRAINT " + name;
-                newKeyString += L" PRIMARY KEY(";
-                for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
-                {
-                    newKeyString += (*it);
-                    if( std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_autoincrement )
-                        newKeyString += L" AUTOINCREMENT";
-                    if( it == newKey.end() - 1 )
-                        newKeyString += L")";
-                    else
-                        newKeyString += L",";
-                }
-                auto action = std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_conflict;
-                switch( action )
-                {
-                case 0:
-                    newKeyString += L" ON CONFLICT ROLLBACK";
-                    break;
-                case 2:
-                    newKeyString += L" ON CONFLICT FAIL";
-                    break;
-                case 3:
-                    newKeyString += L" ON CONFLICT IGNORE";
-                    break;
-                case 4:
-                    newKeyString += L" ON CONFLICT REPLACE";
-                    break;
-                case 1:
-                default:
-                    break;
-                }
-                newCommand.insert( newCommand.length() - 1, newKeyString );
+                newKeyString += (*it);
+                if( std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_autoincrement )
+                    newKeyString += L" AUTOINCREMENT";
+                if( it == newKey.end() - 1 )
+                    newKeyString += L")";
+                else
+                    newKeyString += L",";
             }
+            auto action = std::dynamic_pointer_cast<SQLitePKOptions>( opts )->m_conflict;
+            switch( action )
+            {
+            case 0:
+                newKeyString += L" ON CONFLICT ROLLBACK";
+                break;
+            case 2:
+                newKeyString += L" ON CONFLICT FAIL";
+                break;
+            case 3:
+                newKeyString += L" ON CONFLICT IGNORE";
+                break;
+            case 4:
+                newKeyString += L" ON CONFLICT REPLACE";
+                break;
+            case 1:
+            default:
+                break;
+            }
+            newCommand.insert( newCommand.length() - 1, newKeyString );
         }
         else
         {
         }
     }
+    newCommand.erase( std::remove( newCommand.begin(), newCommand.end(), '\n' ), newCommand.end() );
     // 5. Create new table with revised format
     auto pos = newCommand.find( tableName );
     if( pos != std::wstring::npos )
