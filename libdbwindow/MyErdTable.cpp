@@ -580,7 +580,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         if( !logOnly )
         {
             m_table->SetTableProperties( prop );
-            m_table->SetPKFields( prop.primaryKey )
+            m_table->SetPKFields( prop.primaryKey );
             m_comment->SetText( prop.m_comment );
             UpdateTable();
 //            if( m_displayComments )
