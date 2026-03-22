@@ -3018,7 +3018,24 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
             }
         }
     }
-    EndAlterTable( command, createCommands, tableName, isLog, errorMsg );
+    if( !result )
+    {
+        ret = EndAlterTable( command, createCommands, tableName, isLog, errorMsg );
+        if( ret )
+            result = 1;
+    }
+    else
+    {
+        if( !isLog )
+        {
+            res = sqlite3_exec( m_db, "ROLLBACK", nullptr, nullptr, nullptr );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
     return result;
 }
 
