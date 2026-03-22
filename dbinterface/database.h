@@ -401,7 +401,9 @@ public:
     int GetFieldSize() const { return field_size; }
     int GetPrecision() const { return decimal_size; }
     bool IsPrimaryKey() const { return column_pk; }
+    void SetFieldAsPK(bool isPK) { column_pk = isPK; }
     bool IsForeignKey() const { return column_fk; }
+    void SetFieldAsFK(bool isFK) { column_fk = isFK; }
     bool IsAutoIncrement() { return autoIncrement; }
     void SetFullType(const std::wstring type) { full_type = type; }
     const std::wstring &GetFullType() const { return full_type; }
