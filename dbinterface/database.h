@@ -524,6 +524,7 @@ public:
     int GetNumberOfIndexes() const { return m_numIndex; }
     void SetFullName(const std::wstring &fullName) { m_fullName = fullName; }
     const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
+    void SetPKFields(const std::vector<std::wstring> &fields) { m_pkFelds; }
     PKOptions &GetPKOptions() const { return *m_props.pkOptions.get(); }
     void DropForeignKey(const std::vector<FKField *> &fieldToRemove)
     {
