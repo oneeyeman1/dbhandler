@@ -95,7 +95,7 @@ void TablePrimaryKey::do_layout()
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer5 = new wxBoxSizer( wxVERTICAL );
-    auto sizer6 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    wxFlexGridSizer *sizer6 = nullptr;
     auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer *sizer7 = nullptr;
     wxBoxSizer *sizer8 = nullptr;
@@ -143,6 +143,7 @@ void TablePrimaryKey::do_layout()
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) ||
         ( m_db->GetTableVector().m_type == L"Microsoft SQL Server" ) )
     {
+        sizer6 = new wxFlexGridSizer( 6, 2, 5, 5 );
         m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CLUSTERED" );
         m_clustered->SetValue( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_isClustered );
         sizer5->Add( m_clustered, 0, wxEXPAND, 0 );
