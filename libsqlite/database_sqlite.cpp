@@ -2130,13 +2130,13 @@ int SQLiteDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                         m_numOfTables = count;
                     }
                 }
-                res = sqlite3_finalize( m_stmt3 );
+                res = sqlite3_finalize( m_stmt2 );
                 if( res != SQLITE_OK )
                 {
                     result = 1;
                     GetErrorMessage( res, errorMsg );
                 }
-                m_stmt3 = nullptr;
+                m_stmt2 = nullptr;
             }
         }
     }
