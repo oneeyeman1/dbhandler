@@ -47,6 +47,7 @@ protected:
     bool CompareNoCase(const std::wstring &a, const std::wstring &b);
     bool FindNoCase(const std::wstring &a, const std::wstring &b);
     void SetFullType(TableField *field, const std::wstring &type);
+    bool CreatePKOptions(const std::wstring &command, const std::wregex &pattern, std::wstring &name, int &conflict, bool &autoinc);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;

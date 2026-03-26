@@ -836,35 +836,13 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     bool autoinc = false;
                     int conflict = 1;
                     std::wstring name = L"";
-                    std::wregex pattern( L"(constraint\\s+\\w*)*primary key\\s*(on\\s+conflict\\s+\\w*)*\\s*(autoincrement)*", std::regex_constants::icase );
+                    std::wregex pattern( L"((constraint\s+\w+)?primary key\s*(on\s+conflict\s+\w+)?\s*(autoincrement)?)?", std::regex_constants::icase );
                     std::wsmatch findings;
-                    if( std::regex_search( command, findings, pattern ) )
+                    auto ret = CreatePKOptions( command, pattern, name, conflict, autoinc );
+                    if( !ret )
                     {
-                        auto start = findings[0].first - command.begin();
-                        auto temp1 = command.substr( start );
-                        auto end = temp1.find( L"," );
-                        if( end == std::wstring::npos )
-                            end = temp1.length() - 1;
-                        temp1 = temp1.substr( 0, end );
-                        if( FindNoCase( temp1, L"CONSTRAINT") )
-                        {
-                            name = temp1.substr( temp1.find( ' ' ) + 1 );
-                            name = name.substr( 0, name.find( ' ') );
-                        }
-                        if( FindNoCase( temp1, L"AUTOINCREMENT" ) )
-                            autoinc = true;
-                        if( FindNoCase( temp1, L"ON CONFLICT" ) )
-                        {
-                            auto substr = temp1.substr( temp1.find_last_of( ' ' ) + 1 );
-                            if( substr == L"ROLLBACK" )
-                                conflict = 0;
-                            else if( substr == L"FAIL" )
-                                conflict = 2;
-                            else if( substr == L"IGNORE" )
-                                conflict = 3;
-                            else if( substr == L"REPLACE" )
-                                conflict = 4;
-                        }
+                        pattern = L"(constraint\\s+\\w+)?primary key\\s*\\(\\w+(autoincrement)*(,\\s\\w+)*\\)(on\\s+conflict\\s+\\w*)?";
+                        ret = CreatePKOptions( command, pattern, name, conflict, autoinc );
                     }
                     prop.pkOptions = std::make_shared<SQLitePKOptions>( name, conflict, autoinc );
                 }
@@ -2935,7 +2913,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     // 4. Remove foreign key constraint from CREATE TABLE command
     if( !result )
     {
-        std::wregex pattern( L"(constraint\\s+\\w*)*primary key\\s*(ASC|DESC)*(on\\s+conflict\\s+\\w*)*\\s*(autoincrement)*", std::regex_constants::icase );
+        std::wregex pattern( L"((constraint\s+\w+)?primary key\s*(on\s+conflict\s+\w+)?\s*(autoincrement)?)?", std::regex_constants::icase );
         std::wsmatch findings;
         std::wstring name = L"";
         if( std::regex_search( createCommand, findings, pattern ) )
@@ -2947,7 +2925,6 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
             if( end == std::wstring::npos )
                 end = temp1.length() - 1;
             temp2 = temp2.substr( end );
-            std::wstring name = L"";
             auto oldKey = temp2.substr( 0, end );
             if( FindNoCase( oldKey, L"CONSTRAINT") )
             {
@@ -2957,7 +2934,28 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
             newCommand = temp1 + temp2;
         }
         else
-            newCommand = createCommand;
+        {
+            pattern = L"(constraint\\s+\\w+)?primary key\\s*\\(\\w+(autoincrement)*(,\\s\\w+)*\\)(on\\s+conflict\\s+\\w+)?";
+            if( std::regex_search( createCommand, findings, pattern ) )
+            {
+                auto start = findings[0].first - createCommand.begin();
+                auto temp1 = createCommand.substr( 0, start );
+                auto temp2 = createCommand.substr( start );
+                auto end = temp2.find( L"," );
+                if( end == std::wstring::npos )
+                    end = temp1.length() - 1;
+                temp2 = temp2.substr( end );
+                auto oldKey = temp2.substr( 0, end );
+                if( FindNoCase( oldKey, L"CONSTRAINT") )
+                {
+                    name = oldKey.substr( oldKey.find( ' ' ) + 1 );
+                    name = name.substr( 0, name.find( ' ') );
+                }
+                newCommand = temp1 + temp2;
+            }
+            else
+                newCommand = createCommand;
+        }
         if( newKey.size() > 0 )
         {
             std::wstring newKeyString = L",";
@@ -3296,3 +3294,37 @@ bool SQLiteDatabase::FindNoCase(const std::wstring &a, const std::wstring &b)
     return result;
 }
 
+bool SQLiteDatabase::CreatePKOptions(const std::wstring &command, const std::wregex &pattern, std::wstring &name, int &conflict, bool &autoinc)
+{
+    std::wsmatch findings;
+    auto result = true;
+    if( ( result = std::regex_search( command, findings, pattern ) ) )
+    {
+        auto start = findings[0].first - command.begin();
+        auto temp1 = command.substr( start );
+        auto end = temp1.find( L"," );
+        if( end == std::wstring::npos )
+            end = temp1.length() - 1;
+        temp1 = temp1.substr( 0, end );
+        if( FindNoCase( temp1, L"CONSTRAINT") )
+        {
+            name = temp1.substr( temp1.find( ' ' ) + 1 );
+            name = name.substr( 0, name.find( ' ') );
+        }
+        if( FindNoCase( temp1, L"AUTOINCREMENT" ) )
+            autoinc = true;
+        if( FindNoCase( temp1, L"ON CONFLICT" ) )
+        {
+            auto substr = temp1.substr( temp1.find_last_of( ' ' ) + 1 );
+            if( substr == L"ROLLBACK" )
+                conflict = 0;
+            else if( substr == L"FAIL" )
+                conflict = 2;
+            else if( substr == L"IGNORE" )
+                conflict = 3;
+            else if( substr == L"REPLACE" )
+                conflict = 4;
+        }
+    }
+    return result;
+}

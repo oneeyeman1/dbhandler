@@ -20,6 +20,7 @@
 
 #include <map>
 #include <vector>
+#include <regex>
 #include <locale>
 #include <memory>
 #include <codecvt>
