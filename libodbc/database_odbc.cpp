@@ -3750,7 +3750,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             str_to_uc_cpy( option, clustered.get() );
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( description, desc.get() );
-            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex, fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex == 'N', fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
@@ -8635,16 +8635,94 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     if( !result && newKey.size() > 0 )
     {
-        if( !primaryKeyName.empty() )
-            query3 += L" CONSTRAINT " + primaryKeyName;
-        query3 += L" PRIMARY KEY(";
-        for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            query3 += (*it);
-            if( it == newKey.end() - 1 )
-                query3 += L")";
-            else
-                query3 += L",";
+            auto options = std::dynamic_pointer_cast<SQLServerPKOptions>( opts );
+            if( !primaryKeyName.empty() )
+                query3 += L" CONSTRAINT " + primaryKeyName;
+            query3 += L" PRIMARY KEY";
+            if( !options->m_isClustered )
+                query3 += L" NONCLUSTERED";
+            query3 += L"(";
+            for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
+            {
+                query3 += (*it);
+                if( it == newKey.end() - 1 )
+                    query3 += L")";
+                else
+                    query3 += L",";
+            }
+            bool withPresent = false;
+            std::wstring with = L" WITH";
+            if( options.get()->m_fill > 0 )
+            {
+                with += L" FILLFACTOR = ";
+                with += std::to_wstring( options.get()->m_fill );
+                withPresent = true;
+            }
+            if( options.get()->m_pad )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" PAD_INDEX = ON";
+                withPresent = true;
+            }
+            if( options.get()->m_ignoreDup )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" IGNORE_DUP_KEY = ON";
+                withPresent = true;
+            }
+            if( options.get()->m_norecomp )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" STATISTICS_NORECOMPUTE = ON";
+                withPresent = true;
+            }
+            if( options.get()->m_incremental )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" STATISTICS_INCREMENTAL = ON";
+                withPresent = true;
+            }
+            if( !options.get()->m_rowLocks )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" ALLOW_ROW_LOCKS = OFF";
+                withPresent = true;
+            }
+            if( !options.get()->m_pageLocks )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" ALLOW_PAGE_LOCKS = OFF";
+                withPresent = true;
+            }
+            if( options.get()->m_sequential )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" OPTIMIZE_FOR_SEQUENTIAL_KEY = ON";
+                withPresent = true;
+            }
+            if( options.get()->m_delay > 0 )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" COMPRESSION_DELAY = " + std::to_wstring( options.get()->m_delay );
+                withPresent = true;
+            }
+            if( options.get()->m_desc != L"NONE" )
+            {
+                if( withPresent )
+                    with += L",";
+                with += L" COMPRESSION_DELAY = " + options.get()->m_desc;
+                withPresent = true;
+            }
         }
         if( isLog )
         {
