@@ -3570,14 +3570,16 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
     std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] ), type( new SQLWCHAR[20] );
     memset( clustered.get(), '\0', 60 );
+    uc_to_str_cpy( clustered.get(), L"CLUSTERED" );
     memset( type.get(), '\0', 20 );
     memset( name.get(), '\0', 256 );
     memset( included.get(), '\0', 256 );
     memset( index_param.get(), '\0', 255 );
     memset( tablespace.get(), '\0', 64 );
     memset( desc.get(), '\0', 60 );
-    unsigned char padIndex;
-    short int fill, ignoreDup, noRecomp, incremental = 0, rowLocks, pageLocks, sequential = 0, xml = 0;
+    uc_to_str_cpy( desc.get(), L"NONE" );
+    unsigned char padIndex = 'N';
+    short int fill = 0, ignoreDup = 0, noRecomp = 0, incremental = 0, rowLocks = 1, pageLocks = 1, sequential = 0, xml = 0;
     int delay = 0, partition;
     ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -3734,7 +3736,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     if( !result )
     {
         ret = SQLFetch( m_hstmt );
-        if( ret != SQL_SUCCESS/* && ret != SQL_SUCCESS_WITH_INFO*/ )
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
         {
             GetErrorMessage( errorMsg, STMT_ERROR  );
             result = 1;
