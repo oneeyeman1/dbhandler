@@ -382,7 +382,7 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
         options = std::make_shared<SQLServerPKOptions>( name, m_clustered->GetValue(), m_padIndex->GetValue(), m_fillFactor->GetValue(), 
                                                        m_ignoreDup->GetValue(), m_norecompute->GetValue(), m_incremental->GetValue(), 
                                                        m_rowLocks->GetValue(), m_pageLocks->GetValue(), sequental, delay, 
-                                                       L"", 1, false );
+                                                       m_compression->GetString( m_compression->GetSelection() ).ToStdWstring(), 1, false );
     }
     return options;
 }

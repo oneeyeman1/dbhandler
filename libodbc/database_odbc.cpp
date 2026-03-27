@@ -3750,7 +3750,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             str_to_uc_cpy( option, clustered.get() );
             str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( description, desc.get() );
-            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex == 'N', fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
+            prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex != 'N', fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
         }
         if( pimpl.m_subtype == L"PostgreSQL" )
         {
@@ -8723,6 +8723,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 with += L" COMPRESSION_DELAY = " + options.get()->m_desc;
                 withPresent = true;
             }
+            query3 += with;
         }
         if( isLog )
         {
