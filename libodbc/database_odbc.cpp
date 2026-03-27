@@ -3148,7 +3148,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
     SQLLEN cbDataFontCharacterSet = 0, cbHeadingFontCharacterSet = 0, cbLabelFontCharacterSet = 0, cbDataFontPixelSize = 0, cbHeadingFontPixelSize = 0, cbLabelFontPixelSize = 0;
     std::wstring query = L"SELECT abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_strke, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_strke, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_strke, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE rtrim(abt_tnam) = ";
-    std::wstring query1;
+    std::wstring query1, query2;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         query1 = L"SELECT i.name, i.type_desc, i.is_padded, i.fill_factor, i.ignore_dup_key, st.no_recompute";
@@ -3163,6 +3163,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         if( pimpl.m_versionMajor >= 16 )
             query1 += L", p.xml_compression";
         query1 += L" FROM sys.indexes i, sys.tables t, sys.schemas s, sys.stats st, sys.partitions p WHERE i.object_id = t.object_id AND i.is_primary_key = 1 AND s.name = ? AND t.name = ? AND t.schema_id = s.schema_id AND i.object_id = st.object_id AND i.index_id = st.stats_id AND i.object_id = p.object_id AND i.index_id = p.index_id;";
+        query2 = L"SELECT f.name FROM sys.filegroups f";
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
@@ -3838,6 +3839,65 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         result = 1;
     }
     m_hstmt = 0;
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        if( !result )
+        {
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        SQLWCHAR name[128];
+        qry.reset( new SQLWCHAR[query2.length() + 2] );
+        memset( qry.get(), '\0', query2.length() + 2 );
+        memset( name, '\0', 128 );
+        uc_to_str_cpy( qry.get(), query2 );
+        if( !result )
+        {
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name, 128, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring temp;
+                str_to_uc_cpy( temp, name );
+                std::dynamic_pointer_cast<SQLServerPKOptions>( prop.pkOptions )->m_filegroups.push_back( temp );
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            m_hstmt = 0;
+        }
+    }
     table->SetFullName( table->GetCatalog() + L"." + table->GetSchemaName() + L"." + table->GetTableName() );
     return 0;
 }
