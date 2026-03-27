@@ -8713,7 +8713,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                     query3 += L",";
             }
             bool withPresent = false;
-            std::wstring with = L" WITH";
+            std::wstring with = L" WITH(";
             if( options.get()->m_fill > 0 )
             {
                 with += L" FILLFACTOR = ";
@@ -8780,10 +8780,13 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             {
                 if( withPresent )
                     with += L",";
-                with += L" COMPRESSION_DELAY = " + options.get()->m_desc;
+                with += L" DATA_COMPRESSION = " + options.get()->m_desc;
                 withPresent = true;
             }
-            query3 += with;
+            if( withPresent )
+                with += L" )";
+            if( withPresent )
+                query3 += with;
         }
         if( isLog )
         {
