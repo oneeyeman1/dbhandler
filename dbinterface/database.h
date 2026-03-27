@@ -79,6 +79,7 @@ struct SQLServerPKOptions : public PKOptions
     bool m_isClustered, m_pad, m_ignoreDup, m_norecomp, m_incremental, m_rowLocks, m_pageLocks, m_sequential, m_xml;
     int m_fill, m_delay, m_partitionRegular, m_partitionXML;
     std::wstring m_desc;
+    std::vector<std::wstring> m_filegroups;
     virtual bool equal(const PKOptions &opt) const override
     {
         const SQLServerPKOptions *options = dynamic_cast<const SQLServerPKOptions*>( &opt );
