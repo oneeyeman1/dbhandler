@@ -301,12 +301,12 @@ void TablePrimaryKey::do_layout()
                 value = false;
             m_deduplicate = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "deduplicate_items" );
             m_deduplicate->SetValue( value );
-            sizer6->Add( m_deduplicate, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer5->Add( m_deduplicate, 0, wxEXPAND, 0 );
         }
-        sizer6->Add( sizer7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer5->Add( sizer7, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer5->Add( sizer6, 0, wxEXPAND, 0 );
+//        sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
