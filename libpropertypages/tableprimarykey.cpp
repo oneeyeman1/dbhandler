@@ -288,11 +288,11 @@ void TablePrimaryKey::do_layout()
         {
             sizer8 = new wxBoxSizer( wxHORIZONTAL );
             m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "vacuum_cleanup_index_scale_factor" );
-            sizer8->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer8->Add( m_label3, 0, wxEXPAND, 0 );
             sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
             m_vacuumCleanup = new wxSpinCtrlDouble( sizer2->GetStaticBox(), wxID_ANY, params.find( "vacuum_cleanup_index_scale_factor" ) == params.end() ? "0.1" : params["vacuum_cleanup_index_scale_factor"], wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS | wxSP_WRAP, 0, 10000000000 );
             sizer8->Add( m_vacuumCleanup, 0, wxEXPAND, 0 );
-            sizer6->Add( sizer8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            sizer6->Add( sizer8, 0, wxEXPAND, 0 );
         }
         if( type == "btree" && m_db->GetTableVector().m_versionMajor >= 13 )
         {
@@ -303,10 +303,9 @@ void TablePrimaryKey::do_layout()
             m_deduplicate->SetValue( value );
             sizer5->Add( m_deduplicate, 0, wxEXPAND, 0 );
         }
-        sizer5->Add( sizer7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer5->Add( sizer7, 0, wxEXPAND, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
-//        sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
@@ -387,7 +386,8 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
     {
-        options = std::make_shared<PostgresPKOptions>( name, );
+//        options = std::make_shared<PostgresPKOptions>( name, );
     }
     return options;
 }
+
