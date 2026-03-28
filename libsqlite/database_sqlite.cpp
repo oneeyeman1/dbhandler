@@ -836,7 +836,7 @@ int SQLiteDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::ws
                     bool autoinc = false;
                     int conflict = 1;
                     std::wstring name = L"";
-                    std::wregex pattern( L"(constraint\s+\w+)?primary\\s+key\s*(on\s+conflict\s+\w+)?\s*(autoincrement)?,", std::regex_constants::icase );
+                    std::wregex pattern( L"(constraint\\s+\\w+)?primary\\s+key\\s*(on\\s+conflict\\s+\\w+)?\\s*(autoincrement)?,", std::regex_constants::icase );
                     std::wsmatch findings;
                     auto ret = CreatePKOptions( command, pattern, name, conflict, autoinc );
                     if( !ret )
@@ -2913,7 +2913,7 @@ int SQLiteDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogName), cons
     // 4. Remove foreign key constraint from CREATE TABLE command
     if( !result )
     {
-        std::wregex pattern( L"(constraint\s+\w+)?primary\\s+key\s*(on\s+conflict\s+\w+)?\s*(autoincrement)?,", std::regex_constants::icase );
+        std::wregex pattern( L"(constraint\\s+\\w+)?primary\\s+key\\s*(on\\s+conflict\\s+\\w+)?\\s*(autoincrement)?,", std::regex_constants::icase );
         std::wsmatch findings;
         std::wstring name = L"";
         if( std::regex_search( createCommand, findings, pattern ) )
