@@ -384,5 +384,10 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
                                                        m_rowLocks->GetValue(), m_pageLocks->GetValue(), sequental, delay, 
                                                        m_compression->GetString( m_compression->GetSelection() ).ToStdWstring(), 1, false );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
+        ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
+    {
+        options = std::make_shared<PostgresPKOptions>( name, );
+    }
     return options;
 }
