@@ -227,7 +227,6 @@ void TablePrimaryKey::do_layout()
         m_compression->SetSelection( m_compression->FindString( std::dynamic_pointer_cast<SQLServerPKOptions>( m_options )->m_desc ) );
         m_compression->SetToolTip( _( "Specifies the data compression option for the specified table, partition number, or range of partitions" ) );
         sizer6->Add( m_compression, 0, wxEXPAND, 0 );
-//        sizer6->Add( sizer9, 0, wxALIGN_CENTER_VERTICAL, 0 );
         sizer5->Add( sizer6, 0, wxEXPAND, 0 );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
@@ -303,6 +302,10 @@ void TablePrimaryKey::do_layout()
             m_deduplicate->SetValue( value );
             sizer5->Add( m_deduplicate, 0, wxEXPAND, 0 );
         }
+        m_overlaps = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "WITHOUT OVERLAPS" );
+        m_overlaps->SetValue( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_withoutOverlaps );
+        sizer5->Add( m_overlaps, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer7, 0, wxEXPAND, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );

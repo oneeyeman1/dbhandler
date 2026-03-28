@@ -40,5 +40,6 @@ private:
     wxCheckBox *m_buffering = nullptr;
     wxSpinCtrlDouble *m_vacuumCleanup = nullptr;
     wxCheckBox *m_deduplicate = nullptr;
+    wxCheckBox *m_overlaps = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };
