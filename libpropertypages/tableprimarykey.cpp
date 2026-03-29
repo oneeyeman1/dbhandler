@@ -282,6 +282,7 @@ void TablePrimaryKey::do_layout()
             }
             m_buffering = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "buffering", wxDefaultPosition, wxDefaultSize, wxCHK_3STATE );
             m_buffering->Set3StateValue( value );
+            m_buffering->Enable( false );
         }
         if( type == "btree" && ( m_db->GetTableVector().m_versionMajor >= 11 && m_db->GetTableVector().m_versionMajor <= 12 ) )
         {
@@ -302,9 +303,13 @@ void TablePrimaryKey::do_layout()
             m_deduplicate->SetValue( value );
             sizer5->Add( m_deduplicate, 0, wxEXPAND, 0 );
         }
-        m_overlaps = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "WITHOUT OVERLAPS" );
-        m_overlaps->SetValue( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_withoutOverlaps );
-        sizer5->Add( m_overlaps, 0, wxEXPAND, 0 );
+        if( m_db->GetTableVector().m_versionMajor >= 18 )
+        {
+            m_overlaps = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "WITHOUT OVERLAPS" );
+            m_overlaps->SetValue( std::dynamic_pointer_cast<PostgresPKOptions>( m_options )->m_withoutOverlaps );
+            m_overlaps->Bind( wxEVT_CHECKBOX, &TablePrimaryKey::OnOverlaps, this );
+            sizer5->Add( m_overlaps, 0, wxEXPAND, 0 );
+        }
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer7, 0, wxEXPAND, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
@@ -389,8 +394,80 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
         ( m_db->GetTableVector().m_type == L"PostgreSQL" ) )
     {
-//        options = std::make_shared<PostgresPKOptions>( name, );
+        std::wstring type, included, params;
+        if( m_overlaps && m_overlaps->GetValue() )
+            type = L"gist";
+        else
+            type = L"btree";
+        GetIncludedFields( included );
+        params = L"{";
+        auto paramsPresent = false;
+        auto value = m_fillFactor->GetValue();
+        if( value != 90 )
+        {
+            params += L"fillfactor=" + std::to_wstring( value );
+            paramsPresent = true;
+        }
+        if( !m_deduplicate->GetValue() )
+        {
+            if( paramsPresent )
+                params += L",";
+            params += L"deduplicate_items=off";
+            paramsPresent = true;
+        }
+        if( m_buffering )
+        {
+            auto buffValue = m_buffering->Get3StateValue();
+            if( buffValue == wxCHK_UNCHECKED )
+            {
+                if( paramsPresent )
+                    params += L",";
+                params += L"buffering=off";
+            }
+            if( buffValue == wxCHK_CHECKED )
+            {
+                if( paramsPresent )
+                    params += L",";
+                params += L"buffering=on";
+            }
+        }
+        options = std::make_shared<PostgresPKOptions>( name, type, included, params, m_tableSpace->GetValue().ToStdWstring(), m_overlaps->GetValue() );
     }
     return options;
+}
+
+void TablePrimaryKey::GetIncludedFields(std::wstring &fields) const
+{
+    auto count = m_included->GetSelectedItemCount();
+    if( count > 0 )
+    {
+        fields = L"{";
+        auto num = 0;
+        for( auto i = 0; i < m_included->GetItemCount(); ++i )
+        {
+            if( m_included->GetItemState( i, wxLIST_STATE_SELECTED ) == wxLIST_STATE_SELECTED )
+            {
+                fields += m_included->GetItemText( i );
+                num++;
+                if( num != count )
+                    fields += L", ";
+                else
+                {
+                    fields += L"}";
+                    break;
+                }
+            }
+        }
+    }
+    else
+        fields = L"{}";
+}
+
+void TablePrimaryKey::OnOverlaps(wxCommandEvent &event)
+{
+    if( event.GetInt() )
+        m_buffering->Enable( true );
+    else
+        m_buffering->Enable( false );
 }
 

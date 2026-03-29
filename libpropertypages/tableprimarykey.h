@@ -7,9 +7,11 @@ public:
     const std::shared_ptr<PKOptions> GetPKOptions() const;
 protected:
     void do_layout();
+    void GetIncludedFields(std::wstring &fields) const;
     void OnLeftDown(wxMouseEvent &event);
     void OnAutoincrementUpdateUI(wxUpdateUIEvent &event);
     void OnOptionChanged(wxCommandEvent &event);
+    void OnOverlaps(wxCommandEvent &event);
 private:
     Database *m_db;
     FieldWindow* m_foreignKeyColumnsFields;
