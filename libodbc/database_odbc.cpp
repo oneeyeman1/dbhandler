@@ -8547,7 +8547,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         else
         {
             // 1. Find constraint name
-            query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = ? AND tc.schema_name = ? AND tc.table_name = ?;";
+            query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.constraint_catalog = ? AND tc.constraint_schema = ? AND tc.table_name = ?;";
             // 2. Drop PK
             query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
             // 3. Re-add PK
@@ -8652,7 +8652,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         }
         if( !result )
         {
-            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
+            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) || pimpl.m_subtype == L"PostgreSQL" ) )
             {
                 ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, catalog.get(), 0, &cbLen[0] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8673,7 +8673,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         }
         if( !result )
         {
-            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
+            if( pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 || pimpl.m_subtype == L"PostgreSQL" ) )
             {
                 ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, schema.get(), 0, &cbLen[2] );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8692,7 +8692,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 }
             }
         }
-        if( !result && pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 ) )
+        if( !result && pimpl.m_subtype != L"MySQL" && pimpl.m_subtype != L"Oracle" && ( pimpl.m_subtype == L"Microsoft SQL Server" && pimpl.m_versionMajor > 11 || pimpl.m_subtype == L"PostgreSQL" ) )
         {
             ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, m_maxIdLen, 0, table.get(), 0, &cbLen[3] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -8864,6 +8864,43 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 with += L" )";
             if( withPresent )
                 query3 += with;
+        }
+        if( pimpl.m_subtype == L"PostgreSQL" )
+        {
+            auto options = std::dynamic_pointer_cast<PostgresPKOptions>( opts );
+            std::vector<std::wstring> included, storage;
+            std::wstring temp;
+            options.get()->m_includeColumns.erase( 0, 1 );
+            options.get()->m_includeColumns.pop_back();
+            options.get()->m_storage.pop_back();
+            options.get()->m_storage.erase( 0, 1 );
+            if( !options.get()->m_includeColumns.empty() )
+            {
+                std::wstringstream stream( options.get()->m_includeColumns );
+                while( std::getline( stream, temp, L',' ) )
+                    included.push_back( temp );
+                if( included.empty() )
+                    included.push_back( options.get()->m_includeColumns );
+            }
+            if( !options.get()->m_includeColumns.empty() )
+            {
+                std::wstringstream stream( options.get()->m_storage );
+                while( std::getline( stream, temp, L',' ) )
+                    storage.push_back( temp );
+                if( storage.empty() )
+                    storage.push_back( options.get()->m_storage );
+            }
+            for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
+            {
+                if( std::find( included.begin(), included.end(), (*it) ) == included.end() )
+                {
+                    query3 += (*it);
+                    if( it == newKey.end() - 1 )
+                        query3 += L")";
+                    else
+                        query3 += L",";
+                }
+            }
         }
         if( isLog )
         {
