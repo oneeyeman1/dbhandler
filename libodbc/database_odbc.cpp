@@ -8896,11 +8896,41 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 {
                     query3 += (*it);
                     if( it == newKey.end() - 1 )
+                    {
+                        if( options.get()->m_withoutOverlaps )
+                            query3 += L" WITHOUT OVERLAPS";
+                        query3 += L")";
+                    }
+                    else
+                        query3 += L",";
+                }
+            }
+            if( included.size() > 0 )
+            {
+                query3 += L" INCLUDE(";
+                for( std::vector<std::wstring>::iterator it = included.begin(); it < included.end(); ++it )
+                {
+                    query3 += (*it);
+                    if( it == included.end() - 1 )
                         query3 += L")";
                     else
                         query3 += L",";
                 }
             }
+            if( storage.size() > 0 )
+            {
+                query3 += L" WITH(";
+                for( std::vector<std::wstring>::iterator it = storage.begin(); it < storage.end(); ++it )
+                {
+                    query3 += (*it);
+                    if( it == storage.end() - 1 )
+                        query3 += L")";
+                    else
+                        query3 += L",";
+                }
+            }
+            if( options.get()->m_tablespace != L"default" )
+                query3 += L" USING INDEX TABLESPACE " + options.get()->m_tablespace;
         }
         if( isLog )
         {
