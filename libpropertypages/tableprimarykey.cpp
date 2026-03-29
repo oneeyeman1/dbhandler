@@ -431,7 +431,11 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
                 params += L"buffering=on";
             }
         }
-        options = std::make_shared<PostgresPKOptions>( name, type, included, params, m_tableSpace->GetValue().ToStdWstring(), m_overlaps->GetValue() );
+        params += L"}";
+        auto overlap = false;
+        if( m_overlaps && m_overlaps->GetValue() )
+            overlap = true;
+        options = std::make_shared<PostgresPKOptions>( name, type, included, params, m_tableSpace->GetValue().ToStdWstring(), overlap );
     }
     return options;
 }
