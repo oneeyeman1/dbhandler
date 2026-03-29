@@ -100,7 +100,7 @@ struct PostgresPKOptions : public PKOptions
     std::wstring m_includeColumns, m_storage, m_type;
     std::wstring m_tablespace;
     bool m_withoutOverlaps;
-    PostgresPKOptions(const std::wstring &name, const std::wstring type, const std::wstring &columns, const std::wstring &storage, const std::wstring tablespace, bool overlaps) : m_includeColumns( columns ), m_type( type ), m_storage( storage ), m_tablespace( tablespace ), m_withoutOverlaps( overlaps ) { m_name = name; }
+    PostgresPKOptions(const std::wstring &name, const std::wstring &type, const std::wstring &columns, const std::wstring &storage, const std::wstring &tablespace, bool overlaps) : m_includeColumns( columns ), m_type( type ), m_storage( storage ), m_tablespace( tablespace ), m_withoutOverlaps( overlaps ) { m_name = name; }
     virtual ~PostgresPKOptions() { }
     virtual bool equal(const PKOptions &opt) const override
     {
