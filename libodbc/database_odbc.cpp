@@ -3815,14 +3815,76 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 options.erase( 0, 1 );
                 options.pop_back();
             }
-            prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, false );
+            if( !result )
+            {
+                ret = SQLCloseCursor( m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR  );
+                    result = 1;
+                }
+            }
+            bool overlap = false;
+            if( pimpl.m_versionMajor >= 18 )
+            {
+                qry.reset( new SQLWCHAR[query2.length() + 2] );
+                memset( qry.get(), '\0', query2.length() + 2 );
+                uc_to_str_cpy( qry.get(), query2 );
+                if( !result  )
+                {
+                    ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
+                }
+                if( !result )
+                {
+                    ret = SQLBindParameter( m_hstmt, 1, SQL_C_WCHAR, SQL_C_WCHAR, SQL_WCHAR, 63, 0, name.get(), 63, &ind[0] );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
+                }
+                if( !result )
+                {
+                    ret = SQLExecute( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
+                }
+                if( !result )
+                {
+                    SQLBindCol( m_hstmt, 1, SQL_C_BIT, &overlap, 63, &ind[0] );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                }
+                if( !result )
+                {
+                    ret = SQLFetch( m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                }
+            }
+            if( !result  )
+                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, overlap );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
         }
         table->SetTableProperties( prop );
     }
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
     {
         GetErrorMessage( errorMsg, 1, m_hstmt );
         result = 1;
@@ -8882,7 +8944,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                 if( included.empty() )
                     included.push_back( options.get()->m_includeColumns );
             }
-            if( !options.get()->m_includeColumns.empty() )
+            if( !options.get()->m_storage.empty() )
             {
                 std::wstringstream stream( options.get()->m_storage );
                 while( std::getline( stream, temp, L',' ) )
