@@ -543,6 +543,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_versionMajor >= 11 )
         query8 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
     query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = $1 AND t.relname = $2;";
+    std::wstring query9 = L"SELECT conperiod FROM pg_constraint c WHERE conname = $1";
     res = PQexec( m_db, "BEGIN" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
@@ -654,6 +655,17 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         }
     }
     PQclear( res1 );
+    if( pimpl.m_versionMajor >= 18 && !result )
+    {
+        res1 = PQprepare( m_db, "get_overlap", m_pimpl->m_myconv.to_bytes( query9 ).c_str(), 1, nullptr );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        PQclear( res1 );
+    }
     if( !result )
     {
          char *params[4];
@@ -861,10 +873,11 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
         osid = QT;
 #endif // __DBGTK__
     }
+    std::wstring pkName = L"";
     std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     std::wstring t = schemaName + L".";
     t += tableName;
-    char *values[3], *values1[2];
+    char *values[3], *values1[2], *values2[1];
     unsigned long len1 = t.length() * sizeof( wchar_t ) + 1;
     unsigned long len2 = ownerName.length() * sizeof( wchar_t ) + 1;
     values[0] = new char[len1 * 2];
@@ -941,7 +954,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             {
                 std::wstring includedCol = L"";
                 int nextCol;
-                std::wstring pkName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 0 ) );
+                pkName = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 0 ) );
                 std::wstring tbSpace = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 1 ) );
                 if( tbSpace.empty() )
                     tbSpace = L"default";
@@ -962,6 +975,23 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, false );
             }
         }
+        bool overlap = false;
+        if( !result )
+        {
+            values2[0] = new char[pkName.length() + 2];
+            memset( values2[0], '\0', pkName.length() + 2 );
+            strcpy( values2[0], m_pimpl->m_myconv.to_bytes( pkName.c_str() ).c_str() );
+            res = PQexecPrepared( m_db, "get_overlap", 1, values2, nullptr, nullptr, 0 );
+            if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( L"Error executing query: " + err );
+                result = 1;
+            }
+            else
+                overlap = PQgetvalue( res, 0, 0 );
+        }
+        std::dynamic_pointer_cast<PostgresPKOptions>( prop.pkOptions )->m_withoutOverlaps == overlap;
     }
     PQclear( res );
     if( !result )
