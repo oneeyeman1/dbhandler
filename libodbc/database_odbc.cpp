@@ -8940,7 +8940,13 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             {
                 std::wstringstream stream( options.get()->m_includeColumns );
                 while( std::getline( stream, temp, L',' ) )
+                {
+                    auto first = temp.find_first_not_of( L' ' );
+                    auto last = temp.find_last_not_of( L' ' );
+                    temp.erase( 0, first );
+                    temp.erase( last - first + 1 );
                     included.push_back( temp );
+                }
                 if( included.empty() )
                     included.push_back( options.get()->m_includeColumns );
             }
