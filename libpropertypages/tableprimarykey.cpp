@@ -252,6 +252,7 @@ void TablePrimaryKey::do_layout()
         m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "INCLUDED" );
         sizer4->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
         m_included = new wxListCtrl( sizer2->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_NO_HEADER );
+        m_fields->Bind( wxEVT_SIZE, &TablePrimaryKey::OnListSizing, this );
         m_included->AppendColumn( m_table->GetTableName(), wxLIST_FORMAT_LEFT, wxLIST_AUTOSIZE );
         int row = 0;
         for( std::vector<TableField *>::const_iterator it = m_table->GetFields().begin(); it < m_table->GetFields().end(); it++ )
@@ -312,6 +313,7 @@ void TablePrimaryKey::do_layout()
         }
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer7, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     }
@@ -475,3 +477,9 @@ void TablePrimaryKey::OnOverlaps(wxCommandEvent &event)
         m_buffering->Enable( false );
 }
 
+void TablePrimaryKey::OnListSizing( wxSizeEvent &event )
+{
+    auto size = m_fields->GetMaxSize();
+    m_included->SetMaxSize( size );
+    event.Skip();
+}

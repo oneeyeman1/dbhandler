@@ -12,6 +12,7 @@ protected:
     void OnAutoincrementUpdateUI(wxUpdateUIEvent &event);
     void OnOptionChanged(wxCommandEvent &event);
     void OnOverlaps(wxCommandEvent &event);
+    void OnListSizing(wxSizeEvent &event);
 private:
     Database *m_db;
     FieldWindow* m_foreignKeyColumnsFields;
