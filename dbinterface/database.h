@@ -115,6 +115,10 @@ struct PostgresPKOptions : public PKOptions
     }
 };
 
+struct MySQLPKOptions : public PKOptions
+{
+};
+
 struct DropIndexOption
 {
     int m_maxdop = 0, m_algorythm = 0, m_locks = 0, m_force = false, m_immediate = true;
@@ -530,6 +534,8 @@ public:
     const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
     void SetPKFields(const std::vector<std::wstring> &fields) { m_pkFelds; }
     PKOptions &GetPKOptions() const { return *m_props.pkOptions.get(); }
+    void SetTableEngine(const std::wstring &engine) { m_engine = engine; }
+    const std::wstring &GetTableEngine() const { return m_engine; }
     void DropForeignKey(const std::vector<FKField *> &fieldToRemove)
     {
         for( auto elem = foreign_keys.begin(); elem != foreign_keys.end(); ++elem )
@@ -572,6 +578,7 @@ private:
     std::vector<std::wstring> m_indexes;
     TableProperties m_props;
     std::vector<std::wstring> m_pkFelds;
+    std::wstring m_engine = L"";
 };
 
 struct /*Database::*/Impl
