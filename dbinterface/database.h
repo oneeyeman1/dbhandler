@@ -117,6 +117,10 @@ struct PostgresPKOptions : public PKOptions
 
 struct MySQLPKOptions : public PKOptions
 {
+    std::wstring m_indexType, m_parser, m_comment, m_attr1, m_attr2;
+    int m_blocksize;
+    bool m_isVisible;
+    MySQLPKOptions(const std::wstring &name, const std::wstring &indexType, const std::wstring &parser, const std::wstring &comment, int blockSize, bool isVisble, const std::wstring &attr1, const std::wstring &attr2) : m_indexType( indexType ), m_parser( parser ), m_comment( comment ), m_blocksize( blockSize ), m_isVisible( isVisble ), m_attr1( attr1 ), m_attr2( attr2 ) { m_name = name; }
 };
 
 struct DropIndexOption

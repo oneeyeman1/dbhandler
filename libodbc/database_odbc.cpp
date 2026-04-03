@@ -3175,7 +3175,13 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             query2 = L"SELECT conperiod FROM pg_constraint c WHERE conname = ?";
     }
     if( pimpl.m_subtype == L"MySQL" )
+    {
         query1 = L"SELECT index_type, comment, is_visible, engine_attribute, secondary_engine_attribute FROM information_schema.statistics s, information_schema.table_constraints_extensions t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_name = t.table_name AND index_name = 'primary';";
+        // get key_block_size for InnpDB (check CREATE_OPTIONS for KEY_BLOCK_SIZE=n)
+        // SELECT TABLE_NAME, ROW_FORMAT, CREATE_OPTIONS FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'your_database_name' AND TABLE_NAME = 'your_table_name';
+        // get key_block_size for MyISAM (check CREATE_OPTIONS for KEY_BLOCK_SIZE=n)
+        // SHOW CREATE TABLE 'table_name';
+    }
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = WINDOWS;
