@@ -2278,7 +2278,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
-        if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 )
+        if( pimpl.m_versionMajor >= 8 )
         {
             if( osid == WINDOWS )
                 qry2 = L"INSERT IGNORE INTO abcattbl VALUES( ?, ?, (SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?), '', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0,, 1, 0, 'MS Sans Serif', '' );";
@@ -5244,7 +5244,12 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?;";
     if( pimpl.m_subtype == L"MySQL" )
-        query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
+    {
+        if( pimpl.m_versionMajor >= 8 )
+            query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
+        else
+            query = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_SYS_TABLES st WHERE CONCAT(t.table_schema,'/', t.table_name) = st.name) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_name = ? AND t.table_schema = ?;";
+    }
     if( pimpl.m_subtype == L"Oracle" )
         query = L"SELECT object_id FROM all_objects WHERE object_name = UPPER(?) AND owner = UPPER(?)";
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
@@ -6900,7 +6905,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     result = 1;
                 }
             }
-            std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[query4.length() + 2] );
+            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query4.length() + 2] );
             SQLULEN ParamSize;
             SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS;
             SQLWCHAR name[SQL_MAX_COLUMN_NAME_LEN];
