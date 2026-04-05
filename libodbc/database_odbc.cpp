@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
+#include <regex>
 #ifdef _IODBCUNIX_FRAMEWORK
 #include "iODBC/sql.h"
 #include "iODBC/sqlext.h"
@@ -3176,10 +3177,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
-        query1 = L"SELECT index_type, index_comment, is_visible";
+        query1 = L"SELECT index_type, index_comment, is_visible, create_options";
         if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 && pimpl.m_versionRevision >= 21 )
             query1 += L", engine_attribute, secondary_engine_attribute";
-        query1 += L" FROM information_schema.statistics s WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary';";
+        query1 += L" FROM information_schema.statistics s, information_schema.tables t WHERE s.table_schema = ? AND s.table_name = ? AND index_name = 'primary' AND s.table_schema = t.table_schema AND s.table_name = t.table_name;";
         // get key_block_size for InnpDB (check CREATE_OPTIONS for KEY_BLOCK_SIZE=n)
         // SELECT TABLE_NAME, ROW_FORMAT, CREATE_OPTIONS FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'your_database_name' AND TABLE_NAME = 'your_table_name';
         // get key_block_size for MyISAM (check CREATE_OPTIONS for KEY_BLOCK_SIZE=n)
@@ -3581,8 +3582,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     std::wstring pkName;
     SQLLEN ind1[13] = { SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS, SQL_NTS };
-    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] ), type( new SQLWCHAR[20] );
+    std::unique_ptr<SQLWCHAR[]> blockSize( new SQLWCHAR[512] );
+    std::unique_ptr<SQLWCHAR[]> attr1( new SQLWCHAR[1024] ), attr2( new SQLWCHAR[1024] );
+    std::unique_ptr<SQLWCHAR[]> clustered( new SQLWCHAR[60] ), name( new SQLWCHAR[256] ), index_param( new SQLWCHAR[255] ), tablespace( new SQLWCHAR[64] ), included( new SQLWCHAR[256] ), desc( new SQLWCHAR[60] ), type( new SQLWCHAR[20] ), index_comment( new SQLWCHAR[1024] );
     memset( clustered.get(), '\0', 60 );
+    SQLWCHAR visible[5];
     uc_to_str_cpy( clustered.get(), L"CLUSTERED" );
     memset( type.get(), '\0', 20 );
     memset( name.get(), '\0', 256 );
@@ -3590,15 +3594,20 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     memset( index_param.get(), '\0', 255 );
     memset( tablespace.get(), '\0', 64 );
     memset( desc.get(), '\0', 60 );
+    memset( attr1.get(), '\0', 1024 );
+    memset( attr2.get(), '\0', 1024 );
     uc_to_str_cpy( desc.get(), L"NONE" );
     unsigned char padIndex = 'N';
     short int fill = 0, ignoreDup = 0, noRecomp = 0, incremental = 0, rowLocks = 1, pageLocks = 1, sequential = 0, xml = 0;
     int delay = 0, partition;
-    ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( !result && pimpl.m_subtype != L"MySQL" )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR  );
-        result = 1;
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR  );
+            result = 1;
+        }
     }
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
@@ -3745,6 +3754,42 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, type.get(), 20, &ind1[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, index_comment.get(), 1024, &ind1[1] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, visible, 5, &ind1[3] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, blockSize.get(), 512, &ind1[4] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
     }
     if( !result )
     {
@@ -3890,6 +3935,57 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
+            std::wstring pkType, comment, parser = L"", blockSizeParam, vis, attrib1 = L"", attrib2 = L"";
+            str_to_uc_cpy( pkType, type.get() );
+            str_to_uc_cpy( comment, index_comment.get() );
+            str_to_uc_cpy( blockSizeParam, blockSize.get() );
+            str_to_uc_cpy( vis, visible );
+            std::wregex pattern( L"key_block_size\\s+=\\s+\\d+", std::regex_constants::icase );
+            std::wsmatch findings;
+            int size = 0;
+            if( std::regex_search( blockSizeParam, findings, pattern ) )
+            {
+                auto start = findings[0].first - blockSizeParam.begin();
+            }
+            if( pimpl.m_versionMajor >= 8 && pimpl.m_versionMinor >= 0 && pimpl.m_versionRevision >= 24 )
+            {
+                while( ( ret = SQLGetData( m_hstmt, 5, SQL_C_WCHAR, attr1.get(), 1024, &ind1[4] ) ) != SQL_NO_DATA )
+                {
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        auto numBytes = ind[2];
+                        if( ind[2] == SQL_NO_TOTAL )
+                            numBytes = 255;
+                        else if( ind[2] > 255 )
+                            numBytes = 255;
+                        str_to_uc_cpy( attrib1, attr1.get() );
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
+                }
+                while( ( ret = SQLGetData( m_hstmt, 6, SQL_C_WCHAR, attr2.get(), 1024, &ind1[5] ) ) != SQL_NO_DATA )
+                {
+                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                    {
+                        auto numBytes = ind[2];
+                        if( ind[2] == SQL_NO_TOTAL )
+                            numBytes = 255;
+                        else if( ind[2] > 255 )
+                            numBytes = 255;
+                        str_to_uc_cpy( attrib2, attr2.get() );
+                    }
+                    else
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR  );
+                        result = 1;
+                    }
+                }
+            }
+            if( !result )
+                prop.pkOptions = std::make_shared<MySQLPKOptions>( L"PRIMARY", pkType, parser, comment, size, vis == L"Y", attrib1, attrib2  );
         }
         table->SetTableProperties( prop );
     }
