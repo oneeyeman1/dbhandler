@@ -39,10 +39,17 @@ private:
     wxTextCtrl *m_delay = nullptr;
     wxRadioBox *m_compression = nullptr;
     wxTextCtrl *m_tableSpace = nullptr;
+    wxComboBox *m_pkType = nullptr;
     wxCheckBox *m_fastUpdate = nullptr;
     wxCheckBox *m_buffering = nullptr;
     wxSpinCtrlDouble *m_vacuumCleanup = nullptr;
     wxCheckBox *m_deduplicate = nullptr;
     wxCheckBox *m_overlaps = nullptr;
+    wxSpinCtrl *m_blockSize = nullptr;
+    wxTextCtrl *m_parser = nullptr;
+    wxTextCtrl *m_comment = nullptr;
+    wxCheckBox *m_visible = nullptr;
+    wxTextCtrl *m_attr1 = nullptr;
+    wxTextCtrl *m_attr2 = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };

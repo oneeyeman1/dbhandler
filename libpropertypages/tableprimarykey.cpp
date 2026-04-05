@@ -317,6 +317,71 @@ void TablePrimaryKey::do_layout()
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"MySQL" ) ||
+        ( m_db->GetTableVector().m_type == L"MySQL" ) )
+    {
+        sizer7 = new wxBoxSizer( wxHORIZONTAL );
+        m_label1 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "Type" );
+        const wxString choices[] =
+        {
+            "BTREE",
+            "HASH"
+        };
+        m_pkType = new wxComboBox( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<MySQLPKOptions>( m_options )->m_indexType, wxDefaultPosition, wxDefaultSize, 2, choices, wxCB_READONLY );
+        sizer7->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer7->Add( m_pkType, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer7, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer8 = new wxBoxSizer( wxHORIZONTAL );
+        m_label2 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "KEY_BLOCK_SIZE" );
+        m_blockSize = new wxSpinCtrl( sizer2->GetStaticBox(), wxID_ANY, wxString::Format( "%d", std::dynamic_pointer_cast<MySQLPKOptions>( m_options )->m_blocksize ) );
+        sizer8->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer8->Add( m_blockSize, 0, wxEXPAND, 0 );
+        if( m_table->GetTableEngine() == L"InnoDB" )
+        {
+            m_label2->Enable( false );
+            m_blockSize->Enable( false );
+        }
+        sizer5->Add( sizer8, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto sizer11 = new wxBoxSizer( wxHORIZONTAL );
+        m_label3 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "WITH PARSER" );
+        m_parser = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<MySQLPKOptions>( m_options)->m_parser );
+        sizer11->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer11->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer11->Add( m_parser, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer11, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_label4 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "COMMENT" );
+        m_comment = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<MySQLPKOptions>( m_options)->m_comment, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+        m_comment->SetMaxLength( 1024 );
+        auto sizer9 = new wxBoxSizer( wxHORIZONTAL );
+        sizer9->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer9->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer9->Add( m_comment, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer9, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_visible = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "VISIBLE" );
+        m_visible->SetValue( std::dynamic_pointer_cast<MySQLPKOptions>( m_options)->m_isVisible );
+        sizer5->Add( m_visible, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto sizer12 = new wxBoxSizer( wxHORIZONTAL );
+        m_label5 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "ENGINE_ATTRIBUTE" );
+        m_attr1 = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<MySQLPKOptions>( m_options)->m_attr1, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+        sizer12->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer12->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer12->Add( m_attr1, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer12, 0, wxEXPAND, 0 );
+        auto sizer13 = new wxBoxSizer( wxHORIZONTAL );
+        m_label6 = new wxStaticText( sizer2->GetStaticBox(), wxID_ANY, "SECONDARY_ENGINE_ATTRIBUTE" );
+        m_attr2 = new wxTextCtrl( sizer2->GetStaticBox(), wxID_ANY, std::dynamic_pointer_cast<MySQLPKOptions>( m_options)->m_attr2, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+        sizer13->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        sizer13->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer13->Add( m_attr2, 0, wxEXPAND, 0 );
+        sizer5->Add( sizer13, 0, wxEXPAND, 0 );
+    }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );
