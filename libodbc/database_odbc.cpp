@@ -5499,19 +5499,19 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
 {
     int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
-    SQLWCHAR *table_name = nullptr, *schema_name = nullptr, *qry = nullptr, *owner = nullptr;
+    SQLWCHAR *owner = nullptr;
     SQLSMALLINT dataType[2], decimalDigits[2], nullable[2];
     SQLULEN paramSize[2];
     SQLSMALLINT nameBufLength, dataTypePtr, decimalDigitsPtr, isNullable;
     SQLULEN columnSizePtr = 0;
     SQLLEN cbTableOwner;
     std::wstring query;
-    table_name = new SQLWCHAR[tableName.length() + 2];
-    schema_name = new SQLWCHAR[schemaName.length() + 2];
-    memset( table_name, '\0', tableName.length() + 2 );
-    memset( schema_name, '\0', schemaName.length() + 2 );
-    uc_to_str_cpy( table_name, tableName );
-    uc_to_str_cpy( schema_name, schemaName );
+    std::unique_ptr<SQLWCHAR[]> table_name( new SQLWCHAR[tableName.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> schema_name( new SQLWCHAR[schemaName.length() + 2] );
+    memset( table_name.get(), '\0', tableName.length() + 2 );
+    memset( schema_name.get(), '\0', schemaName.length() + 2 );
+    uc_to_str_cpy( table_name.get(), tableName );
+    uc_to_str_cpy( schema_name.get(), schemaName );
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND so.name = ? AND s.name = ?;";
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -5536,12 +5536,12 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
     if( !result )
     {
-        qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
-        retcode = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        retcode = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5559,7 +5559,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     }
     if( !result )
     {
-        retcode = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], paramSize[0], decimalDigits[0], table_name, 0, &cbTableName );
+        retcode = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], paramSize[0], decimalDigits[0], table_name.get(), 0, &cbTableName );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5577,7 +5577,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     }
     if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" ) )
     {
-        retcode = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], paramSize[1], decimalDigits[1], schema_name, 0, &cbSchemaName );
+        retcode = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], paramSize[1], decimalDigits[1], schema_name.get(), 0, &cbSchemaName );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5645,12 +5645,6 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
         result = 1;
     }
     m_hstmt = 0;
-    delete[] qry;
-    qry = nullptr;
-    delete[] table_name;
-    table_name = nullptr;
-    delete[] schema_name;
-    schema_name = nullptr;
     delete[] owner;
     owner = nullptr;
     return result;
