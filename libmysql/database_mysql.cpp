@@ -467,6 +467,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
                         pimpl.m_connectedUser = m_pimpl->m_myconv.from_bytes( row[0] );
                     }
                 }
+                mysql_free_result( results );
             }
             else
             {
@@ -3177,6 +3178,7 @@ int MySQLDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
 
             }
         }
+        mysql_free_result( store );
     }
     return result;
 }
