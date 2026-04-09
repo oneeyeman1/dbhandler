@@ -752,10 +752,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::vector<std::wstring> queries, mysqlQueries, oracleQueries;
+    std::vector<std::wstring> queries, queries2, queries3;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
-        queries.push_back( L"BEGIN TRANSACTION" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE abcatcol(abc_tnam nvarchar(129) NOT NULL, abc_tid integer, abc_ownr nvarchar(129) NOT NULL, abc_cnam nvarchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt nvarchar(254), abc_edit varchar(31), abc_tag varchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcatc_x' AND object_id = OBJECT_ID('abcatcol') ) CREATE UNIQUE INDEX abcatc_x ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE abcatedt(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) );" );
@@ -883,7 +882,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"PostgreSQL" )
     {
-        queries.push_back( L"BEGIN" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
@@ -891,123 +889,123 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         if( pimpl.m_subtype == L"MySQL" )
         {
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os tinyint, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_strke smallint, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_strke smallint, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_strke smallint, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ));" );
-            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatc_x' AND table_name='abcatcol';" );
-            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
-            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcate_x' AND table_name='abcatedt';" );
-            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
-            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatf_x' AND table_name='abcatfmt';" );
-            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
-            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatt_x' AND table_name='abcattbl';" );
-            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
-            mysqlQueries.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatv_x' AND table_name='abcatvld'" );
-            mysqlQueries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '(General)', '(General)', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0', '0', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00', '0.00', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '#.##0', '#.##0', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '#.##0,00', '#.##0,00', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0;|RED|[$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0%', '0%', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00%', '0.00%', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00E+00', '0.00E+00', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'm/d/yy', 'm/d/yy', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'd-mmm-yy', 'd-mmm-yy', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'd-mmm', 'd-mmm', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mmm-yy', 'mmm-yy', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm AM/PM', 'h:mm AM/PM', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm:ss AM/PM', 'h:mm:ss AM/PM', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm:ss', 'h:mm:ss', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'Phone_format', '(@@@)) @@@-@@@@', 80, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'm-d-yy', 'm-d-yy', 84, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'soc_sec_number', '@@@-@@-@@@@', 80, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mm/dd/yyyy', 'mm/dd/yyyy', 82, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'salary', '$###,##0.00', 81, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ');" );
-            queries.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0');");
-            queries.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '');");
-            queries.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'must_be_numer', 'CHECK( isNumer( @column )', 80, 0, '');");
-            queries.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '');");
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-            queries.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatc_x' AND table_name='abcatcol';" );
+            queries2.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
+            queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcate_x' AND table_name='abcatedt';" );
+            queries2.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
+            queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatf_x' AND table_name='abcatfmt';" );
+            queries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
+            queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatt_x' AND table_name='abcattbl';" );
+            queries2.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
+            queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatv_x' AND table_name='abcatvld'" );
+            queries2.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name ASC);" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '(General)', '(General)', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0', '0', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00', '0.00', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '#.##0', '#.##0', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '#.##0,00', '#.##0,00', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0;|RED|[$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0%', '0%', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00%', '0.00%', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( '0.00E+00', '0.00E+00', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'm/d/yy', 'm/d/yy', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'd-mmm-yy', 'd-mmm-yy', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'd-mmm', 'd-mmm', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mmm-yy', 'mmm-yy', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm AM/PM', 'h:mm AM/PM', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm:ss AM/PM', 'h:mm:ss AM/PM', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'h:mm:ss', 'h:mm:ss', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'Phone_format', '(@@@)) @@@-@@@@', 80, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'm-d-yy', 'm-d-yy', 84, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'soc_sec_number', '@@@-@@-@@@@', 80, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mm/dd/yyyy', 'mm/dd/yyyy', 82, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'salary', '$###,##0.00', 81, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatfmt VALUES( 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ');" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0');");
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '');");
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'must_be_numer', 'CHECK( isNumer( @column )', 80, 0, '');");
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '');");
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+            queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
         }
         else
         {
@@ -1026,8 +1024,8 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0,00' ) THEN INSERT INTO abcatfmt VALUES( '#.##0,00', '#.##0,00', 81, 0 ); END IF; END;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[$#.##0]' ) THEN INSERT INTO abcatfmt VALUES( '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0 ); END IF; END;;" );
                 queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;|RED|[$#.##0]' ) THEN INSERT INTO abcatfmt VALUES( '$#.##0;|RED|[$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 ); END IF; END;" );
-                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[$#.##0,00]' ) THEN INSERT INTO abcatfmt VALUES( '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 ) ON CONFLICT DO NOTHING;" );
-                queries.push_back( L"INSERT INTO abcatfmt VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 ) ON CONFLICT DO NOTHING;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[$#.##0,00]' ) THEN INSERT INTO abcatfmt VALUES( '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 ); END IF; END;" );
+                queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;|RED|[$#.##0,00]' ) THEN INSERT INTO abcatfmt VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 ); END IF; END;" );
                 queries.push_back( L"INSERT INTO abcatfmt VALUES( '0%', '0%', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatfmt VALUES( '0.00%', '0.00%', 81, 0 ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatfmt VALUES( '0.00E+00', '0.00E+00', 81, 0 ) ON CONFLICT DO NOTHING;" );
@@ -1246,7 +1244,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
     {
-        queries.push_back( L"BEGIN TRANSACTION" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatfmt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))\")" );
@@ -1254,16 +1251,16 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcattbl' AND i.name='abcatt_x') EXECUTE(\"CREATE INDEX abcatt_x ON abcattbl(abt_tnam ASC, abt_ownr ASC)\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name='abcatcol' AND i.name='abcatc_x') EXECUTE(\"CREATE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC)\")" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) WHERE NOT EXIST( SELECT 1 FROM abcatedt WHERE abe_name == '###-#-####' );" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( '#####', '#####', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatedt SELECT( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
@@ -1334,7 +1331,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
     {
-        queries.push_back( L"BEGIN TRANSACTION" );
         if( pimpl.m_versionMajor >= 12 )
         {
             // According to the Sybase (SAP) documentation "IF NOT EXIST" is supported from version 12 up.
@@ -1348,83 +1344,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt(abf_name ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld(abv_name ASC);" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
         }
         else
         {
@@ -1435,96 +1354,169 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatfmt'" );
             queries.push_back( L"CREATE TABLE abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcattbl'" );
-            queries.push_back( L"CREATE TABLE abcattbl(abt_os, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_strke smallint, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_strke smallint, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_strke smallint, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"CREATE TABLE abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_strke smallint, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_strke smallint, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_strke smallint, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
             queries.push_back( L"SELECT 1 FROM dbo.sysobjects WHERE name = 'abcatvld'" );
             queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
-            queries.push_back( L"SELECT 1 FROM dbo.sysindexes WHERE name = 'abcatc_x' AND tname = 'abcatcol';" );
+            queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND i.index_name = 'abcatc_x' AND t.table_name = 'abcatcol';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatc_x ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC );" );
-            queries.push_back( L"SELECT 1 FROM dbo.sysindexes WHERE name = 'abcate_x' AND tname = 'abcatedt';" );
+            queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND i.index_name = 'abcate_x' AND t.table_name = 'abcatedt';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt( abe_name ASC, abe_seqn ASC );" );
-            queries.push_back( L"SELECT 1 FROM dbo.sysindexes WHERE name = 'abcatf_x' AND tname = 'abcatfmt';" );
+            queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND i.index_name = 'abcatf_x' AND t.table_name = 'abcatfmt';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt( abf_name ASC );" );
-            queries.push_back( L"SELECT 1 FROM sysindexes WHERE tname = 'abcattbl' AND iname = 'abcatt_x';" );
+            queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND t.table_name = 'abcattbl' AND i.index_name = 'abcatt_x';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC );" );
-            queries.push_back( L"SELECT 1 FROM sysindexes WHERE tname = 'abcatvld' AND iname = 'abcatv_x';" );
-            queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC, abt_ownr ASC );" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
-            queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
+            queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND t.table_name = 'abcatvld' AND i.index_name = 'abcatv_x';" );
+            queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC );" );
+        }
+        if( pimpl.m_versionMajor >= 9 )
+        {
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
+        }
+        else
+        {
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '###-##-####', '###-##-####', 90, 1, 1, 32, '00' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '###-##-####' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '###,###.00', '###,###.00', 90, 1, 1, 32, '10' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '###,###.00' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '#####', '#####', 90, 1, 1, 32, '10' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '#####' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'BenefitsCheckBox' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'BenefitsCheckBox' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'BenefitsCheckBox' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', '0', 87, 3, 1, -201326590, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'White', 87, 3, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'White', 87, 3, 3, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Black', 87, 3, 4, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 4);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Black', 87, 3, 5, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 5);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Purple', 87, 3, 6, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 6);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Purple', 87, 3, 7, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 7);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Orange', 87, 3, 8, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 8);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Orange', 87, 3, 9, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 9);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Green', 87, 3, 10, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 10);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Green', 87, 3, 11, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 11);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Blue', 87, 3, 12, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 12);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Blue', 87, 3, 13, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 13);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Yellow', 87, 3, 14, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 14);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Yellow', 87, 3, 15, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 15);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Red', 87, 3, 16, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 16);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Color List', 'Red', 87, 3, 17, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Color List' AND abe_seqn = 17);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Customers' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Customers', 'id', 88, 2, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Customers' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Customers', 'id', 88, 2, 3, 0, '400' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Customers' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Day Care' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Day Care', 'Y', 85, 4, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Day Care' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Day Care', 'N', 85, 4, 3, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Day Care' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MM/YY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MM/YY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MM/YY HH:MM:SS:FFFFFF' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MM/YYYY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MM/YYYY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MMM/YY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DD/MMM/YY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DDD/YY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DDD/YY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DDD/YYYY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'DDD/YYYY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Department List' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Department List', 'dept_id', 88, 10, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Department List' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Department List', 'dept_d', 88, 10, 3, 0, '300' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Department List' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Dollars with cents' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', '1', 86, 3, 1, 1073741832, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'Active', 86, 3, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'A', 86, 3, 3, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 4);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'T', 86, 3, 5, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 5);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 6);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Employee Status', 'L', 86, 3, 7, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employee Status' AND abe_seqn = 7);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employees' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'employees', 'emp_id', 88, 3, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employees' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'employees', 'emp_id', 88, 3, 3, 0, '400' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Employees' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Financial Codes' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Financial Codes', 'code', 88, 3, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Financial Codes' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Financial Codes', 'code', 88, 3, 3, 0, '700' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Financial Codes' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Health Insurance' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Health Insurance', 'Y', 85, 3, 2, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Health Insurance' AND abe_seqn = 2);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'Health Insurance', 'N', 85, 3, 3, 0, NULL FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'Health Insurance' AND abe_seqn = 3);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'HH:MM:SS:FFF' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'HH:MM:SS:FFFFFF' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'JJJ/YY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'JJJ/YY HH:MM:SS' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'JJJ/YYYY' AND abe_seqn = 1);" );
+            queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = 'HH:MM:SS' AND abe_seqn = 1);" );
         }
     }
     if( pimpl.m_subtype == L"Oracle" )
@@ -1654,175 +1646,225 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254));" );
             queries.push_back( L"SELECT 1 FROM all_indexes WHERE table_name = UPPER( 'abcatvld' ) AND index_name = UPPER( 'abcatv_x' );" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld(abv_name);" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###-##-####'              AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '###,###.00'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT '#####'                    AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  8 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  9 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 10 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 11 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 12 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 13 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 14 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 15 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 16 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 17 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS:FFFFFF' AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/NN/YYYY'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/NN/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YYYY HH:MM:SS'      AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY HH:MM:SS'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY'                   AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY HH:MM:SS'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Dollars with cents'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '(General)'                  AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '(General)',                  '(General)',                  81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0'                          AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0',                          '0',                          81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00'                       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00',                       '0.00',                       81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0',                      '#.##0',                      81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0,00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0,00',                   '#.##0,00',                   81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;[$#.##0]'            AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;[$#.##0]',            '$#.##0;[$#.##0]',            81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;|RED|[$#.##0]'       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;|RED|[$#.##0]',       '$#.##0;|RED|[$#.##0]',       81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;[$#.##0,00]'      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;[$#.##0,00]',      '$#.##0,00;[$#.##0,00]',      81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;|RED|[$#.##0,00]' AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0%'                         AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0%',                         '0%',                         81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00%'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00%',                      '0.00%',                      81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00E+00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00E+00',                   '0.00E+00',                   81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm/d/yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm/d/yy',                     'm/d/yy',                     84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm-yy'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm-yy',                   'd-mmm-yy',                   84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm',                      'd-mmm',                      84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mmm-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mmm-yy',                     'mmm-yy',                     84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm AM/PM'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm AM/PM',                 'h:mm AM/PM',                 84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss AM/PM'              AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss AM/PM',              'h:mm:ss AM/PM',              84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss'                    AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss',                    'h:mm:ss',                    84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'Phone_format'               AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Phone_format',               '(@@@)) @@@-@@@@',            80, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm-d-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm-d-yy',                     'm-d-yy',                     84, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'soc_sec_number'             AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'soc_sec_number',             '@@@-@@-@@@@',                80, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm/dd/yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm/dd/yyyy',                 'mm/dd/yyyy',                 82, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'salary'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'salary',                     '$###,##0.00',                81, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm-dd-yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm-dd-yyyy',                 'mm-dd-yyyy',                 82, 0 );" );
-            oracleQueries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Multple_of_100'             AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Multple_of_100',  'CHECK( mod( @column, 100 ) = 0 )',                 81, 3, 'The department number must be ' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Positive_number'            AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Positive_number', 'CHECK( @column > 0 )',                             81, 6, 'Sorry! The value must be greater than 0' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Y_or_N'                     AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Y_or_N',          'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_numer'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
-            oracleQueries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'valid status'               AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'valid status',    'CHECK( @status == \"ALT*\" )',                     80, 3, '' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT '###-##-####'              AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT '###,###.00'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT '#####'                    AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
+            queries.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'BenefitsCheckBox'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  8 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name,  9 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 10 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 11 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 12 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 13 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 14 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 15 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 16 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Color List'               AS abe_name, 17 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Customers'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Day Care'                 AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YY HH:MM:SS:FFFFFF' AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/NN/YYYY'               AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/NN/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MM/YYYY HH:MM:SS'      AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DD/MMM/YY HH:MM:SS'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY'                   AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YY HH:MM:SS'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY'                 AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'DDD/YYYY HH:MM:SS'        AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Department List'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Dollars with cents'       AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  4 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  5 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  6 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Employee Status'          AS abe_name,  7 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'employees'                AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Financial Codes'          AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  1 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  2 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatedt t USING (SELECT 'Health Insurance'         AS abe_name,  3 AS abe_seqn FROM DUAL) s ON( t.abe_name = s.abe_name AND s.abe_seqn = t.abe_seqn ) WHEN NOT MATCHED THEN INSERT VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '(General)'                  AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '(General)',                  '(General)',                  81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0'                          AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0',                          '0',                          81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00'                       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00',                       '0.00',                       81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0',                      '#.##0',                      81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '#.##0,00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '#.##0,00',                   '#.##0,00',                   81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;[$#.##0]'            AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;[$#.##0]',            '$#.##0;[$#.##0]',            81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0;|RED|[$#.##0]'       AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0;|RED|[$#.##0]',       '$#.##0;|RED|[$#.##0]',       81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;[$#.##0,00]'      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;[$#.##0,00]',      '$#.##0,00;[$#.##0,00]',      81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '$#.##0,00;|RED|[$#.##0,00]' AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '$#.##0,00;|RED|[$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0%'                         AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0%',                         '0%',                         81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00%'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00%',                      '0.00%',                      81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT '0.00E+00'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( '0.00E+00',                   '0.00E+00',                   81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm/d/yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm/d/yy',                     'm/d/yy',                     84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm-yy'                   AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm-yy',                   'd-mmm-yy',                   84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'd-mmm'                      AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'd-mmm',                      'd-mmm',                      84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mmm-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mmm-yy',                     'mmm-yy',                     84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm AM/PM'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm AM/PM',                 'h:mm AM/PM',                 84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss AM/PM'              AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss AM/PM',              'h:mm:ss AM/PM',              84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'h:mm:ss'                    AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'h:mm:ss',                    'h:mm:ss',                    84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'Phone_format'               AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Phone_format',               '(@@@)) @@@-@@@@',            80, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'm-d-yy'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'm-d-yy',                     'm-d-yy',                     84, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'soc_sec_number'             AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'soc_sec_number',             '@@@-@@-@@@@',                80, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm/dd/yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm/dd/yyyy',                 'mm/dd/yyyy',                 82, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'salary'                     AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'salary',                     '$###,##0.00',                81, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatfmt t USING (SELECT 'mm-dd-yyyy'                 AS abf_name FROM DUAL) s ON(t.abf_name = s.abf_name) WHEN NOT MATCHED THEN INSERT VALUES( 'mm-dd-yyyy',                 'mm-dd-yyyy',                 82, 0 );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Multple_of_100'             AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Multple_of_100',  'CHECK( mod( @column, 100 ) = 0 )',                 81, 3, 'The department number must be ' );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Positive_number'            AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Positive_number', 'CHECK( @column > 0 )',                             81, 6, 'Sorry! The value must be greater than 0' );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Y_or_N'                     AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Y_or_N',          'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_numer'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'valid status'               AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'valid status',    'CHECK( @status == \"ALT*\" )',                     80, 3, '' );" );
         }
     }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        if( pimpl.m_subtype != L"Oracle" || ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) || ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) )
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[25] );
+        memset( qry.get(), '\0', 25 );
+        uc_to_str_cpy( qry.get(), L"BEGIN" );
+        if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
+            uc_to_str_cpy( qry.get(), L" TRANSACTION" );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
-            {
-                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
-                memset( qry.get(), '\0', (*it).length() + 2 );
-                uc_to_str_cpy( qry.get(), (*it) );
-                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR );
-                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                    result = 1;
-                    break;
-                }
-            }
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
         }
-        else
+        if( !result )
         {
-            int i = 1;
-            for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+            if( pimpl.m_subtype == L"Microsoft SQL Server" || 
+                pimpl.m_subtype == L"MySQL" || 
+                pimpl.m_subtype == L"PostgreSQL" || 
+                pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || 
+                ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) || 
+                ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
             {
-                std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
-                memset( qry.get(), '\0', (*it).length() + 2 );
-                uc_to_str_cpy( qry.get(), (*it) );
-                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                if( i % 2 != 0 )
+                for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
                 {
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    memset( qry.get(), '\0', (*it).length() + 2 );
+                    uc_to_str_cpy( qry.get(), (*it) );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
                         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                         result = 1;
                         break;
                     }
-                    else if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                }
+                for( std::vector<std::wstring>::iterator it = queries2.begin(); it < queries2.end(); ++it )
+                {
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    memset( qry.get(), '\0', (*it).length() + 2 );
+                    uc_to_str_cpy( qry.get(), (*it) );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
-                        ret = SQLFetch( m_hstmt );
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                        result = 1;
+                        break;
+                    }
+                }
+                for( std::vector<std::wstring>::iterator it = queries3.begin(); it < queries3.end(); ++it )
+                {
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    memset( qry.get(), '\0', (*it).length() + 2 );
+                    uc_to_str_cpy( qry.get(), (*it) );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                        result = 1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                int i = 1;
+                for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
+                {
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    memset( qry.get(), '\0', (*it).length() + 2 );
+                    uc_to_str_cpy( qry.get(), (*it) );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                    if( i % 2 != 0 )
+                    {
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
                             result = 1;
                             break;
                         }
-                        else if( ret == SQL_NO_DATA )
+                        else if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
                         {
-                            i++;
+                            ret = SQLFetch( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                result = 1;
+                                break;
+                            }
+                            else if( ret == SQL_NO_DATA )
+                            {
+                                i++;
+                            }
+                            else
+                            {
+                                ++it;
+                                i += 2;
+                            }
                         }
                         else
                         {
                             ++it;
-                            i += 2;
                         }
+                        ret = SQLCloseCursor( m_hstmt );
+                        continue;
                     }
                     else
                     {
-                        ++it;
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                        else
+                            i++;
                     }
-                    ret = SQLCloseCursor( m_hstmt );
-                    continue;
                 }
-                else
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                        break;
-                    }
-            }
-            if( !result )
-            {
-                for( std::vector<std::wstring>::iterator it = oracleQueries.begin(); it < oracleQueries.end(); ++it )
+                for( std::vector<std::wstring>::iterator it = queries2.begin(); it < queries2.end(); ++it )
                 {
                     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
@@ -1836,130 +1878,15 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                     }
                 }
             }
-            if( !result )
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-            else
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        }
-        if( pimpl.m_subtype == L"MySQL" )
-        {
-            SQLHSTMT statement1, statement2;
-            if( !result )
-            {
-                auto i = 1;
-                auto create = false;
-                for( std::vector<std::wstring>::iterator it1 = mysqlQueries.begin(); it1 < mysqlQueries.end(); ++it1, ++i )
-                {
-                    if( i % 2 == 0 )
-                    {
-                        if( create )
-                        {
-                            std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
-                            memset( qry.get(), '\0', (*it1).length() + 2 );
-                            uc_to_str_cpy( qry.get(), (*it1) );
-                            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement2 );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                                break;
-                            }
-                            if( !result )
-                            {
-                                ret = SQLExecDirect( statement2, qry.get(), SQL_NTS );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                    break;
-                                }
-                            }
-                            if( !result )
-                            {
-                                ret = SQLFreeHandle( SQL_HANDLE_STMT, statement2 );
-                                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                                {
-                                    GetErrorMessage( errorMsg, STMT_ERROR, statement2 );
-                                    ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                    result = 1;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it1).length() + 2] );
-                        memset( qry.get(), '\0', (*it1).length() + 2 );
-                        uc_to_str_cpy( qry.get(), (*it1) );
-                        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &statement1 );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
-                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                            result = 1;
-                            break;
-                        }
-                        if( !result )
-                        {
-                            ret = SQLExecDirect( statement1, qry.get(), SQL_NTS );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLFetch( statement1 );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                                break;
-                            }
-                            else if( ret == SQL_NO_DATA )
-                            {
-                                create = true;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLFreeHandle( SQL_HANDLE_STMT, statement1 );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement1 );
-                                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                                result = 1;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
         }
         if( !result )
-        {
             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-        }
         else
-        {
             ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
         }
         ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1968,9 +1895,9 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             result = 1;
         }
         m_hstmt = 0;
-        if( !result )
-            result = GetTableListFromDb( errorMsg );
     }
+    if( !result )
+        result = GetTableListFromDb( errorMsg );
     else
     {
         GetErrorMessage( errorMsg, CONN_ERROR );
@@ -2324,6 +2251,31 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == OSX )
             qry2 = L"MERGE INTO abcattbl t USING( SELECT 3 AS abr_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 3, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
     }
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
+    {
+        if( pimpl.m_versionMajor >= 9 )
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ON EXISTING SKIP;";
+            else if( osid == GTK )
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ON EXIATING SKIP;";
+            else if( osid == QT )
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ON EXISTING SKIP;";
+            else if( osid == OSX )
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?) ON EXISTING SKIP;";
+        }
+        else
+        {
+            if( osid == WINDOWS )
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            else if( osid == GTK )
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            else if( osid == QT )
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            else if( osid == OSX )
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+        }
+    }
     std::unique_ptr<SQLWCHAR[]> catalogDB( new SQLWCHAR[pimpl.m_dbName.length() + 2] );
     std::unique_ptr<SQLWCHAR[]> schemaDB( new SQLWCHAR[5] );
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[qry2.length() + 2] );
@@ -2347,17 +2299,20 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         memset( schemaDB.get(), '\0', 5 );
 //        uc_to_str_cpy( catalogDB.get(), L"%" );
         uc_to_str_cpy( schemaDB.get(), L"%" );
-        for( int i = 0; i < 5; i++ )
+        if( ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor > 9 ) || pimpl.m_subtype != L"Sybase SQL Anywhere" )
         {
-            catalog[i].TargetType = SQL_C_WCHAR;
-            catalog[i].BufferLength = ( bufferSize + 1 );
-            catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
-            ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            for( int i = 0; i < 5; i++ )
             {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-                break;
+                catalog[i].TargetType = SQL_C_WCHAR;
+                catalog[i].BufferLength = ( bufferSize + 1 );
+                catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
+                ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                    break;
+                }
             }
         }
         if(  pimpl.m_subtype == L"Oracle"  )
@@ -2368,7 +2323,18 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             if( pimpl.m_subtype != L"MySQL" )
             {
-                ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, tableDB.get(), SQL_NTS, nullptr, 0 );
+                if( pimpl.m_subtype == L"Sybase SQL Anywhere"  && pimpl.m_versionMajor <= 9 )
+                {
+                    std::wstring temp = L"SELECT u.user_name, t.table_name FROM sys.systable t, sys.sysuserperm u WHERE t.creator = u.user_id ORDER BY u.user_name, t.table_name";
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR( temp.length() + 2 ) );
+                    memset( qry.get(), '\0', temp.length() + 2 );
+                    uc_to_str_cpy( qry.get(), temp );
+                    ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                }
+                else
+                {
+                    ret = SQLTables( m_hstmt, catalogDB.get(), SQL_NTS, schemaDB.get(), SQL_NTS, tableDB.get(), SQL_NTS, nullptr, 0 );
+                }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
@@ -6235,7 +6201,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 
 int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors)
 {
-    SQLRETURN ret;
+    SQLRETURN ret = SQL_SUCCESS;
     std::unique_ptr<SQLWCHAR[]> table_name( new SQLWCHAR[tableName.length() + 2] ), schema_name( new SQLWCHAR[schemaName.length() + 2] ), catalog_name( new SQLWCHAR[catalog.size() + 2] );
     std::wstring owner;
     std::vector<std::wstring> autoinc_fields, indexes;
