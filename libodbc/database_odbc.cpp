@@ -2196,13 +2196,13 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
         if( osid == WINDOWS )
-            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND s.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
         else if( osid == GTK )
-            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND s.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
         else if( osid == QT )
-            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND s.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
         else if( osid == OSX )
-            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND s.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -2232,48 +2232,48 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         if( osid == WINDOWS )
-            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND nc.nspname = ? AND c.relname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND nc.nspname = ? AND c.relname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND nc.nspname = ? AND c.relname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = ? AND nc.nspname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND nc.nspname = ? AND c.relname = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
     }
     if( pimpl.m_subtype == L"Oracle" )
     {
         if( osid == WINDOWS )
-            qry2 = L"MERGE INTO abcattbl t USING( SELECT 0 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 0, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT ? AS abt_os, ?.? AS abt_tnam, ? AS abt_ownr FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam AND t.abt_ownr = s.abt_ownr) WHEN NOT MATCHED THEN INSERT VALUES( ?, ?, (SELECT object_id FROM all_objects WHERE owner = ? AND object_name = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == GTK )
-            qry2 = L"MERGE INTO abcattbl t USING( SELECT 1 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 1, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT ? AS abt_os, ?.? AS abt_tnam, ? AS abt_ownr FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam AND t.abt_ownr = s.abt_ownr) WHEN NOT MATCHED THEN INSERT VALUES( ?, ?, (SELECT object_id FROM all_objects WHERE owner = ? AND object_name = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == QT )
-            qry2 = L"MERGE INTO abcattbl t USING( SELECT 2 AS abt_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 2, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT ? AS abt_os, ?.? AS abt_tnam, ? AS abt_ownr FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam AND t.abt_ownr = s.abt_ownr) WHEN NOT MATCHED THEN INSERT VALUES( ?, ?, (SELECT object_id FROM all_objects WHERE owner = ? AND object_name = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'), 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
         else if( osid == OSX )
-            qry2 = L"MERGE INTO abcattbl t USING( SELECT 3 AS abr_os, ?.? AS abt_tnam FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam) WHEN NOT MATCHED THEN INSERT VALUES( 3, ?, (SELECT object_id FROM all_objects WHERE object_name = ? AND owner = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
+            qry2 = L"MERGE INTO abcattbl t USING( SELECT ? AS abr_os, ?.? AS abt_tnam, ? AS abt_ownr FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam AND t.abt_ownr = s.abt_ownr) WHEN NOT MATCHED THEN INSERT VALUES( ?, ?, (SELECT object_id FROM all_objects WHERE owner = ? AND object_name = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
     }
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
     {
         if( pimpl.m_versionMajor >= 9 )
         {
             if( osid == WINDOWS )
-                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ON EXISTING SKIP;";
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ON EXISTING SKIP;";
             else if( osid == GTK )
-                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ON EXIATING SKIP;";
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' ON EXIATING SKIP;";
             else if( osid == QT )
-                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ON EXISTING SKIP;";
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' ON EXISTING SKIP;";
             else if( osid == OSX )
-                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?) ON EXISTING SKIP;";
+                qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?) ON EXISTING SKIP;";
         }
         else
         {
             if( osid == WINDOWS )
-                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
             else if( osid == GTK )
-                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
             else if( osid == QT )
-                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
             else if( osid == OSX )
-                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
+                qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
         }
     }
     std::unique_ptr<SQLWCHAR[]> catalogDB( new SQLWCHAR[pimpl.m_dbName.length() + 2] );
@@ -2558,38 +2558,38 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         uc_to_str_cpy( fullName.get(), L"." );
                         uc_to_str_cpy( fullName.get(), (*it1).tableName );
                     }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, len, 0, fullName.get(), 0, &cbParam[1] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                    }
                     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
                     {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 129, 0, fullName.get(), len, &cbParam[0] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
                         if( !result )
                         {
                             ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[4] );
@@ -2634,36 +2634,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     {
                         if( !result )
                         {
-                            ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, len, 0, fullName.get(), 0, &cbParam[1] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
                             ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
                             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                             {
@@ -2685,16 +2655,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( pimpl.m_subtype == L"PostgreSQL" )
                     {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, len, 0, fullName.get(), 0, &cbParam[0] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                                break;
-                            }
-                        }
                         if( !result )
                         {
                             ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
