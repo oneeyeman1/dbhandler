@@ -2319,6 +2319,10 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         {
             memset( catalogDB.get(), '\0', 5 );
         }
+        std::unique_ptr<SQLWCHAR[]> owner( new SQLWCHAR[130] ), table_name( new SQLWCHAR[130] );
+        memset( owner.get(), '\0', 130 );
+        memset( table_name.get(), '\0', 130 );
+        SQLINTEGER ind[2];
         if( !result )
         {
             if( pimpl.m_subtype != L"MySQL" )
@@ -2326,7 +2330,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl.m_subtype == L"Sybase SQL Anywhere"  && pimpl.m_versionMajor <= 9 )
                 {
                     std::wstring temp = L"SELECT u.user_name, t.table_name FROM sys.systable t, sys.sysuserperm u WHERE t.creator = u.user_id ORDER BY u.user_name, t.table_name";
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR( temp.length() + 2 ) );
+                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[temp.length() + 2] );
                     memset( qry.get(), '\0', temp.length() + 2 );
                     uc_to_str_cpy( qry.get(), temp );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -2339,6 +2343,24 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 {
                     GetErrorMessage( errorMsg, STMT_ERROR );
                     result = 1;
+                }
+                if( !result && ( pimpl.m_subtype == L"Sybase SQL Anywhere"  && pimpl.m_versionMajor <= 9 ) )
+                {
+                    ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, owner.get(), 130, &ind[0] );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                    if( !result )
+                    {
+                        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, table_name.get(), 130, &ind[1] );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
                 }
             }
             else
@@ -2359,16 +2381,27 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
             {
                 SQLWCHAR *schemaName = nullptr, *tableName = nullptr;
+                schema = L"";
+                table = L"";
                 if( pimpl.m_subtype != L"MySQL" )
                 {
-                    if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
-                        catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
-                    if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
-                        schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
-                    if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
-                        tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
-                    cat = L"";
-                    str_to_uc_cpy( cat, catalogName );
+                    if( !result && ( pimpl.m_subtype == L"Sybase SQL Anywhere"  && pimpl.m_versionMajor <= 9 ) )
+                    {
+                        cat = pimpl.m_dbName;
+                        schemaName = owner.get();
+                        tableName = table_name.get();
+                    }
+                    else
+                    {
+                        if( catalog[0].StrLen_or_Ind != SQL_NULL_DATA )
+                            catalogName = (SQLWCHAR *) catalog[0].TargetValuePtr;
+                        if( catalog[1].StrLen_or_Ind != SQL_NULL_DATA )
+                            schemaName = (SQLWCHAR *) catalog[1].TargetValuePtr;
+                        if( catalog[2].StrLen_or_Ind != SQL_NULL_DATA )
+                            tableName = (SQLWCHAR *) catalog[2].TargetValuePtr;
+                        cat = L"";
+                        str_to_uc_cpy( cat, catalogName );
+                    }
                 }
                 else
                 {
@@ -2391,8 +2424,6 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         }
                     }
                 }
-                schema = L"";
-                table = L"";
                 str_to_uc_cpy( schema, schemaName );
                 str_to_uc_cpy( table, tableName );
                 pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
@@ -2442,7 +2473,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
                 memset( qry1.get(), '\0', 30 );
                 uc_to_str_cpy( qry1.get(), L"BEGIN" );
-                if( pimpl.m_subtype == L"Microsoft SQL Server" )
+                if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
                     uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
                 ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
