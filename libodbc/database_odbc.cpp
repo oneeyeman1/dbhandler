@@ -2322,7 +2322,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         std::unique_ptr<SQLWCHAR[]> owner( new SQLWCHAR[130] ), table_name( new SQLWCHAR[130] );
         memset( owner.get(), '\0', 130 );
         memset( table_name.get(), '\0', 130 );
-        SQLINTEGER ind[2];
+        SQLLEN ind[2];
         if( !result )
         {
             if( pimpl.m_subtype != L"MySQL" )
