@@ -9262,3 +9262,146 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     return result;
 }
 
+int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > &charSets, std::map<std::wstring, std::tuple<std::wstring, bool, bool> > &collations, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLWCHAR setName[64], colName[64], setDesc[128];
+    bool isDefault, isCompiled;
+    std::wstring query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
+    std::wstring query2 = L"SELECT collation_name, character_set_name, is_defaut, is_compiled FROM information_schema.collations";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
+    memset( qry.get(), '\0', query1.length() + 2 );
+    uc_to_str_cpy( qry.get(), query1 );
+    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    SQLLEN ind[6];
+    if( !result )
+    {
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &setName, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &colName, 64, &ind[1] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, &setDesc, 128, &ind[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring param1, param2, param3;
+                str_to_uc_cpy( param1, setName );
+                str_to_uc_cpy( param2, colName );
+                str_to_uc_cpy( param3, setDesc );
+                charSets.push_back( std::make_tuple( param1, param2, param3 ) );
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        charSets.push_back( std::make_tuple( L"default", L"default", L"default" ) );
+        if( !result )
+        {
+            ret = SQLCloseCursor( m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        qry.reset( new SQLWCHAR[query2.length() + 2] );
+        memset( qry.get(), '\0', query2.length() + 2 );
+        uc_to_str_cpy( qry.get(), query2 );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &colName, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &setName, 64, &ind[1] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_BIT, &isDefault, 0, &ind[2] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 4, SQL_C_BIT, &isCompiled, 0, &ind[3] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring param1, param2;
+                str_to_uc_cpy( param1, setName );
+                str_to_uc_cpy( param2, colName );
+                collations[param1] = std::make_tuple( param2, isDefault, isCompiled );
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        collations[L"default"] = std::make_tuple( L"default", true, true );
+    }
+    return result;
+}
+

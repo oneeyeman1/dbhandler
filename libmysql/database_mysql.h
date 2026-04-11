@@ -54,8 +54,7 @@ protected:
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *table, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
-    int GetCharacterSets(std::vector<std::wstring> &errorMsg);
-    int GetCollations(std::vector<std::wstring> &errorMsg);
+    int MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > &chatacterSets, std::map<std::wstring,std::tuple<std::wstring, bool, bool> > &collations, std::vector<std::wstring> &errorMsg);
 private:
     MYSQL_STMT *m_stmt;
     MYSQL *m_db;
@@ -66,7 +65,5 @@ struct MySQLDatabase::MySQLImpl
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
     std::wstring m_host, m_user, m_password, m_dbName, m_socket, m_catalog;
-    std::vector<std::tuple<std::wstring, std::wstring> > m_chatacterSets;
-    std::vector<std::tuple<std::wstring, std::wstring, bool> > m_collations;
 };
 #endif

@@ -91,6 +91,7 @@ protected:
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
+    int MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > &charSets, std::map<std::wstring, std::tuple<std::wstring, bool, bool> > &collations, std::vector<std::wstring> &errorMsg);
 private:
     SQLHENV m_env;
     SQLHDBC m_hdbc;
@@ -101,6 +102,8 @@ private:
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
     int m_maxIdLen;
+    std::tuple<std::wstring, std::wstring, std::wstring, int> m_mysqlCharSets;
+    std::tuple<std::wstring, std::wstring, int, bool, bool> m_mysqlCollations;
 };
 
 struct ODBCDatabase::ODBCImpl
