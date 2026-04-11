@@ -48,7 +48,7 @@ enum FK_ONDELETE
 struct PKOptions
 {
     std::wstring m_name;
-    virtual ~PKOptions() {}
+    virtual ~PKOptions() = default;
     virtual bool equal(const PKOptions &opts) const { return m_name == opts.m_name; }
     virtual bool notequal(const PKOptions &opts) const { return !( this->equal( opts ) ); }
 };
