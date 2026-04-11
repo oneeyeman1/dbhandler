@@ -894,7 +894,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcate_x' AND table_name='abcatedt';" );
             queries2.push_back( L"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
             queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatf_x' AND table_name='abcatfmt';" );
-            queries.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
+            queries2.push_back( L"CREATE UNIQUE INDEX abcatf_x ON abcatfmt(abf_name ASC);" );
             queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatt_x' AND table_name='abcattbl';" );
             queries2.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
             queries2.push_back( L"SELECT 1 FROM information_schema.statistics WHERE index_name='abcatv_x' AND table_name='abcatvld'" );
@@ -1780,18 +1780,58 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                         break;
                     }
                 }
+                auto i = 1;
                 for( std::vector<std::wstring>::iterator it = queries2.begin(); it < queries2.end(); ++it )
                 {
                     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    if( i % 2 != 0 )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-                        result = 1;
-                        break;
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                            result = 1;
+                            break;
+                        }
+                        else if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                        {
+                            ret = SQLFetch( m_hstmt );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR );
+                                result = 1;
+                                break;
+                            }
+                            else if( ret == SQL_NO_DATA )
+                            {
+                                i++;
+                            }
+                            else
+                            {
+                                ++it;
+                                i += 2;
+                            }
+                        }
+                        else
+                        {
+                            ++it;
+                        }
+                        ret = SQLCloseCursor( m_hstmt );
+                        continue;
+                    }
+                    else
+                    {
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                            break;
+                        }
+                        else
+                            i++;
                     }
                 }
                 for( std::vector<std::wstring>::iterator it = queries3.begin(); it < queries3.end(); ++it )
