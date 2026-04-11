@@ -9,6 +9,12 @@
 #ifndef __libdialogs__createdatabase__
 #define __libdialogs__createdatabase__
 
-#include <iostream>
+class CreateDatabase : public wxDialog
+{
+public:
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype);
+private:
+    wxStaticText *m_label1;
+};
 
 #endif /* defined(__libdialogs__createdatabase__) */
