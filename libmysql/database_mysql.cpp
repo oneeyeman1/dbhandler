@@ -3208,9 +3208,12 @@ int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), cons
     return result;
 }
 
-int MySQLDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > &chatacterSets, std::map<std::wstring,std::tuple<std::wstring, bool, bool> > &collations, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
+    dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( L"Default", L"Default", L"Default" ) );
+    dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"] = std::make_tuple( L"Default", true, true );
     MYSQL_RES *res = nullptr;
     if( mysql_query( m_db, "SHOW CHARACTER SET" ) )
     {
@@ -3233,7 +3236,7 @@ int MySQLDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstrin
         MYSQL_ROW row;
         while( ( row = mysql_fetch_row( res ) ) )
         {
-            chatacterSets.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) );
+            dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) );
         }
         mysql_free_result( res );
     }
@@ -3263,7 +3266,7 @@ int MySQLDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstrin
                 def = false;
             if( m_pimpl->m_myconv.from_bytes( row[4] ) != L"Yes" )
                 comp = false;
-            collations[m_pimpl->m_myconv.from_bytes( row[1] )] = std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp );
+            dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )] = std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp );
         }
         mysql_free_result( res );
     }

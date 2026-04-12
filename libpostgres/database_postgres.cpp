@@ -2308,3 +2308,9 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
     return result;
 }
 
+int PostgresDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errors)
+{
+    int result = 0;
+    return result;
+}
+

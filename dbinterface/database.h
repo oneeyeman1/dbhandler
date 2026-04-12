@@ -45,6 +45,25 @@ enum FK_ONDELETE
     CASCADE_DELETE
 };
 
+struct CreateDBOptions
+{
+    std::wstring m_name = L"";
+    bool m_exist = false;
+    virtual ~CreateDBOptions() = default;
+};
+
+struct MySQLCreateDBOptions : public CreateDBOptions
+{
+    std::wstring m_charSet, m_collation;
+    bool m_encrypted;
+    std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > m_charSets;
+    std::map<std::wstring, std::tuple<std::wstring, bool, bool> > m_collations;
+    MySQLCreateDBOptions(const std::wstring &name, const std::wstring &charSet, const std::wstring &collation, bool encrypted, bool exist) : m_charSet( charSet ), m_collation( collation ), m_encrypted( encrypted )
+    {
+        m_name = name;
+        m_exist = exist;
+    }
+};
 struct PKOptions
 {
     std::wstring m_name;
@@ -680,6 +699,7 @@ public:
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) = 0;
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errors) = 0;
 };
 
 #endif

@@ -9262,30 +9262,36 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     return result;
 }
 
-int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > &charSets, std::map<std::wstring, std::tuple<std::wstring, bool, bool> > &collations, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    SQLWCHAR setName[64], colName[64], setDesc[128];
-    bool isDefault, isCompiled;
-    std::wstring query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
-    std::wstring query2 = L"SELECT collation_name, character_set_name, is_defaut, is_compiled FROM information_schema.collations";
-    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
-    memset( qry.get(), '\0', query1.length() + 2 );
-    uc_to_str_cpy( qry.get(), query1 );
-    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( pimpl.m_subtype == L"MySQL" )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
-    SQLLEN ind[6];
-    if( !result )
-    {
-        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
+        dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( L"Default", L"Default", L"Default" ) );
+        dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"] = std::make_tuple( L"Default", true, true );
+        SQLWCHAR setName[64], colName[64], setDesc[128];
+        bool isDefault, isCompiled;
+        std::wstring query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
+        std::wstring query2 = L"SELECT collation_name, character_set_name, is_defaut, is_compiled FROM information_schema.collations";
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
+        memset( qry.get(), '\0', query1.length() + 2 );
+        uc_to_str_cpy( qry.get(), query1 );
+        auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
+        }
+        SQLLEN ind[6];
+        if( !result )
+        {
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
         }
         if( !result )
         {
@@ -9322,7 +9328,7 @@ int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring
                 str_to_uc_cpy( param1, setName );
                 str_to_uc_cpy( param2, colName );
                 str_to_uc_cpy( param3, setDesc );
-                charSets.push_back( std::make_tuple( param1, param2, param3 ) );
+                dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( param1, param2, param3 ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
@@ -9330,7 +9336,6 @@ int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring
                 result = 1;
             }
         }
-        charSets.push_back( std::make_tuple( L"default", L"default", L"default" ) );
         if( !result )
         {
             ret = SQLCloseCursor( m_hstmt );
@@ -9392,7 +9397,7 @@ int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring
                 std::wstring param1, param2;
                 str_to_uc_cpy( param1, setName );
                 str_to_uc_cpy( param2, colName );
-                collations[param1] = std::make_tuple( param2, isDefault, isCompiled );
+                dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[param1] = std::make_tuple( param2, isDefault, isCompiled );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
@@ -9400,7 +9405,6 @@ int ODBCDatabase::MySQLGetCharSetsCollations(std::vector<std::tuple<std::wstring
                 result = 1;
             }
         }
-        collations[L"default"] = std::make_tuple( L"default", true, true );
     }
     return result;
 }
