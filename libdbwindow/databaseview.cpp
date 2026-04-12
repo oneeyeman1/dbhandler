@@ -148,7 +148,7 @@ typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vecto
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
-typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &);
+typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, CreateDBOptions *);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
@@ -3037,7 +3037,7 @@ void DrawingView::DropTableFromQeury(const wxString &name)
         GetDocument()->DeleteQueryFieldForTable( name, replace );
         if( !replace.IsEmpty() )
         {
-            m_selectTableName.erase( std::remove_if( m_selectTableName.begin(), m_selectTableName.end(), 
+            m_selectTableName.erase( std::remove_if( m_selectTableName.begin(), m_selectTableName.end(),
             [&name](DatabaseTable *tbl)
             {
                 return tbl->GetTableName() == name;
@@ -3139,7 +3139,7 @@ void DrawingView::OnQuerySave(wxCommandEvent &WXUNUSED(event))
                 dynamic_cast<QueryRoot *>( m_canvas->GetDiagramManager().GetRootItem() )->AddWhereLines( wxString::Format( "%d,%s,%s,%s,%s", i, var, sign, value, condition ) );
             }
             GetDocument()->SetFilename( documentName + ".qry" );
-            if( GetDocument()->SaveNewQuery( libraryName, m_queries, documentName + ".qry", update ) ) 
+            if( GetDocument()->SaveNewQuery( libraryName, m_queries, documentName + ".qry", update ) )
             {
 
             }
@@ -3163,7 +3163,7 @@ void DrawingView::OnQuerySaveAsUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
 }
 
-std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap() 
+std::map<wxString, std::vector<TableDefinition> > &DrawingView::GetTablesMap()
 {
     return m_tables;
 }
@@ -3333,6 +3333,8 @@ void DrawingView::OnEditTableObject(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnCreateDatabase(wxCommandEvent &event)
 {
     wxString libName;
+    CreateDBOptions *options = nullptr;
+    std::vector<std::wstring> errors;
     int res;
     wxDynamicLibrary lib;
 #ifdef __WXMSW__
@@ -3345,8 +3347,16 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
-        CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
-        res = func( m_frame, L"", L"" );
+        auto type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
+        auto subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
+        wxBeginBusyCursor();
+        res = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetCreateDBOptions( options, errors );
+        wxEndBusyCursor();
+        if( !res )
+        {
+            CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
+            res = func( m_frame, type, subtype, options );
+        }
     }
 }
 

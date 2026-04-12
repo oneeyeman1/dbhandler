@@ -543,7 +543,7 @@ extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring 
     return res;
 }
 
-extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype)
+extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
