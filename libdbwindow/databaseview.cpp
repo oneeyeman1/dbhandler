@@ -148,6 +148,7 @@ typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vecto
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
+typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
@@ -1801,37 +1802,6 @@ SyntaxPropPage *DrawingView::GetSyntaxPage()
     return m_page6;
 }
 
-void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
-{
-    Database *db = NULL, *db1 = GetDocument()->GetDatabase();
-    wxString libName;
-    wxDynamicLibrary *lib = new wxDynamicLibrary();
-#ifdef __WXMSW__
-    libName = m_libPath + "dbloader";
-#elif __WXMAC__
-    libName = m_libPath + "liblibdbloader.dylib";
-#else
-    libName = m_libPath + "libdbloader";
-#endif
-    lib->Load( libName );
-    if( lib->IsLoaded() )
-    {
-        DBPROFILE func = (DBPROFILE) lib->GetSymbol( "ConnectToDb" );
-        wxString name = wxEmptyString;
-        wxString engine = GetDocument()->GetDatabase()->GetTableVector().m_type;
-        db = func( m_frame->GetParent(), name, engine, L"" );
-        if( db )
-        {
-            delete db1;
-            db1 = NULL;
-//            wxGetApp().SetDBEngine( engine );
-//            wxGetApp().SetDBName( name );
-        }
-        db1 = db;
-    }
-    delete lib;
-}
-
 void DrawingView::AddFieldToQuery(const FieldShape &field, QueryFieldChange isAdding, const std::wstring &tableName)
 {
     TableField *fld = const_cast<FieldShape &>( field ).GetField();
@@ -3359,3 +3329,24 @@ void DrawingView::OnEditTableObject(wxCommandEvent &WXUNUSED(event))
 {
 
 }
+
+void DrawingView::OnCreateDatabase(wxCommandEvent &event)
+{
+    wxString libName;
+    int res;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXMAC__
+    libName = m_libPath + "liblibdialogs.dylib";
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    lib.Load( libName );
+    if( lib.IsLoaded() )
+    {
+        CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
+        res = func( m_frame, L"", L"" );
+    }
+}
+
