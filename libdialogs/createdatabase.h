@@ -9,7 +9,7 @@
 #ifndef __libdialogs__createdatabase__
 #define __libdialogs__createdatabase__
 
-class CreateDatabase : public wxDialog
+class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
     CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype);

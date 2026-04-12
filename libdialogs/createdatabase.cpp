@@ -9,7 +9,7 @@
 #include "wx/wx.h"
 #include "createdatabase.h"
 
-CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype) : wxDialog( parent, wxID_ANY, _( "Create Database" )
+CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );

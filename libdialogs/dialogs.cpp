@@ -103,6 +103,7 @@
 #include "saveview.h"
 #include "createtablespace.h"
 #include "dropindexoptions.h"
+#include "createdatabase.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
@@ -542,4 +543,12 @@ extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring 
     return res;
 }
 
+extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype)
+{
+#ifdef __WXMSW__
+    wxTheApp->SetTopWindow( parent );
+#endif
+    CreateDatabase dlg( parent, L"", L"" );
+    return dlg.ShowModal();
+}
 
