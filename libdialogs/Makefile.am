@@ -58,7 +58,9 @@ libdialogs_la_SOURCES =  \
 	createtablespace.cpp \
 	createtablespace.h \
 	dropindexoptions.cpp \
-	dropindexoptions.h
+	dropindexoptions.h \
+	createdatabase.cpp \
+	createdatabase.h
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \
