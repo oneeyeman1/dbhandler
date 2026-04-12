@@ -1759,11 +1759,11 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         }
         if( !result )
         {
-            if( pimpl.m_subtype == L"Microsoft SQL Server" || 
-                pimpl.m_subtype == L"MySQL" || 
-                pimpl.m_subtype == L"PostgreSQL" || 
-                pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || 
-                ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) || 
+            if( pimpl.m_subtype == L"Microsoft SQL Server" ||
+                pimpl.m_subtype == L"MySQL" ||
+                pimpl.m_subtype == L"PostgreSQL" ||
+                pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ||
+                ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) ||
                 ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
             {
                 for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
@@ -9273,7 +9273,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::
         SQLWCHAR setName[64], colName[64], setDesc[128];
         bool isDefault, isCompiled;
         std::wstring query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
-        std::wstring query2 = L"SELECT collation_name, character_set_name, is_defaut, is_compiled FROM information_schema.collations";
+        std::wstring query2 = L"SELECT collation_name, character_set_name, is_default, is_compiled FROM information_schema.collations";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
@@ -9330,7 +9330,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::
                 str_to_uc_cpy( param3, setDesc );
                 dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( param1, param2, param3 ) );
             }
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
@@ -9399,7 +9399,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::
                 str_to_uc_cpy( param2, colName );
                 dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[param1] = std::make_tuple( param2, isDefault, isCompiled );
             }
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;

@@ -3357,6 +3357,11 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
             CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
             res = func( m_frame, type, subtype, options );
         }
+        else
+        {
+            for( auto error: errors )
+                wxMessageBox( error );
+        }
     }
 }
 

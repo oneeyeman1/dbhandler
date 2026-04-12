@@ -548,7 +548,7 @@ extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, co
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateDatabase dlg( parent, L"", L"" );
+    CreateDatabase dlg( parent, type, subtype, options );
     return dlg.ShowModal();
 }
 

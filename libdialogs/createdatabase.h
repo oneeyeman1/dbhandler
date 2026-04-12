@@ -12,7 +12,7 @@
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
-    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype);
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options);
 private:
     wxStaticText *m_label1;
 };
