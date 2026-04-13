@@ -505,6 +505,7 @@
     <ClCompile Include="arguments.c" />
     <ClCompile Include="attachdb.cpp" />
     <ClCompile Include="bitmappanel.cpp" />
+    <ClCompile Include="createdatabase.cpp" />
     <ClCompile Include="createindex.cpp" />
     <ClCompile Include="createindexpostgres.cpp" />
     <ClCompile Include="createindexsqlserver.cpp" />
@@ -536,6 +537,7 @@
     <ClInclude Include="addcolumnsdialog.h" />
     <ClInclude Include="attachdb.h" />
     <ClInclude Include="bitmappanel.h" />
+    <ClInclude Include="createdatabase.h" />
     <ClInclude Include="createindex.h" />
     <ClInclude Include="createindexpostgres.h" />
     <ClInclude Include="createindexsqlserver.h" />
