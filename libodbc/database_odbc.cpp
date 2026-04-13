@@ -9265,6 +9265,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
 int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query1, query2, query3;
     if( pimpl.m_subtype == L"MySQL" )
     {
         options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
@@ -9272,8 +9273,8 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
         dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"] = std::make_tuple( L"Default", true, true );
         SQLWCHAR setName[64], colName[64], setDesc[128];
         bool isDefault, isCompiled;
-        std::wstring query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
-        std::wstring query2 = L"SELECT collation_name, character_set_name, is_default, is_compiled FROM information_schema.collations";
+        query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
+        query2 = L"SELECT collation_name, character_set_name, is_default, is_compiled FROM information_schema.collations";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
@@ -9405,6 +9406,11 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
                 result = 1;
             }
         }
+    }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        query1 = L"SELECT rolname FROM pg_roles";
+        query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;"
     }
     return result;
 }
