@@ -9410,7 +9410,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         query1 = L"SELECT rolname FROM pg_roles";
-        query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;"
+        query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
     }
     return result;
 }
