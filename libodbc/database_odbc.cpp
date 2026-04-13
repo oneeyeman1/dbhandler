@@ -9266,7 +9266,13 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
 {
     int result = 0;
     std::wstring query1, query2, query3;
-    if( pimpl.m_subtype == L"MySQL" )
+    auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    if( !result && pimpl.m_subtype == L"MySQL" )
     {
         options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
         dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( L"Default", L"Default", L"Default" ) );
@@ -9278,12 +9284,6 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
-        auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
         SQLLEN ind[6];
         if( !result )
         {
@@ -9407,10 +9407,37 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
             }
         }
     }
-    if( pimpl.m_subtype == L"PostgreSQL" )
+    if( !result && pimpl.m_subtype == L"PostgreSQL" )
     {
+        options = new PostgresCreateDBOptions();
+        dynamic_cast<PostgresCreateDBOptions *>( options )->m_roles.push_back( L"Default" );
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
+        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
+        memset( qry.get(), '\0', query1.length() + 2 );
+        uc_to_str_cpy( qry.get(), query1 );
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    m_hstmt = 0;
+    if( !result )
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+    else
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
     }
     return result;
 }

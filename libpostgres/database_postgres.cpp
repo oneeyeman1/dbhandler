@@ -2311,6 +2311,17 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
 int PostgresDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errors)
 {
     int result = 0;
+    std::wstring query1 = L"SELECT rolname FROM pg_roles";
+    std::wstring query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
+    options = new PostgresCreateDBOptions();
+    dynamic_cast<PostgresCreateDBOptions *>( options )->m_roles.push_back( L"Default" );
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        PQclear( res );
+        result = 1;
+    }
     return result;
 }
-
