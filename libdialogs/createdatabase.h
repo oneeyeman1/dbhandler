@@ -24,6 +24,7 @@ private:
     wxComboBox *m_characterSet = nullptr;
     wxComboBox *m_collations = nullptr;
     wxCheckBox *m_encrypted = nullptr;
+    wxComboBox *m_owner = nullptr;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */

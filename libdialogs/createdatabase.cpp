@@ -73,6 +73,15 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
         }
+        if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
+        {
+            PostgresCreateDBOptions *opts = dynamic_cast<PostgresCreateDBOptions *>( options );
+            auto paneSizer1 = new wxFlexGridSizer( 7, 2, 5, 5 );
+            m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
+            paneSizer1->Add( m_label1, 0, wxEXPAND, 0 );
+            m_owner = new wxComboBox( win, wxID_ANY );
+            paneSizer1->Add( m_owner, 0, wxEXPAND, 0 );
+        }
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer3->Add( sizer4, 0, wxEXPAND, 0 );
         sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -93,10 +102,15 @@ void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
     MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts );
     auto charSet = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_characterSet->GetClientObject( m_characterSet->GetSelection() ) );
     m_collations->Clear();
+    wxString defValue = "";
     std::wstring charset = std::get<1>( *charSet );
     for( auto collation : opts->m_collations[charset] )
     {
-        m_collations->Append( std::get<0>( collation ) );
+        auto value = std::get<0>( collation );
+        m_collations->Append( value );
+        if( std::get<1>( collation ) )
+            defValue = value;
     }
+    m_collations->SetValue( defValue );
 }
 
