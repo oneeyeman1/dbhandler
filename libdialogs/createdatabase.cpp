@@ -93,7 +93,7 @@ void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
     MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts );
     auto charSet = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_characterSet->GetClientObject( m_characterSet->GetSelection() ) );
     m_collations->Clear();
-    std::wstring charset = std::get<1>( charSet );
+    std::wstring charset = std::get<1>( *charSet );
     for( auto collation : opts->m_collations[charset] )
     {
         m_collations->Append( std::get<0>( collation ) );

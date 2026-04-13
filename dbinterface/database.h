@@ -63,7 +63,7 @@ struct MySQLCreateDBOptions : public CreateDBOptions
     std::wstring m_charSet, m_collation;
     bool m_encrypted;
     std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > m_charSets;
-    std::map<std::wstring, std::tuple<std::wstring, bool, bool> > m_collations;
+    std::map<std::wstring, std::vector<std::tuple<std::wstring, bool, bool> > > m_collations;
     MySQLCreateDBOptions(const std::wstring &name, const std::wstring &charSet, const std::wstring &collation, bool encrypted, bool exist) : m_charSet( charSet ), m_collation( collation ), m_encrypted( encrypted )
     {
         m_name = name;

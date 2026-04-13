@@ -9270,7 +9270,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
     {
         options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
         dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.push_back( std::make_tuple( L"Default", L"Default", L"Default" ) );
-        dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"] = std::make_tuple( L"Default", true, true );
+        dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
         SQLWCHAR setName[64], colName[64], setDesc[128];
         bool isDefault, isCompiled;
         query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
@@ -9398,7 +9398,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
                 std::wstring param1, param2;
                 str_to_uc_cpy( param1, setName );
                 str_to_uc_cpy( param2, colName );
-                dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[param1] = std::make_tuple( param2, isDefault, isCompiled );
+                dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[param1].push_back( std::make_tuple( param2, isDefault, isCompiled ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
