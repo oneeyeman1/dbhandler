@@ -56,6 +56,7 @@ struct PostgresCreateDBOptions : public CreateDBOptions
 {
     std::wstring m_role, m_template, m_encoding, m_collation, m_ctype, m_tablespace;
     std::vector<std::wstring> m_roles, m_templates, m_tablespaces;
+    virtual ~PostgresCreateDBOptions() { }
 };
 
 struct MySQLCreateDBOptions : public CreateDBOptions
