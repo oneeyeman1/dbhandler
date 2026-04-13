@@ -1604,7 +1604,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         errorMsg.push_back( err );
         result = 1;
     }
-    else 
+    else
     {
         if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
         {
@@ -1921,7 +1921,7 @@ int MySQLDatabase::ApplyForeignKey(std::wstring &command, const std::wstring &ke
         else
         {
             command += query1 + L"\n\r";
-            command += query + L"\n\r"; 
+            command += query + L"\n\r";
         }
     }
     return result;
@@ -2358,8 +2358,8 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             foreign_keys[ordinal].push_back( new FKField( ordinal, m_pimpl->m_myconv.from_bytes( cnstraintName ), schemaName, tableName, m_pimpl->m_myconv.from_bytes( fieldName ),
                                                            m_pimpl->m_myconv.from_bytes( refTableSchema ),
                                                            m_pimpl->m_myconv.from_bytes( refTableName ),
-                                                           m_pimpl->m_myconv.from_bytes( refTableField ), 
-                                                           origFields, refFelds, 
+                                                           m_pimpl->m_myconv.from_bytes( refTableField ),
+                                                           origFields, refFelds,
                                                            update_constraint, delete_constraint ) );
         }
         mysql_free_result( meta1 );
@@ -2458,13 +2458,13 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     {
         memset( results2, '\0', sizeof( results2 ) );
 
-        results2[0].buffer_type = MYSQL_TYPE_STRING; 
+        results2[0].buffer_type = MYSQL_TYPE_STRING;
         results2[0].buffer = fieldName;
         results2[0].buffer_length = 64;;
         results2[0].is_null = &isNull2[0];
         results2[0].error = &err2[0];
 
-        results2[1].buffer_type = MYSQL_TYPE_STRING; 
+        results2[1].buffer_type = MYSQL_TYPE_STRING;
         results2[1].buffer = fieldType;
         results2[1].buffer_length = 64;
         results2[1].is_null = &isNull2[1];
@@ -3208,7 +3208,7 @@ int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), cons
     return result;
 }
 
-int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     options = new MySQLCreateDBOptions( L"", L"", L"", false , false );

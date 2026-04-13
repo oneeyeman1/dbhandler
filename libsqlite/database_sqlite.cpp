@@ -3329,7 +3329,7 @@ bool SQLiteDatabase::CreatePKOptions(const std::wstring &command, const std::wre
     return result;
 }
 
-int SQLiteDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

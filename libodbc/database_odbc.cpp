@@ -9262,7 +9262,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     return result;
 }
 
-int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     if( pimpl.m_subtype == L"MySQL" )

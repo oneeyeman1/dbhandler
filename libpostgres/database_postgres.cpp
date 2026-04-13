@@ -461,7 +461,7 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     }
     return result;
 }
-	
+
 int PostgresDatabase::Disconnect(std::vector<std::wstring> &UNUSED(errorMsg))
 {
     std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
@@ -555,7 +555,7 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( !result )
     {
         res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
-        ExecStatusType status = PQresultStatus( res ); 
+        ExecStatusType status = PQresultStatus( res );
         if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -834,7 +834,7 @@ bool PostgresDatabase::IsIndexExists(const std::wstring &indexName, const std::w
     int length[3] = { len1, len2, len3 };
     int formats[3] = { 1, 1, 1 };
     res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 3, NULL, values, length, formats, 0 );
-    ExecStatusType status = PQresultStatus( res ); 
+    ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -1332,7 +1332,7 @@ bool PostgresDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::v
 //    int length[2] = { len1, len2 };
 //    int formats[2] = { 1, 1 };
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
-    ExecStatusType status = PQresultStatus( res ); 
+    ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -2002,7 +2002,7 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
-    ExecStatusType status = PQresultStatus( res ); 
+    ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         result = 1;
@@ -2063,7 +2063,7 @@ int PostgresDatabase::GetFieldHeader(const std::wstring &tableName, const std::w
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
     std::wstring query = L"SEECT pbc_hdr FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_cnam\" = $2";
     PGresult *res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 2, NULL, values, nullptr, nullptr, 0 );
-    ExecStatusType status = PQresultStatus( res ); 
+    ExecStatusType status = PQresultStatus( res );
     if( status == PGRES_COMMAND_OK || status == PGRES_TUPLES_OK )
         headerStr = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, 0, 0 ) );
     delete[] values[0];
@@ -2134,7 +2134,7 @@ int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wst
     strcpy( param[0], m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str() );
     std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table FROM information_schema.tables t WHERE t.table_catalog = $1 AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 1, NULL, param, NULL, NULL, 0 );
-    ExecStatusType status = PQresultStatus( res ); 
+    ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -2247,7 +2247,7 @@ int PostgresDatabase::GetTablespacesList(std::vector<std::wstring> &list, std::v
     int result = 0;
     std::wstring errorMessage;
     std::wstring query = L"SELECT * FROM pg_tablespace;";
-    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );       // ask for binary results 
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );       // ask for binary results
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -2308,7 +2308,7 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
     return result;
 }
 
-int PostgresDatabase::GetCreateDBOptions(CreateDBOptions *options, std::vector<std::wstring> &errors)
+int PostgresDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errors)
 {
     int result = 0;
     return result;
