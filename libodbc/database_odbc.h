@@ -102,8 +102,6 @@ private:
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
     int m_maxIdLen;
-    std::tuple<std::wstring, std::wstring, std::wstring, int> m_mysqlCharSets;
-    std::tuple<std::wstring, std::wstring, int, bool, bool> m_mysqlCollations;
 };
 
 struct ODBCDatabase::ODBCImpl

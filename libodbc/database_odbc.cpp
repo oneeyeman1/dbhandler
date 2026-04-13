@@ -1768,7 +1768,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             {
                 for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    qry.reset( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -1783,7 +1783,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 auto i = 1;
                 for( std::vector<std::wstring>::iterator it = queries2.begin(); it < queries2.end(); ++it )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    qry.reset( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -1836,7 +1836,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 }
                 for( std::vector<std::wstring>::iterator it = queries3.begin(); it < queries3.end(); ++it )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    qry.reset( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -1854,7 +1854,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 int i = 1;
                 for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    qry.reset( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -1906,7 +1906,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 }
                 for( std::vector<std::wstring>::iterator it = queries2.begin(); it < queries2.end(); ++it )
                 {
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[(*it).length() + 2] );
+                    qry.reset( new SQLWCHAR[(*it).length() + 2] );
                     memset( qry.get(), '\0', (*it).length() + 2 );
                     uc_to_str_cpy( qry.get(), (*it) );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -2370,7 +2370,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( pimpl.m_subtype == L"Sybase SQL Anywhere"  && pimpl.m_versionMajor <= 9 )
                 {
                     std::wstring temp = L"SELECT u.user_name, t.table_name FROM sys.systable t, sys.sysuserperm u WHERE t.creator = u.user_id ORDER BY u.user_name, t.table_name";
-                    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[temp.length() + 2] );
+                    qry.reset( new SQLWCHAR[temp.length() + 2] );
                     memset( qry.get(), '\0', temp.length() + 2 );
                     uc_to_str_cpy( qry.get(), temp );
                     ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
