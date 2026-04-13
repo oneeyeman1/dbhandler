@@ -30,6 +30,7 @@
 #include "wx/grid.h"
 #include "wx/propgrid/manager.h"
 #include "wx/propgrid/propgrid.h"
+#include "wx/collpane.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
 #include "wx/nativewin.h"
