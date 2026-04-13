@@ -14,6 +14,7 @@
 
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
+    m_opts = options;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto second = new wxBoxSizer( wxVERTICAL );
@@ -89,6 +90,13 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
 
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
 {
+    MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts );
     auto charSet = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_characterSet->GetClientObject( m_characterSet->GetSelection() ) );
+    m_collations->Clear();
+    std::wstring charset = std::get<1>( charSet );
+    for( auto collation : opts->m_collations[charset] )
+    {
+        m_collations->Append( std::get<0>( collation ) );
+    }
 }
 

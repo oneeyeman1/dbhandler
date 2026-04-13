@@ -16,6 +16,7 @@ public:
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
 private:
+    CreateDBOptions *m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;
