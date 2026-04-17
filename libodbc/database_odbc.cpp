@@ -1329,18 +1329,18 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON CONFLICT DO NOTHING;" );
     }
-    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
     {
         if( pimpl.m_versionMajor >= 12 )
         {
             // According to the Sybase (SAP) documentation "IF NOT EXIST" is supported from version 12 up.
-            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_name char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ))" );
-            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
+            queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer NOT NULL, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_strke smallint, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_strke smallint, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_strke smallint, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))" );
             queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))" );
-            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
-            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt(abe_tnam ASC, abe_seqn ASC);" );
+            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol(abc_name ASC, abc_ownr ASC, abc_cnam ASC);" );
+            queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt(abf_name ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
             queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatv_x ON abcatvld(abv_name ASC);" );
@@ -1367,89 +1367,6 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC );" );
             queries.push_back( L"SELECT 1 FROM sysindex i, systable t WHERE i.table_id = t.table_id AND t.table_name = 'abcatvld' AND i.index_name = 'abcatv_x';" );
             queries.push_back( L"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC );" );
-        }
-        if( pimpl.m_versionMajor >= 9 )
-        {
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', NULL, 85, 4, 1, 536870916, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'Y', 85, 4, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'BenefitsCheckBox', 'N', 85, 4, 3, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', '0', 87, 3, 1, -201326590, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'White', 87, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 4, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Black', 87, 3, 5, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 6, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Purple', 87, 3, 7, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 8, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Orange', 87, 3, 9, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 10, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Green', 87, 3, 11, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 12, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Blue', 87, 3, 13, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 14, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Yellow', 87, 3, 15, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 16, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Color List', 'Red', 87, 3, 17, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'd_dddw_cust', 88, 2, 1, 536870928, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Customers', 'id', 88, 2, 3, 0, '400' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Day Care', 85, 4, 1, 536870916, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'Y', 85, 4, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Day Care', 'N', 85, 4, 3, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY', 'DD/MM/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS', 'DD/MM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YY HH:MM:SS:FFFFFF', 'DD/MM/YY HH:MM:SS:FFFFFF', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY', 'DD/MM/YYYY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MM/YYYY HH:MM:SS', 'DD/MM/YY HH::MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY', 'DD/MMM/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DD/MMM/YY HH:MM:SS', 'DD/MMM/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY', 'DDD/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'd_dddw_dept', 88, 10, 1, 536870928, '0' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps', 88, 3, 1, 536870928, '0' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'health insurance', 85, 3, 1, 536870928, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'Y', 85, 3, 2, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'Health Insurance', 'N', 85, 3, 3, 0, NULL ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFF', 'HH:MM:SS:FFF', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS:FFFFFF', 'HH:MM:SS:FFFFFF', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY', 'JJJ/YY', 90, 1, 1, 32, '20' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-            queries2.push_back( L"INSERT INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' ) ON EXISTING SKIP;" );
-        }
-        else
-        {
             queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '###-##-####', '###-##-####', 90, 1, 1, 32, '00' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '###-##-####' AND abe_seqn = 1);" );
             queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '###,###.00', '###,###.00', 90, 1, 1, 32, '10' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '###,###.00' AND abe_seqn = 1);" );
             queries2.push_back( L"INSERT INTO abcatedt(abe_name, abe_edit, abe_type, abe_cntr, abe_seqn, abe_flag, abe_work) SELECT '#####', '#####', 90, 1, 1, 32, '10' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatedt WHERE abe_name = '#####' AND abe_seqn = 1);" );
@@ -1749,7 +1666,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[25] );
         memset( qry.get(), '\0', 25 );
         uc_to_str_cpy( qry.get(), L"BEGIN" );
-        if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
             uc_to_str_cpy( qry.get(), L" TRANSACTION" );
         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -1764,7 +1681,8 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 pimpl.m_subtype == L"PostgreSQL" ||
                 pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ||
                 ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) ||
-                ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) )
+                ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) ||
+                ( pimpl.m_subtype == L"SQL Anywhere" && pimpl.m_versionMajor ) )
             {
                 for( std::vector<std::wstring>::iterator it = queries.begin(); it < queries.end(); ++it )
                 {
@@ -2291,9 +2209,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == OSX )
             qry2 = L"MERGE INTO abcattbl t USING( SELECT ? AS abr_os, ?.? AS abt_tnam, ? AS abt_ownr FROM DUAL ) s ON(t.abt_os = s.abt_os AND t.abt_tnam = s.abt_tnam AND t.abt_ownr = s.abt_ownr) WHEN NOT MATCHED THEN INSERT VALUES( ?, ?, (SELECT object_id FROM all_objects WHERE owner = ? AND object_name = ?), COALESCE((SELECT tableowner FROM pg_tables WHERE tablename = ? AND schemaname = ?), 'postgres'),, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' ) ON CONFLICT DO NOTHING;";
     }
-    if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
     {
-        if( pimpl.m_versionMajor >= 9 )
+/**        if( pimpl.m_versionMajor >= 9 )
         {
             if( osid == WINDOWS )
                 qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' ON EXISTING SKIP;";
@@ -2304,7 +2222,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             else if( osid == OSX )
                 qry2 = L"INSERT INTO abcattbl VALUES( ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSER u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT * FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?) ON EXISTING SKIP;";
         }
-        else
+        else*/
         {
             if( osid == WINDOWS )
                 qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
@@ -2344,7 +2262,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( int i = 0; i < 5; i++ )
             {
                 catalog[i].TargetType = SQL_C_WCHAR;
-                catalog[i].BufferLength = ( bufferSize + 1 );
+                catalog[i].BufferLength = ( bufferSize + 1 ) * sizeof( SQLWCHAR );
                 catalog[i].TargetValuePtr = malloc( sizeof( unsigned char ) * catalog[i].BufferLength );
                 ret = SQLBindCol( m_hstmt, (SQLUSMALLINT) i + 1, catalog[i].TargetType, catalog[i].TargetValuePtr, catalog[i].BufferLength, &( catalog[i].StrLen_or_Ind ) );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2513,7 +2431,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
                 memset( qry1.get(), '\0', 30 );
                 uc_to_str_cpy( qry1.get(), L"BEGIN" );
-                if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
+                if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
                     uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
                 ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2597,7 +2515,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
-                        ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 129, 0, fullName.get(), len, &cbParam[1] );
+                        ret = SQLBindParameter( statement, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 128, 0, fullName.get(), ( len + 1 ) * sizeof( SQLWCHAR ), &cbParam[1] );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errorMsg, STMT_ERROR, statement );
@@ -2733,6 +2651,48 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                                 GetErrorMessage( errorMsg, STMT_ERROR, statement );
                                 result = 1;
                                 break;
+                            }
+                        }
+                    }
+                    if( pimpl.m_subtype == L"SQL Anywhere" )
+                    {
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 128, 0, fullName.get(), ( len + 1 ) * sizeof( SQLWCHAR ), &cbParam[1] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                                result = 1;
+                                break;
+                            }
+                        }
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( statement, 8, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                                result = 1;
                             }
                         }
                     }
@@ -5791,13 +5751,13 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             }
             if( result == 1 )
             {
-                result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+                retcode = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
             }
             else
             {
-                result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+                retcode = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
             }
-            if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, CONN_ERROR );
                 result = 1;
