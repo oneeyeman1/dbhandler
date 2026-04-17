@@ -163,6 +163,12 @@ struct MySQLPKOptions : public PKOptions
     }
 };
 
+struct SQLAnywherePKOptions :  : public PKOptions
+{
+    bool m_isClustered;
+    virtual ~SQLAnywherePKOptions() { }
+};
+
 struct DropIndexOption
 {
     int m_maxdop = 0, m_algorythm = 0, m_locks = 0, m_force = false, m_immediate = true;
