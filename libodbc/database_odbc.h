@@ -102,6 +102,7 @@ private:
     bool m_oneStatement;
     SQLWCHAR *m_connectString;
     int m_maxIdLen;
+    SQLSMALLINT m_valueType = SQL_C_WCHAR, m_paramType = SQL_WCHAR;
 };
 
 struct ODBCDatabase::ODBCImpl
