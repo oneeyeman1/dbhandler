@@ -2384,6 +2384,8 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 str_to_uc_cpy( schema, schemaName );
                 str_to_uc_cpy( table, tableName );
+                if( pimpl.m_subtype == L"SQL Anywhere" )
+                    cat = pimpl.m_dbName;
                 pimpl.m_tableDefinitions[cat].push_back( TableDefinition( cat, schema, table ) );
                 count++;
                 if( pimpl.m_subtype == L"MySQL" )

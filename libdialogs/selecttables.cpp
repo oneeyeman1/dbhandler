@@ -165,7 +165,6 @@ void SelectTables::FillTableList(bool sysTableIncluded)
     std::wstring subType = m_db->GetTableVector().m_subtype;
     std::lock_guard<std::mutex> locker( m_db->GetTableVector().my_mutex );
     std::map<std::wstring,std::vector<TableDefinition> > tables = m_db->GetTableVector().m_tableDefinitions;
-    auto size = tables.size();
     std::wstring dbName = m_db->GetTableVector().m_dbName;
     for( std::map<std::wstring,std::vector<TableDefinition> >::iterator it = tables.begin(); it != tables.end(); it++ )
     {
@@ -188,15 +187,15 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                     tableName = schemaName + L"." + tableName;
                 }
                 else if( ( ( type == L"ODBC" && subType == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" ) ||
-                           ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" )
+                         ( ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" ) ||
+                           ( type == L"ODBC" && subType == L"SQL Anywhere" ) || type == L"SQL Anywhere" )
                 {
-                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos ) )
+                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos || schemaName.find( L"dbo" ) != std::wstring::npos ) )
                         continue;
                     else
                     {
                         insert = true;
                     }
-//                    if( size > 1 )
                     tableName = catalogName + L"." + schemaName + L"." + tableName;
                 }
                 else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"mySQL" )
