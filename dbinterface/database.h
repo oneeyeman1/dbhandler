@@ -163,7 +163,7 @@ struct MySQLPKOptions : public PKOptions
     }
 };
 
-struct SQLAnywherePKOptions :  : public PKOptions
+struct SQLAnywherePKOptions : public PKOptions
 {
     bool m_isClustered;
     virtual ~SQLAnywherePKOptions() { }
