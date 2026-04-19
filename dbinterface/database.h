@@ -44,6 +44,8 @@ enum FK_ONDELETE
     SET_DEFAULT_DELETE,
     CASCADE_DELETE
 };
+// Character Set, Default Collation, Description
+using CharSet = std::tuple<std::wstring, std::wstring, std::wstring>;
 
 struct CreateDBOptions
 {
@@ -63,7 +65,7 @@ struct MySQLCreateDBOptions : public CreateDBOptions
 {
     std::wstring m_charSet, m_collation;
     bool m_encrypted;
-    std::vector<std::tuple<std::wstring, std::wstring, std::wstring> > m_charSets;
+    std::vector<std::unique_ptr<CharSet> > m_charSets;
     std::map<std::wstring, std::vector<std::tuple<std::wstring, bool, bool> > > m_collations;
     MySQLCreateDBOptions(const std::wstring &name, const std::wstring &charSet, const std::wstring &collation, bool encrypted, bool exist) : m_charSet( charSet ), m_collation( collation ), m_encrypted( encrypted )
     {

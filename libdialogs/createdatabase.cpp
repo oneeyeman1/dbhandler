@@ -15,6 +15,7 @@
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
     m_opts = options;
+    wxFlexGridSizer *paneSizer1 = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto second = new wxBoxSizer( wxVERTICAL );
@@ -50,14 +51,14 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         if( type == L"MySQL" || subtype == L"MySQL" )
         {
             MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( options );
-            auto paneSizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
+            paneSizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
             m_label2 = new wxStaticText( win, wxID_ANY, _( "Character Set:" ) );
             paneSizer1->Add( m_label2, 0, wxEXPAND, 0 );
             m_characterSet = new wxComboBox( win, wxID_ANY );
-            for( auto charSet : opts->m_charSets )
+            for( auto &charSet : opts->m_charSets )
             {
-                int row = m_characterSet->Append( std::get<2>( charSet ) );
-                m_characterSet->SetClientObject( row, (wxClientData *) &charSet );
+                int row = m_characterSet->Append( std::get<2>( *charSet ) );
+                m_characterSet->SetClientData( row, charSet.get() );
             }
             m_characterSet->SetValue( "Default" );
             m_characterSet->Bind( wxEVT_COMBOBOX, &CreateDatabase::OnCharacterSetChanged, this );
@@ -71,17 +72,27 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_encrypted = new wxCheckBox( win, wxID_ANY, _( "Encrypted:" ) );
             paneSizer1->Add( m_encrypted, 0, wxEXPAND, 0 );
             paneSizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-            sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
         }
         if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
         {
             PostgresCreateDBOptions *opts = dynamic_cast<PostgresCreateDBOptions *>( options );
-            auto paneSizer1 = new wxFlexGridSizer( 7, 2, 5, 5 );
+            paneSizer1 = new wxFlexGridSizer( 7, 2, 5, 5 );
             m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
-            paneSizer1->Add( m_label1, 0, wxEXPAND, 0 );
+            paneSizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_owner = new wxComboBox( win, wxID_ANY );
             paneSizer1->Add( m_owner, 0, wxEXPAND, 0 );
+            for( auto user : opts->m_roles )
+                m_owner->Append( user );
+            m_owner->SetValue( "Default" );
+            m_label2 = new wxStaticText( win, wxID_ANY, "TEMPLATE" );
+            paneSizer1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_template = new wxComboBox( win, wxID_ANY );
+            for( auto tmplate : opts->m_templates )
+                m_template->Append( tmplate );
+            paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
+            m_template->SetValue( "Default" );
         }
+        sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer3->Add( sizer4, 0, wxEXPAND, 0 );
         sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -100,10 +111,13 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
 {
     MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts );
-    auto charSet = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_characterSet->GetClientObject( m_characterSet->GetSelection() ) );
-    m_collations->Clear();
+    CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
+//    m_collations->Clear();
     wxString defValue = "";
-    std::wstring charset = std::get<1>( *charSet );
+    std::wstring charset = std::get<0>( *charSet );
+//    std::wstring desc = std::get<1>( *charSet );
+//    std::wstring coll = std::get<2>( *charSet );
+//    std::wstring charset = m_characterSet->GetString( m_characterSet->GetSelection() ).ToStdWstring();
     for( auto collation : opts->m_collations[charset] )
     {
         auto value = std::get<0>( collation );
