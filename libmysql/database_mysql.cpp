@@ -3262,9 +3262,9 @@ int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std
         while( ( row = mysql_fetch_row( res ) ) )
         {
             bool def = true, comp = true;
-            if( m_pimpl->m_myconv.from_bytes( row[3] ) != L"Yes" )
+            if( m_pimpl->m_myconv.from_bytes( row[3] ) != L"Y" )
                 def = false;
-            if( m_pimpl->m_myconv.from_bytes( row[4] ) != L"Yes" )
+            if( m_pimpl->m_myconv.from_bytes( row[4] ) != L"Y" )
                 comp = false;
             dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
         }
