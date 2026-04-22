@@ -3107,7 +3107,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     unsigned short dataFontSize = 0, dataFontWeight = 0,  dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontStriken = 0;
     unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
     SQLWCHAR dataFontItalic[2], dataFontUnderline[2], headingFontItalic[2], headingFontUnderline[2], labelFontItalic[2], labelFontUnderline[2], dataFontName[20], headingFontName[20], labelFontName[20];
-    SQLWCHAR comments[225];
+    SQLWCHAR comments[226];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontStriken = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
@@ -3409,7 +3409,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 25, SQL_C_WCHAR, &comments, 225, &cbComment );
+        ret = SQLBindCol( m_hstmt, 25, SQL_C_WCHAR, &comments, 226, &cbComment );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5308,7 +5308,6 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     SQLLEN cbName, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     int result = 0;
     std::wstring query;
-    SQLWCHAR *qry;
     if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?";
 //        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo';";
@@ -5325,15 +5324,17 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
         query = L"SELECT object_id FROM all_objects WHERE object_name = UPPER(?) AND owner = UPPER(?)";
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT id FROM dbo.sysobjects WHERE name = ?";
-    qry = new SQLWCHAR[query.length() + 2];
-    auto tname = new SQLWCHAR[tableName.length() + 2];
-    auto sname = new SQLWCHAR[schemaName.length() + 2];
-    memset( qry, '\0', query.length() + 2 );
-    memset( tname, '\0', tableName.length() + 2 );
-    memset( sname, '\0', schemaName.length() + 2);
-    uc_to_str_cpy( qry, query );
-    uc_to_str_cpy( sname, schemaName );
-    uc_to_str_cpy( tname, tableName );
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+        query = L"SELECT table_id FROM sys.systable t, sys.sysuserperm u WHERE t.creator = u.user_id AND t.table_name = ? AND u.user_name = ?";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> tname( new SQLWCHAR[tableName.length() + 2] );
+    std::unique_ptr<SQLWCHAR[]> sname( new SQLWCHAR[schemaName.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    memset( tname.get(), '\0', tableName.length() + 2 );
+    memset( sname.get(), '\0', schemaName.length() + 2);
+    uc_to_str_cpy( qry.get(), query );
+    uc_to_str_cpy( sname.get(), schemaName );
+    uc_to_str_cpy( tname.get(), tableName );
     auto dbName = new SQLWCHAR[pimpl.m_dbName.length() + 2];
     memset( dbName, '\0', pimpl.m_dbName.length() + 2 );
     uc_to_str_cpy( dbName, pimpl.m_dbName );
@@ -5356,7 +5357,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     }
     if( !result )
     {
-        retcode = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        retcode = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5374,7 +5375,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     }
     if( !result )
     {
-        retcode = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], parameterSize[0], decimalDigit[0], tname, 0, &cbTableName );
+        retcode = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[0], parameterSize[0], decimalDigit[0], tname.get(), 0, &cbTableName );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5392,7 +5393,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     }
     if( !result )
     {
-        retcode = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], parameterSize[1], decimalDigit[1], sname, 0, &cbSchemaName );
+        retcode = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], parameterSize[1], decimalDigit[1], sname.get(), 0, &cbSchemaName );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -5441,11 +5442,6 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
-    delete[] tname;
-    tname = nullptr;
-    delete[] sname;
-    sname = nullptr;
-    delete[] qry;
     if( m_hstmt )
     {
         retcode = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
@@ -5482,6 +5478,8 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
         query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND relname = ? AND n.nspname = ?";
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+        query = L"SELECT t.table_name, u.user_name FROM sys.systab t, sys.sysuser u, WHERE t.creator = u.user_id AND t.table_name = ? AND u.user_name = ?;";
     if( pimpl.m_subtype == L"MySQL" )
     {
         odbc_pimpl->m_currentTableOwner = L"";
@@ -6199,8 +6197,8 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     std::wstring fieldName, fieldType, defaultValue, primaryKey, fkSchema, fkName, fkTable, origSchema, origTable, origCol, refSchema, refTable, refCol;
     std::vector<std::wstring> pk_fields, fk_fieldNames;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
-    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 1];
-    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 1], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 1], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 1];
+    SQLWCHAR szColumnName[256], szTypeName[256], szRemarks[256], szColumnDefault[256], szIsNullable[256], pkName[SQL_MAX_COLUMN_NAME_LEN + 2];
+    SQLWCHAR szFkTable[SQL_MAX_COLUMN_NAME_LEN + 1], szPkCol[SQL_MAX_COLUMN_NAME_LEN + 2], szPkTable[SQL_MAX_COLUMN_NAME_LEN + 2], szPkSchema[SQL_MAX_COLUMN_NAME_LEN + 2], szFkTableSchema[SQL_MAX_SCHEMA_NAME_LEN + 1], szFkCol[SQL_MAX_COLUMN_NAME_LEN + 2], szFkName[256], szFkCatalog[SQL_MAX_CATALOG_NAME_LEN + 2];
     SQLSMALLINT updateRule = 0, deleteRule = 0, keySequence = 0;
     SQLLEN cbPkCol, cbFkTable, cbFkCol, cbFkName, cbFkSchemaName, cbUpdateRule, cbDeleteRule, cbKeySequence, cbFkCatalog, fkNameLength = 256;
     SQLLEN cbColumnName, cbDataType, cbTypeName, cbColumnSize, cbBufferLength, cbDecimalDigits, cbNumPrecRadix, pkLength;
@@ -6219,7 +6217,9 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
         query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
-        query4 = L"SELECT iname FROM sysindexes WHERE tname = ?";
+        query4 = L"SELECT i.index_name FROM sys.sysindex i, sys.systable t, sys.sysuserperm u WHERE i.table_id = t.table_id AND t.creator = u.user_id AND t.table_name = 'customer' AND u.user_name  = 'dba';";
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+        query4 = L"SELECT iname FROM sys.sysindexes WHERE tname = ? AND creator = ?";
     if( pimpl.m_subtype == L"Oracle" )
         query4 = L"SELECT index_name FROM all_indexes WHERE table_name = UPPER(?)";
     std::wstring schema, table;
@@ -6375,7 +6375,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 if( !result )
                 {
-                    ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, szPkSchema, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                    ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, szPkSchema, SQL_MAX_COLUMN_NAME_LEN + 2, &cbPkCol );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errors, STMT_ERROR );
@@ -6384,7 +6384,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, szPkTable, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                        ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, szPkTable, SQL_MAX_COLUMN_NAME_LEN + 2, &cbPkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -6394,7 +6394,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, szPkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbPkCol );
+                        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, szPkCol, SQL_MAX_COLUMN_NAME_LEN + 2, &cbPkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -6404,7 +6404,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( m_hstmt, 5, SQL_C_WCHAR, szFkCatalog, SQL_MAX_CATALOG_NAME_LEN + 1, &cbFkCatalog );
+                        ret = SQLBindCol( m_hstmt, 5, SQL_C_WCHAR, szFkCatalog, SQL_MAX_CATALOG_NAME_LEN + 2, &cbFkCatalog );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -6434,7 +6434,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                     }
                     if( !result )
                     {
-                        ret = SQLBindCol( m_hstmt, 8, SQL_C_WCHAR, szFkCol, SQL_MAX_COLUMN_NAME_LEN + 1, &cbFkCol );
+                        ret = SQLBindCol( m_hstmt, 8, SQL_C_WCHAR, szFkCol, SQL_MAX_COLUMN_NAME_LEN + 2, &cbFkCol );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                         {
                             GetErrorMessage( errors, STMT_ERROR );
@@ -6621,7 +6621,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                 }
                 else
                 {
-                    ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, pkName, SQL_MAX_COLUMN_NAME_LEN + 1, &pkLength );
+                    ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, pkName, SQL_MAX_COLUMN_NAME_LEN + 2, &pkLength );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errors, STMT_ERROR );
@@ -8830,6 +8830,22 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             query2 = L"ALTER TABLE your_table DROP CONSTRAINT ";
             // 3. Re-add PK
             query3 = L"ALTER TABLE your_table ADD CONSTRAINT new_primary_key_constraint_name PRIMARY KEY (column1, column2, ...);";
+        }
+    }
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+    {
+        m_maxIdLen = 130;
+        if( !isLog )
+        {
+            query1 = L"SELECT si.index_name, st.clustered_index_id FROM sys.SYSTAB st, sys.SYSIDX si, sys.SYSINDEXES idx WHERE st.table_id = si.table_id AND st.table_name = ? AND idx.iname = si.index_name AND idx.indextype  = 'primary key';";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRAINT name PRIMARY KEY ";
+        }
+        else
+        {
+            query1 = L"SELECT si.index_name, st.clustered_index_id FROM sys.SYSTAB st, sys.SYSIDX si, sys.SYSINDEXES idx WHERE st.table_id = si.table_id AND st.table_name = ? AND idx.iname = si.index_name AND idx.indextype  = 'primary key';";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRANT name PRIMARY KEY ";
         }
     }
     if( !isLog )
