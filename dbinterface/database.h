@@ -168,7 +168,18 @@ struct MySQLPKOptions : public PKOptions
 struct SQLAnywherePKOptions : public PKOptions
 {
     bool m_isClustered;
+    SQLAnywherePKOptions(const std::wstring &name, bool isClustered) : m_isClustered( isClustered ) { m_name = name; }
     virtual ~SQLAnywherePKOptions() { }
+    virtual bool equal(const PKOptions &opt) const override
+    {
+        const SQLAnywherePKOptions *options = dynamic_cast<const SQLAnywherePKOptions *>( &opt );
+        return m_name == options->m_name && m_isClustered == options->m_isClustered;
+    }
+    virtual bool notequal(const PKOptions &opt) const override
+    {
+        const SQLAnywherePKOptions *options = dynamic_cast<const SQLAnywherePKOptions *>( &opt );
+        return !( this->equal( *options ) );
+    }
 };
 
 struct DropIndexOption

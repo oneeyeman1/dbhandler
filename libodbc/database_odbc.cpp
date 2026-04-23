@@ -3148,6 +3148,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         // get key_block_size for MyISAM (check CREATE_OPTIONS for KEY_BLOCK_SIZE=n)
         // SHOW CREATE TABLE 'table_name';
     }
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+    {
+        query1 = L"SELECT si.index_name as IdxName, ISNULL( st.clustered_index_id, 0 ) as ClusteredIdxID FROM sys.systab st, sys.sysidx si, sys.sysuser u WHERE st.table_id = si.table_id AND si.index_category = 1 AND u.user_name = ? AND st.table_name = ? AND st.creator = u.user_id";
+    }
     std::wstring tableName = table->GetTableName(), schemaName = table->GetSchemaName(), ownerName = table->GetTableOwner();
     if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
         id = WINDOWS;
@@ -3561,7 +3565,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     uc_to_str_cpy( desc.get(), L"NONE" );
     unsigned char padIndex = 'N';
     short int fill = 0, ignoreDup = 0, noRecomp = 0, incremental = 0, rowLocks = 1, pageLocks = 1, sequential = 0, xml = 0;
-    int delay = 0, partition;
+    int delay = 0, partition, clusteredId = 0;
     if( !result && pimpl.m_subtype != L"MySQL" )
     {
         ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, name.get(), 130, &ind1[0] );
@@ -3755,6 +3759,18 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         if( !result )
         {
             ret = SQLBindCol( m_hstmt, 5, SQL_C_WCHAR, blockSize.get(), 512, &ind1[4] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR  );
+                result = 1;
+            }
+        }
+    }
+    if( pimpl.m_subtype == L"SQL Anywhere" )
+    {
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &clusteredId, 0, &ind1[1] );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR  );
@@ -3958,6 +3974,10 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             }
             if( !result )
                 prop.pkOptions = std::make_shared<MySQLPKOptions>( conname.empty() ? L"PRIMARY" : conname, pkType, parser, comment, size, vis == L"Y", attrib1, attrib2  );
+        }
+        if( pimpl.m_subtype == L"SQL Anywhere" )
+        {
+            prop.pkOptions = std::make_shared<SQLAnywherePKOptions>( pkName, ( ind[1] == SQL_NULL_DATA || clusteredId == 0 ) ? false : true );
         }
         table->SetTableProperties( prop );
     }
@@ -5479,7 +5499,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
     if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl.m_subtype == L"SQL Anywhere" )
-        query = L"SELECT t.table_name, u.user_name FROM sys.systab t, sys.sysuser u, WHERE t.creator = u.user_id AND t.table_name = ? AND u.user_name = ?;";
+        query = L"SELECT u.user_name FROM sys.systab t, sys.sysuser u, WHERE t.creator = u.user_id AND t.table_name = ? AND u.user_name = ?;";
     if( pimpl.m_subtype == L"MySQL" )
     {
         odbc_pimpl->m_currentTableOwner = L"";
