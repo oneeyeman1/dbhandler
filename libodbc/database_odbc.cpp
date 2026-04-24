@@ -8853,18 +8853,18 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     }
     if( pimpl.m_subtype == L"SQL Anywhere" )
     {
-        m_maxIdLen = 130;
+        m_maxIdLen = 128;
         if( !isLog )
         {
-            query1 = L"SELECT si.index_name, st.clustered_index_id FROM sys.SYSTAB st, sys.SYSIDX si, sys.SYSINDEXES idx WHERE st.table_id = si.table_id AND st.table_name = ? AND idx.iname = si.index_name AND idx.indextype  = 'primary key';";
-            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
-            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRAINT name PRIMARY KEY ";
+            query1 = L"SELECT si.index_name as IdxName, ISNULL( st.clustered_index_id, 0 ) as ClusteredIdxID FROM sys.systab st, sys.sysidx si, sys.sysuser u WHERE st.table_id = si.table_id AND si.index_category = 1 AND u.user_name = ? AND st.table_name = ? AND st.creator = u.user_id;";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY ";
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRAINT ";
         }
         else
         {
-            query1 = L"SELECT si.index_name, st.clustered_index_id FROM sys.SYSTAB st, sys.SYSIDX si, sys.SYSINDEXES idx WHERE st.table_id = si.table_id AND st.table_name = ? AND idx.iname = si.index_name AND idx.indextype  = 'primary key';";
-            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
-            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRANT name PRIMARY KEY ";
+            query1 = L"SELECT si.index_name as IdxName, ISNULL( st.clustered_index_id, 0 ) as ClusteredIdxID FROM sys.systab st, sys.sysidx si, sys.sysuser u WHERE st.table_id = si.table_id AND si.index_category = 1 AND u.user_name = " + schemaName + L" AND st.table_name = " + tableName + L" AND st.creator = u.user_id;";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY ";
+            query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD CONSTRANT ";
         }
     }
     if( !isLog )
@@ -8881,7 +8881,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         if( isLog )
         {
             command += L"BEGIN";
-            if( pimpl.m_subtype == L"Microsoft SQL Server" )
+            if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"SQL Anywhere" )
                 command += L" TRANSACTION";
             command += L"\n\r";
         }
@@ -8890,7 +8890,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
             memset( qry1.get(), '\0', 30 );
             uc_to_str_cpy( qry1.get(), L"BEGIN" );
-            if( pimpl.m_subtype == L"Microsoft SQL Server" )
+            if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"SQL Anywhere" )
                 uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
             ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -9017,7 +9017,8 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
     {
         if( !primaryKeyName.empty() )
         {
-            query2 += primaryKeyName;
+            if( pimpl.m_subtype != L"SQL Anywhere" )
+                query2 += primaryKeyName;
             if( isLog )
             {
                 command += query2 + L"\n\r";
@@ -9047,7 +9048,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             if( !primaryKeyName.empty() )
                 query3 += L" CONSTRAINT " + primaryKeyName;
             query3 += L" PRIMARY KEY";
-            if( !options->m_isClustered )
+            if( options && !options->m_isClustered )
                 query3 += L" NONCLUSTERED";
             query3 += L"(";
             for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
@@ -9060,69 +9061,69 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
             bool withPresent = false;
             std::wstring with = L" WITH(";
-            if( options.get()->m_fill > 0 )
+            if( options && options.get()->m_fill > 0 )
             {
                 with += L" FILLFACTOR = ";
                 with += std::to_wstring( options.get()->m_fill );
                 withPresent = true;
             }
-            if( options.get()->m_pad )
+            if( options && options.get()->m_pad )
             {
                 if( withPresent )
                     with += L",";
                 with += L" PAD_INDEX = ON";
                 withPresent = true;
             }
-            if( options.get()->m_ignoreDup )
+            if( options && options.get()->m_ignoreDup )
             {
                 if( withPresent )
                     with += L",";
                 with += L" IGNORE_DUP_KEY = ON";
                 withPresent = true;
             }
-            if( options.get()->m_norecomp )
+            if( options && options.get()->m_norecomp )
             {
                 if( withPresent )
                     with += L",";
                 with += L" STATISTICS_NORECOMPUTE = ON";
                 withPresent = true;
             }
-            if( options.get()->m_incremental )
+            if( options && options.get()->m_incremental )
             {
                 if( withPresent )
                     with += L",";
                 with += L" STATISTICS_INCREMENTAL = ON";
                 withPresent = true;
             }
-            if( !options.get()->m_rowLocks )
+            if( options && !options.get()->m_rowLocks )
             {
                 if( withPresent )
                     with += L",";
                 with += L" ALLOW_ROW_LOCKS = OFF";
                 withPresent = true;
             }
-            if( !options.get()->m_pageLocks )
+            if( options && !options.get()->m_pageLocks )
             {
                 if( withPresent )
                     with += L",";
                 with += L" ALLOW_PAGE_LOCKS = OFF";
                 withPresent = true;
             }
-            if( options.get()->m_sequential )
+            if( options && options.get()->m_sequential )
             {
                 if( withPresent )
                     with += L",";
                 with += L" OPTIMIZE_FOR_SEQUENTIAL_KEY = ON";
                 withPresent = true;
             }
-            if( options.get()->m_delay > 0 )
+            if( options && options.get()->m_delay > 0 )
             {
                 if( withPresent )
                     with += L",";
                 with += L" COMPRESSION_DELAY = " + std::to_wstring( options.get()->m_delay );
                 withPresent = true;
             }
-            if( options.get()->m_desc != L"NONE" )
+            if( options && options.get()->m_desc != L"NONE" )
             {
                 if( withPresent )
                     with += L",";
@@ -9139,31 +9140,34 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             auto options = std::dynamic_pointer_cast<PostgresPKOptions>( opts );
             std::vector<std::wstring> included, storage;
             std::wstring temp;
-            options.get()->m_includeColumns.erase( 0, 1 );
-            options.get()->m_includeColumns.pop_back();
-            options.get()->m_storage.pop_back();
-            options.get()->m_storage.erase( 0, 1 );
-            if( !options.get()->m_includeColumns.empty() )
+            if( options )
             {
-                std::wstringstream stream( options.get()->m_includeColumns );
-                while( std::getline( stream, temp, L',' ) )
+                options.get()->m_includeColumns.erase( 0, 1 );
+                options.get()->m_includeColumns.pop_back();
+                options.get()->m_storage.pop_back();
+                options.get()->m_storage.erase( 0, 1 );
+                if( !options.get()->m_includeColumns.empty() )
                 {
-                    auto first = temp.find_first_not_of( L' ' );
-                    auto last = temp.find_last_not_of( L' ' );
-                    temp.erase( 0, first );
-                    temp.erase( last - first + 1 );
-                    included.push_back( temp );
+                    std::wstringstream stream( options.get()->m_includeColumns );
+                    while( std::getline( stream, temp, L',' ) )
+                    {
+                        auto first = temp.find_first_not_of( L' ' );
+                        auto last = temp.find_last_not_of( L' ' );
+                        temp.erase( 0, first );
+                        temp.erase( last - first + 1 );
+                        included.push_back( temp );
+                    }
+                    if( included.empty() )
+                        included.push_back( options.get()->m_includeColumns );
                 }
-                if( included.empty() )
-                    included.push_back( options.get()->m_includeColumns );
-            }
-            if( !options.get()->m_storage.empty() )
-            {
-                std::wstringstream stream( options.get()->m_storage );
-                while( std::getline( stream, temp, L',' ) )
-                    storage.push_back( temp );
-                if( storage.empty() )
-                    storage.push_back( options.get()->m_storage );
+                if( !options.get()->m_storage.empty() )
+                {
+                    std::wstringstream stream( options.get()->m_storage );
+                    while( std::getline( stream, temp, L',' ) )
+                        storage.push_back( temp );
+                    if( storage.empty() )
+                        storage.push_back( options.get()->m_storage );
+                }
             }
             for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
             {
@@ -9172,7 +9176,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
                     query3 += (*it);
                     if( it == newKey.end() - 1 )
                     {
-                        if( options.get()->m_withoutOverlaps )
+                        if( options && options.get()->m_withoutOverlaps )
                             query3 += L" WITHOUT OVERLAPS";
                         query3 += L")";
                     }
@@ -9206,6 +9210,22 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             }
             if( options.get()->m_tablespace != L"default" )
                 query3 += L" USING INDEX TABLESPACE " + options.get()->m_tablespace;
+        }
+        if( pimpl.m_subtype == L"SQL Anywhere" )
+        {
+            auto options = std::dynamic_pointer_cast<SQLAnywherePKOptions>( opts );
+            query3 += primaryKeyName + L" PRIMARY KEY";
+            if( options && options->m_isClustered )
+                query3 += L" CLUSTERED";
+            query3 += L"(";
+            for( std::vector<std::wstring>::const_iterator it = newKey.begin(); it < newKey.end(); ++it )
+            {
+                query3 += (*it);
+                if( it == newKey.end() - 1 )
+                    query3 += L")";
+                else
+                    query3 += L",";
+            }
         }
         if( isLog )
         {
