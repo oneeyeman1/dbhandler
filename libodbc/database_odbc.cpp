@@ -3789,11 +3789,11 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
+        str_to_uc_cpy( pkName, name.get() );
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
             std::wstring option, description;
             str_to_uc_cpy( option, clustered.get() );
-            str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( description, desc.get() );
             prop.pkOptions = std::make_shared<SQLServerPKOptions>( pkName, option == L"CLUSTERED", padIndex != 'N', fill, ignoreDup, noRecomp, incremental, rowLocks, pageLocks, sequential, delay, description, partition, xml );
         }
@@ -3803,7 +3803,6 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             SQLWCHAR columnName[64];
             SQLSMALLINT nameLengthPtr, dataTypePtr, decimalDigitsPtr, nullablePtr;
             SQLULEN columnSIzePtr;
-            str_to_uc_cpy( pkName, name.get() );
             str_to_uc_cpy( tbSpace, tablespace.get() );
             str_to_uc_cpy( indType, type.get() );
             if( tbSpace.empty() )

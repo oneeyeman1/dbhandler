@@ -382,6 +382,13 @@ void TablePrimaryKey::do_layout()
         sizer13->Add( m_attr2, 0, wxEXPAND, 0 );
         sizer5->Add( sizer13, 0, wxEXPAND, 0 );
     }
+    if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"SQL Anywhere" ) ||
+        ( m_db->GetTableVector().m_type == L"SQL Anywhere" ) )
+    {
+        m_clustered = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "Clustered" );
+        m_clustered->SetValue( std::dynamic_pointer_cast<SQLAnywherePKOptions>( m_options )->m_isClustered );
+        sizer5->Add( m_clustered, 0, wxEXPAND, 0 );
+    }
     sizer3->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( sizer3, 0, wxEXPAND, 0 );
     main->Add( sizer1, 1, wxEXPAND, 0 );
