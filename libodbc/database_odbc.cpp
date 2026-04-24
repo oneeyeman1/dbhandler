@@ -2713,6 +2713,16 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             break;
                         }
                     }
+                    if( !result && ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor <= 9 ) )
+                    {
+                        ret = SQLCloseCursor( statement );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                            result = 1;
+                            break;
+                        }
+                    }
                 }
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -2764,8 +2774,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     }
     for( int i = 0; i < 5; i++ )
     {
-        free( catalog[i].TargetValuePtr );
-        catalog[i].TargetValuePtr = nullptr;
+        if( pimpl.m_subtype != L"Sybase SQL Anywhere" )
+        {
+            free( catalog[i].TargetValuePtr );
+            catalog[i].TargetValuePtr = nullptr;
+        }
     }
     free( catalog );
     catalog = nullptr;
