@@ -50,7 +50,7 @@ SQLiteDatabase::~SQLiteDatabase()
     sqlite_pimpl = NULL;
 }
 
-int SQLiteDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
 {
     sqlite3 *db = nullptr;
     int result = 0;
@@ -3329,8 +3329,9 @@ bool SQLiteDatabase::CreatePKOptions(const std::wstring &command, const std::wre
     return result;
 }
 
-int SQLiteDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;
 }
+

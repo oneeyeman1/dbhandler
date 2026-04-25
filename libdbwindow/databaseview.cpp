@@ -148,7 +148,7 @@ typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vecto
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
-typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, CreateDBOptions *);
+typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, std::shared_ptr<CreateDBOptions>);
 
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
@@ -3333,7 +3333,7 @@ void DrawingView::OnEditTableObject(wxCommandEvent &WXUNUSED(event))
 void DrawingView::OnCreateDatabase(wxCommandEvent &event)
 {
     wxString libName;
-    CreateDBOptions *options = nullptr;
+    std::shared_ptr<CreateDBOptions> options;
     std::vector<std::wstring> errors;
     int res;
     wxDynamicLibrary lib;

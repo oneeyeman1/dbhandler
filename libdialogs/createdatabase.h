@@ -12,12 +12,14 @@
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
-    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options);
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options);
+    std::shared_ptr<CreateDBOptions> GetOptions() { return m_opts; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
     void OnOKUpdateUI(wxUpdateUIEvent &event);
+    void OnOK(wxCommandEvent &event);
 private:
-    CreateDBOptions *m_opts;
+    std::shared_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;

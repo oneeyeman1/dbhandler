@@ -12,7 +12,7 @@
 #include "database.h"
 #include "createdatabase.h"
 
-CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
+CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
     m_opts = options;
     wxFlexGridSizer *paneSizer1 = nullptr;
@@ -50,7 +50,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         if( type == L"MySQL" || subtype == L"MySQL" )
         {
-            MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( options );
+            auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( options );
             paneSizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
             m_label2 = new wxStaticText( win, wxID_ANY, _( "Character Set:" ) );
             paneSizer1->Add( m_label2, 0, wxEXPAND, 0 );
@@ -75,7 +75,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
         {
-            PostgresCreateDBOptions *opts = dynamic_cast<PostgresCreateDBOptions *>( options );
+            auto opts = std::dynamic_pointer_cast<PostgresCreateDBOptions>( options );
             paneSizer1 = new wxFlexGridSizer( 7, 2, 5, 5 );
             m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
             paneSizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -107,11 +107,12 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     SetSizer( main );
     Layout();
     FindWindowById( wxID_OK )->Bind( wxEVT_UPDATE_UI, &CreateDatabase::OnOKUpdateUI, this );
+    dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->Bind( wxEVT_BUTTON, &CreateDatabase::OnOK, this );
 }
 
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
 {
-    MySQLCreateDBOptions *opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts );
+    auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
     CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
 //    m_collations->Clear();
     wxString defValue = "";
@@ -135,5 +136,10 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void CreateDatabase::OnOK(wxCommandEvent &event)
+{
+    EndModal( wxID_OK );
 }
 

@@ -41,7 +41,7 @@ PostgresDatabase::~PostgresDatabase()
     m_pimpl = NULL;
 }
 
-int PostgresDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::vector<std::wstring> dbList;
@@ -2308,13 +2308,13 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std
     return result;
 }
 
-int PostgresDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errors)
+int PostgresDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errors)
 {
     int result = 0;
     std::wstring query1 = L"SELECT rolname FROM pg_roles";
     std::wstring query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
-    options = new PostgresCreateDBOptions();
-    dynamic_cast<PostgresCreateDBOptions *>( options )->m_roles.push_back( L"Default" );
+    options = std::make_shared<PostgresCreateDBOptions>();
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( L"Default" );
     auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {

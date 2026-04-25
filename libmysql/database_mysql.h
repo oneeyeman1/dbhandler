@@ -11,7 +11,7 @@ public:
     MySQLDatabase(const int osId, const std::wstring &desktop);
     virtual ~MySQLDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
-    virtual int CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
+    virtual int CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg) override;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
     int mySQLConnect();
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) override;
@@ -40,7 +40,7 @@ public:
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) override;
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
-    virtual int GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errors) override;
+    virtual int GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errors) override;
 protected:
     struct MySQLImpl;
     MySQLImpl *m_pimpl;

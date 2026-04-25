@@ -63,7 +63,7 @@ MySQLDatabase::~MySQLDatabase()
     m_pimpl = NULL;
 }
 
-int MySQLDatabase::CreateDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     result = Disconnect( errorMsg );
@@ -3208,12 +3208,12 @@ int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), cons
     return result;
 }
 
-int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    options = new MySQLCreateDBOptions( L"", L"", L"", false , false );
-    dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
-    dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
+    options = std::make_shared<MySQLCreateDBOptions>( L"", L"", L"", false , false );
+    std::dynamic_pointer_cast<MySQLCreateDBOptions>( options )->m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
+    std::dynamic_pointer_cast<MySQLCreateDBOptions>( options )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
     MYSQL_RES *res = nullptr;
     if( mysql_query( m_db, "SHOW CHARACTER SET" ) )
     {
@@ -3236,7 +3236,7 @@ int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std
         MYSQL_ROW row;
         while( ( row = mysql_fetch_row( res ) ) )
         {
-            dynamic_cast<MySQLCreateDBOptions *>( options )->m_charSets.emplace_back( new CharSet( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) ) );
+            std::dynamic_pointer_cast<MySQLCreateDBOptions>( options )->m_charSets.emplace_back( new CharSet( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) ) );
         }
         mysql_free_result( res );
     }
@@ -3266,7 +3266,7 @@ int MySQLDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std
                 def = false;
             if( m_pimpl->m_myconv.from_bytes( row[4] ) != L"Y" )
                 comp = false;
-            dynamic_cast<MySQLCreateDBOptions *>( options )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
+            std::dynamic_pointer_cast<MySQLCreateDBOptions>( options )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
         }
         mysql_free_result( res );
     }
