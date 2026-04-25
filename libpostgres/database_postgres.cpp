@@ -41,7 +41,7 @@ PostgresDatabase::~PostgresDatabase()
     m_pimpl = NULL;
 }
 
-int PostgresDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::vector<std::wstring> dbList;

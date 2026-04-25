@@ -63,13 +63,22 @@ MySQLDatabase::~MySQLDatabase()
     m_pimpl = NULL;
 }
 
-int MySQLDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     result = Disconnect( errorMsg );
+    std::wstring query = L"CREATE DATABASE " + name;
+    auto options = std::dynamic_pointer_cast<MySQLCreateDBOptions>( opts );
+    if( options->m_charSet != L"Default" )
+    {
+        query += L" CHARACTER SET = " + options->m_charSet;
+        query += L" COLLATE = " + options->m_collation;
+    }
+    if( options->m_encrypted )
+        query += L" ENCRYPTION = 'Y'";
     if( !result )
     {
-        result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
+        result = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
         if( result )
         {
             result = 1;

@@ -50,7 +50,7 @@ SQLiteDatabase::~SQLiteDatabase()
     sqlite_pimpl = NULL;
 }
 
-int SQLiteDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     sqlite3 *db = nullptr;
     int result = 0;

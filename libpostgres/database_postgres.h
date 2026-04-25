@@ -11,7 +11,7 @@ public:
     PostgresDatabase(const int osId, const std::wstring &desktop);
     virtual ~PostgresDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
-    virtual int CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg) override;
+    virtual int CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg) override;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
     virtual int Disconnect(std::vector<std::wstring> &UNUSED(errorMsg)) override;
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;

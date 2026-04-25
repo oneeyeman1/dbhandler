@@ -11,7 +11,7 @@ public:
     MySQLDatabase(const int osId, const std::wstring &desktop);
     virtual ~MySQLDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
-    virtual int CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg) override;
+    virtual int CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg) override;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
     int mySQLConnect();
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) override;

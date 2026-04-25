@@ -3356,6 +3356,8 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &event)
         {
             CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
             res = func( m_frame, type, subtype, options );
+            if( res == wxID_OK )
+                dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->CreateDatabase( options->m_name, options, errors );
         }
         else
         {

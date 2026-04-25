@@ -412,12 +412,21 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
     return result;
 }
 
-int ODBCDatabase::CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring qry = L"CREATE DATABASE " + name + L" ";
-    if( pimpl.m_subtype == L"Microsoft SQL Server" )
-        qry = L"CREATE DATABASE " + name + L"";
+    std::wstring qry = L"CREATE DATABASE " + name;
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+        auto options = std::dynamic_pointer_cast<MySQLCreateDBOptions>( opts );
+        if( options->m_charSet != L"Default" )
+        {
+            qry += L" CHARACTER SET = " + options->m_charSet;
+            qry += L" COLLATE = " + options->m_collation;
+        }
+        if( options->m_encrypted )
+            qry += L" ENCRYPTION = 'Y'";
+    }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {

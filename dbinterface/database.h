@@ -697,7 +697,7 @@ public:
     int GetOSId() const { return m_osId; }
     const std::wstring &GetDesktopEnv() const { return pimpl.m_desktop; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int CreateDatabase(const std::wstring &name, const CreateDBOptions &opts, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) = 0;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;

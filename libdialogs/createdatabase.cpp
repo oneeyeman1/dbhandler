@@ -15,6 +15,8 @@
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
     m_opts = options;
+    m_type = type;
+    m_subtype = subtype;
     wxFlexGridSizer *paneSizer1 = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -114,12 +116,8 @@ void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
 {
     auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
     CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
-//    m_collations->Clear();
     wxString defValue = "";
     std::wstring charset = std::get<0>( *charSet );
-//    std::wstring desc = std::get<1>( *charSet );
-//    std::wstring coll = std::get<2>( *charSet );
-//    std::wstring charset = m_characterSet->GetString( m_characterSet->GetSelection() ).ToStdWstring();
     for( auto collation : opts->m_collations[charset] )
     {
         auto value = std::get<0>( collation );
@@ -140,6 +138,14 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
 
 void CreateDatabase::OnOK(wxCommandEvent &event)
 {
+    m_opts->m_name = m_name->GetValue();
+    if( m_type == L"MySQL" || m_subtype == L"MySQL" )
+    {
+        auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
+        opts->m_charSet = m_characterSet->GetValue();
+        opts->m_collation = m_collations->GetValue();
+        opts->m_encrypted = m_encrypted->GetValue();
+    }
     EndModal( wxID_OK );
 }
 

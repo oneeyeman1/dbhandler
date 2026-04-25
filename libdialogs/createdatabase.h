@@ -29,6 +29,7 @@ private:
     wxCheckBox *m_encrypted = nullptr;
     wxComboBox *m_owner = nullptr;
     wxComboBox *m_template = nullptr;
+    std::wstring m_type, m_subtype;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */
