@@ -9373,6 +9373,7 @@ int ODBCDatabase::GetCreateDBOptions(CreateDBOptions *&options, std::vector<std:
         dynamic_cast<PostgresCreateDBOptions *>( options )->m_templates.push_back( L"Default" );
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
+        query3 = L"SELECT conname AS name, pg_encoding_to_char( conforencoding ), condefault AS default FROM pg_conversion";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
