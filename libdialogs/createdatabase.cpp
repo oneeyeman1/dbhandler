@@ -106,6 +106,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( main );
     Layout();
+    FindWindowById( wxID_OK )->Bind( wxEVT_UPDATE_UI, &CreateDatabase::OnOKUpdateUI, this );
 }
 
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
@@ -126,5 +127,13 @@ void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
             defValue = value;
     }
     m_collations->SetValue( defValue );
+}
+
+void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_name->GetValue() == wxEmptyString )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }
 

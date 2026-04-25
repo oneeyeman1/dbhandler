@@ -15,6 +15,7 @@ public:
     CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, CreateDBOptions *options);
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
+    void OnOKUpdateUI(wxUpdateUIEvent &event);
 private:
     CreateDBOptions *m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr;
