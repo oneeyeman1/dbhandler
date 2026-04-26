@@ -69,7 +69,7 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, const std::shared_pt
     result = Disconnect( errorMsg );
     std::wstring query = L"CREATE DATABASE ";
     if( opts->m_exist )
-        query += L"IF NOT EXIST ";
+        query += L"IF NOT EXISTS ";
     query += name;
     auto options = std::dynamic_pointer_cast<MySQLCreateDBOptions>( opts );
     if( options->m_charSet != L"Default" )
@@ -90,7 +90,7 @@ int MySQLDatabase::CreateDatabase(const std::wstring &name, const std::shared_pt
         }
         else
         {
-            result = mysql_select_db( m_db, "" );
+            result = mysql_select_db( m_db, m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
             if( result )
             {
                 result = 1;

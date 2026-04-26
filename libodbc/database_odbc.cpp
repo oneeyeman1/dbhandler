@@ -415,9 +415,9 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring qry = L"CREATE DATABASE ";
+    std::wstring qry = L"CREATE DATABASE ", qry1;
     if( opts->m_exist )
-        qry += L"IF NOT EXIST ";
+        qry += L"IF NOT EXISTS ";
     qry += name;
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -429,6 +429,7 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
         }
         if( options->m_encrypted )
             qry += L" ENCRYPTION = 'Y'";
+        qry1 = L"USE " + name;
     }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -436,17 +437,38 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
     }
+    std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry.length() + 2] );
+    memset( query.get(), '\0', qry.length() + 2 );
+    uc_to_str_cpy( query.get(), qry );
     if( !result )
     {
-        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry.length() + 2] );
-        memset( query.get(), '\0', qry.length() + 2 );
-        uc_to_str_cpy( query.get(), qry );
         ret = SQLExecDirect( m_hstmt, query.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
+    }
+    if( !result )
+    {
+        query.reset( new SQLWCHAR[qry1.length() + 2] );
+        memset( query.get(), '\0', qry1.length() + 2 );
+        uc_to_str_cpy( query.get(), qry1 );
+        ret = SQLExecDirect( m_hstmt, query.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+    else
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
     }
     if( m_hstmt )
     {
