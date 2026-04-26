@@ -47,7 +47,7 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
     auto exists = false;
     std::vector<std::wstring> dbList;
     std::wstring qry0, qry1, qry2;
-    qry0 = L"SELECT 1 FROM pg_database WHERE datnam = %1";
+    qry0 = L"SELECT 1 FROM pg_database WHERE datname = $1";
     if( opts->m_exist )
     {
         char *values[1];
