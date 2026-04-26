@@ -44,7 +44,37 @@ PostgresDatabase::~PostgresDatabase()
 int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    auto exists = false;
     std::vector<std::wstring> dbList;
+    std::wstring qry0, qry1, qry2;
+    qry0 = L"SELECT 1 FROM pg_database WHERE datnam = %1";
+    if( opts->m_exist )
+    {
+        char *values[1];
+        values[0] = NULL;
+        values[0] = new char[name.length() * sizeof( wchar_t ) + 1];
+        memset( values[0], '\0', name.length() * sizeof( wchar_t ) + 1 );
+        strcpy( values[0], m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
+        int len1 = (int) name.length() * sizeof( wchar_t );
+        int length[1] = { len1 };
+        int formats[1] = { 1 };
+        auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( qry0.c_str() ).c_str(), 1, NULL, values, length, formats, 0 );
+        auto status = PQresultStatus( res );
+        if( status != PGRES_TUPLES_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
+        else if( status == PGRES_TUPLES_OK )
+        {
+            exists = true;
+        }
+        PQclear( res );
+    }
+    if( !exists )
+    {
+    }
     result = Disconnect( errorMsg );
 //    if( !result )
 //        result = Connect( name, dbList, errorMsg );
@@ -976,7 +1006,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
             }
         }
         bool overlap = false;
-        if( !result )
+        if( !result && pimpl.m_versionMajor >= 18 )
         {
             values2[0] = new char[pkName.length() + 2];
             memset( values2[0], '\0', pkName.length() + 2 );
