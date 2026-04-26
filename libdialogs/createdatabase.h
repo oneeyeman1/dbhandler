@@ -23,6 +23,7 @@ private:
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;
+    wxCheckBox *m_exist = nullptr;
     wxCollapsiblePane *m_options = nullptr;
     wxComboBox *m_characterSet = nullptr;
     wxComboBox *m_collations = nullptr;

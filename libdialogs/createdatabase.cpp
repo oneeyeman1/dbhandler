@@ -38,6 +38,9 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     }
     second->Add( sizer1, 0, wxEXPAND, 0 );
     second->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_exist = new wxCheckBox( this, wxID_ANY, "IF NOT EXIST" );
+    second->Add( m_exist, 0, wxEXPAND, 0 );
+    second->Add( 5, 5, 0, wxEXPAND, 0 );
     if( type != L"SQLite" )
     {
         auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
@@ -142,7 +145,11 @@ void CreateDatabase::OnOK(wxCommandEvent &event)
     if( m_type == L"MySQL" || m_subtype == L"MySQL" )
     {
         auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
-        opts->m_charSet = m_characterSet->GetValue();
+        opts->m_exist = m_exist->GetValue();
+        CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
+        wxString defValue = "";
+        std::wstring charset = std::get<0>( *charSet );
+        opts->m_charSet = charset;
         opts->m_collation = m_collations->GetValue();
         opts->m_encrypted = m_encrypted->GetValue();
     }
