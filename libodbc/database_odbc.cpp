@@ -415,9 +415,14 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring qry = L"CREATE DATABASE ", qry1;
+    std::wstring qry = L"CREATE DATABASE ", qry1, qry0 = L"";
     if( opts->m_exist )
-        qry += L"IF NOT EXISTS ";
+    {
+        if( pimpl.m_subtype == L"PostgreSQL" )
+            qry0 = L"SELECT 1 FROM pg_database WHERE datname = ?";
+        else
+            qry += L"IF NOT EXISTS ";
+    }
     qry += name;
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -431,11 +436,37 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
             qry += L" ENCRYPTION = 'Y'";
         qry1 = L"USE " + name;
     }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+    }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
+    }
+    if( !qry0.empty() )
+    {
+        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry0.length() + 2] );
+        memset( query.get(), '\0', qry0.length() + 2 );
+        uc_to_str_cpy( query.get(), qry0 );
+        ret = SQLPrepare( m_hstmt, query.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+        if( !result )
+        {
+            SQLWCHAR newDBName[name.length() + 2];
+            SQLLEN cbDBName = SQL_NTS;
+            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, name.length(), 0, newDBName, 0, &cbDBName );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, CONN_ERROR );
+                result = 1;
+            }
+        }
     }
     std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry.length() + 2] );
     memset( query.get(), '\0', qry.length() + 2 );
