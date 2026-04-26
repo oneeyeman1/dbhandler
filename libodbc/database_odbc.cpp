@@ -415,7 +415,10 @@ int ODBCDatabase::GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<s
 int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring qry = L"CREATE DATABASE " + name;
+    std::wstring qry = L"CREATE DATABASE ";
+    if( opts->m_exist )
+        qry += L"IF NOT EXIST ";
+    qry += name;
     if( pimpl.m_subtype == L"MySQL" )
     {
         auto options = std::dynamic_pointer_cast<MySQLCreateDBOptions>( opts );
@@ -435,9 +438,9 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
     }
     if( !result )
     {
-        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[name.length() + 2] );
-        memset( query.get(), '\0', name.length() + 2 );
-        uc_to_str_cpy( query.get(), name );
+        std::unique_ptr<SQLWCHAR[]> query( new SQLWCHAR[qry.length() + 2] );
+        memset( query.get(), '\0', qry.length() + 2 );
+        uc_to_str_cpy( query.get(), qry );
         ret = SQLExecDirect( m_hstmt, query.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
