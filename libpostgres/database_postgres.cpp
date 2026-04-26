@@ -55,7 +55,7 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
         values[0] = new char[name.length() * sizeof( wchar_t ) + 1];
         memset( values[0], '\0', name.length() * sizeof( wchar_t ) + 1 );
         strcpy( values[0], m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
-        int len1 = (int) name.length() * sizeof( wchar_t );
+        int len1 = strlen( values[0] );//(int) name.length() * sizeof( wchar_t );
         int length[1] = { len1 };
         int formats[1] = { 1 };
         auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( qry0.c_str() ).c_str(), 1, NULL, values, length, formats, 0 );
@@ -68,7 +68,8 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
         }
         else if( status == PGRES_TUPLES_OK )
         {
-            exists = true;
+            if( PQntuples( res ) > 0 )
+                exists = true;
         }
         PQclear( res );
     }
