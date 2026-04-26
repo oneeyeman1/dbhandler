@@ -97,6 +97,20 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
             m_template->SetValue( "Default" );
         }
+        if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
+        {
+            auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
+            paneSizer1 = new wxFlexGridSizer( 5, 5, 5, 5 );
+            const wxString data[] =
+            {
+                "NONE",
+                "PARTIAL"
+            };
+            m_label1 = new wxStaticText( win, wxID_ANY, "CONTAINMENT" );
+            m_containment = new wxComboBox( win, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, 0 );
+            paneSizer1->Add( m_label1, 0, wxEXPAND, 0 );
+            paneSizer1->Add( m_containment, 0, wxEXPAND, 0 );
+        }
         sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
         sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer3->Add( sizer4, 0, wxEXPAND, 0 );
@@ -152,6 +166,11 @@ void CreateDatabase::OnOK(wxCommandEvent &event)
         opts->m_charSet = charset;
         opts->m_collation = m_collations->GetValue();
         opts->m_encrypted = m_encrypted->GetValue();
+    }
+    if( m_type == L"Microsoft SQL Server" || m_subtype == L"Microsoft SQL Server" )
+    {
+        auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( m_opts );
+        opts->m_containment = m_containment->GetValue();
     }
     EndModal( wxID_OK );
 }

@@ -54,6 +54,11 @@ struct CreateDBOptions
     virtual ~CreateDBOptions() = default;
 };
 
+struct SQLServerCreateDBOptions : public CreateDBOptions
+{
+    std::wstring m_containment;
+};
+
 struct PostgresCreateDBOptions : public CreateDBOptions
 {
     std::wstring m_role, m_template, m_encoding, m_collation, m_ctype, m_tablespace;
