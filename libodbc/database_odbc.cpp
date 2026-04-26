@@ -421,6 +421,8 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
     {
         if( pimpl.m_subtype == L"PostgreSQL" )
             qry0 = L"SELECT 1 FROM pg_database WHERE datname = ?";
+        else if( pimpl.m_subtype == L"Microsoft SQL Server" )
+            qey0 = L"SELECT 1 FROM sys.databases WHERE name = ?"
         else
             qry += L"IF NOT EXISTS ";
     }
