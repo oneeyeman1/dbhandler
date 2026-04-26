@@ -142,10 +142,10 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
 void CreateDatabase::OnOK(wxCommandEvent &event)
 {
     m_opts->m_name = m_name->GetValue();
+    m_opts->m_exist = m_exist->GetValue();
     if( m_type == L"MySQL" || m_subtype == L"MySQL" )
     {
         auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
-        opts->m_exist = m_exist->GetValue();
         CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
         wxString defValue = "";
         std::wstring charset = std::get<0>( *charSet );
