@@ -31,6 +31,7 @@ private:
     wxComboBox *m_owner = nullptr;
     wxComboBox *m_template = nullptr;
     wxComboBox *m_containment = nullptr;
+    wxSpinCtrl *m_connlimit = nullptr;
     std::wstring m_type, m_subtype;
 };
 

@@ -57,7 +57,7 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
         strcpy( values[0], m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
         int len1 = strlen( values[0] );//(int) name.length() * sizeof( wchar_t );
         int length[1] = { len1 };
-        int formats[1] = { 1 };
+        int formats[1] = { 0 };
         auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( qry0.c_str() ).c_str(), 1, NULL, values, length, formats, 0 );
         auto status = PQresultStatus( res );
         if( status != PGRES_TUPLES_OK )

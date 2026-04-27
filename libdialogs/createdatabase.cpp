@@ -7,8 +7,9 @@
 //
 
 #include "wx/wx.h"
-#include <wx/filepicker.h>
-#include <wx/collpane.h>
+#include "wx/filepicker.h"
+#include "wx/collpane.h"
+#include "wx/spinctrl.h"
 #include "database.h"
 #include "createdatabase.h"
 
@@ -96,6 +97,10 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
                 m_template->Append( tmplate );
             paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
             m_template->SetValue( "Default" );
+            m_label3 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
+            m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1" );
+            paneSizer1->Add( m_label3, 0, wxEXPAND, 0 );
+            paneSizer1->Add( m_connlimit, 0, wxEXPAND, 0 );
         }
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {

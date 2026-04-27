@@ -9549,7 +9549,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
 int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query1, query2, query3;
+    std::wstring query1, query2, query3, query4;
     SQLLEN ind[6];
     auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -9701,6 +9701,7 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
         query3 = L"SELECT conname AS name, pg_encoding_to_char( conforencoding ), condefault AS default FROM pg_conversion";
+        query4 = L"SELECT collname, collencoding, collprovider collctype FROM pg_collation";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
