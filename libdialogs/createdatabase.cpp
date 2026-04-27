@@ -99,7 +99,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_template->SetValue( "Default" );
             m_label3 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
             m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1" );
-            paneSizer1->Add( m_label3, 0, wxEXPAND, 0 );
+            paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_connlimit, 0, wxEXPAND, 0 );
         }
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
