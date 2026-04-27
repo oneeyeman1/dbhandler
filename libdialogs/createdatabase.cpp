@@ -138,7 +138,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->Bind( wxEVT_BUTTON, &CreateDatabase::OnOK, this );
 }
 
-void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &event)
+void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &WXUNUSED(event))
 {
     auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
     CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
@@ -162,7 +162,7 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
         event.Enable( true );
 }
 
-void CreateDatabase::OnOK(wxCommandEvent &event)
+void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     m_opts->m_name = m_name->GetValue();
     m_opts->m_exist = m_exist->GetValue();

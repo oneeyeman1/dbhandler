@@ -3330,7 +3330,7 @@ void DrawingView::OnEditTableObject(wxCommandEvent &WXUNUSED(event))
 
 }
 
-void DrawingView::OnCreateDatabase(wxCommandEvent &event)
+void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 {
     wxString libName;
     std::shared_ptr<CreateDBOptions> options;
