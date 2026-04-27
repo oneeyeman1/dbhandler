@@ -20,7 +20,7 @@ protected:
     void OnOK(wxCommandEvent &event);
 private:
     std::shared_ptr<CreateDBOptions> m_opts;
-    wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr;
+    wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;
     wxCheckBox *m_exist = nullptr;
@@ -32,6 +32,7 @@ private:
     wxComboBox *m_template = nullptr;
     wxComboBox *m_containment = nullptr;
     wxSpinCtrl *m_connlimit = nullptr;
+    wxComboBox *m_tablespace = nullptr;
     std::wstring m_type, m_subtype;
 };
 

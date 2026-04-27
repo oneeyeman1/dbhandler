@@ -97,9 +97,13 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
                 m_template->Append( tmplate );
             paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
             m_template->SetValue( "Default" );
-            m_label3 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
-            m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1" );
+            m_label3 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
+            m_tablespace = new wxComboBox( win, wxID_ANY, "" );
             paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            paneSizer1->Add( m_tablespace, 0, wxEXPAND, 0 );
+            m_label4 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
+            m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 32676 );
+            paneSizer1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_connlimit, 0, wxEXPAND, 0 );
         }
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
