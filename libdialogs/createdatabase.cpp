@@ -116,7 +116,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
                 "PARTIAL"
             };
             m_label1 = new wxStaticText( win, wxID_ANY, "CONTAINMENT" );
-            m_containment = new wxComboBox( win, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, 0 );
+            m_containment = new wxComboBox( win, wxID_ANY, "NONE", wxDefaultPosition, wxDefaultSize, 2, data );
             paneSizer1->Add( m_label1, 0, wxEXPAND, 0 );
             paneSizer1->Add( m_containment, 0, wxEXPAND, 0 );
         }
