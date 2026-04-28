@@ -190,7 +190,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                          ( ( type == L"ODBC" && subType == L"Sybase SQL Anywhere" ) || type == L"Sybase SQL Anywhere" ) ||
                            ( type == L"ODBC" && subType == L"SQL Anywhere" ) || type == L"SQL Anywhere" )
                 {
-                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos || schemaName.find( L"dbo" ) != std::wstring::npos ) )
+                    if( !sysTableIncluded && ( tableName.substr( 0, 5 ) == L"abcat" || schemaName.find( L"sys" ) != std::wstring::npos || schemaName.find( L"INFORMATION_SCHEMA" ) != std::wstring::npos || schemaName.find( L"SYS" ) != std::wstring::npos ) )
                         continue;
                     else
                     {
