@@ -993,16 +993,22 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                 if( pimpl.m_versionMajor >= 11 )
                 {
                     includedCol = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, 3 ) );
-                    includedCol.erase( 0, 1 );
-                    includedCol.pop_back();
+                    if( !includedCol.empty() )
+                    {
+                        includedCol.erase( 0, 1 );
+                        includedCol.pop_back();
+                    }
                     nextCol = 4;
                 }
                 else
                     nextCol = 3;
                 std::wstring options = m_pimpl->m_myconv.from_bytes( (const char *) PQgetvalue( res, i, nextCol ) );
-                options.erase( 0, 1 );
-                options.pop_back();
-                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, false );
+                if( !options.empty() )
+                {
+                    options.erase( 0, 1 );
+                    options.pop_back();
+                }
+                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName );//, indType, includedCol, options, tbSpace, false );
             }
         }
         bool overlap = false;
