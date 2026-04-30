@@ -19,6 +19,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_opts = options;
     m_type = type;
     m_subtype = subtype;
+    m_version = serverVersion;
     wxFlexGridSizer *paneSizer1 = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -259,7 +260,7 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
 
 void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &event)
 {
-    SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec" );
+    SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_version );
     if( dlg.ShowModal() == wxID_OK )
     {
     }

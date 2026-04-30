@@ -38,6 +38,7 @@ private:
     wxButton *m_add = nullptr;
     wxButton *m_delete = nullptr;
     std::wstring m_type, m_subtype;
+    int m_version;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */
