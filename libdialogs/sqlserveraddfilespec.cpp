@@ -23,6 +23,12 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
         m_value1 = "8";
     else
         m_value1 = "1";
+    if( version >= 13 )
+        m_value3 = "64";
+    else if( version < 13 && version >= 9  )
+        m_value3 = "1";
+    else
+        m_value3 = "10";
     wxTextValidator val1( wxFILTER_DIGITS, &m_value1 );
     val1.SuppressBellOnError();
     wxTextValidator val2( wxFILTER_DIGITS, &m_value2 );
