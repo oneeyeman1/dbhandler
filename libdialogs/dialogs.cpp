@@ -544,13 +544,13 @@ extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring 
     return res;
 }
 
-extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options)
+extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int version, std::shared_ptr<CreateDBOptions> options)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateDatabase dlg( parent, type, subtype, options );
+    CreateDatabase dlg( parent, type, subtype, version, options );
     if( ( res = dlg.ShowModal() ) == wxID_OK )
     {
         options = dlg.GetOptions();

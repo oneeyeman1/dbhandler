@@ -12,7 +12,7 @@
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
-    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options);
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersion, std::shared_ptr<CreateDBOptions> options);
     std::shared_ptr<CreateDBOptions> GetOptions() { return m_opts; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
