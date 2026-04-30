@@ -44,7 +44,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_exist = new wxCheckBox( this, wxID_ANY, "IF NOT EXIST" );
     second->Add( m_exist, 0, wxEXPAND, 0 );
     second->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
+    if( ( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" ) && serverVersion >= 11 )
     {
         const wxString data[] =
         {
@@ -258,7 +258,7 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     EndModal( wxID_OK );
 }
 
-void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &event)
+void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
 {
     SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_version );
     if( dlg.ShowModal() == wxID_OK )
@@ -266,7 +266,7 @@ void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &event)
     }
 }
 
-void CreateDatabase::OnSQLServerFileSecDelete(wxCommandEvent &event)
+void CreateDatabase::OnSQLServerFileSecDelete(wxCommandEvent &WXUNUSED(event))
 {
 
 }
