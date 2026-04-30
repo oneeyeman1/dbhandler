@@ -15,10 +15,8 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-
-
-SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title):
+    wxDialog( parent, id, title )
 {
     // begin wxGlade: SQLServerAddFileSpec::SQLServerAddFileSpec
     SetTitle( "dialog" );
@@ -72,6 +70,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     sizer_3->Add( m_measure2, 0, 0, 0 );
     checkbox_1 = new wxCheckBox( this, wxID_ANY, "UNLIMITED" );
     checkbox_1->SetValue( 1 );
+    checkbox_1->Bind( wxEVT_CHECKBOX, &SQLServerAddFileSpec::OnUnlimited, this );
     grid_sizer_1->Add( checkbox_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     wxStaticText* label_1 = new wxStaticText(this, wxID_ANY, "FileGrowth" );
     grid_sizer_1->Add( label_1, 0, 0, 0 );
@@ -99,3 +98,24 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     // end wxGlade
 }
 
+void SQLServerAddFileSpec::OnUnlimited(wxCommandEvent &event)
+{
+    if( checkbox_1->IsChecked() )
+    {
+        m_maxSize->Enable( false );
+        m_measure2->Enable( false );
+    }
+    else
+    {
+        m_maxSize->Enable( true );
+        m_measure2->Enable( true );
+    }
+}
+
+void SQLServerAddFileSpec::OnOKUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_name->GetValue() == wxEmptyString )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}

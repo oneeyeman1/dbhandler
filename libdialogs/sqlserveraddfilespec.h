@@ -25,7 +25,7 @@ public:
     // begin wxGlade: SQLServerAddFileSpec::ids
     // end wxGlade
 
-    SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title);
 
 private:
 
@@ -45,6 +45,8 @@ protected:
     wxTextCtrl* m_growth;
     wxChoice* m_measure3;
     // end wxGlade
+    void OnUnlimited(wxCommandEvent &event);
+    void OnOKUpdateUI(wxUpdateUIEvent &event);
 }; // wxGlade: end class
 
 
