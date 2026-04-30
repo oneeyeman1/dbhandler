@@ -25,7 +25,7 @@ public:
     // begin wxGlade: SQLServerAddFileSpec::ids
     // end wxGlade
 
-    SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title);
+    SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title, int version);
 
 private:
 
@@ -47,6 +47,7 @@ protected:
     // end wxGlade
     void OnUnlimited(wxCommandEvent &event);
     void OnOKUpdateUI(wxUpdateUIEvent &event);
+    wxString m_value1, m_value2, m_value3;
 }; // wxGlade: end class
 
 

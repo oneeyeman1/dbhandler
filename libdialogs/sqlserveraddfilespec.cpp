@@ -9,17 +9,28 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include "wx/wx.h"
+#include "wx/valtext.h"
 #include "wx/filepicker.h"
 #include "sqlserveraddfilespec.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title):
+SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title, int version):
     wxDialog( parent, id, title )
 {
+    if( version >= 13 )
+        m_value1 = "8";
+    else
+        m_value1 = "1";
+    wxTextValidator val1( wxFILTER_DIGITS, &m_value1 );
+    val1.SuppressBellOnError();
+    wxTextValidator val2( wxFILTER_DIGITS, &m_value2 );
+    val2.SuppressBellOnError();
+    wxTextValidator val3( wxFILTER_DIGITS, &m_value3 );
+    val3.SuppressBellOnError();
     // begin wxGlade: SQLServerAddFileSpec::SQLServerAddFileSpec
-    SetTitle( "dialog" );
+    SetTitle( title );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_2 = new wxBoxSizer( wxVERTICAL );
@@ -39,7 +50,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_label3 = new wxStaticText( this, wxID_ANY, "Size" );
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_size = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_size = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, val1 );
     grid_sizer_1->Add( m_size, 0, 0, 0 );
     const wxString m_measure1_choices[] = {
         "KB",
@@ -54,7 +65,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     grid_sizer_1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxHORIZONTAL );
     grid_sizer_1->Add( sizer_3, 1, wxEXPAND, 0 );
-    m_maxSize = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_maxSize = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, val2 );
     m_maxSize->Enable( false );
     sizer_3->Add( m_maxSize, 0, 0, 0 );
     sizer_3->Add( 5, 5, 0, 0, 0 );
@@ -74,7 +85,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     grid_sizer_1->Add( checkbox_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     wxStaticText* label_1 = new wxStaticText(this, wxID_ANY, "FileGrowth" );
     grid_sizer_1->Add( label_1, 0, 0, 0 );
-    m_growth = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    m_growth = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, val3 );
     grid_sizer_1->Add( m_growth, 0, wxEXPAND, 0 );
     const wxString m_measure3_choices[] = {
         "KB",
@@ -98,7 +109,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     // end wxGlade
 }
 
-void SQLServerAddFileSpec::OnUnlimited(wxCommandEvent &event)
+void SQLServerAddFileSpec::OnUnlimited(wxCommandEvent &WXUNUSED(event))
 {
     if( checkbox_1->IsChecked() )
     {
