@@ -531,6 +531,7 @@
     <ClCompile Include="retrievalarguments.cpp" />
     <ClCompile Include="saveview.cpp" />
     <ClCompile Include="selecttables.cpp" />
+    <ClCompile Include="sqlserveraddfilespec.cpp" />
     <ClCompile Include="toolbarsetup.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -564,6 +565,7 @@
     <ClInclude Include="retrievalarguments.h" />
     <ClInclude Include="saveview.h" />
     <ClInclude Include="selecttables.h" />
+    <ClInclude Include="sqlserveraddfilespec.h" />
     <ClInclude Include="toolbarsetup.h" />
   </ItemGroup>
   <ItemGroup>

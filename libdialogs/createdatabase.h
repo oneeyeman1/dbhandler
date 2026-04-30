@@ -16,6 +16,8 @@ public:
     std::shared_ptr<CreateDBOptions> GetOptions() { return m_opts; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
+    void OnSQLServerFileSecAdd(wxCommandEvent &event);
+    void OnSQLServerFileSecDelete(wxCommandEvent &event);
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnOK(wxCommandEvent &event);
 private:
@@ -33,6 +35,8 @@ private:
     wxComboBox *m_containment = nullptr;
     wxSpinCtrl *m_connlimit = nullptr;
     wxComboBox *m_tablespace = nullptr;
+    wxButton *m_add = nullptr;
+    wxButton *m_delete = nullptr;
     std::wstring m_type, m_subtype;
 };
 

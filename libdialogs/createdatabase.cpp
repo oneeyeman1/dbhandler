@@ -11,6 +11,7 @@
 #include "wx/collpane.h"
 #include "wx/spinctrl.h"
 #include "database.h"
+#include "sqlserveraddfilespec.h"
 #include "createdatabase.h"
 
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
@@ -42,10 +43,30 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_exist = new wxCheckBox( this, wxID_ANY, "IF NOT EXIST" );
     second->Add( m_exist, 0, wxEXPAND, 0 );
     second->Add( 5, 5, 0, wxEXPAND, 0 );
+    if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
+    {
+        const wxString data[] =
+        {
+            "NONE",
+            "PARTIAL"
+        };
+        m_label1 = new wxStaticText( this, wxID_ANY, "CONTAINMENT" );
+        m_containment = new wxComboBox( this, wxID_ANY, "NONE", wxDefaultPosition, wxDefaultSize, 2, data );
+        auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
+        sizer2->Add( m_label1, 0, wxEXPAND, 0 );
+        sizer2->Add( m_containment, 0, wxEXPAND, 0 );
+        second->Add( sizer2, 0, wxEXPAND, 0 );
+        second->Add( 5, 5, 0, wxEXPAND, 0 );
+    }
     if( type != L"SQLite" )
     {
         auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
-        m_options = new wxCollapsiblePane( this, wxID_ANY, _( "Options" ) );
+        wxString title;
+        if( type != L"Microsoft SQL Server" || subtype != L"Microsoft SQL Server" )
+            title = _( "Options" );
+        else
+            title = _( "ON" );
+        m_options = new wxCollapsiblePane( this, wxID_ANY, title );
         m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
         second->Add( sizer2, 0, wxEXPAND, 0 );
@@ -109,23 +130,75 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
             auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
-            paneSizer1 = new wxFlexGridSizer( 5, 5, 5, 5 );
-            const wxString data[] =
-            {
-                "NONE",
-                "PARTIAL"
-            };
-            m_label1 = new wxStaticText( win, wxID_ANY, "CONTAINMENT" );
-            m_containment = new wxComboBox( win, wxID_ANY, "NONE", wxDefaultPosition, wxDefaultSize, 2, data );
-            paneSizer1->Add( m_label1, 0, wxEXPAND, 0 );
-            paneSizer1->Add( m_containment, 0, wxEXPAND, 0 );
+            auto paneSizer = new wxBoxSizer( wxVERTICAL );
+            auto scrolled = new wxScrolledWindow( win, wxID_ANY );
+            paneSizer->Add( scrolled, 1, wxEXPAND, 0 );
+            paneSizer1 = new wxFlexGridSizer( 2, 5, 5, 5 );
+            auto label_1 = new wxStaticText( scrolled, wxID_ANY, "Name" );
+            paneSizer1->Add( label_1, 0, wxEXPAND, 0 );
+            auto label_2 = new wxStaticText( scrolled, wxID_ANY, "FileName" );
+            paneSizer1->Add( label_2, 0, wxEXPAND, 0 );
+            auto label_3 = new wxStaticText( scrolled, wxID_ANY, "Size" );
+            paneSizer1->Add( label_3, 0, wxEXPAND, 0 );
+            auto label_4 = new wxStaticText( scrolled, wxID_ANY, "MaxSize" );
+            paneSizer1->Add( label_4, 0, wxEXPAND, 0 );
+            auto label_5 = new wxStaticText( scrolled, wxID_ANY, "FileGrowth" );
+            paneSizer1->Add( label_5, 0, wxEXPAND, 0 );
+            auto name = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            name->Enable( false );
+            paneSizer1->Add( name, 0, wxEXPAND, 0 );
+            auto fileName = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            fileName->Enable( false );
+            paneSizer1->Add( fileName, 0, wxEXPAND, 0 );
+            auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer5, 0, wxEXPAND, 0 );
+            auto size1 = new wxTextCtrl( scrolled, wxID_ANY, "" );
+            size1->Enable( false );
+            sizer5->Add( size1, 0, wxEXPAND, 0 );
+            sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto label1 = new wxStaticText( scrolled, wxID_ANY, "GB" );
+            sizer5->Add( label1, 0, wxEXPAND, 0 );
+            auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer6, 0, wxBOTTOM, 0 );
+            auto size2 = new wxTextCtrl( scrolled, wxID_ANY, "" );
+            size2->Enable( false );
+            sizer6->Add( size2, 0, wxEXPAND, 0 );
+            sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto label2 = new wxStaticText( scrolled, wxID_ANY, "GN" );
+            sizer6->Add( label2, 0, wxEXPAND, 0 );
+            auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer7, 0, wxEXPAND, 0 );
+            auto size3 = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            size3->Enable( false );
+            sizer7->Add( size3, 0, wxEXPAND, 0 );
+            sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto label3 = new wxStaticText( scrolled, wxID_ANY, "%" );
+            sizer7->Add( label3, 0, wxEXPAND, 0 );
+            paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer->Add( sizer4, 0, wxEXPAND, 0 );
+            auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
+            sizer4->Add( sizer3, 0, wxEXPAND, 0 );
+            m_add = new wxButton( win, wxID_ANY, "Add" );
+            m_add->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecAdd, this );
+            sizer3->Add( m_add, 0, wxEXPAND, 0 );
+            sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_delete = new wxButton( win, wxID_ANY, "Delete" );
+            m_delete->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecDelete, this );
+            sizer3->Add( m_delete, 0, wxEXPAND, 0 );
+            paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
+            scrolled->SetSizer( paneSizer1 );
+            win->SetSizer( paneSizer );
         }
-        sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
-        sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
-        sizer3->Add( sizer4, 0, wxEXPAND, 0 );
-        sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-        win->SetSizer( sizer3 );
-        sizer3->SetSizeHints( win );
+        else
+        {
+            sizer4->Add( paneSizer1, 0, wxEXPAND, 0 );
+            sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer3->Add( sizer4, 0, wxEXPAND, 0 );
+            sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+            win->SetSizer( sizer3 );
+            sizer3->SetSizeHints( win );
+        }
     }
     second->Add( 5, 5, 0, wxEXPAND, 0 );
     second->Add( CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP ) );
@@ -184,3 +257,15 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     EndModal( wxID_OK );
 }
 
+void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &event)
+{
+    SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec" );
+    if( dlg.ShowModal() == wxID_OK )
+    {
+    }
+}
+
+void CreateDatabase::OnSQLServerFileSecDelete(wxCommandEvent &event)
+{
+
+}
