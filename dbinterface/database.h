@@ -56,7 +56,9 @@ struct CreateDBOptions
 
 struct SQLServerCreateDBOptions : public CreateDBOptions
 {
-    std::wstring m_containment;
+    std::wstring m_containment, m_collation, m_fullText;
+    std::vector<std::tuple<std::wstring, std::wstring> > m_collations;
+    std::vector<std::tuple<int, std::wstring> > m_fullTextSearch;
 };
 
 struct PostgresCreateDBOptions : public CreateDBOptions
