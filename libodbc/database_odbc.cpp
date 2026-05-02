@@ -9789,6 +9789,7 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
         options = std::make_shared<SQLServerCreateDBOptions>();
         query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
         query2 = L"SELECT lcid, name FROM sys.fulltext_languages";
+        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
@@ -9886,6 +9887,18 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
+        }
+        if( !result )
+        {
+            qry.reset( new SQLWCHAR[query3.length() + 2] );
+            memset( qry.get(), '\0', query3.length() + 2 );
+            uc_to_str_cpy( qry.get(), query3 );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
         }
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
