@@ -106,8 +106,8 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     auto buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
-    FindWindowById( wxID_OK )->Enable( false );
-    dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->Bind( wxEVT_BUTTON, &SQLServerAddFileSpec::OnOK, this );
+    FindWindowById( wxID_OK, this )->Enable( false );
+    FindWindowById( wxID_OK, this )->Bind( wxEVT_BUTTON, &SQLServerAddFileSpec::OnOK, this );
     sizer_2->Add( buttons, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     
