@@ -20,6 +20,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_type = type;
     m_subtype = subtype;
     m_version = serverVersion;
+    wxWindow *withPane = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto second = new wxBoxSizer( wxVERTICAL );
@@ -69,6 +70,14 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         m_options = new wxCollapsiblePane( this, wxID_ANY, title );
         m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
+        if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
+        {
+            sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_with = new wxCollapsiblePane( this, wxID_ANY, "WITH" );
+            m_with->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
+            sizer2->Add( m_with, 0, wxEXPAND, 0 );
+            withPane = m_with->GetPane();
+        }
         second->Add( sizer2, 0, wxEXPAND, 0 );
         auto win = m_options->GetPane();
         auto sizer3 = new wxBoxSizer( wxHORIZONTAL );

@@ -27,6 +27,7 @@ private:
     wxTextCtrl *m_name = nullptr;
     wxCheckBox *m_exist = nullptr;
     wxCollapsiblePane *m_options = nullptr;
+    wxCollapsiblePane *m_with = nullptr;
     wxComboBox *m_characterSet = nullptr;
     wxComboBox *m_collations = nullptr;
     wxCheckBox *m_encrypted = nullptr;
