@@ -60,7 +60,9 @@ libdialogs_la_SOURCES =  \
 	dropindexoptions.cpp \
 	dropindexoptions.h \
 	createdatabase.cpp \
-	createdatabase.h
+	createdatabase.h \
+	sqlserveraddfilespec.cpp \
+	sqlserveraddfilespec.h
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \
