@@ -129,6 +129,9 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_template->SetValue( "Default" );
             m_label3 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
             m_tablespace = new wxComboBox( win, wxID_ANY, "" );
+            for( auto space: opts->m_tablespaces )
+                m_tablespace->Append( space );
+            m_tablespace->SetValue( "Default" );
             paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_tablespace, 0, wxEXPAND, 0 );
             m_label4 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );

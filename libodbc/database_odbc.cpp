@@ -9551,7 +9551,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
 int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query1, query2, query3, query4;
+    std::wstring query1, query2, query3, query4, query5;
     SQLLEN ind[6];
     auto ret = SQLAllocHandle(  SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -9696,14 +9696,16 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
     }
     if( !result && pimpl.m_subtype == L"PostgreSQL" )
     {
-        SQLWCHAR column[64];
+        SQLWCHAR column[64], space[64];
         options = std::make_shared<PostgresCreateDBOptions>();
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( L"Default" );
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( L"Default" );
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( L"Default" );
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
         query3 = L"SELECT conname AS name, pg_encoding_to_char( conforencoding ), condefault AS default FROM pg_conversion";
         query4 = L"SELECT collname, collencoding, collprovider collctype FROM pg_collation";
+        query5 = L"SELECT spcname FROM pg_tablespace";
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
@@ -9775,6 +9777,59 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
                 std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( param1 );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLCloseCursor( m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            qry.reset( new SQLWCHAR[query5.length() + 2] );
+            memset( qry.get(), '\0', query5.length() + 2 );
+            uc_to_str_cpy( qry.get(), query5 );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, space, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring param1;
+                str_to_uc_cpy( param1, space );
+                std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( param1 );
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLCloseCursor( m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
