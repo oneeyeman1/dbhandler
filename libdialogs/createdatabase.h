@@ -39,6 +39,7 @@ private:
     wxButton *m_delete = nullptr;
     std::wstring m_type, m_subtype;
     int m_version;
+    wxFlexGridSizer *paneSizer1 = nullptr;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */

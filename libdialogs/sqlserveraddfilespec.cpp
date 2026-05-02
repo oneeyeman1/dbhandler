@@ -106,6 +106,8 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     auto buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
+    FindWindowById( wxID_OK )->Enable( false );
+    dynamic_cast<wxButton *>( FindWindowById( wxID_OK ) )->Bind( wxEVT_BUTTON, &SQLServerAddFileSpec::OnOK, this );
     sizer_2->Add( buttons, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     
@@ -135,4 +137,14 @@ void SQLServerAddFileSpec::OnOKUpdateUI(wxUpdateUIEvent &event)
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void SQLServerAddFileSpec::OnOK(wxCommandEvent &WXUNUSED(event))
+{
+    m_spec.m_name = m_name->GetValue();
+    m_spec.m_fileName = m_fileName->GetFileName();
+    m_spec.m_size = m_size->GetValue();
+    m_spec.m_maxSize = m_maxSize->GetValue();
+    m_spec.m_growth = m_growth->GetValue();
+    EndModal( wxID_OK );
 }

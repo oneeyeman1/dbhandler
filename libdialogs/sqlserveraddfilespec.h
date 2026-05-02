@@ -18,6 +18,12 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
+struct FileSpec
+{
+    wxString m_name;
+    wxFileName m_fileName;
+    wxString m_size, m_maxSize, m_growth;
+};
 
 class SQLServerAddFileSpec: public wxDialog
 {
@@ -26,10 +32,11 @@ public:
     // end wxGlade
 
     SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, const wxString& title, int version);
-
+    FileSpec GetFileSpec() const { return m_spec; }
 private:
 
 protected:
+    void OnOK(wxCommandEvent &event);
     // begin wxGlade: SQLServerAddFileSpec::attributes
     wxStaticText* m_label1;
     wxTextCtrl* m_name;
@@ -48,6 +55,7 @@ protected:
     void OnUnlimited(wxCommandEvent &event);
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     wxString m_value1, m_value2, m_value3;
+    FileSpec m_spec;
 }; // wxGlade: end class
 
 

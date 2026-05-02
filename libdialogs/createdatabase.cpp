@@ -20,7 +20,6 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_type = type;
     m_subtype = subtype;
     m_version = serverVersion;
-    wxFlexGridSizer *paneSizer1 = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
     auto second = new wxBoxSizer( wxVERTICAL );
@@ -134,7 +133,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             auto paneSizer = new wxBoxSizer( wxVERTICAL );
             auto scrolled = new wxScrolledWindow( win, wxID_ANY );
             paneSizer->Add( scrolled, 1, wxEXPAND, 0 );
-            paneSizer1 = new wxFlexGridSizer( 2, 5, 5, 5 );
+            paneSizer1 = new wxFlexGridSizer( 2, 6, 5, 5 );
             auto label_1 = new wxStaticText( scrolled, wxID_ANY, "Name" );
             paneSizer1->Add( label_1, 0, wxEXPAND, 0 );
             auto label_2 = new wxStaticText( scrolled, wxID_ANY, "FileName" );
@@ -145,6 +144,8 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( label_4, 0, wxEXPAND, 0 );
             auto label_5 = new wxStaticText( scrolled, wxID_ANY, "FileGrowth" );
             paneSizer1->Add( label_5, 0, wxEXPAND, 0 );
+            auto label_6 = new wxStaticText( scrolled, wxID_ANY, "Primary" );
+            paneSizer1->Add( label_6, 0, wxEXPAND, 0 );
             auto name = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
             name->Enable( false );
             paneSizer1->Add( name, 0, wxEXPAND, 0 );
@@ -175,6 +176,9 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
             auto label3 = new wxStaticText( scrolled, wxID_ANY, "%" );
             sizer7->Add( label3, 0, wxEXPAND, 0 );
+            auto primary = new wxCheckBox( scrolled, wxID_ANY, "" );
+            primary->Enable( false );
+            paneSizer1->Add( primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
             paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
             auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
             paneSizer->Add( sizer4, 0, wxEXPAND, 0 );
@@ -263,6 +267,11 @@ void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
     SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_version );
     if( dlg.ShowModal() == wxID_OK )
     {
+        auto spec = dlg.GetFileSpec();
+        if( paneSizer1->GetRows() == 2 )
+        {
+            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 ) )->SetValue( spec.m_name );
+        }
     }
 }
 
