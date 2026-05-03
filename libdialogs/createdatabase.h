@@ -12,7 +12,7 @@
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
-    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersion, std::shared_ptr<CreateDBOptions> options);
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMaor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options);
     std::shared_ptr<CreateDBOptions> GetOptions() { return m_opts; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
@@ -39,9 +39,11 @@ private:
     wxButton *m_add = nullptr;
     wxButton *m_delete = nullptr;
     std::wstring m_type, m_subtype;
-    int m_version;
+    int m_versionMajor, m_versionMinor;
     wxFlexGridSizer *paneSizer1 = nullptr;
     wxComboBox *m_ctype = nullptr;
+    wxCheckBox *m_allowConn = nullptr;
+    wxCheckBox *m_istemplate = nullptr;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */

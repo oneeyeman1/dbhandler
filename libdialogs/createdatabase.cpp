@@ -14,12 +14,13 @@
 #include "sqlserveraddfilespec.h"
 #include "createdatabase.h"
 
-CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersion, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
+CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
     m_opts = options;
     m_type = type;
     m_subtype = subtype;
-    m_version = serverVersion;
+    m_versionMajor = serverVersionMajor;
+    m_versionMinor = serverVersionMinor;
     wxWindow *withPane = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -44,7 +45,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_exist = new wxCheckBox( this, wxID_ANY, "IF NOT EXIST" );
     second->Add( m_exist, 0, wxEXPAND, 0 );
     second->Add( 5, 5, 0, wxEXPAND, 0 );
-    if( ( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" ) && serverVersion >= 11 )
+    if( ( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" ) && m_versionMajor >= 11 )
     {
         const wxString data[] =
         {
@@ -112,7 +113,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
         {
             auto opts = std::dynamic_pointer_cast<PostgresCreateDBOptions>( options );
-            paneSizer1 = new wxFlexGridSizer( 7, 2, 5, 5 );
+            paneSizer1 = new wxFlexGridSizer( 9, 2, 5, 5 );
             m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
             paneSizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_owner = new wxComboBox( win, wxID_ANY );
@@ -161,11 +162,26 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_tablespace->SetValue( "Default" );
             paneSizer1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_tablespace, 0, wxEXPAND, 0 );
+            if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
+            {
+                m_allowConn = new wxCheckBox( win, wxID_ANY, "ALLOW_CONNECTION" );
+                m_allowConn->SetToolTip( "If false then no one can connect to this database. The default is true, allowing connections" );
+                m_allowConn->SetValue( true );
+                paneSizer1->Add( m_allowConn, 0, wxEXPAND, 0 );
+                paneSizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+            }
             m_label4 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
             m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 32676 );
             m_connlimit->SetToolTip( "How many concurrent connections can be made to this database. -1 (the default) means no limit" );
             paneSizer1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_connlimit, 0, wxEXPAND, 0 );
+            if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
+            {
+                m_istemplate = new wxCheckBox( win, wxID_ANY, "IS_TEMPLATE" );
+                m_istemplate->SetToolTip( "If true, then this database can be cloned by any user with CREATEDB privileges; if false (the default), then only superusers or the owner of the database can clone it" );
+                paneSizer1->Add( m_istemplate, 0, wxEXPAND, 0 );
+                paneSizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+            }
         }
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
@@ -304,7 +320,7 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
 
 void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
 {
-    SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_version );
+    SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_versionMajor );
     if( dlg.ShowModal() == wxID_OK )
     {
         auto spec = dlg.GetFileSpec();
