@@ -54,6 +54,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         };
         m_label1 = new wxStaticText( this, wxID_ANY, "CONTAINMENT" );
         m_containment = new wxComboBox( this, wxID_ANY, "NONE", wxDefaultPosition, wxDefaultSize, 2, data );
+        m_containment->SetToolTip( "Specifies the containment status of the database" );
         auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
         sizer2->Add( m_label1, 0, wxEXPAND, 0 );
         sizer2->Add( m_containment, 0, wxEXPAND, 0 );
@@ -314,6 +315,21 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     {
         auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( m_opts );
         opts->m_containment = m_containment->GetValue();
+    }
+    if( m_type == L"PostgreSQL" || m_subtype == L"PostgreSQL" )
+    {
+        auto opts = std::dynamic_pointer_cast<PostgresCreateDBOptions>( m_opts );
+        opts->m_role = m_owner->GetValue();
+        opts->m_template = m_template->GetValue();
+        opts->m_encoding = m_characterSet->GetValue();
+        opts->m_collation = m_collations->GetValue();
+        opts->m_ctype = m_ctype->GetValue();
+        opts->m_tablespace = m_tablespace->GetValue();
+        if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
+            opts->m_allowConn = m_allowConn->GetValue();
+        opts->m_connlimit = m_connlimit->GetValue();
+        if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
+            opts->m_isTemplate = m_istemplate->GetValue();
     }
     EndModal( wxID_OK );
 }
