@@ -2356,6 +2356,8 @@ int PostgresDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &optio
     std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( L"Default" );
     std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( L"Default" );
     std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( L"Default" );
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
     std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( L"Default" );
     auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
@@ -2391,6 +2393,19 @@ int PostgresDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &optio
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    for( auto i = 0; i < PQntuples( res ); ++i )
+    {
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_ctypes.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
     }
     PQclear( res );
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );

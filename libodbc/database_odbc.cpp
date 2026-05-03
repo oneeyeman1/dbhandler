@@ -9696,11 +9696,13 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
     }
     if( !result && pimpl.m_subtype == L"PostgreSQL" )
     {
-        SQLWCHAR column[64], space[64], encoding[64];
+        SQLWCHAR column[64], space[64], encoding[64], collation[64], ctype[64];
         options = std::make_shared<PostgresCreateDBOptions>();
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( L"Default" );
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( L"Default" );
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( L"Default" );
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( L"Default" );
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
@@ -9820,6 +9822,71 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
                 std::wstring param1;
                 str_to_uc_cpy( param1, encoding );
                 std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( param1 );
+            }
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLCloseCursor( m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            qry.reset( new SQLWCHAR[query4.length() + 2] );
+            memset( qry.get(), '\0', query4.length() + 2 );
+            uc_to_str_cpy( qry.get(), query4 );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, collation, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, ctype, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, encoding, 64, &ind[0] );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+            {
+                std::wstring param1, param2, param3;
+                str_to_uc_cpy( param1, collation );
+                str_to_uc_cpy( param2, ctype );
+                str_to_uc_cpy( param3, encoding );
+                std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_collations.push_back( std::make_tuple( param1, param3 ) );
+                std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_ctypes.push_back( std::make_tuple( param2, param3 ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {

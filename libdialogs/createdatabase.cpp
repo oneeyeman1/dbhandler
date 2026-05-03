@@ -137,6 +137,22 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_characterSet->SetValue( "Default" );
             paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_characterSet, 0, wxEXPAND, 0 );
+            m_label5 = new wxStaticText( win, wxID_ANY, "LC_COLLATE" );
+            paneSizer1->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_collations = new wxComboBox( win, wxID_ANY, "" );
+            m_collations->SetToolTip( "Collation order (LC_COLLATE) to use in the new database. This affects the sort order applied to strings" );
+            for( auto collation : opts->m_collations )
+                m_collations->Append( std::get<0>( collation ) );
+            m_collations->SetValue( "Default" );
+            paneSizer1->Add( m_collations, 0, wxEXPAND, 0 );
+            m_label6 = new wxStaticText( win, wxID_ANY, "LC_CTYPE" );
+            paneSizer1->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_ctype = new wxComboBox( win, wxID_ANY, "" );
+            m_ctype->SetToolTip( "Character classification (LC_CTYPE) to use in the new database. This affects the categorization of characters" );
+            for( auto ctype : opts->m_ctypes )
+                m_ctype->Append( std::get<0>( ctype ) );
+            m_ctype->SetValue( "Default" );
+            paneSizer1->Add( m_ctype, 0, wxEXPAND, 0 );
             m_label4 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
             m_tablespace = new wxComboBox( win, wxID_ANY, "" );
             m_tablespace->SetToolTip( "The name of the tablespace that will be associated with the new database, or DEFAULT to use the template database's tablespace" );
