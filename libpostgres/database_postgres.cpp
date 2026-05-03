@@ -2349,15 +2349,61 @@ int PostgresDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &optio
     int result = 0;
     std::wstring query1 = L"SELECT rolname FROM pg_roles";
     std::wstring query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
+    std::wstring query3 = L"SELECT pg_encoding_to_char( conforencoding ) AS name FROM pg_conversion";
+    std::wstring query4 = L"SELECT collname, collencoding, collprovider collctype FROM pg_collation";
+    std::wstring query5 = L"SELECT spcname FROM pg_tablespace";
     options = std::make_shared<PostgresCreateDBOptions>();
     std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( L"Default" );
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( L"Default" );
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( L"Default" );
+    std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( L"Default" );
     auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
         errors.push_back( L"Error executing query: " + err );
-        PQclear( res );
         result = 1;
     }
+    for( auto i = 0; i < PQntuples( res ); ++i )
+    {
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_roles.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    for( auto i = 0; i < PQntuples( res ); ++i )
+    {
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_templates.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    for( auto i = 0; i < PQntuples( res ); ++i )
+    {
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_encodings.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
+    res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errors.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    for( auto i = 0; i < PQntuples( res ); ++i )
+    {
+        std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
     return result;
 }

@@ -127,12 +127,19 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
                 m_template->Append( tmplate );
             paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
             m_template->SetValue( "Default" );
-            m_label3 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
+            m_label3 = new wxStaticText( win, wxID_ANY, "ENCODING" );
+            m_characterSet = new wxComboBox( win, wxID_ANY );
+            for( auto encoding : opts->m_encodings )
+                m_characterSet->Append( encoding );
+            m_characterSet->SetValue( "Default" );
+            paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            paneSizer1->Add( m_characterSet, 0, wxEXPAND, 0 );
+            m_label4 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
             m_tablespace = new wxComboBox( win, wxID_ANY, "" );
             for( auto space: opts->m_tablespaces )
                 m_tablespace->Append( space );
             m_tablespace->SetValue( "Default" );
-            paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            paneSizer1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
             paneSizer1->Add( m_tablespace, 0, wxEXPAND, 0 );
             m_label4 = new wxStaticText( win, wxID_ANY, "CONNECTION LIMIT" );
             m_connlimit = new wxSpinCtrl( win, wxID_ANY, "-1", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, -1, 32676 );
