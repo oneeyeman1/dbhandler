@@ -441,6 +441,72 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
+        auto withPresent = false;
+        auto options = std::dynamic_pointer_cast<PostgresCreateDBOptions>( opts );
+        std::wstring with = L"";
+        if( options->m_role != L"Default" )
+        {
+            with += L"OWNER = " + options->m_role;
+            withPresent = true;
+        }
+        if( options->m_template != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"TEMPLATE = " + options->m_template;
+            withPresent = true;
+        }
+        if( options->m_encoding != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"ENCODING = " + options->m_encoding;
+            withPresent = true;
+        }
+        if( options->m_collation != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"LC_COLLATE = " + options->m_collation;
+            withPresent = true;
+        }
+        if( options->m_ctype != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"LC_CTYPE = " + options->m_ctype;
+            withPresent = true;
+        }
+        if( options->m_tablespace != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"TABLESPACE = " + options->m_tablespace;
+            withPresent = true;
+        }
+        if( !options->m_allowConn && ( pimpl.m_versionMajor > 9 && pimpl.m_versionMinor >= 5 ) || ( pimpl.m_versionMajor >= 10 ) )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"ALLOW_CONNECTIONS = false";
+            withPresent = true;
+        }
+        if( options->m_connlimit != -1 )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"CONNECTION LIMIT = " + std::to_wstring( options->m_connlimit );
+            withPresent = true;
+        }
+        if( options->m_isTemplate && ( pimpl.m_versionMajor > 9 && pimpl.m_versionMinor >= 5 ) || ( pimpl.m_versionMajor >= 10 ) )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"IS_TEMPLATE = true";
+            withPresent = true;
+        }
+        if( !with.empty() )
+            qry += L" WITH " + with;
     }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )

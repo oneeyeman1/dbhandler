@@ -67,7 +67,7 @@ struct PostgresCreateDBOptions : public CreateDBOptions
     std::vector<std::wstring> m_roles, m_templates, m_encodings, m_tablespaces;
     std::vector<std::tuple<std::wstring, std::wstring> > m_collations, m_ctypes;
     int m_connlimit;
-    bool m_allowConn, m_isTemplate;
+    bool m_allowConn = true, m_isTemplate = false;
     virtual ~PostgresCreateDBOptions() { }
 };
 

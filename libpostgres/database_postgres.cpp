@@ -46,7 +46,7 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
     int result = 0;
     auto exists = false;
     std::vector<std::wstring> dbList;
-    std::wstring qry0, qry1, qry2;
+    std::wstring qry0, qry1;
     qry0 = L"SELECT 1 FROM pg_database WHERE datname = $1";
     if( opts->m_exist )
     {
@@ -75,8 +75,84 @@ int PostgresDatabase::CreateDatabase(const std::wstring &name, const std::shared
     }
     if( !exists )
     {
+        qry1 = L"CREATE DATABASE " + name;
+        auto withPresent = false;
+        auto options = std::dynamic_pointer_cast<PostgresCreateDBOptions>( opts );
+        std::wstring with = L"";
+        if( options->m_role != L"Default" )
+        {
+            with += L"OWNER = " + options->m_role;
+            withPresent = true;
+        }
+        if( options->m_template != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"TEMPLATE = " + options->m_template;
+            withPresent = true;
+        }
+        if( options->m_encoding != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"ENCODING = " + options->m_encoding;
+            withPresent = true;
+        }
+        if( options->m_collation != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"LC_COLLATE = " + options->m_collation;
+            withPresent = true;
+        }
+        if( options->m_ctype != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"LC_CTYPE = " + options->m_ctype;
+            withPresent = true;
+        }
+        if( options->m_tablespace != L"Default" )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"TABLESPACE = " + options->m_tablespace;
+            withPresent = true;
+        }
+        if( !options->m_allowConn && ( pimpl.m_versionMajor > 9 && pimpl.m_versionMinor >= 5 ) || ( pimpl.m_versionMajor >= 10 ) )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"ALLOW_CONNECTIONS = false";
+            withPresent = true;
+        }
+        if( options->m_connlimit != -1 )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"CONNECTION LIMIT = " + std::to_wstring( options->m_connlimit );
+            withPresent = true;
+        }
+        if( options->m_isTemplate && ( pimpl.m_versionMajor > 9 && pimpl.m_versionMinor >= 5 ) || ( pimpl.m_versionMajor >= 10 ) )
+        {
+            if( withPresent )
+                with += L" ";
+            with += L"IS_TEMPLATE = true";
+            withPresent = true;
+        }
+        if( !with.empty() )
+            qry1 += L" WITH " + with;
+        auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( qry1.c_str() ).c_str() );
+        auto status = PQresultStatus( res );
+        if( status != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( L"Error executing query: " + err );
+            result = 1;
+        }
     }
-    result = Disconnect( errorMsg );
+    if( !result )
+        result = Disconnect( errorMsg );
 //    if( !result )
 //        result = Connect( name, dbList, errorMsg );
     return result;
