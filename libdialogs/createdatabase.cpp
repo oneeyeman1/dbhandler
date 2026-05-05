@@ -72,15 +72,15 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         m_options = new wxCollapsiblePane( this, wxID_ANY, title );
         m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
+        second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
-            sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+            second->Add( 5, 5, 0, wxEXPAND, 0 );
             m_with = new wxCollapsiblePane( this, wxID_ANY, "WITH" );
             m_with->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
-            sizer2->Add( m_with, 0, wxEXPAND, 0 );
+            second->Add( m_with, 0, wxEXPAND, 0 );
             withPane = m_with->GetPane();
         }
-        second->Add( sizer2, 0, wxEXPAND, 0 );
         auto win = m_options->GetPane();
         auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
         sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -237,17 +237,19 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             primary->Enable( false );
             paneSizer1->Add( primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
             paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
-            auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
-            paneSizer->Add( sizer4, 0, wxEXPAND, 0 );
-            auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
-            sizer4->Add( sizer3, 0, wxEXPAND, 0 );
+            auto sizer9 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer->Add( sizer9, 0, wxEXPAND, 0 );
+            auto sizer8 = new wxBoxSizer( wxHORIZONTAL );
+            sizer9->AddStretchSpacer();
+            sizer9->Add( sizer8, 0, wxEXPAND, 0 );
+            sizer9->AddStretchSpacer();
             m_add = new wxButton( win, wxID_ANY, "Add" );
             m_add->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecAdd, this );
-            sizer3->Add( m_add, 0, wxEXPAND, 0 );
-            sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer8->Add( m_add, 0, wxEXPAND, 0 );
+            sizer8->Add( 5, 5, 0, wxEXPAND, 0 );
             m_delete = new wxButton( win, wxID_ANY, "Delete" );
             m_delete->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecDelete, this );
-            sizer3->Add( m_delete, 0, wxEXPAND, 0 );
+            sizer8->Add( m_delete, 0, wxEXPAND, 0 );
             paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
             scrolled->SetSizer( paneSizer1 );
             win->SetSizer( paneSizer );
