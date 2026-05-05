@@ -84,8 +84,12 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         auto win = m_options->GetPane();
         auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
         sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-        auto sizer4 = new wxBoxSizer( wxVERTICAL );
-        sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+        wxBoxSizer *sizer4 = nullptr;
+        if( type != L"Microsoft SQL Server" && subtype != L"Microsoft SQL Server" )
+        {
+            sizer4 = new wxBoxSizer( wxVERTICAL );
+            sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
+        }
         if( type == L"MySQL" || subtype == L"MySQL" )
         {
             auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( options );
