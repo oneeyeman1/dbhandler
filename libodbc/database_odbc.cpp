@@ -10023,6 +10023,7 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
         query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
         query2 = L"SELECT lcid, name FROM sys.fulltext_languages";
         query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
+        std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );

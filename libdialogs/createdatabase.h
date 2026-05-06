@@ -20,9 +20,10 @@ protected:
     void OnSQLServerFileSecDelete(wxCommandEvent &event);
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnOK(wxCommandEvent &event);
+    void OnPersistentLog(wxCommandEvent &event);
 private:
     std::shared_ptr<CreateDBOptions> m_opts;
-    wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr;
+    wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;
     wxCheckBox *m_exist = nullptr;
@@ -43,7 +44,19 @@ private:
     wxFlexGridSizer *paneSizer1 = nullptr;
     wxComboBox *m_ctype = nullptr;
     wxCheckBox *m_allowConn = nullptr;
+    wxChoice *m_access = nullptr;
     wxCheckBox *m_istemplate = nullptr;
+    wxDirPickerCtrl *m_dirName1 = nullptr;
+    wxChoice *m_fulltext = nullptr;
+    wxChoice *m_lang = nullptr;
+    wxCheckBox *m_triggers = nullptr;
+    wxCheckBox *m_noise = nullptr;
+    wxSpinCtrl *m_yearCutoff = nullptr;
+    wxCheckBox *m_dbChain = nullptr;
+    wxCheckBox *m_trust = nullptr;
+    wxDirPickerCtrl *m_dirName2 = nullptr;
+    wxCheckBox *m_persistantLog = nullptr;
+    wxCheckBox *m_ledger = nullptr;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */

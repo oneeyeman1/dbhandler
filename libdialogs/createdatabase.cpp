@@ -75,11 +75,84 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
+            auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
+            m_label12 = new wxStaticText( this, wxID_ANY, "COLLATE" );
             second->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer20 = new wxBoxSizer( wxHORIZONTAL );
+            sizer20->Add( m_label12, 0, wxEXPAND, 0 );
+            sizer20->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_collations = new wxComboBox( this, wxID_ANY, "Default" );
+            sizer20->Add( m_collations, 0, wxEXPAND, 0 );
+            second->Add( sizer20, 0, wxEXPAND, 0 );
             m_with = new wxCollapsiblePane( this, wxID_ANY, "WITH" );
             m_with->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
             second->Add( m_with, 0, wxEXPAND, 0 );
             withPane = m_with->GetPane();
+            auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+            sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_3 = new wxBoxSizer( wxVERTICAL );
+            sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+            auto sizer_5 = new wxStaticBoxSizer( new wxStaticBox( withPane, wxID_ANY, "FILESTREAM" ), wxHORIZONTAL );
+            sizer_3->Add( sizer_5, 0, wxEXPAND, 0 );
+            auto grid_sizer_2 = new wxFlexGridSizer( 2, 2, 5, 5 );
+            sizer_5->Add( grid_sizer_2, 1, wxEXPAND, 0 );
+            m_label7 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, "NON_TRANSACTED_ACCESS" );
+            grid_sizer_2->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            const wxString m_access_choices[] = {
+                "OFF",
+                "READ ONLY",
+                "FULL",
+            };
+            m_access = new wxChoice( sizer_5->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 3, m_access_choices );
+            m_access->SetSelection( 2 );
+            grid_sizer_2->Add( m_access, 0, wxEXPAND, 0 );
+            m_label8 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, "DIRECTORY_NAME" );
+            grid_sizer_2->Add( m_label8, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_dirName1 = new wxDirPickerCtrl( sizer_5->GetStaticBox(), wxID_ANY, wxEmptyString );
+            grid_sizer_2->Add( m_dirName1, 0, wxEXPAND, 0 );
+            sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto grid_sizer_1 = new wxFlexGridSizer( 9, 2, 5, 5 );
+            sizer_3->Add( grid_sizer_1, 0, wxEXPAND, 0 );
+            m_label9 = new wxStaticText( withPane, wxID_ANY, "DEFAULT_FULLTEXT_LANGUAGE" );
+            grid_sizer_1->Add( m_label9, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_fulltext = new wxChoice( withPane, wxID_ANY );
+            grid_sizer_1->Add( m_fulltext, 0, wxEXPAND, 0 );
+            m_label10 = new wxStaticText( withPane, wxID_ANY, "DEFAULT_LANGUAGE" );
+            grid_sizer_1->Add( m_label10, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_lang = new wxChoice( withPane, wxID_ANY );
+            grid_sizer_1->Add( m_lang, 0, wxEXPAND, 0 );
+            m_triggers = new wxCheckBox( withPane, wxID_ANY, "NESTED_TRIGGERS" );
+            m_triggers->SetValue( 1 );
+            grid_sizer_1->Add( m_triggers, 0, wxEXPAND, 0 );
+            grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_noise = new wxCheckBox( withPane, wxID_ANY, "TRANSFORM_NOISE_WORDS" );
+            grid_sizer_1->Add( m_noise, 0, wxEXPAND, 0 );
+            grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_label11 = new wxStaticText( withPane, wxID_ANY, "TWO_DIGIT_YEAR_CUTOFF" );
+            grid_sizer_1->Add( m_label11, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_yearCutoff = new wxSpinCtrl( withPane, wxID_ANY, "2049", wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 1753, 9999 );
+            grid_sizer_1->Add( m_yearCutoff, 0, wxEXPAND, 0 );
+            m_dbChain = new wxCheckBox( withPane, wxID_ANY, "DB_CHAINING" );
+            grid_sizer_1->Add( m_dbChain, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_trust = new wxCheckBox( withPane, wxID_ANY, "TRUSTWORTHY" );
+            grid_sizer_1->Add( m_trust, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_persistantLog = new wxCheckBox( withPane, wxID_ANY, "PERSISTENT_LOG_BUFFER" );
+            grid_sizer_1->Add( m_persistantLog, 0, wxALIGN_CENTER_VERTICAL, 0 );
+            m_dirName2 = new wxDirPickerCtrl( withPane, wxID_ANY, wxEmptyString );
+            m_dirName2->Enable( false );
+            grid_sizer_1->Add( m_dirName2, 0, wxEXPAND, 0 );
+            m_ledger = new wxCheckBox( withPane, wxID_ANY, "LEDGER" );
+            grid_sizer_1->Add( m_ledger, 0, wxEXPAND, 0 );
+            grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_persistantLog->Bind( wxEVT_CHECKBOX, &CreateDatabase::OnPersistentLog, this );
+            withPane->SetSizer( sizer_1 );
         }
         auto win = m_options->GetPane();
         auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
@@ -227,7 +300,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             size2->Enable( false );
             sizer6->Add( size2, 0, wxEXPAND, 0 );
             sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
-            auto label2 = new wxStaticText( scrolled, wxID_ANY, "GN" );
+            auto label2 = new wxStaticText( scrolled, wxID_ANY, "GB" );
             sizer6->Add( label2, 0, wxEXPAND, 0 );
             auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
             paneSizer1->Add( sizer7, 0, wxEXPAND, 0 );
@@ -356,4 +429,12 @@ void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
 void CreateDatabase::OnSQLServerFileSecDelete(wxCommandEvent &WXUNUSED(event))
 {
 
+}
+
+void CreateDatabase::OnPersistentLog(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_persistantLog->IsChecked() )
+        m_dirName2->Enable( true );
+    else
+        m_dirName2->Enable( false );
 }
