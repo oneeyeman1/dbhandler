@@ -51,7 +51,11 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_label2 = new wxStaticText( this, wxID_ANY, "FileName" );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_fileName = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString );
+    long style = wxFLP_OPEN;
+#if defined(__WXMSW__) || defined(__WXOSX__)
+    style |= wxFLP_USE_TEXTCTRL;
+#endif
+    m_fileName = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, wxFileSelectorPromptStr, wxFileSelectorDefaultWildcardStr, wxDefaultPosition, wxDefaultSize, style );
     grid_sizer_1->Add( m_fileName, 0, 0, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_label3 = new wxStaticText( this, wxID_ANY, "Size" );
