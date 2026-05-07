@@ -82,6 +82,11 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer20->Add( m_label12, 0, wxEXPAND, 0 );
             sizer20->Add( 5, 5, 0, wxEXPAND, 0 );
             m_collations = new wxComboBox( this, wxID_ANY, "Default" );
+            for( auto &collation : opts->m_collations )
+            {
+                auto item = m_collations->Append( std::get<1>( *collation ) );
+                m_collations->SetClientData( item, collation.get() );
+            }
             sizer20->Add( m_collations, 0, wxEXPAND, 0 );
             second->Add( sizer20, 0, wxEXPAND, 0 );
             m_with = new wxCollapsiblePane( this, wxID_ANY, "WITH" );
@@ -155,11 +160,11 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             withPane->SetSizer( sizer_1 );
         }
         auto win = m_options->GetPane();
-        auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
-        sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-        wxBoxSizer *sizer4 = nullptr;
+        wxBoxSizer *sizer3 = nullptr, *sizer4 = nullptr;
         if( type != L"Microsoft SQL Server" && subtype != L"Microsoft SQL Server" )
         {
+            sizer3 = new wxBoxSizer( wxHORIZONTAL );
+            sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer4 = new wxBoxSizer( wxVERTICAL );
             sizer4->Add( 5, 5, 0, wxEXPAND, 0 );
         }
