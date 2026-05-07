@@ -47,6 +47,8 @@ enum FK_ONDELETE
 // Character Set, Default Collation, Description
 using CharSet = std::tuple<std::wstring, std::wstring, std::wstring>;
 
+using SQLServerCharSet = std::tuple<std::wstring, std::wstring>;
+
 struct CreateDBOptions
 {
     std::wstring m_name = L"";
@@ -57,7 +59,7 @@ struct CreateDBOptions
 struct SQLServerCreateDBOptions : public CreateDBOptions
 {
     std::wstring m_containment, m_collation, m_fullText;
-    std::vector<std::tuple<std::wstring, std::wstring> > m_collations;
+    std::vector<std::unique_ptr<SQLServerCharSet> > m_collations;
     std::vector<std::tuple<int, std::wstring> > m_fullTextSearch;
 };
 
