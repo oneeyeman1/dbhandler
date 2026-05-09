@@ -28,7 +28,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     second->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
     m_label1 = new wxStaticText( this, wxID_ANY, _( "Database Name" ) );
-    sizer1->Add( m_label1, 0, wxEXPAND, 0 );
+    sizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     if( type == L"SQLite" )
     {
