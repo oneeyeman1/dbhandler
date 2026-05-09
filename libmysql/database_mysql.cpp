@@ -3005,7 +3005,7 @@ int MySQLDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::ve
 
 int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wstring &schema, const std::wstring &table, long &id, std::vector<std::wstring> &errors)
 {
-    std::wstring query1 = L"SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE st.name = CONCAT( ?, '/', ? );";
+    std::wstring query1 = L"SELECT CASE WHEN t.engine = 'InnoDB' THEN (SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE name = CONCAT(?,'/', ?) ) ELSE (SELECT 0) END AS id FROM information_schema.tables t WHERE t.table_schema = ? AND t.table_name = ?;";
     int result = 0;
     long tableId = 0;
     unsigned long str_length1 = 0, str_length2 = 0;
@@ -3028,7 +3028,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
     }
     if( !result )
     {
-        MYSQL_BIND params[2];
+        MYSQL_BIND params[4];
         memset( params, 0, sizeof( params ) );
         str_length1 = strlen( m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() ) + 1;
         str_length2 = strlen( m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() ) + 1;
@@ -3048,6 +3048,16 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         params[1].buffer_length = str_length2;
         params[1].is_null = 0;
         params[1].length = &str_length2;
+        params[2].buffer_type = MYSQL_TYPE_STRING;
+        params[2].buffer = (char *) str_data1.get();
+        params[2].buffer_length = str_length1;
+        params[2].is_null = 0;
+        params[2].length = &str_length1;
+        params[3].buffer_type = MYSQL_TYPE_STRING;
+        params[3].buffer = (char *) str_data2.get();
+        params[3].buffer_length = str_length2;
+        params[3].is_null = 0;
+        params[3].length = &str_length2;
         if( mysql_stmt_bind_param( res1, params ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
@@ -3086,15 +3096,16 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         memset( results1, 0, sizeof( results1 ) );
         results1[0].buffer_type = MYSQL_TYPE_LONG;
         results1[0].buffer = (char *) &tableId;
-        results1[0].is_null = &is_null[1];
-        results1[0].error = &error[1];
-        results1[0].length = &length[1];
+        results1[0].is_null = &is_null[0];
+        results1[0].error = &error[0];
+        results1[0].length = &length[0];
         if( mysql_stmt_bind_result( res1, results1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
             errors.push_back( err );
             result = 1;
         }
+        printf( "1!!!\n\r" );
         if( !result )
         {
             if( mysql_stmt_store_result( res1 ) )
@@ -3104,6 +3115,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
                 result = 1;
             }
         }
+        printf( "2!!!\n\r" );
         auto rows = mysql_stmt_num_rows( res1 );
         if( !result )
         {
@@ -3118,6 +3130,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
                 }
                 break;
                 case 0:
+                    printf( "Table id is: %ld", tableId );
                     id = tableId;
                     break;
                 case MYSQL_NO_DATA:
@@ -3129,6 +3142,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         }
         mysql_free_result( prepare_meta_result );
     }
+    printf( "3!!!\n\r" );
     if( !result )
     {
         if( mysql_stmt_close( res1 ) )
