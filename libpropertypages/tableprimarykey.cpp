@@ -93,7 +93,11 @@ void TablePrimaryKey::do_layout()
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
     sizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, "PK Options" ), wxVERTICAL );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
-    auto sizer4 = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer *sizer4 = nullptr;
+    if( ( m_db->GetTableVector().m_type == L"SQLite" ) ||
+      ( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
+        ( m_db->GetTableVector().m_type == L"PostgreSQL" ) ) )
+        sizer4 = new wxBoxSizer( wxHORIZONTAL );
     auto sizer5 = new wxBoxSizer( wxVERTICAL );
     wxFlexGridSizer *sizer6 = nullptr;
     auto sizer10 = new wxBoxSizer( wxHORIZONTAL );
