@@ -2230,6 +2230,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             result = 1;
         }
     }
+    memset( params, 0, sizeof( params ) );
     if( !result )
     {
         params[0].buffer_type = MYSQL_TYPE_STRING;
@@ -3038,16 +3039,17 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         memset( str_data2.get(), '\0', str_length2 );
         snprintf( str_data1.get(), str_length1, "%s", m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() );
         snprintf( str_data2.get(), str_length2, "%s", m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
+        str_length1--; str_length2--;
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1.get();
-        params[0].buffer_length = str_length1 - 1;
+        params[0].buffer_length = str_length1;
         params[0].is_null = 0;
-        params[0].length = &str_length1 - 1;
+        params[0].length = &str_length1;
         params[1].buffer_type = MYSQL_TYPE_STRING;
         params[1].buffer = (char *) str_data2.get();
-        params[1].buffer_length = str_length2 - 1;
+        params[1].buffer_length = str_length2;
         params[1].is_null = 0;
-        params[1].length = &str_length2 - 1;
+        params[1].length = &str_length2;
         if( mysql_stmt_bind_param( res1, params ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
@@ -3118,7 +3120,6 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
                 }
                 break;
                 case 0:
-                    printf( "Table id is: %ld", tableId );
                     id = tableId;
                     break;
                 case MYSQL_NO_DATA:
