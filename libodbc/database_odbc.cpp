@@ -644,7 +644,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
 {
     int result = 0, bufferSize = 1024;
     std::vector<SQLWCHAR *> errorMessage;
-    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024];
+    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024] = {};
     SQLSMALLINT OutConnStrLen;
     SQLRETURN ret;
     SQLUSMALLINT options;
@@ -1403,7 +1403,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             }
         }
     }
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
     {
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatcol' AND type = 'U') EXECUTE(\"CREATE TABLE abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatedt' AND type = 'U') EXECUTE(\"CREATE TABLE abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ))\")" );
@@ -1997,7 +1997,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[25] );
         memset( qry.get(), '\0', 25 );
         uc_to_str_cpy( qry.get(), L"BEGIN" );
-        if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
+        if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" || pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
             uc_to_str_cpy( qry.get(), L" TRANSACTION" );
         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -2010,7 +2010,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             if( pimpl.m_subtype == L"Microsoft SQL Server" ||
                 pimpl.m_subtype == L"MySQL" ||
                 pimpl.m_subtype == L"PostgreSQL" ||
-                pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" ||
+                pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" ||
                 ( pimpl.m_subtype == L"Oracle" && pimpl.m_versionMajor >= 23 ) ||
                 ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor >= 12 ) ||
                 ( pimpl.m_subtype == L"SQL Anywhere" && pimpl.m_versionMajor ) )
@@ -2205,7 +2205,7 @@ int ODBCDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vector<s
     int result = 0;
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query = L"SELECT name AS Database FROM master.dbo.sysdatabases;";
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query = L"SELECT name FROM sp_helpdb";
     if( pimpl.m_subtype == L"MySQL"  )
         query = L"SELECT schema_name AS Database FROM information_schema.schemata;";
@@ -3325,7 +3325,7 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
         query1 = L"SELECT 1 FROM information_schema.statistics WHERE index_name = ? AND table_name = ? AND schema_name = ? AND table_catalog = ?;";
     if( pimpl.m_subtype == L"PostgreSQL" )
         query1 = L"SELECT 1 FROM " + catalogName + L".pg_catalog.pg_indexes WHERE indexname = $1 AND tablename = $2 AND schemaname = $3;";
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+	if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query1 = L"SELECT 1 FROM sysindexes ind, sysobjects obj WHERE obj.id = ind.id AND ind.name = ? AND obj.name = ?";
     if( pimpl.m_subtype == L"Oracle" )
         query1 = L"SELECT 1 FROM user_indexes WHERE index_name = ?;";
@@ -5666,7 +5666,7 @@ int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wst
     SQLLEN cbName, cbTableName = SQL_NTS, cbSchemaName = SQL_NTS;
     int result = 0;
     std::wstring query;
-    if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = ? AND s.name = ?";
 //        query = L"SELECT object_id FROM sys.objects o, sys.schemas s WHERE s.schema_id = o.schema_id AND o.name = 'abcatcol' AND s.name = 'dbo';";
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -5834,7 +5834,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
         query = L"SELECT cast(su.name AS nvarchar(128)) FROM sysobjects so, sysusers su, sys.tables t, sys.schemas s WHERE so.uid = su.uid AND t.object_id = so.id AND t.schema_id = s.schema_id AND so.name = ? AND s.name = ?;";
     if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND relname = ? AND n.nspname = ?";
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" || pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query = L"SELECT su.name FROM sysobjects so, sysusers su WHERE su.uid = so.uid AND so.name = ?";
     if( pimpl.m_subtype == L"SQL Anywhere" )
         query = L"SELECT u.user_name FROM sys.systab t, sys.sysuser u, WHERE t.creator = u.user_id AND t.table_name = ? AND u.user_name = ?;";
@@ -5886,7 +5886,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
             result = 1;
         }
     }
-    if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" ) )
+    if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" && pimpl.m_subtype != L"Adaptive Server Enterprise" ) )
     {
         retcode = SQLDescribeParam( m_hstmt, 2, &dataType[1], &paramSize[1], &decimalDigits[1], &nullable[1] );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -5895,7 +5895,7 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
             result = 1;
         }
     }
-    if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" ) )
+    if( !result && ( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"ASE" && pimpl.m_subtype != L"Sybase" && pimpl.m_subtype != L"Adaptive Server Enterprise" ) )
     {
         retcode = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, dataType[1], paramSize[1], decimalDigits[1], schema_name.get(), 0, &cbSchemaName );
         if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -6022,9 +6022,9 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
     {
         query = L"SELECT version() AS version, split_part( split_part( version(), ' ', 2 ) , '.', 1 ) AS major, split_part( split_part( version(), ' ', 2 ), '.', 2 ) AS minor;";
     }
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
     {
-        query = L"SELECT @@version_number AS version, @@version_as_integer / 1000 AS major";
+        query = L"SELECT @@version_number AS version, @@version_as_integer / 1000000 AS major, ( @@version_as_integer / 1000 - ((@@version_as_integer / 1000000)*1000) ) / 100 AS minor;";
     }
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
     {
@@ -6165,7 +6165,7 @@ int ODBCDatabase::DropForeignKey(std::wstring &command, DatabaseTable *tableName
     query += tableName->GetSchemaName() + L"." + tableName->GetTableName() + L" ";
     if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"PostgreSQL" || pimpl.m_subtype == L"Oracle" )
         query += L"DROP CONSTRAINT ";
-    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query += L"DROP FOREIGN KEY ";
     query += keyName;
     if( !logOnly )
@@ -6572,7 +6572,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     }
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
         query4 = L"SELECT i.name FROM " + catalog + L".sys.indexes i, " + catalog + L".sys.tables t WHERE i.object_id = t.object_id AND SCHEMA_NAME(t.schema_id) = ? AND t.name = ?;";
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query4 = L"SELECT o.name, i.name FROM sysobjects o, sysindexes i, sysusers u WHERE o.id = i.id AND o.uid = u.uid AND u.name = ? AND o.name= ?";
     if( pimpl.m_subtype == L"Sybase SQL Anywhere" )
         query4 = L"SELECT i.index_name FROM sys.sysindex i, sys.systable t, sys.sysuserperm u WHERE i.table_id = t.table_id AND t.creator = u.user_id AND t.table_name = 'customer' AND u.user_name  = 'dba';";
@@ -8543,7 +8543,7 @@ int ODBCDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::vec
         query = L"SELECT name FROM sys.databases;";
     if( pimpl.m_subtype == L"PostgreSQL" )
         query = L"SELECT datname FROM pg_database;";
-    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" )
+    if( pimpl.m_subtype == L"Sybase" || pimpl.m_subtype == L"ASE" || pimpl.m_subtype == L"Adaptive Server Enterprise" )
         query = L"SELECT name FROM sp_helpdb";
     if( pimpl.m_subtype == L"mySQL" )
         query = L"SELECT schema_name FROM information_schema.schemata;";
