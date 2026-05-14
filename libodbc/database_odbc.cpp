@@ -808,6 +808,72 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                         result = 1;
                     }
                 }
+                if( !result && pimpl.m_subtype == L"Adaptive Server Enterprise" )
+                {
+                    std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[200] );
+                    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+                    if( !result )
+                    {
+                        memset( qry.get(), '\0', 200 );
+                        uc_to_str_cpy( qry.get(), L"USE master" );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        memset( qry.get(), '\0', 200 );
+                        uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'ddl in tran', 'true'" );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        memset(  qry.get(), '\0', 200 );
+                        std::wstring temp = L"sp_dboption " + pimpl.m_dbName;
+                        temp += L", 'ddl in tran', 'true'";
+                        uc_to_str_cpy( qry.get(), temp );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        memset( qry.get(), '\0', 200 );
+                        std::wstring temp = L"USE " + pimpl.m_dbName;
+                        uc_to_str_cpy( qry.get(), temp );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                }
                 if( !result )
                     str_to_uc_cpy( pimpl.m_connectedUser, userName );
                 if( pimpl.m_subtype == L"ACCESS" )
@@ -2304,18 +2370,94 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            auto qry1 = new SQLWCHAR[200];
-            memset( qry1, '\0', 200 );
-            uc_to_str_cpy( qry1, L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION OFF" );
-            ret = SQLExecDirect( m_hstmt, qry1, SQL_NTS );
-            delete[] qry1;
-            qry1 = nullptr;
+            RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
+            if( !result )
+            {
+                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[200] );
+                memset( qry1.get(), '\0', 200 );
+                uc_to_str_cpy( qry1.get(), L"ALTER DATABASE " + pimpl.m_dbName + L" SET ALLOW_SNAPSHOT_ISOLATION OFF" );
+                ret = SQLExecDirect( m_hstmt, qry1.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
         }
+        if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
+        {
+            std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[200] );
+            RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            if( !result )
+            {
+                memset( qry.get(), '\0', 200 );
+                uc_to_str_cpy( qry.get(), L"USE master" );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                memset( qry.get(), '\0', 200 );
+                uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'ddl in tran', 'false'" );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                memset(  qry.get(), '\0', 200 );
+                std::wstring temp = L"sp_dboption " + pimpl.m_dbName;
+                temp += L", 'ddl in tran', 'true'";
+                uc_to_str_cpy( qry.get(), temp );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                memset( qry.get(), '\0', 200 );
+                std::wstring temp = L"USE " + pimpl.m_dbName;
+                uc_to_str_cpy( qry.get(), temp );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+                m_hstmt = 0;
+            }
+        }
+        if( m_hstmt != 0 )
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
         ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
         ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
         return 0;
@@ -6053,7 +6195,7 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                 GetErrorMessage( errorMsg, STMT_ERROR );
                 result = 1;
             }
-            else
+            if( !result )
             {
                 retcode = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &version, 1024, &cbVersion );
                 if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
@@ -6061,55 +6203,55 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
                     GetErrorMessage( errorMsg, STMT_ERROR );
                     result = 1;
                 }
+			}
+            if( !result )
+            {
+                if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
+                {
+                    retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
+                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+				}
+                if( !result )
+                {
+                    retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
+                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    {
+                        GetErrorMessage( errorMsg, STMT_ERROR );
+                        result = 1;
+                    }
+				}
+			}
+            if( !result )
+            {
+                retcode = SQLFetch( m_hstmt );
+                if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+			}
+			if( !result )
+            {
+                if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
+                {
+                    str_to_uc_cpy( pimpl.m_serverVersion, version );
+                    pimpl.m_versionMajor = (int) versionMajor;
+                    pimpl.m_versionMinor = (int) versionMinor;
+                }
                 else
                 {
-                    if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
-                    {
-                        retcode = SQLBindCol( m_hstmt, 2, SQL_C_SLONG, &versionMajor, 0, 0 );
-                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                        else
-                        {
-                            retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
-                            if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR );
-                                result = 1;
-                            }
-                        }
-                    }
-                    if( !result )
-                    {
-                        retcode = SQLFetch( m_hstmt );
-                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                        else
-                        {
-                            if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
-                            {
-                                str_to_uc_cpy( pimpl.m_serverVersion, version );
-                                pimpl.m_versionMajor = (int) versionMajor;
-                                pimpl.m_versionMinor = (int) versionMinor;
-                            }
-                            else
-                            {
-                                std::wstring temp;
-                                str_to_uc_cpy( temp, version );
-                                pimpl.m_serverVersion = temp;
-                                pimpl.m_versionMajor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
-                                temp = temp.substr( temp.find( '.' ) + 1 );
-                                pimpl.m_versionMinor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
-                                temp = temp.substr( temp.find( '.' ) + 1 );
-                                pimpl.m_versionRevision = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
-                            }
-                        }
-                    }
+                    std::wstring temp;
+                    str_to_uc_cpy( temp, version );
+                    pimpl.m_serverVersion = temp;
+                    pimpl.m_versionMajor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
+                    temp = temp.substr( temp.find( '.' ) + 1 );
+                    pimpl.m_versionMinor = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
+                    temp = temp.substr( temp.find( '.' ) + 1 );
+                    pimpl.m_versionRevision = std::stoi( temp.substr( 0, temp.find( '.' ) ) );
                 }
             }
             if( result == 1 )
@@ -6143,10 +6285,12 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
             result = 1;
         }
         else
+		{
             str_to_uc_cpy( clientVersion, version );
-        pimpl.m_clientVersionMajor = stoi( clientVersion.substr( 0, clientVersion.find( L'.' ) ) );
-        auto temp = clientVersion.substr( clientVersion.find( L'.' ) + 1 );
-        pimpl.m_clientVersionMinor = stoi( temp.substr( 0, temp.find( L'.' ) ) );;
+            pimpl.m_clientVersionMajor = stoi( clientVersion.substr( 0, clientVersion.find( L'.' ) ) );
+            auto temp = clientVersion.substr( clientVersion.find( L'.' ) + 1 );
+            pimpl.m_clientVersionMinor = stoi( temp.substr( 0, temp.find( L'.' ) ) );;
+		}
     }
     return result;
 }
