@@ -2186,7 +2186,7 @@ int MySQLDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    long tableId;
+    long tableId = 0;
     MYSQL_BIND params[3], results1[8], results2[10];
     unsigned long len[3], length1[8];
     MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
@@ -2230,6 +2230,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             result = 1;
         }
     }
+    memset( params, 0, sizeof( params ) );
     if( !result )
     {
         params[0].buffer_type = MYSQL_TYPE_STRING;
@@ -3005,7 +3006,7 @@ int MySQLDatabase::GetDatabaseNameList(std::vector<std::wstring> &names, std::ve
 
 int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wstring &schema, const std::wstring &table, long &id, std::vector<std::wstring> &errors)
 {
-    std::wstring query1 = L"SELECT st.table_id FROM information_schema.INNODB_TABLES st WHERE st.name = CONCAT( ?, '/', ? );";
+    std::wstring query1 = L"SELECT st.table_id FROM information_schema.tables t, information_schema.innodb_tables st WHERE st.name = CONCAT(t.table_schema,'/',t.table_name) AND t.table_schema = ? AND t.table_name = ? AND t.engine = 'InnoDB';";
     int result = 0;
     long tableId = 0;
     unsigned long str_length1 = 0, str_length2 = 0;
@@ -3038,6 +3039,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         memset( str_data2.get(), '\0', str_length2 );
         snprintf( str_data1.get(), str_length1, "%s", m_pimpl->m_myconv.to_bytes( schema.c_str() ).c_str() );
         snprintf( str_data2.get(), str_length2, "%s", m_pimpl->m_myconv.to_bytes( table.c_str() ).c_str() );
+        str_length1--; str_length2--;
         params[0].buffer_type = MYSQL_TYPE_STRING;
         params[0].buffer = (char *) str_data1.get();
         params[0].buffer_length = str_length1;
@@ -3086,9 +3088,9 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         memset( results1, 0, sizeof( results1 ) );
         results1[0].buffer_type = MYSQL_TYPE_LONG;
         results1[0].buffer = (char *) &tableId;
-        results1[0].is_null = &is_null[1];
-        results1[0].error = &error[1];
-        results1[0].length = &length[1];
+        results1[0].is_null = &is_null[0];
+        results1[0].error = &error[0];
+        results1[0].length = &length[0];
         if( mysql_stmt_bind_result( res1, results1 ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
