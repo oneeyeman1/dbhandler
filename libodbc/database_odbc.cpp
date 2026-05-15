@@ -831,6 +831,31 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     if( !result )
                     {
                         memset( qry.get(), '\0', 200 );
+                        uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'allow nulls by default', 'true'" );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        memset( qry.get(), '\0', 200 );
+                        std::wstring temp = L"sp_dboption ";
+                        temp += pimpl.m_dbName;
+                        temp += L", 'allow nulls by default', 'true'";
+                        uc_to_str_cpy( qry.get(), temp );
+                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
+                    }
+                    if( !result )
+                    {
+                        memset(  qry.get(), '\0', 200 );
                         uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'ddl in tran', 'true'" );
                         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
@@ -842,7 +867,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                     if( !result )
                     {
                         memset(  qry.get(), '\0', 200 );
-                        std::wstring temp = L"sp_dboption " + pimpl.m_dbName;
+                        std::wstring temp = L"sp_dboption ";
+                        temp += pimpl.m_dbName;
                         temp += L", 'ddl in tran', 'true'";
                         uc_to_str_cpy( qry.get(), temp );
                         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -1477,10 +1503,10 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcattbl' AND type = 'U') EXECUTE(\"CREATE TABLE abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr smallint, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl char(1), abh_fstr smallint, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl char(1), abl_fstr smallint, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_tnam, abt_ownr ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT 1 FROM sysobjects WHERE name = 'abcatvld' AND type = 'U') EXECUTE(\"CREATE TABLE abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ))\")" );
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatcol' AND i.name = 'abcatc_x') EXECUTE(\"CREATE UNIQUE INDEX abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC) WITH IGNORE_DUP_KEY\")" );
-        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysbbjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatedt' AND i.name = 'abcate_x') EXECUTE( CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt( abe_name, abe_seqn ) ) WITH IGNORE_DUP_KEY");
-        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysbbjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatfmt' AND i.name = 'abcatf_x') EXECUTE( CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt( abf_name ASC ) ) WITH IGNORE_DUP_KEY");
+        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatedt' AND i.name = 'abcate_x') EXECUTE(\"CREATE UNIQUE INDEX abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC) WITH IGNORE_DUP_KEY\")");
+        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatfmt' AND i.name = 'abcatf_x') EXECUTE(\"CREATE UNIQUE INDEX abcatf_x ON abcatfmt( abf_name ASC ) WITH IGNORE_DUP_KEY\")");
         queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcattbl' AND i.name = 'abcatt_x') EXECUTE(\"CREATE UNIQUE INDEX abcatt_x ON abcattbl(abt_tnam ASC, abt_ownr ASC) WITH IGNORE_DUP_KEY\")" );
-        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatvld' AND i.name = 'abcatv_x') EXECUTE(CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ) ) WITH IGNORE_DUP_KEY;" );
+        queries.push_back( L"IF NOT EXISTS(SELECT o.name, i.name FROM sysobjects o, sysindexes i WHERE o.id = i.id AND o.name = 'abcatvld' AND i.name = 'abcatv_x') EXECUTE(\"CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ) WITH IGNORE_DUP_KEY\")" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
         queries.push_back( L"INSERT INTO abcatedt VALUES( '#####', '#####', 90, 1, 1, 32, '10' );" );
@@ -2424,7 +2450,31 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
             {
                 memset(  qry.get(), '\0', 200 );
                 std::wstring temp = L"sp_dboption " + pimpl.m_dbName;
-                temp += L", 'ddl in tran', 'true'";
+                temp += L", 'ddl in tran', 'false'";
+                uc_to_str_cpy( qry.get(), temp );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                memset(  qry.get(), '\0', 200 );
+                uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'allow nulls by default', 'false'" );
+                ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                {
+                    GetErrorMessage( errorMsg, STMT_ERROR );
+                    result = 1;
+                }
+            }
+            if( !result )
+            {
+                memset(  qry.get(), '\0', 200 );
+                std::wstring temp = L"sp_dboption " + pimpl.m_dbName;
+                temp += L", 'allow nulls by default', 'false'";
                 uc_to_str_cpy( qry.get(), temp );
                 ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
