@@ -2414,9 +2414,28 @@ int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wst
     return result;
 }
 
-int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0 ,m_maxIdLen = 63;
+    std::wstring query1, query2, query3;
+    if( isLog )
+    {
+        // 1. Find constraint name
+        query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = " + catalogName + L" AND tc.schema_name = " + schemaName + L"AND tc.table_name = " + tableName + L"; + \n\r";
+        // 2. Drop PK
+        query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT";
+        // 3. Re-add PK
+        query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
+    }
+    else
+    {
+        // 1. Find constraint name
+        query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.constraint_catalog = ? AND tc.constraint_schema = ? AND tc.table_name = ?;";
+        // 2. Drop PK
+        query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
+        // 3. Re-add PK
+        query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
+    }
     return result;
 }
 
