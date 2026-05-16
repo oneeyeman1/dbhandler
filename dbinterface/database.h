@@ -85,6 +85,7 @@ struct MySQLCreateDBOptions : public CreateDBOptions
         m_exist = exist;
     }
 };
+
 struct PKOptions
 {
     std::wstring m_name;
