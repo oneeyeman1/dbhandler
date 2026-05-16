@@ -1044,7 +1044,7 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
                 else
                 {
                     MYSQL_BIND results[28];
-#if !defined __WXMSW__
+#if MYSQL_VERSION_ID > 80001
                     bool is_null[28], error[28];
 #else
                     char is_null[28], error[28];
@@ -1669,7 +1669,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                     {
                         MYSQL_BIND results[17];
                         int tableId, fieldId;
-#if !defined __WXMSW__
+#if MYSQL_VERSION_ID > 80001
                         bool is_null[17], error[17];
 #else
                         char is_null[17], error[17];
@@ -2857,7 +2857,7 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
                     if( ( mysql_store_result( m_db ) ) )
                     {
                         MYSQL_BIND results;
-#if !defined __WXMSW__
+#if MYSQL_VERSION_ID > 80001
                         bool is_null, error;
 #else
                         char is_null, error;
@@ -3079,7 +3079,7 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
     if( !result )
     {
         MYSQL_BIND results1[1];
-#if !defined __WXMSW__
+#if MYSQL_VERSION_ID > 80001
         bool is_null[1], error[1];
 #else
         char is_null[1], error[1];
@@ -3109,27 +3109,24 @@ int MySQLDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::ws
         auto rows = mysql_stmt_num_rows( res1 );
         if( !result )
         {
-            auto fetch = mysql_stmt_fetch( res1 );
-            switch( fetch )
+            int fetch;
+            while( true )
             {
-                case 1:
-                {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
-                    errors.push_back( err );
-                    result = 1;
-                }
-                break;
-                case 0:
+                fetch = mysql_stmt_fetch( res1 );
+                if( fetch == 1 || fetch == MYSQL_NO_DATA )
+                    break;
+                else if( !fetch )
                     id = tableId;
-                    break;
-                case MYSQL_NO_DATA:
-                    break;
-                case MYSQL_DATA_TRUNCATED:
-                    errors.push_back( L"Data truncated" );
-                    break;
+            }
+            if( fetch == 1 )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errors.push_back( err );
+                result = 1;
             }
         }
-        mysql_free_result( prepare_meta_result );
+        if( !result )
+            mysql_free_result( prepare_meta_result );
     }
     if( !result )
     {
