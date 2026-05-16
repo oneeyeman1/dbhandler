@@ -2417,24 +2417,100 @@ int PostgresDatabase::GetTableFields(const std::wstring &catalog, const std::wst
 int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0 ,m_maxIdLen = 63;
-    std::wstring query1, query2, query3;
+    std::wstring query1, query2, query3, primaryKeyName;
+    PGresult *res;
     if( isLog )
     {
         // 1. Find constraint name
-        query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.catalog_name = " + catalogName + L" AND tc.schema_name = " + schemaName + L"AND tc.table_name = " + tableName + L"; + \n\r";
+        query1 = L"SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_type = 'PRIMARY KEY'AND catalog_name = " + catalogName + L" AND schema_name = " + schemaName + L"AND table_name = " + tableName + L"; + \n\r";
         // 2. Drop PK
-        query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT";
+        query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
         // 3. Re-add PK
         query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
     }
     else
     {
         // 1. Find constraint name
-        query1= L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.constraint_catalog = ? AND tc.constraint_schema = ? AND tc.table_name = ?;";
+        query1= L"SELECT constraint_name FROM information_schema.table_constraints WHERE constraint_type = 'PRIMARY KEY' AND constraint_catalog = '" + catalogName + L"' AND constraint_schema = '" + schemaName + L"' AND table_name = '" + tableName + L"';";
         // 2. Drop PK
         query2 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
         // 3. Re-add PK
         query3 = L"ALTER TABLE " + catalogName + L"." + schemaName + L"." + tableName + L" ADD PRIMARY KEY(";
+    }
+    if( !isLog )
+    {
+        res = PQexec( m_db, "BEGIN" );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        PQclear( res );
+    }
+    if( !result )
+    {
+        if( isLog )
+            command += query1;
+        else
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
+            if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            else
+            {
+                for( auto i = 0; i < PQntuples( res ); ++i )
+                {
+                    primaryKeyName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+                }
+            }
+        }
+        PQclear( res );
+    }
+    if( !result && !primaryKeyName.empty() )
+    {
+        if( isLog )
+            command += query2 + primaryKeyName;
+        else
+        {
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() + primaryKeyName ).c_str() );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            PQclear( res );
+        }
+    }
+    if( !isLog )
+    {
+        if( !result )
+        {
+            res = PQexec( m_db, "COMMIT" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            PQclear( res );
+        }
+        else
+        {
+            res = PQexec( m_db, "ROLLBACK" );
+            if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            PQclear( res );
+        }
     }
     return result;
 }
