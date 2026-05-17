@@ -2501,13 +2501,75 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
             query3 += (*iter);
             if( iter == newKey.end() - 1 )
             {
-                if(  m_db->GetTableVector().m_versionMajor >= 18 && options->m_withoutOverlaps )
+                if( GetTableVector().m_versionMajor >= 18 && options->m_withoutOverlaps )
                     query3 += L" WITHOUT OVERLAPS";
                 query3 += L")";
             }
             else
                 query3 += L",";
         }
+        std::vector<std::wstring> included, storage;
+        std::wstring temp;
+        options.get()->m_includeColumns.erase( 0, 1 );
+        options.get()->m_includeColumns.pop_back();
+        options.get()->m_storage.pop_back();
+        options.get()->m_storage.erase( 0, 1 );
+        if( !options.get()->m_includeColumns.empty() )
+        {
+            std::wstringstream stream( options.get()->m_includeColumns );
+            while( std::getline( stream, temp, L',' ) )
+            {
+                auto first = temp.find_first_not_of( L' ' );
+                auto last = temp.find_last_not_of( L' ' );
+                temp.erase( 0, first );
+                temp.erase( last - first + 1 );
+                included.push_back( temp );
+            }
+            if( included.empty() )
+                included.push_back( options.get()->m_includeColumns );
+        }
+        if( included.size() > 0 )
+        {
+            query3 += L" INCLUDE(";
+            for( std::vector<std::wstring>::iterator it = included.begin(); it < included.end(); ++it )
+            {
+                query3 += (*it);
+                if( it == included.end() - 1 )
+                    query3 += L")";
+                else
+                    query3 += L",";
+            }
+        }
+        if( !options.get()->m_storage.empty() )
+        {
+            std::wstringstream stream( options.get()->m_storage );
+            while( std::getline( stream, temp, L',' ) )
+                storage.push_back( temp );
+            if( storage.empty() )
+                storage.push_back( options.get()->m_storage );
+        }
+        if( storage.size() > 0 )
+        {
+            query3 += L" WITH(";
+            for( std::vector<std::wstring>::iterator it = storage.begin(); it < storage.end(); ++it )
+            {
+                query3 += (*it);
+                if( it == storage.end() - 1 )
+                    query3 += L")";
+                else
+                    query3 += L",";
+            }
+        }
+        if( options.get()->m_tablespace != L"default" )
+            query3 += L" USING INDEX TABLESPACE " + options.get()->m_tablespace;
+        res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
+        if( PQresultStatus( res ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        PQclear( res );
     }
     if( !isLog )
     {
