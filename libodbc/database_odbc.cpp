@@ -4449,7 +4449,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 }
             }
             if( !result  )
-                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, overlap );
+                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, overlap, false );
         }
         if( pimpl.m_subtype == L"MySQL" )
         {
@@ -9552,6 +9552,12 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         {
             if( pimpl.m_subtype != L"SQL Anywhere" )
                 query2 += primaryKeyName;
+            if( pimpl.m_subtype == L"PostgreSQL" )
+            {
+                auto options = std::dynamic_pointer_cast<PostgresPKOptions>( opts );
+                if( options->m_cascade )
+                    query2 += L" CASCADE";
+            }
             if( isLog )
             {
                 command += query2 + L"\n\r";

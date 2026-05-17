@@ -320,6 +320,9 @@ void TablePrimaryKey::do_layout()
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer5->Add( sizer4, 0, wxEXPAND, 0 );
         sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_cascade = new wxCheckBox( sizer2->GetStaticBox(), wxID_ANY, "CASCADE" );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer5->Add( m_cascade, 0, wxEXPAND, 0 );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"MySQL" ) ||
         ( m_db->GetTableVector().m_type == L"MySQL" ) )
@@ -464,9 +467,9 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
     {
         bool sequental = m_sequential ? m_sequential->GetValue() : false;
         int delay = m_delay ? wxAtoi( m_delay->GetValue() ) : 0;
-        options = std::make_shared<SQLServerPKOptions>( name, m_clustered->GetValue(), m_padIndex->GetValue(), m_fillFactor->GetValue(), 
-                                                       m_ignoreDup->GetValue(), m_norecompute->GetValue(), m_incremental->GetValue(), 
-                                                       m_rowLocks->GetValue(), m_pageLocks->GetValue(), sequental, delay, 
+        options = std::make_shared<SQLServerPKOptions>( name, m_clustered->GetValue(), m_padIndex->GetValue(), m_fillFactor->GetValue(),
+                                                       m_ignoreDup->GetValue(), m_norecompute->GetValue(), m_incremental->GetValue(),
+                                                       m_rowLocks->GetValue(), m_pageLocks->GetValue(), sequental, delay,
                                                        m_compression->GetString( m_compression->GetSelection() ).ToStdWstring(), 1, false );
     }
     if( ( m_db->GetTableVector().m_type == L"ODBC" && m_db->GetTableVector().m_subtype == L"PostgreSQL" ) ||
@@ -513,7 +516,7 @@ const std::shared_ptr<PKOptions> TablePrimaryKey::GetPKOptions() const
         auto overlap = false;
         if( m_overlaps && m_overlaps->GetValue() )
             overlap = true;
-        options = std::make_shared<PostgresPKOptions>( name, type, included, params, m_tableSpace->GetValue().ToStdWstring(), overlap );
+        options = std::make_shared<PostgresPKOptions>( name, type, included, params, m_tableSpace->GetValue().ToStdWstring(), overlap, m_cascade->GetValue() );
     }
     return options;
 }

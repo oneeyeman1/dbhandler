@@ -51,5 +51,6 @@ private:
     wxCheckBox *m_visible = nullptr;
     wxTextCtrl *m_attr1 = nullptr;
     wxTextCtrl *m_attr2 = nullptr;
+    wxCheckBox *m_cascade = nullptr;
     std::shared_ptr<PKOptions> m_options;
 };
