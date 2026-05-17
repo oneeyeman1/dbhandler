@@ -9439,7 +9439,10 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
         if( isLog )
+        {
             command += query1;
+            primaryKeyName = opts->m_name;
+        }
         else
         {
             if( !result )
