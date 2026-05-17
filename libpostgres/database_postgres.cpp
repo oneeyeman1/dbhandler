@@ -1084,7 +1084,7 @@ int PostgresDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::
                     options.erase( 0, 1 );
                     options.pop_back();
                 }
-                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, false );
+                prop.pkOptions = std::make_shared<PostgresPKOptions>( pkName, indType, includedCol, options, tbSpace, false, false );
             }
         }
         bool overlap = false;
@@ -2419,6 +2419,7 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
     int result = 0 ,m_maxIdLen = 63;
     std::wstring query1, query2, query3, primaryKeyName;
     PGresult *res;
+    auto options = std::dynamic_pointer_cast<PostgresPKOptions>( opts );
     if( isLog )
     {
         // 1. Find constraint name
@@ -2451,7 +2452,10 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
     if( !result )
     {
         if( isLog )
+        {
             command += query1;
+            primaryKeyName = options->m_name;
+        }
         else
         {
             res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
@@ -2468,16 +2472,19 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
                     primaryKeyName = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
                 }
             }
+            PQclear( res );
         }
-        PQclear( res );
     }
     if( !result && !primaryKeyName.empty() )
     {
+        query2 += primaryKeyName;
+        if( options->m_cascade )
+            query2 += L" CASCADE";
         if( isLog )
-            command += query2 + primaryKeyName;
+            command += query2 + L"\n\r";
         else
         {
-            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() + primaryKeyName ).c_str() );
+            res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
             if( PQresultStatus( res ) != PGRES_COMMAND_OK )
             {
                 std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -2485,6 +2492,21 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
                 result = 1;
             }
             PQclear( res );
+        }
+    }
+    if( !result && !newKey.empty() )
+    {
+        for( auto iter = newKey.begin(); iter < newKey.end(); ++iter )
+        {
+            query3 += (*iter);
+            if( iter == newKey.end() - 1 )
+            {
+                if(  m_db->GetTableVector().m_versionMajor >= 18 && options->m_withoutOverlaps )
+                    query3 += L" WITHOUT OVERLAPS";
+                query3 += L")";
+            }
+            else
+                query3 += L",";
         }
     }
     if( !isLog )
