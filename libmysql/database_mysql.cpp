@@ -3216,6 +3216,67 @@ int MySQLDatabase::GetTableFields(const std::wstring &catalog, const std::wstrin
 int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    std::wstring query1, query2, query3;
+    MYSQL_RES *res;
+    std::wstring primaryKeyName;
+    if( isLog )
+    {
+        // 1. Find constraint name
+        query1 = L"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE TABLE_NAME = '" + tableName + L"' AND TABLE_SCHEMA = '" + schemaName + L"' AND CONSTRAINT_TYPE = 'PRIMARY KEY';";
+        // 2. Drop PK
+        query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
+        // 3. Re-add PK
+        query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
+    }
+    else
+    {
+        // 1. Find constraint name
+        query1 = L"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS WHERE TABLE_NAME = '" + tableName + L"' AND TABLE_SCHEMA = '" + schemaName + L"' AND CONSTRAINT_TYPE = 'PRIMARY KEY';";
+        // 2. Drop PK
+        query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
+        // 3. Re-add PK
+        query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";"";
+    }
+    if( !isLog )
+    {
+        if( mysql_query( m_db, "BEGIN" ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( isLog )
+            command += query1;
+        else
+        {
+            if( mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+    }
+    if( !result )
+    {
+        res = mysql_store_result( m_db );
+        if( !res )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( auto row = mysql_fetch_row( res ) )
+        {
+            primaryKeyName = m_pimpl->m_myconv.from_bytes( row[0] );
+        }
+    }
     return result;
 }
 

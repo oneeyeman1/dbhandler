@@ -9348,7 +9348,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 1. Find constraint name
             query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name WHERE tc.constraint_type = 'PRIMARY KEY'AND tc.schema_name = " + schemaName + L" AND tc.table_name = " + tableName + L";\n\r";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
             // 3. Re-add PK
             query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
         }
@@ -9357,7 +9357,7 @@ int ODBCDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::wst
             // 1. Find constraint name
             query1 = L"SELECT tc.constraint_name FROM information_schema.table_constraints tc, information_schema.key_column_usage kcu WHERE tc.constraint_name = kcu.constraint_name AND tc.table_schema = kcu.table_schema AND tc.table_name = kcu.table_name AND tc.constraint_type = 'PRIMARY KEY'AND tc.table_schema = ? AND tc.table_name = ?;";
             // 2. Drop PK
-            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP CONSTRAINT ";
+            query2 = L"ALTER TABLE " + schemaName + L"." + tableName + L" DROP PRIMARY KEY";
             // 3. Re-add PK
             query3 = L"ALTER TABLE " + schemaName + L"." + tableName + L" ADD PRIMARY KEY (column1, column2);";
 
