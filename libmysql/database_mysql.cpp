@@ -2231,23 +2231,35 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         }
     }
     memset( params, 0, sizeof( params ) );
+    len[0] = strlen( m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str() );
+    len[1] = strlen( m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    len[2] = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    std::unique_ptr<char[]> str_data1( new char[len[0]] );
+    std::unique_ptr<char[]> str_data2( new char[len[1]] );
+    std::unique_ptr<char[]> str_data3( new char[len[2]] );
+    memset( str_data1.get(), '\0', len[0] );
+    memset( str_data2.get(), '\0', len[1] );
+    memset( str_data3.get(), '\0', len[2] );
+    snprintf( str_data1.get(), len[0], "%s", m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str() );
+    snprintf( str_data2.get(), len[1], "%s", m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    snprintf( str_data3.get(), len[2], "%s", m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     if( !result )
     {
         params[0].buffer_type = MYSQL_TYPE_STRING;
-        params[0].buffer = (char*) m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str();
-        params[0].buffer_length = catalog.length();
+        params[0].buffer = (char*) str_data1.get();
+        params[0].buffer_length = len[0];
         params[0].is_null = 0;
         params[0].length = &len[0];
 
         params[1].buffer_type = MYSQL_TYPE_STRING;
-        params[1].buffer = (char*) m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
-        params[1].buffer_length = schemaName.length();
+        params[1].buffer = (char*) str_data2.get();
+        params[1].buffer_length = len[1];
         params[1].is_null = 0;
         params[1].length = &len[1];
 
         params[2].buffer_type = MYSQL_TYPE_STRING;
-        params[2].buffer = (char*) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
-        params[2].buffer_length = tableName.length();
+        params[2].buffer = (char*) str_data3.get();
+        params[2].buffer_length = len[2];
         params[2].is_null = 0;
         params[2].length = &len[2];
 
@@ -2430,6 +2442,13 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             result = 1;
         }
     }
+    memset( results2, 0, sizeof( results2 ) );
+    results2[0].buffer_type = MYSQL_TYPE_STRING;
+    results2[0].buffer = &fieldName;
+    results2[0].buffer_length = 63;
+    results2[0].is_null = &isNull2[0];
+    results2[0].length = &len[0];
+    results2[0].error = &err2[0];
     if( !result )
     {
         res3 = mysql_stmt_init( m_db );
