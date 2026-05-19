@@ -3635,10 +3635,10 @@ bool ODBCDatabase::IsIndexExists(const std::wstring &indexName, const std::wstri
 int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, id;
-    unsigned short dataFontSize = 0, dataFontWeight = 0,  dataFontUnderline = 0, dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontUnderline = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontStriken = 0;
-    unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, labelFontUnderline = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
-    SQLWCHAR dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
-    SQLWCHAR comments[226];
+    unsigned short dataFontSize = 0, dataFontWeight = 0,  dataFontStriken = 0, headingFontSize = 0, headingFontWeight = 0, headingFontStriken = 0, labelFontSize = 0, labelFontWeight = 0, labelFontStriken = 0;
+    unsigned short dataFontCharacterSet = 0, headingFontCharacterSet = 0, labelFontCharacterSet = 0, dataFontPixelSize = 0, headingFontPixelSize = 0, labelFontPixelSize = 0;
+    SQLWCHAR dataFontUnderline[2], headingFontUnderline[2], dataFontItalic[2], headingFontItalic[2], labelFontItalic[2], dataFontName[20], headingFontName[20], labelFontName[20];
+    SQLWCHAR comments[226], labelFontUnderline[2];
     SQLLEN cbDataFontSize = 0, cbDataFontWeight = 0, cbDataFontItalic = SQL_NTS, cbDataFontUnderline = SQL_NTS, cbDataFontStriken = SQL_NTS, cbDataFontName = 0, cbHeadingFontSize = 0, cbHeadingFontWeight = 0;
     SQLLEN cbHeadingFontItalic = 0,  cbHeadingFontUnderline = 0, cbHeadingFontStriken = 0, cbHeadingFontName = 0, cbComment;
     SQLLEN cbLabelFontSize = 0, cbLabelFontWeight = 0, cbLabelFontItalic = 0, cbLabelFontUnderline = 0, cbLabelFontStriken = 0, cbLabelFontName = 0;
@@ -3755,7 +3755,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 4, SQL_C_USHORT, &dataFontUnderline, 4, &cbDataFontUnderline );
+        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, &dataFontUnderline, 4, &cbDataFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3827,7 +3827,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 12, SQL_C_USHORT, &headingFontUnderline, 4, &cbHeadingFontUnderline );
+        ret = SQLBindCol( m_hstmt, 12, SQL_C_WCHAR, &headingFontUnderline, 4, &cbHeadingFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3899,7 +3899,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 20, SQL_C_USHORT, &labelFontUnderline, 4, &cbLabelFontUnderline );
+        ret = SQLBindCol( m_hstmt, 20, SQL_C_WCHAR, &labelFontUnderline, 4, &cbLabelFontUnderline );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -3960,7 +3960,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             prop.m_dataFontSize = dataFontSize;
             prop.m_dataFontWeight = dataFontWeight;
             prop.m_dataFontItalic = dataFontItalic[0] == 'Y';
-            prop.m_dataFontUnderline = dataFontUnderline;
+            prop.m_dataFontUnderline = dataFontUnderline[0] == 'Y';
             prop.m_dataFontStrikethrough = dataFontStriken == 1;
             prop.m_dataFontCharacterSet = dataFontCharacterSet;
             prop.m_dataFontPixelSize = dataFontPixelSize;
@@ -3970,7 +3970,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             prop.m_headingFontSize = headingFontSize;
             prop.m_headingFontWeight = headingFontWeight;
             prop.m_headingFontItalic = headingFontItalic[0] == 'Y';
-            prop.m_headingFontUnderline = headingFontUnderline;
+            prop.m_headingFontUnderline = headingFontUnderline[0] == 'Y';
             prop.m_headingFontStrikethrough = headingFontStriken == 1 ? true : false;
             prop.m_headingFontCharacterSet = headingFontCharacterSet;
             prop.m_headingFontPixelSize = headingFontPixelSize;
@@ -3980,7 +3980,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
             prop.m_labelFontSize = labelFontSize;
             prop.m_labelFontWeight = labelFontWeight;
             prop.m_labelFontItalic = labelFontItalic[0] == 'Y';
-            prop.m_labelFontUnderline = labelFontUnderline;
+            prop.m_labelFontUnderline = labelFontUnderline[0] == 'Y';
             prop.m_labelFontStrikethrough = labelFontStriken == 1;
             prop.m_labelFontCharacterSer = labelFontCharacterSet;
             prop.m_labelFontPixelSize = labelFontPixelSize;
