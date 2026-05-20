@@ -2757,6 +2757,17 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT t.table_id FROM SYS.SYSTABLE t, SYS.SYSUSERPERM u WHERE t.creator = u.user_id AND u.user_name = ? AND t.table_name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', '' WHERE NOT EXISTS(SELECT 1 FROM abcattbl WHERE abt_tnam=? AND abt_ownr=? AND abt_os=?);";
         }
     }
+    if( pimpl.m_subtype == L"Adaptive Server Enterprise" || pimpl.m_subtype == L"ASE" )
+    {
+        if( osid == WINDOWS )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.users u WHERE o.uid = u.uid AND u.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 1, 0, 'MS Sans Serif', '';";
+        else if( osid == GTK )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.users u WHERE o.uid = u.uid AND u.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', 8, 400, 'N', 'N', 0, 34, 0, 'Serif', '';";
+        else if( osid == QT )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.users u WHERE o.uid = u.uid AND u.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 34, 0, 'Cantrell', '';";
+        else if( osid == OSX )
+            qry2 = L"INSERT INTO abcattbl SELECT ?, ?, (SELECT object_id FROM sys.objects o, sys.users u WHERE o.uid = u.uid AND u.name = ? AND o.name = ?),  ?, 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif', 8, 400, 'N', 'N', 0, 34, 0, 'MS Sans Serif',;";
+    }
     std::unique_ptr<SQLWCHAR[]> catalogDB( new SQLWCHAR[pimpl.m_dbName.length() + 2] );
     std::unique_ptr<SQLWCHAR[]> schemaDB( new SQLWCHAR[5] );
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[qry2.length() + 2] );
@@ -2956,7 +2967,11 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
                 memset( qry1.get(), '\0', 30 );
                 uc_to_str_cpy( qry1.get(), L"BEGIN" );
-                if( pimpl.m_subtype == L"Microsoft SQL Server" || pimpl.m_subtype == L"Sybase SQL Anywhere" || pimpl.m_subtype == L"SQL Anywhere" )
+                if( pimpl.m_subtype == L"Microsoft SQL Server" || 
+                    pimpl.m_subtype == L"Sybase SQL Anywhere" || 
+                    pimpl.m_subtype == L"SQL Anywhere" || 
+                    pimpl.m_subtype == L"Adaptive Server Enterprise" ||
+                    pimpl.m_subtype == L"ASE" )
                     uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
                 ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
