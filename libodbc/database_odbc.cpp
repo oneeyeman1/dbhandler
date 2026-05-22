@@ -3236,6 +3236,19 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
+                    if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
+                    {
+                        if( !result )
+                        {
+                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, m_valueType, m_paramType, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
+                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                            {
+                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                                result = 1;
+                                break;
+                            }
+                        }
+                    }
                     if( !result )
                     {
                         ret = SQLExecute( statement );
