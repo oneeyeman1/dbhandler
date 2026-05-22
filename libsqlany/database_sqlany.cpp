@@ -3236,7 +3236,7 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                             }
                         }
                     }
-                    if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
+					if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
                     {
                         if( !result )
                         {
@@ -10247,12 +10247,11 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
     if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
     {
         SQLWCHAR name[128], desc[128];
-        int lcid, langid;
+        int lcid;
         options = std::make_shared<SQLServerCreateDBOptions>();
         query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
-        query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
-//        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
-        query3 = L"SELECT lcid, name FROM sys.syslanguages";
+        query2 = L"SELECT lcid, name FROM sys.fulltext_languages";
+        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
         std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
@@ -10296,7 +10295,6 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
                 result = 1;
             }
         }
-        memset( desc, '\0', 128 );
         ret = SQLCloseCursor( m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -10339,7 +10337,7 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
             {
                 std::wstring param2;
                 str_to_uc_cpy( param2, desc );
-                std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_fullTextSearch.push_back( std::make_tuple( lcid, param2 ) );
+                std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_fullTextSearch.push_back( make_tuple( lcid, param2 ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10347,14 +10345,12 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
                 result = 1;
             }
         }
-        memset( desc, '\0', 128 );
         ret = SQLCloseCursor( m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-        std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_fullTextSearch.push_back( std::make_tuple( 0, L"Default" ) );
         if( !result )
         {
             qry.reset( new SQLWCHAR[query3.length() + 2] );
@@ -10367,50 +10363,14 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
                 result = 1;
             }
         }
-        if( !result )
-        {
-            ret = SQLBindCol( m_hstmt, 1, SQL_C_ULONG, &langid, 0, &ind[0] );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-        }
-        if( !result )
-        {
-            ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, desc, 128, &ind[1] );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-        }
-        std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_langs.push_back( std::make_tuple( 0, L"Default" ) );
-        if( !result )
-        {
-            for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt) )
-            {
-                std::wstring param2;
-                str_to_uc_cpy( param2, desc );
-                std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options )->m_langs.push_back( std::make_tuple( langid, param2 ) );
-            }
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-        }
     }
-    if( !result )
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-        m_hstmt = 0;
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
     }
+    m_hstmt = 0;
     if( !result )
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     else
