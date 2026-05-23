@@ -82,11 +82,12 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer20->Add( m_label12, 0, wxEXPAND, 0 );
             sizer20->Add( 5, 5, 0, wxEXPAND, 0 );
             m_collations = new wxComboBox( this, wxID_ANY, "Default" );
-/*            for( auto &collation : opts->m_collations )
+            wxArrayString collations;
+            for( auto &collation : opts->m_collations )
             {
-                auto item = m_collations->Append( std::get<1>( *collation ) );
-                m_collations->SetClientData( item, collation.get() );
-            }*/
+                collations.Add( std::get<1>( *collation ) );
+            }
+            m_collations->AutoComplete( collations );
             sizer20->Add( m_collations, 0, wxEXPAND, 0 );
             second->Add( sizer20, 0, wxEXPAND, 0 );
             m_with = new wxCollapsiblePane( this, wxID_ANY, "WITH" );
@@ -165,6 +166,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             {
                 m_persistantLog = new wxCheckBox( withPane, wxID_ANY, "PERSISTENT_LOG_BUFFER" );
                 grid_sizer_1->Add( m_persistantLog, 0, wxALIGN_CENTER_VERTICAL, 0 );
+                m_persistantLog->Bind( wxEVT_CHECKBOX, &CreateDatabase::OnPersistentLog, this );
                 m_dirName2 = new wxDirPickerCtrl( withPane, wxID_ANY, wxEmptyString );
                 m_dirName2->Enable( false );
                 grid_sizer_1->Add( m_dirName2, 0, wxEXPAND, 0 );
@@ -174,7 +176,6 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             grid_sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-            m_persistantLog->Bind( wxEVT_CHECKBOX, &CreateDatabase::OnPersistentLog, this );
             withPane->SetSizer( sizer_1 );
         }
         auto win = m_options->GetPane();
@@ -416,7 +417,8 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     if( m_type == L"Microsoft SQL Server" || m_subtype == L"Microsoft SQL Server" )
     {
         auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( m_opts );
-        opts->m_containment = m_containment->GetValue();
+        if( m_versionMajor >= 11 )
+            opts->m_containment = m_containment->GetValue();
     }
     if( m_type == L"PostgreSQL" || m_subtype == L"PostgreSQL" )
     {

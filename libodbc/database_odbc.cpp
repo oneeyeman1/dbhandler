@@ -508,6 +508,13 @@ int ODBCDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr
         if( !with.empty() )
             qry += L" WITH " + with;
     }
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        auto options = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( opts );
+        if( pimpl.m_versionMajor >= 11 )
+            qry += L" COMTANMENT " + options->m_containment;
+        qry += L" ON";
+    }
     RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
