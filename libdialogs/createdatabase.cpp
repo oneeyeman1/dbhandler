@@ -446,7 +446,22 @@ void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
         auto spec = dlg.GetFileSpec();
         if( paneSizer1->GetRows() == 2 )
         {
-            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 ) )->SetValue( spec.m_name );
+            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 6 )->GetWindow() )->SetValue( spec.m_name );
+            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
+            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
+            dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
+            if( spec.m_isUnlimited )
+            {
+                dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( "UNLIMITED" );
+            }
+            else
+            {
+                dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
+                dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
+            }
+            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
+            dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
+            dynamic_cast<wxCheckBox *>( paneSizer1->GetItem( 11 )->GetWindow() )->Enable();
         }
     }
 }

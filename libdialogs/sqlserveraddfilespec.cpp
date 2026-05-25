@@ -61,6 +61,10 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     m_label3 = new wxStaticText( this, wxID_ANY, "Size" );
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_size = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, val1 );
+    if( version > 13 )
+        m_size->SetValue( "8" );
+    else
+        m_size->SetValue( "1" );
     grid_sizer_1->Add( m_size, 0, 0, 0 );
     const wxString m_measure1_choices[] = {
         "KB",
@@ -112,6 +116,7 @@ SQLServerAddFileSpec::SQLServerAddFileSpec(wxWindow* parent, wxWindowID id, cons
     auto buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
     FindWindowById( wxID_OK, this )->Enable( false );
     FindWindowById( wxID_OK, this )->Bind( wxEVT_BUTTON, &SQLServerAddFileSpec::OnOK, this );
+    FindWindowById( wxID_OK, this )->Bind( wxEVT_UPDATE_UI, &SQLServerAddFileSpec::OnOKUpdateUI, this );
     sizer_2->Add( buttons, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     
@@ -137,18 +142,22 @@ void SQLServerAddFileSpec::OnUnlimited(wxCommandEvent &WXUNUSED(event))
 
 void SQLServerAddFileSpec::OnOKUpdateUI(wxUpdateUIEvent &event)
 {
-    if( m_name->GetValue() == wxEmptyString )
-        event.Enable( false );
-    else
+    if( m_name->GetValue() != wxEmptyString && m_fileName->GetPath() != wxEmptyString )
         event.Enable( true );
+    else
+        event.Enable( false );
 }
 
 void SQLServerAddFileSpec::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     m_spec.m_name = m_name->GetValue();
-    m_spec.m_fileName = m_fileName->GetFileName();
+    m_spec.m_fileName = m_fileName->GetPath();
     m_spec.m_size = m_size->GetValue();
+    m_spec.m_measure1 = m_measure1->GetString( m_measure1->GetSelection() );
     m_spec.m_maxSize = m_maxSize->GetValue();
+    m_spec.m_measure2 = m_measure2->GetString( m_measure2->GetSelection() );
     m_spec.m_growth = m_growth->GetValue();
+    m_spec.m_measure3 = m_measure3->GetString( m_measure3->GetSelection() );
+    m_spec.m_isUnlimited = checkbox_1->GetValue();
     EndModal( wxID_OK );
 }
