@@ -20,9 +20,10 @@
 
 struct FileSpec
 {
-    wxString m_name;
+    wxString m_name, m_measure1, m_measure2, m_measure3;
     wxFileName m_fileName;
     wxString m_size, m_maxSize, m_growth;
+    bool m_isUnlimited;
 };
 
 class SQLServerAddFileSpec: public wxDialog

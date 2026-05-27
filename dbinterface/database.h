@@ -58,9 +58,19 @@ struct CreateDBOptions
 
 struct SQLServerCreateDBOptions : public CreateDBOptions
 {
-    std::wstring m_containment, m_collation, m_fullText;
+    struct fileSpec
+    {
+        std::wstring m_name, m_fileName, m_measure1, m_measure2, m_measure3, m_filestreamfilename, m_nontransaccess;
+        int m_size, m_maxSize, m_growth;
+        bool m_isPrimary;
+        fileSpec(const std::wstring &name, const std::wstring &fileName, const std::wstring &measure1, const std::wstring &measure2, const std::wstring &measure3, int size, int maxSize, int growth, bool isPrimary) : m_name( name ), m_fileName( fileName ), m_measure1( measure1 ), m_measure2( measure2 ), m_measure3( measure3 ), m_size( size ), m_maxSize( maxSize ), m_growth( growth ), m_isPrimary( isPrimary ) {}
+    };
+    std::wstring m_containment, m_collation, m_fullText, m_persistentlog;
+    std::vector<fileSpec> m_fileSpecs;
     std::vector<std::unique_ptr<SQLServerCharSet> > m_collations;
-    std::vector<std::tuple<int, std::wstring> > m_fullTextSearch;
+    std::vector<std::tuple<int, std::wstring> > m_fullTextSearch, m_langs;
+    bool m_ledger, m_trustworthy, m_dbchainib, n_nestedtriggera, m_noisewords;
+    int m_twodigityear;
 };
 
 struct PostgresCreateDBOptions : public CreateDBOptions
