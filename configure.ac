@@ -106,7 +106,6 @@ libdialogs/Makefile
 libdbloader/Makefile
 libdbwindow/Makefile
 dbhandler/Makefile
-libsqlany/Makefile
 libhelpers/Makefile
 libtabledataedit/Makefile
 libtablewindow/Makefile
