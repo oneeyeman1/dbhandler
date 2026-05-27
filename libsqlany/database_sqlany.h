@@ -1,44 +1,21 @@
 #ifndef DBMANAGER_ODBC
 #define DBMANAGER_ODBC
 
-struct SQLTablesDataBinding
-{
-    SQLSMALLINT TargetType;
-    SQLPOINTER TargetValuePtr;
-    SQLINTEGER BufferLength;
-    SQLLEN StrLen_or_Ind;
-};
-
-
-#define ENV_ERROR 0
-#define CONN_ERROR 1
-#define STMT_ERROR 2
-
-#ifdef UNIXODBC
-#define TRUE 1
-#define FALSE 0
-#endif
-
 #ifdef WIN32
-class __declspec(dllexport) ODBCDatabase : public Database
+class __declspec(dllexport) SQLAnyDatabase : public Database
 #else
-class ODBCDatabase : public Database
+class SQLAnyDatabase : public Database
 #endif
 {
 public:
-    ODBCDatabase(const int osId, const std::wstring &desktop);
-    virtual ~ODBCDatabase();
+    SQLAnyDatabase(const int osId, const std::wstring &desktop);
+    virtual ~SQLAnyDatabase();
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg) override;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
     virtual int Disconnect(std::vector<std::wstring> &errorMsg) override;
-    void SetWindowHandle(SQLHWND handle);
-    void AskForConnectionParameter(bool ask);
-    bool GetDriverList(std::map<std::wstring, std::vector<std::wstring> > &driversDSN, std::vector<std::wstring> &errMsg);
-    bool AddDsn(SQLHWND hwnd, const std::wstring &driver, std::vector<std::wstring> &errorMsg);
-    bool EditDsn(SQLHWND hwnd, const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg);
-    bool RemoveDsn(const std::wstring &driver, const std::wstring &dsn, std::vector<std::wstring> &errorMsg);
-    bool GetDSNList(std::vector<std::wstring> &dsn, std::vector<std::wstring> &errorMsg);
+//    void SetWindowHandle(SQLHWND handle);
+//    void AskForConnectionParameter(bool ask);
     virtual int CreateIndex(const std::wstring &command, const std::wstring &index_name, const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) override;
     virtual int DropIndex(const std::wstring &fullTableName, const std::wstring &indexName, const DropIndexOption &options, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
@@ -67,17 +44,10 @@ public:
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg) override;
 protected:
-    struct ODBCImpl;
-    ODBCImpl *odbc_pimpl;
-    int GetDriverForDSN(SQLWCHAR *dsn, SQLWCHAR *driver, std::vector<std::wstring> &errorMsg);
+    struct SQLAnyImpl;
+    SQLAnyImpl *sqlany_pimpl;
     int MonitorSchemaChanges(std::vector<std::wstring> &errorMsg);
-    int GetSQLStringSize(SQLWCHAR *str);
-    void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
-    void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
-    void copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src);
-    bool equal(SQLWCHAR *dest, SQLWCHAR *src);
-    int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
-    int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);
+//    int GetSQLStringSize(SQLWCHAR *str);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
     virtual bool IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg) override;
@@ -87,25 +57,18 @@ protected:
     void SetFullType(TableField *field);
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     int CreateIndexesOnPostgreConnection(std::vector<std::wstring> &errorMsg);
-    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, TableField *field, std::vector<std::wstring> &errorMsg);
+//    int GetFieldProperties(const SQLWCHAR *tableName, const SQLWCHAR *schemaName, const SQLWCHAR *ownerName, const SQLWCHAR *fieldName, TableField *field, std::vector<std::wstring> &errorMsg);
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
 private:
-    SQLHENV m_env;
-    SQLHDBC m_hdbc;
-    SQLHSTMT m_hstmt;
-    SQLHWND m_handle;
     bool m_ask;
-    SQLUSMALLINT m_statementsNumber;
     bool m_oneStatement;
-    SQLWCHAR *m_connectString;
     int m_maxIdLen;
-    SQLSMALLINT m_valueType = SQL_C_WCHAR, m_paramType = SQL_WCHAR;
 };
 
-struct ODBCDatabase::ODBCImpl
+struct SQLAnyDatabase::SQLAnyImpl
 {
     std::wstring m_currentTableOwner, m_driverName;
 };
