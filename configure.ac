@@ -13,14 +13,18 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CC
 
-AC_CHECK_PROG(ODBC,odbc_config,yes)
-if test x"${ODBC}" == x"yes" ; then
-    ODBC_CFLAGS = `odbc_config --cflags`
-    ODBC_LIBS = `odbc_config --libs` -lodbcinst
-else
-    ODBC_CFLAGS = `pkg-config odbc --cflags`
-    ODBC_LIBS = `pkg-config odbc --libs` -lodbcinst
-fi
+PKG_PROG_PKG_CONFIG
+
+AC_CHECK_PROG([ODBC_CONFIG], [odbc_config], [odbc_config], [no])
+
+AS_IF([test "x$ODBC_CONFIG" != "xno"], [
+    ODBC_CFLAGS=`$ODBC_CONFIG --cflags`
+    ODBC_LIBS=`$ODBC_CONFIG --libs`
+], [
+    PKG_CHECK_MODULES([ODBC], [odbc])
+])
+
+ODBC_LIBS="$ODBC_LIBS -lodbcinst"
 
 AC_SUBST(ODBC_CFLAGS)
 AC_SUBST(ODBC_LIBS)
