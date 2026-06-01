@@ -10,6 +10,7 @@ class SQLAnyDatabase : public Database
 public:
     SQLAnyDatabase(const int osId, const std::wstring &desktop);
     virtual ~SQLAnyDatabase();
+	bool IsInitialized() { return m_initialized; }
     virtual int Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg) override;
     virtual int DropDatabase(const std::wstring &name, std::vector<std::wstring> &errorMsg) override;
@@ -47,6 +48,7 @@ protected:
     struct SQLAnyImpl;
     SQLAnyImpl *sqlany_pimpl;
     int MonitorSchemaChanges(std::vector<std::wstring> &errorMsg);
+    int GetErrorMessage(std::vector<std::wstring> &errorMsg);
 //    int GetSQLStringSize(SQLWCHAR *str);
     virtual int GetTableListFromDb(std::vector<std::wstring> &errorMsg) override;
     virtual bool IsTablePropertiesExist(const DatabaseTable *table, std::vector<std::wstring> &errorMsg) override;
@@ -63,14 +65,20 @@ protected:
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
 private:
+    SQLAnywhereInterface m_api;
+    a_sqlany_connection *m_conn = nullptr;
+    a_sqlany_stmt *m_stmt = nullptr;
     bool m_ask;
     bool m_oneStatement;
     int m_maxIdLen;
+    bool m_initialized = false;
+    unsigned int max_ver;
 };
 
 struct SQLAnyDatabase::SQLAnyImpl
 {
     std::wstring m_currentTableOwner, m_driverName;
+    std::wstring_convert<std::codecvt_utf8<wchar_t> > m_myconv;
 };
 
 #endif

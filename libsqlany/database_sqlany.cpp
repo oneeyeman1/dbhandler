@@ -19,8 +19,10 @@
 #include <algorithm>
 #include <memory>
 #include <sstream>
+#include <codecvt>
 #include <regex>
 #include "string.h"
+#include "sacapidll.h"
 #include "database.h"
 #include "database_sqlany.h"
 
@@ -28,42 +30,53 @@ std::mutex Impl::my_mutex;
 
 SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
-//    odbc_pimpl = nullptr;
-    m_oneStatement = false;
-//    m_connectString = nullptr;
-    m_isConnected = false;
-    connectToDatabase = false;
-    m_fieldsInRecordSet = 0;
+    if( !sqlany_initialize_interface( &m_api, NULL ) )
+    {
+        m_initialized = false;
+    }
+    else
+    {
+        if( !m_api.sqlany_init( "dbhnadler", SQLANY_API_VERSION_1, &max_ver ) )
+        {
+            sqlany_finalize_interface( &m_api );
+            m_initialized = false;
+        }
+        else
+        {
+            m_initialized = true;
+            sqlany_pimpl = nullptr;
+            m_oneStatement = false;
+            m_isConnected = false;
+            connectToDatabase = false;
+            m_fieldsInRecordSet = 0;
+		}
+    }
 }
 
 SQLAnyDatabase::~SQLAnyDatabase()
 {
+    m_api.sqlany_fini();
+    sqlany_finalize_interface( &m_api );
 /*    RETCODE ret;
     std::vector<std::wstring> errorMsg;
     delete[] m_connectString;
-    m_connectString = nullptr;
-    delete odbc_pimpl;
-    odbc_pimpl = nullptr;*/
+    m_connectString = nullptr;*/
+    delete sqlany_pimpl;
+    sqlany_pimpl = nullptr;
 }
 
-/*void ODBCDatabase::SetWindowHandle(SQLHWND handle)
+int SQLAnyDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg)
 {
-    m_handle = handle;
+    /* failed to connect */
+    char buffer[SACAPI_ERROR_SIZE];
+    char sqlstate[6];
+    int  rc;
+    rc = m_api.sqlany_error( m_conn, buffer, sizeof( buffer ) );
+    m_api.sqlany_sqlstate( m_conn, sqlstate, sizeof( sqlstate ) );
+	printf( "Failed to connect: error code=%d error message=%s, sqlstate=%s\n", rc, buffer, sqlstate );
+	return true;
 }
 
-void ODBCDatabase::AskForConnectionParameter(bool ask)
-{
-    m_ask = ask;
-}
-
-int ODBCDatabase::GetSQLStringSize(SQLWCHAR *str)
-{
-    int ret = 1;
-    while( *str++ )
-        ret++;
-    return ret;
-}
-*/
 int SQLAnyDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
@@ -295,118 +308,51 @@ int SQLAnyDatabase::DropDatabase(const std::wstring &name, std::vector<std::wstr
 int SQLAnyDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, bufferSize = 1024;
-/*    std::vector<SQLWCHAR *> errorMessage;
-    SQLWCHAR connectStrIn[sizeof(SQLWCHAR) * 255], driver[1024], dsn[1024], dbType[1024] = {};
-    SQLSMALLINT OutConnStrLen;
-    SQLRETURN ret;
-    SQLUSMALLINT options;
-    SQLWCHAR *user = nullptr, *password = nullptr;
-    SQLWCHAR driverName[1024];
-    SQLWCHAR dbName[1024];
-    SQLWCHAR userName[1024];
-    std::wstring connectingDSN, connectingUser = L"", connectingPassword = L"";
-    pimpl.m_type = L"ODBC";
-    pimpl.m_pgLogFile = L"";
-    if( !odbc_pimpl )
-        odbc_pimpl = new ODBCImpl;
-    std::wstring::size_type pos = selectedDSN.find( L';' );
-    if( pos == std::wstring::npos )
-        connectingDSN = selectedDSN;
-    else
+    sqlany_pimpl = new SQLAnyImpl;
+    m_conn = m_api.sqlany_new_connection();
+    if( !m_api.sqlany_connect( m_conn, sqlany_pimpl->m_myconv.to_bytes( selectedDSN.c_str() ).c_str() ) )
     {
-        std::wstring temp = selectedDSN.substr( selectedDSN.find( L"DSN=" ) + 4 );
-        connectingDSN = temp.substr( 0, temp.find( L";") );
-//        connectingDSN = selectedDSN.substr( 0, pos );
-        temp = temp.substr( temp.find( L"UID=" ) + 4 );
-        connectingUser = temp.substr( 0, temp.find( L";" ) );
-        temp = temp.substr( temp.find( L"PWD=" ) + 4 );
-        connectingPassword = temp.substr( 0, temp.find( L";" ) );
-        user = new SQLWCHAR[connectingUser.length() + 2];
-        password = new SQLWCHAR[connectingPassword.length() + 2];
-        memset( user, '\0', connectingUser.length() + 2 );
-        memset( password, '\0', connectingPassword.length() + 2 );
-        uc_to_str_cpy( user, connectingUser );
-        uc_to_str_cpy( password, connectingPassword );
-    }
-    m_connectString = new SQLWCHAR[sizeof(SQLWCHAR) * 1024];
-    memset( dsn, 0, sizeof( dsn ) );
-    memset( connectStrIn, 0, sizeof( connectStrIn ) );
-    memset( driver, 0, sizeof( driver ) );
-    uc_to_str_cpy( dsn, connectingDSN.c_str() );
-    ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        errorMsg.push_back( L"Failed to allocate memory for the connection" );
-        return 1;
-    }
-    ret = SQLSetEnvAttr( m_env, SQL_ATTR_ODBC_VERSION, (SQLPOINTER) SQL_OV_ODBC3, SQL_IS_INTEGER );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, ENV_ERROR );
+        GetErrorMessage( errorMsg );
         result = 1;
     }
-    else
+    if( !result )
     {
-        ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &m_hdbc );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        pimpl.m_type = L"SQL Anywhere";
+		pimpl.m_subtype = L"";
+        pimpl.m_pgLogFile = L"";
+        if( ( m_stmt = m_api.sqlany_execute_direct( m_conn, "SELECT DB_NAME()" ) ) == nullptr )
         {
-            GetErrorMessage( errorMsg, ENV_ERROR );
-            return 1;
-        }
-        else
+            GetErrorMessage( errorMsg );
+            result = 1;
+		}
+    }
+    if( !result )
+    {
+        a_sqlany_data_value value;
+        while( m_api.sqlany_fetch_next( m_stmt ) )
         {
-            if( !GetDriverForDSN( dsn, driver, errorMsg ) )
+            if( !m_api.sqlany_get_column( m_stmt, 0, &value ) )
             {
-                std::unique_ptr<SQLWCHAR[]> tempPostgres( new SQLWCHAR[13] );
-                memset( tempPostgres.get(), '\0', 13 );
-                uc_to_str_cpy( tempPostgres.get(), L"PostgreSQL " );
-                if( connectStrIn[0] == '\0' )
+                GetErrorMessage( errorMsg );
+                result = 1;
+                break;
+            }
+            else
+            {
+                if( value.type == A_STRING )
                 {
-                    uc_to_str_cpy( connectStrIn, L"DSN=" );
-                    uc_to_str_cpy( connectStrIn, connectingDSN.c_str() );
+                    pimpl.m_dbName = sqlany_pimpl->m_myconv.from_bytes( value.buffer );
                 }
-                if( equal( tempPostgres.get(), driver ) )
-                    uc_to_str_cpy( connectStrIn, L";UseServerSidePrepare=1;ShowSystemTables=1;" );
-                std::wstring tempmySQL;
-                str_to_uc_cpy( tempmySQL, driver );
-                if( tempmySQL.find( L"myodbc" ) != std::wstring::npos )
-                    uc_to_str_cpy( connectStrIn, L";NO_SCHEMA=0;NO_CATALOG=0" );
-                if( user && password )
+                else
                 {
-                    uc_to_str_cpy( connectStrIn, L";UID=" );
-                    copy_uc_to_uc( connectStrIn, user );
-                    uc_to_str_cpy( connectStrIn, L";PWD=" );
-                    copy_uc_to_uc( connectStrIn, password );
-                }
-                delete[] user;
-                user = nullptr;
-                delete[] password;
-                password = nullptr;
-                ret = SQLSetConnectAttr( m_hdbc, SQL_LOGIN_TIMEOUT, (SQLPOINTER)50, 0 );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                {
-                    GetErrorMessage( errorMsg, 2 );
+                    errorMsg.push_back( L"Received incorrect data type" );
                     result = 1;
+                    break;
                 }
-                if( !result )
-                {
-#ifdef _WIN32
-                    options = m_ask ? SQL_DRIVER_COMPLETE : SQL_DRIVER_NOPROMPT;
-#else
-                    options = SQL_DRIVER_NOPROMPT;
-#endif
-                    ret = SQLDriverConnect( m_hdbc, m_handle, connectStrIn, SQL_NTS, m_connectString, 1024, &OutConnStrLen, options );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
-                    }
-                    if( ret == SQL_NO_DATA )
-                    {
-                        errorMsg.push_back( L"Connection cancelled" );
-                        return 0;
-                    }
-                }
+            }
+        }
+    }
+/*    std::vector<SQLWCHAR *> errorMessage;
                 if( !result )
                 {
                     str_to_uc_cpy( pimpl.m_connectString, m_connectString );
@@ -1213,6 +1159,8 @@ int SQLAnyDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
 {
     std::lock_guard<std::mutex> locker( GetTableVector().my_mutex );
     int result = 0;
+    m_api.sqlany_free_connection( m_conn );
+	m_isConnected = false;
 /*    RETCODE ret;
     long connectionAlive;
     SQLINTEGER pcbValue;
