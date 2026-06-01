@@ -29,6 +29,14 @@ ODBC_LIBS="$ODBC_LIBS -lodbcinst"
 AC_SUBST(ODBC_CFLAGS)
 AC_SUBST(ODBC_LIBS)
 
+AC_PROG_AWK
+AC_PROG_GREP
+
+[SQLANY=$(set | $GREP -E 'SQLANY[0-9]{1,}')]
+[SQLANYVAR=$(echo "$SQLANY" | $AWK -F= '{ print $2 }')]
+
+AC_SUBST(SQLANYVAR)
+
 WXCONFIG=wx-config
 AC_ARG_WITH(wx-config,
 [[  --with-wx-config=FILE

@@ -8,10 +8,8 @@ libsqlany_la_SOURCES =  \
 	database_sqlany.cpp \
 	database_sqlany.h
 
-libsqlany_la_CXXFLAGS = -I../../dbinterface 
-
-libsqlany_lib_la_CXXFLAGS = -I../../dbinterface \
-	-I`SQLANY17/sdk/include`
+libsqlany_la_CXXFLAGS = -I../../dbinterface \
+	-I$(SQLANYVAR)/sdk/include
 
 libsqlany_lib_la_LDFLAGS =
-	-L`SQLANY17/lib64` -llibdbcapi
+	-L$(SQLANYVAR)/lib64 -llibdbcapi
