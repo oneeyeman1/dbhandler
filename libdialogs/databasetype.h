@@ -7,8 +7,8 @@ class DBType : public wxWizardPage
 {
 public:
     DBType(wxWizard *parent);
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
     wxComboBox *GetComboBoxTypes() const;
     wxTextCtrl *GetProfilesCtrl() const { return profile; }
     wxStaticText *GetErrorCtrl() { return label1; }
@@ -23,8 +23,8 @@ class SQLiteConnect : public wxWizardPage
 {
 public:
     SQLiteConnect(wxWizard *parent);
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
     wxFilePickerCtrl *GetFileCtrl() const { return dbName; }
 private:
     wxFilePickerCtrl *dbName;
@@ -34,8 +34,8 @@ class ODBCConnect : public wxWizardPage
 {
 public:
     ODBCConnect(wxWizard *parent, const std::vector<std::wstring> &dsn);
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
     void AppendDSNsToList(const std::vector<std::string> &dsns);
     wxListBox *GetDSNTypesCtrl() const;
     wxCheckBox *GetAskForParameters() const;
@@ -51,8 +51,8 @@ class PostgresConnect : public wxWizardPage
 {
 public:
     PostgresConnect(wxWizard *parent);
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
     void OnAdvanced(wxCommandEvent &event);
     wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
@@ -131,8 +131,8 @@ class mySQLConnect : public wxWizardPage
 {
 public:
     mySQLConnect(wxWizard *parent);
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
     wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
     wxMaskedEditText *GetHostAddr() const;
@@ -172,8 +172,8 @@ public:
     SybaseSQLServer(wxWizard* parent, bool isSQLServer = true);
     int GeDBAPI() { return m_api->GetSelection(); }
     int GetLibrary() { return m_library->GetSelection(); }
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
 
 protected:
     // begin wxGlade: MyDialog::attributes
@@ -183,6 +183,31 @@ protected:
     wxTextCtrl *m_user, *m_password, *m_serverName; 
     wxStaticLine *m_divider;
     // end wxGlade
+};
+
+class SQLAnywhere : public wxWizardPage
+{
+public:
+    SQLAnywhere(wxWizard *parent);
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
+protected:
+    void OnExtra(wxCommandEvent &event);
+private:
+    wxStaticText *m_label1 = nullptr;
+    wxTextCtrl *m_host = nullptr;
+    wxStaticText *m_label2 = nullptr;
+    wxTextCtrl *m_port = nullptr;
+    wxStaticText *m_label3 = nullptr;
+    wxTextCtrl *m_userId = nullptr;
+    wxStaticText *m_label4 = nullptr;
+    wxTextCtrl *m_password = nullptr;
+    wxStaticText *m_label5 = nullptr;
+    wxTextCtrl *m_dbName = nullptr;
+    wxStaticText *m_label6 = nullptr;
+    wxTextCtrl *m_serverName = nullptr;
+    wxButton *m_extra = nullptr;
+    unsigned long m_value;
 };
 
 class DatabaseType : public wxWizard
@@ -195,6 +220,7 @@ public:
     PostgresConnect *GetPostgresPage() const { return page4; };
     mySQLConnect *GetmySQLPage() const { return page5; };
     SybaseSQLServer *GetSybasePage() const { return page7; }
+    SQLAnywhere *GetSQLAnyPage() const { return page8; }
     SybaseSQLServer *GetSQLServerPage() const { return page6; }
     void GetDatabaseEngine(wxString &databaseEngine);
     bool GetODBCConnectionParam();
@@ -216,6 +242,7 @@ private:
     mySQLConnect *page5;
     SybaseSQLServer *page6;
     SybaseSQLServer *page7;
+    SQLAnywhere *page8;
     wxWindow *button;
     wxString m_dbName, m_dbEngine, m_connStr, m_newCurrent;
     bool m_askForConnectParameter;

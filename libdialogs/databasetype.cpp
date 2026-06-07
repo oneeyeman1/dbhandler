@@ -36,6 +36,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     page3 = new ODBCConnect( this, dsn );
     page4 = new PostgresConnect( this );
     page5 = new mySQLConnect( this );
+    page8 = new SQLAnywhere( this );
     page6 = new SybaseSQLServer( this, true );
     page7 = new SybaseSQLServer( this, false );
     GetPageAreaSizer()->Add( page1 );
@@ -45,6 +46,7 @@ DatabaseType::DatabaseType(wxWindow *parent, const wxString &title, const wxStri
     GetPageAreaSizer()->Add( page5 );
     GetPageAreaSizer()->Add( page6 );
     GetPageAreaSizer()->Add( page7 );
+    GetPageAreaSizer()->Add( page8 );
     if( engine == "SQLite" )
     {
         page1->GetComboBoxTypes()->SetValue( "SQLite" );
@@ -277,11 +279,11 @@ DBType::DBType(wxWizard *parent) : wxWizardPage( parent )
 {
     auto main = new wxBoxSizer( wxHORIZONTAL );
     auto sizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
-    const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "mySQL", "PostgreSQL", "Sybase", "Oracle" };
+    const wxString choices[] = { "SQLite", "ODBC", "MS SQL Server", "mySQL", "PostgreSQL", "Sybase", "SQL Anywhere", "Oracle" };
     auto label0 = new wxStaticText( this, wxID_ANY, _( "Profile" ) );
     profile = new wxTextCtrl( this, wxID_ANY );
     auto label = new wxStaticText( this, wxID_ANY, _( "Please select the database type" ) );
-    m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 7, choices, wxCB_READONLY );
+    m_types = new wxComboBox( this, wxID_ANY, "SQLite", wxDefaultPosition, wxDefaultSize, 8, choices, wxCB_READONLY );
     label1 = new wxStaticText( this, wxID_ANY, _( "This profile already exist!" ) );
     wxFont font = label->GetFont();
     font.MakeBold();
@@ -328,6 +330,11 @@ wxWizardPage *DBType::GetNext() const
     {
         dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
         return dynamic_cast<DatabaseType *>( GetParent() )->GetmySQLPage();
+    }
+    else if( type == "SQL Anywhere" )
+    {
+        dynamic_cast<DatabaseType *>( GetParent() )->SetDbEngine( m_types->GetValue() );
+        return dynamic_cast<DatabaseType *>( GetParent() )->GetSQLAnyPage();
     }
     else if( type == "Sybase" )
     {
@@ -1081,6 +1088,65 @@ mySQLAdvanced::mySQLAdvanced(wxWindow *parent, int flags) : wxDialog( parent, wx
     Layout();
 }
 
+SQLAnywhere::SQLAnywhere(wxWizard *parent) : wxWizardPage( parent )
+{
+    m_value = 2638;
+    wxIntegerValidator<unsigned long> val( &m_value );
+    val.SetRange( 1, 65535 );
+    auto sizer1 = new wxBoxSizer( wxVERTICAL );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer3 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    m_label1 = new wxStaticText( this, wxID_ANY, "Host" );
+    sizer3->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
+    sizer3->Add( m_host, 0, wxEXPAND, 0 );
+    m_label2 = new wxStaticText( this, wxID_ANY, "Port" );
+    sizer3->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_port = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
+    sizer3->Add( m_port, 0, wxEXPAND, 0 );
+    m_label3 = new wxStaticText( this, wxID_ANY, "UserID" );
+    sizer3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_userId = new wxTextCtrl( this, wxID_ANY, "dba" );
+    sizer3->Add( m_userId, 0, wxEXPAND, 0 );
+    m_label4 = new wxStaticText( this, wxID_ANY, "Password" );
+    sizer3->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    sizer3->Add( m_password, 0, wxEXPAND, 0 );
+    m_label6 = new wxStaticText( this, wxID_ANY, "DB Server Name" );
+    sizer3->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_serverName = new wxTextCtrl( this, wxID_ANY, "" );
+    sizer3->Add( m_serverName, 0, wxEXPAND, 0 );
+    m_label5 = new wxStaticText( this, wxID_ANY, "Database Name" );
+    sizer3->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    sizer3->Add( m_dbName, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_extra = new wxButton( this, wxID_ANY, "Additional Parameters" );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer1->Add( m_extra, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizerAndFit( sizer1 );
+    m_extra->Bind( wxEVT_BUTTON, &SQLAnywhere::OnExtra, this );
+}
+
+void SQLAnywhere::OnExtra(wxCommandEvent &event)
+{
+}
+
+wxWizardPage *SQLAnywhere::GetPrev() const
+{
+    return dynamic_cast<DatabaseType *>( GetParent() )->GetFirstPage();
+}
+
+wxWizardPage *SQLAnywhere::GetNext() const
+{
+    return nullptr;
+}
+
 SybaseSQLServer::SybaseSQLServer(wxWizard* parent, bool isSQLServer) : wxWizardPage( parent )
 {
     // begin wxGlade: MyDialog::MyDialog
@@ -1140,3 +1206,4 @@ wxWizardPage *SybaseSQLServer::GetNext() const
 {
     return nullptr;
 }
+
