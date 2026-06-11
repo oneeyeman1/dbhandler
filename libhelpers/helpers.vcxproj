@@ -45,6 +45,7 @@
     <ClInclude Include="mytabletypeeditor.h" />
     <ClInclude Include="painterobjects.h" />
     <ClInclude Include="propertieshandlerbase.h" />
+    <ClInclude Include="scrolledcolumnlabel.h" />
     <ClInclude Include="typecombobox.h" />
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +55,7 @@
     <ClCompile Include="mycombocelleditor.cpp" />
     <ClCompile Include="mycombocellrenderer.cpp" />
     <ClCompile Include="mytabletypeeditor.cpp" />
+    <ClCompile Include="scrolledcolumnlabel.cpp" />
     <ClCompile Include="typecombobox.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
