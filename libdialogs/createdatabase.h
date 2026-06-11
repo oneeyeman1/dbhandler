@@ -9,11 +9,20 @@
 #ifndef __libdialogs__createdatabase__
 #define __libdialogs__createdatabase__
 
+class ScrollPanel : public wxPanel
+{
+public:
+    ScrollPanel(wxWindow *parent, wxWindow *cols);
+private:
+    wxWindow *m_columns;
+};
+
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
     CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMaor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options);
-    std::shared_ptr<CreateDBOptions> GetOptions() { return m_opts; }
+    const std::shared_ptr<CreateDBOptions> GetOptions() const { return m_opts; }
+    wxCollapsiblePane *GetSQLOptons() { return m_options; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
     void OnSQLServerFileSecAdd(wxCommandEvent &event);
@@ -39,6 +48,10 @@ private:
     wxComboBox *m_tablespace = nullptr;
     wxButton *m_add = nullptr;
     wxButton *m_delete = nullptr;
+    wxButton *m_add1 = nullptr;
+    wxButton *m_delete1 = nullptr;
+    wxButton *m_add2 = nullptr;
+    wxButton *m_delete2 = nullptr;
     std::wstring m_type, m_subtype;
     int m_versionMajor, m_versionMinor;
     wxFlexGridSizer *paneSizer1 = nullptr;
@@ -57,6 +70,16 @@ private:
     wxDirPickerCtrl *m_dirName2 = nullptr;
     wxCheckBox *m_persistantLog = nullptr;
     wxCheckBox *m_ledger = nullptr;
+    wxScrolledWindow *m_scrolled = nullptr;
+    wxScrolled<wxWindow> *m_scrolled1 = nullptr;
+    wxScrolledWindow *m_scrolled2 = nullptr;
+    int m_position = 12;
+    wxCheckBox *m_filegroup = nullptr;
+    wxTextCtrl *m_filegroupName = nullptr;
+    wxChoice *m_filegroupContains = nullptr;
+    wxCheckBox *m_memoryData = nullptr;
+    wxCheckBox *m_log = nullptr;
+//    wxScrolledWindow *m_canvas1 = nullptr, *m_canvas2 = nullptr, *m_canvas3 = nullptr;
 };
 
 #endif /* defined(__libdialogs__createdatabase__) */

@@ -7,12 +7,35 @@
 //
 
 #include "wx/wx.h"
+#include <vector>
 #include "wx/filepicker.h"
 #include "wx/collpane.h"
 #include "wx/spinctrl.h"
 #include "database.h"
 #include "sqlserveraddfilespec.h"
+#include "scrolledcolumnlabel.h"
 #include "createdatabase.h"
+
+ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols) : wxPanel( parent, wxID_ANY )
+{
+    m_columns = cols;
+    auto grid = new wxFlexGridSizer( 6, 5, 5 );
+    grid->Add( new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    grid->Add( new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    auto sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    const wxString choices[] =
+    {
+        "KB",
+        "MB",
+        "GB",
+        "TB"
+    };
+    sizer->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, choices ), 0, wxEXPAND, 0 );
+    SetSizer( grid );
+    Layout();
+}
 
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
@@ -70,7 +93,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         else
             title = _( "ON" );
         m_options = new wxCollapsiblePane( this, wxID_ANY, title );
-        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
+        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); this->GetSQLOptons()->Layout(); } );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
         second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
@@ -287,54 +310,251 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
-            auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
+            auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+            sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+            sizer_2->Add( 5, 5, 0, 0, 0 );
+            m_scrolled1 = new wxScrolled<wxWindow>( win, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL );
+            sizer_2->Add( m_scrolled1, 1, wxEXPAND, 0 );
+            std::vector<wxString> labels;
+            labels.push_back( "Name" );
+            labels.push_back( "FileName" );
+            labels.push_back( "Size" );
+            labels.push_back( "MaxSize" );
+            labels.push_back( "FileGrowth" );
+            labels.push_back( "Primary" );
+            ScrolledColumnLabel *cols = new ScrolledColumnLabel( m_scrolled1, labels );
+            auto grid1 = new ScrollPanel( m_scrolled1, cols );
+            auto grid = new wxFlexGridSizer( 2, 2, 5, 5 );
+            grid->Add( 5, 25, 0, wxEXPAND, 0 );
+            grid->Add( cols, 0, wxEXPAND, 0 );
+            grid->Add( grid1, 0, wxEXPAND );
+            grid->Add( 5, 5, 0, wxEXPAND, 0 );
+            grid->AddGrowableRow( 1 );
+            m_scrolled1->SetSizer( grid );
+            m_scrolled1->SetTargetWindow( grid1 );
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer15 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_2->Add( sizer15, 0, wxEXPAND, 0 );
+            sizer15->AddStretchSpacer();
+            m_add = new wxButton( win, wxID_ANY, _( "Add" ) );
+            sizer15->Add( m_add, 0, wxEXPAND, 0 );
+            sizer15->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_delete = new wxButton( win, wxID_ANY, "Delete" );
+            sizer15->Add( m_delete, 0, wxEXPAND, 0 );
+            sizer15->AddStretchSpacer();
+            sizer_2->Add( 5, 5, 0, 0, 0 );
+            win->SetSizer( sizer_1 );
+/*            auto sizer_3 = new wxBoxSizer( wxVERTICAL );
+            sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+            auto sizer_4 = new wxBoxSizer( wxVERTICAL );
+            sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+            m_scrolled = new wxScrolledWindow( win, wxID_ANY );
+            m_scrolled->SetScrollRate( 10, 10 );
+            sizer_4->Add( m_scrolled, 1, wxEXPAND, 0 );
+            paneSizer1 = new wxFlexGridSizer( 6, 5, 5 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "Name" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "FileName" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "Size" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "MaxSize" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "FileGrowth" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "Primary" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "Default" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( new wxStaticText( m_scrolled, wxID_ANY, "Default" ), 0, wxEXPAND, 0 );
+            auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer5, 0, wxEXPAND, 0 );
+            sizer5->Add( new wxTextCtrl( m_scrolled, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer5->Add( new wxStaticText( m_scrolled, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( sizer5, 0, wxEXPAND, 0 );
+            auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer6, 0, wxBOTTOM, 0 );
+            sizer6->Add( new wxTextCtrl( m_scrolled, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer6->Add( new wxStaticText( m_scrolled, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer7, 0, wxEXPAND, 0 );
+            sizer7->Add( new wxTextCtrl( m_scrolled, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer7->Add( new wxStaticText( m_scrolled, wxID_ANY, "%" ), 0, wxEXPAND, 0 );
+            sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_8 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_4->Add( sizer_8, 0, wxEXPAND, 0 );
+            sizer_8->AddStretchSpacer();
+            m_add = new wxButton( win, wxID_ANY, _( "Add" ) );
+            sizer_8->Add( m_add, 0, wxEXPAND, 0 );
+            sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_delete = new wxButton( win, wxID_ANY, _( "Delete" ) );
+            sizer_8->Add( m_delete, 0, 0, 0 );
+            sizer_8->AddStretchSpacer();
+            sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_9 = new wxBoxSizer( wxVERTICAL );
+            sizer_3->Add( sizer_9, 0, wxEXPAND, 0 );
+            auto sizer_10 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_9->Add( sizer_10, 0, wxEXPAND, 0 );
+            m_filegroup = new wxCheckBox( win, wxID_ANY, ( "FILEGROUP" ) );
+            sizer_10->Add( m_filegroup, 0, 0, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_filegroupName = new wxTextCtrl( win, wxID_ANY, wxEmptyString );
+            m_filegroupName->Enable( false );
+            sizer_10->Add( m_filegroupName, 0, wxEXPAND, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            const wxString m_filegroupContains_choices[] = {
+                "Default",
+                "FILESTREAM",
+            };
+            m_filegroupContains = new wxChoice( win, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, m_filegroupContains_choices );
+            m_filegroupContains->Enable( false );
+            m_filegroupContains->SetSelection( 0 );
+            sizer_10->Add( m_filegroupContains, 0, wxEXPAND, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_memoryData = new wxCheckBox( win, wxID_ANY, "MEMORY_DATA" );
+            m_memoryData->Enable( false );
+            sizer_10->Add( m_memoryData, 0, wxEXPAND, 0 );
+            sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_scrolled1 = new wxScrolledWindow( win, wxID_ANY );
+            m_scrolled1->SetScrollRate( 10, 10 );
+            m_scrolled1->Enable( false );
+            sizer_9->Add( m_scrolled1, 1, wxEXPAND, 0 );
+            auto paneSizer2 = new wxFlexGridSizer( 5, 5, 5 );
+            paneSizer2->Add( new wxStaticText( m_scrolled1, wxID_ANY, "Name" ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxStaticText( m_scrolled1, wxID_ANY, "FileName" ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxStaticText( m_scrolled1, wxID_ANY, "Size" ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxStaticText( m_scrolled1, wxID_ANY, "MaxSize" ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxStaticText( m_scrolled1, wxID_ANY, "FileGrowth" ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxTextCtrl( m_scrolled1, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            paneSizer2->Add( new wxTextCtrl( m_scrolled1, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            auto sizer15 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer15, 0, wxEXPAND, 0 );
+            sizer15->Add( new wxTextCtrl( m_scrolled1, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer15->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer15->Add( new wxStaticText( m_scrolled1, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            paneSizer1->Add( sizer15, 0, wxEXPAND, 0 );
+            auto sizer16 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer16, 0, wxBOTTOM, 0 );
+            sizer16->Add( new wxTextCtrl( m_scrolled1, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer16->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer16->Add( new wxStaticText( m_scrolled1, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            auto sizer17 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer1->Add( sizer17, 0, wxEXPAND, 0 );
+            sizer17->Add( new wxTextCtrl( m_scrolled1, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer17->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer17->Add( new wxStaticText( m_scrolled1, wxID_ANY, "%" ), 0, wxEXPAND, 0 );
+            sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_18 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_9->Add( sizer_18, 1, wxEXPAND, 0 );
+            sizer_18->AddStretchSpacer();
+            m_add1 = new wxButton( win, wxID_ANY, _( "Add" ) );
+            m_add1->Enable( false );
+            sizer_18->Add( m_add1, 0, wxEXPAND, 0 );
+            sizer_18->Add( 5, 5, 0, 0, 0 );
+            m_delete1 = new wxButton( win, wxID_ANY, _( "Delete" ) );
+            m_delete1->Enable( false );
+            sizer_18->Add( m_delete1, 0, wxEXPAND, 0 );
+            sizer_18->AddStretchSpacer();
+            sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_19 = new wxBoxSizer( wxVERTICAL );
+            sizer_3->Add( sizer_19, 0, wxEXPAND, 0 );
+            m_log = new wxCheckBox( win, wxID_ANY, _( "LOG" ) );
+            sizer_19->Add( m_log, 0, wxEXPAND, 0 );
+            sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_scrolled2 = new wxScrolledWindow( win, wxID_ANY );
+            m_scrolled2->SetScrollRate( 10, 10 );
+            m_scrolled2->Enable( false );
+            sizer_19->Add( m_scrolled2, 1, wxEXPAND, 0 );
+            auto paneSizer3 = new wxFlexGridSizer( 5, 5, 5 );
+            paneSizer3->Add( new wxStaticText( m_scrolled2, wxID_ANY, "Name" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxStaticText( m_scrolled2, wxID_ANY, "FileName" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxStaticText( m_scrolled2, wxID_ANY, "Size" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxStaticText( m_scrolled2, wxID_ANY, "MaxSize" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxStaticText( m_scrolled2, wxID_ANY, "FileGrowth" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxTextCtrl( m_scrolled2, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( new wxTextCtrl( m_scrolled2, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            auto sizer25 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer3->Add( sizer25, 0, wxEXPAND, 0 );
+            sizer25->Add( new wxTextCtrl( m_scrolled2, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer25->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer25->Add( new wxStaticText( m_scrolled2, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            paneSizer3->Add( sizer25, 0, wxEXPAND, 0 );
+            auto sizer26 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer3->Add( sizer26, 0, wxBOTTOM, 0 );
+            sizer26->Add( new wxTextCtrl( m_scrolled2, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer26->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer26->Add( new wxStaticText( m_scrolled2, wxID_ANY, "GB" ), 0, wxEXPAND, 0 );
+            auto sizer27 = new wxBoxSizer( wxHORIZONTAL );
+            paneSizer3->Add( sizer27, 0, wxEXPAND, 0 );
+            sizer27->Add( new wxTextCtrl( m_scrolled2, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+            sizer27->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer27->Add( new wxStaticText( m_scrolled2, wxID_ANY, "%" ), 0, wxEXPAND, 0 );
+            sizer_19->Add( 5, 5, 0, wxEXPAND, 0 );
+            auto sizer_20 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_19->Add( sizer_20, 0, wxEXPAND, 0 );
+            sizer_20->AddStretchSpacer();
+            m_add2 = new wxButton( win, wxID_ANY, _( "Add" ) );
+            m_add2->Enable( false );
+            sizer_20->Add( m_add2, 0, wxEXPAND, 0 );
+            sizer_20->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_delete2 = new wxButton( win, wxID_ANY, _( "Delete" ) );
+            m_delete2->Enable( false );
+            sizer_20->Add( m_delete2, 0, wxEXPAND, 0 );
+            sizer_20->AddStretchSpacer();
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+
+            m_scrolled2->SetSizer( paneSizer3 );
+            m_scrolled1->SetSizer( paneSizer2 );
+            m_scrolled->SetSizer( paneSizer1 );
+            win->SetSizer( sizer_1 );
+            sizer_1->Fit( win );*/
+/*            auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
             auto paneSizer = new wxBoxSizer( wxVERTICAL );
-            auto scrolled = new wxScrolledWindow( win, wxID_ANY );
-            paneSizer->Add( scrolled, 1, wxEXPAND, 0 );
-            paneSizer1 = new wxFlexGridSizer( 2, 6, 5, 5 );
-            auto label_1 = new wxStaticText( scrolled, wxID_ANY, "Name" );
+            m_scrolled = new wxScrolledWindow( win, wxID_ANY );
+            paneSizer->Add( m_scrolled, 1, wxEXPAND, 0 );
+            paneSizer1 = new wxFlexGridSizer( 6, 5, 5 );
+            auto label_1 = new wxStaticText( m_scrolled, wxID_ANY, "Name" );
             paneSizer1->Add( label_1, 0, wxEXPAND, 0 );
-            auto label_2 = new wxStaticText( scrolled, wxID_ANY, "FileName" );
+            auto label_2 = new wxStaticText( m_scrolled, wxID_ANY, "FileName" );
             paneSizer1->Add( label_2, 0, wxEXPAND, 0 );
-            auto label_3 = new wxStaticText( scrolled, wxID_ANY, "Size" );
+            auto label_3 = new wxStaticText( m_scrolled, wxID_ANY, "Size" );
             paneSizer1->Add( label_3, 0, wxEXPAND, 0 );
-            auto label_4 = new wxStaticText( scrolled, wxID_ANY, "MaxSize" );
+            auto label_4 = new wxStaticText( m_scrolled, wxID_ANY, "MaxSize" );
             paneSizer1->Add( label_4, 0, wxEXPAND, 0 );
-            auto label_5 = new wxStaticText( scrolled, wxID_ANY, "FileGrowth" );
+            auto label_5 = new wxStaticText( m_scrolled, wxID_ANY, "FileGrowth" );
             paneSizer1->Add( label_5, 0, wxEXPAND, 0 );
-            auto label_6 = new wxStaticText( scrolled, wxID_ANY, "Primary" );
+            auto label_6 = new wxStaticText( m_scrolled, wxID_ANY, "Primary" );
             paneSizer1->Add( label_6, 0, wxEXPAND, 0 );
-            auto name = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            auto name = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
             name->Enable( false );
             paneSizer1->Add( name, 0, wxEXPAND, 0 );
-            auto fileName = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            auto fileName = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
             fileName->Enable( false );
             paneSizer1->Add( fileName, 0, wxEXPAND, 0 );
             auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
             paneSizer1->Add( sizer5, 0, wxEXPAND, 0 );
-            auto size1 = new wxTextCtrl( scrolled, wxID_ANY, "" );
+            auto size1 = new wxTextCtrl( m_scrolled, wxID_ANY, "" );
             size1->Enable( false );
             sizer5->Add( size1, 0, wxEXPAND, 0 );
             sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
-            auto label1 = new wxStaticText( scrolled, wxID_ANY, "GB" );
+            auto label1 = new wxStaticText( m_scrolled, wxID_ANY, "GB" );
             sizer5->Add( label1, 0, wxEXPAND, 0 );
             auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
             paneSizer1->Add( sizer6, 0, wxBOTTOM, 0 );
-            auto size2 = new wxTextCtrl( scrolled, wxID_ANY, "" );
+            auto size2 = new wxTextCtrl( m_scrolled, wxID_ANY, "" );
             size2->Enable( false );
             sizer6->Add( size2, 0, wxEXPAND, 0 );
             sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
-            auto label2 = new wxStaticText( scrolled, wxID_ANY, "GB" );
+            auto label2 = new wxStaticText( m_scrolled, wxID_ANY, "GB" );
             sizer6->Add( label2, 0, wxEXPAND, 0 );
             auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
             paneSizer1->Add( sizer7, 0, wxEXPAND, 0 );
-            auto size3 = new wxTextCtrl( scrolled, wxID_ANY, "Default" );
+            auto size3 = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
             size3->Enable( false );
             sizer7->Add( size3, 0, wxEXPAND, 0 );
             sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
-            auto label3 = new wxStaticText( scrolled, wxID_ANY, "%" );
+            auto label3 = new wxStaticText( m_scrolled, wxID_ANY, "%" );
             sizer7->Add( label3, 0, wxEXPAND, 0 );
-            auto primary = new wxCheckBox( scrolled, wxID_ANY, "" );
+            auto primary = new wxCheckBox( m_scrolled, wxID_ANY, "" );
             primary->Enable( false );
             paneSizer1->Add( primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
             paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -352,8 +572,12 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_delete->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecDelete, this );
             sizer8->Add( m_delete, 0, wxEXPAND, 0 );
             paneSizer->Add( 5, 5, 0, wxEXPAND, 0 );
-            scrolled->SetSizer( paneSizer1 );
-            win->SetSizer( paneSizer );
+            m_filegroup = new wxCheckBox( win, wxID_ANY, "FILEGROUP" );
+            paneSizer->Add( m_filegroup, 0, wxEXPAND, 0 );
+            m_filegroupName = new wxTextCtrl( win, wxID_ANY, "" );
+            paneSizer->Add( m_filegroupName, 0, wxEXPAND, 0 );
+            m_scrolled->SetSizer( paneSizer1 );
+            win->SetSizer( paneSizer );*/
         }
         else
         {
@@ -443,26 +667,64 @@ void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
     SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_versionMajor );
     if( dlg.ShowModal() == wxID_OK )
     {
+        auto rows = paneSizer1->GetEffectiveRowsCount();
+        auto name = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
+        name->Enable( false );
+        paneSizer1->Insert( m_position, name, 0, wxEXPAND, 0 );
+        m_position++;
+        auto fileName = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
+        fileName->Enable( false );
+        paneSizer1->Insert( m_position, fileName, 0, wxEXPAND, 0 );
+        m_position++;
+        auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
+        paneSizer1->Insert( m_position, sizer5, 0, wxEXPAND, 0 );
+        m_position++;
+        auto size1 = new wxTextCtrl( m_scrolled, wxID_ANY, "" );
+        size1->Enable( false );
+        sizer5->Add( size1, 0, wxEXPAND, 0 );
+        sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto label1 = new wxStaticText( m_scrolled, wxID_ANY, "GB" );
+        sizer5->Add( label1, 0, wxEXPAND, 0 );
+        auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
+        paneSizer1->Insert( m_position, sizer6, 0, wxBOTTOM, 0 );
+        m_position++;
+        auto size2 = new wxTextCtrl( m_scrolled, wxID_ANY, "" );
+        size2->Enable( false );
+        sizer6->Add( size2, 0, wxEXPAND, 0 );
+        sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto label2 = new wxStaticText( m_scrolled, wxID_ANY, "GB" );
+        sizer6->Add( label2, 0, wxEXPAND, 0 );
+        auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
+        paneSizer1->Insert( m_position, sizer7, 0, wxEXPAND, 0 );
+        m_position++;
+        auto size3 = new wxTextCtrl( m_scrolled, wxID_ANY, "Default" );
+        size3->Enable( false );
+        sizer7->Add( size3, 0, wxEXPAND, 0 );
+        sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto label3 = new wxStaticText( m_scrolled, wxID_ANY, "%" );
+        sizer7->Add( label3, 0, wxEXPAND, 0 );
+        auto primary = new wxCheckBox( m_scrolled, wxID_ANY, "" );
+        primary->Enable( false );
+        paneSizer1->Insert( m_position, primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
         auto spec = dlg.GetFileSpec();
-        if( paneSizer1->GetRows() == 2 )
+        dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 6 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_name );
+        dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
+        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
+        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
+        if( spec.m_isUnlimited )
         {
-            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 6 )->GetWindow() )->SetValue( spec.m_name );
-            dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
-            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
-            dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
-            if( spec.m_isUnlimited )
-            {
-                dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( "UNLIMITED" );
-            }
-            else
-            {
-                dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
-                dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
-            }
-            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
-            dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
-            dynamic_cast<wxCheckBox *>( paneSizer1->GetItem( 11 )->GetWindow() )->Enable();
+            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( "UNLIMITED" );
         }
+        else
+        {
+            dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
+            dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
+        }
+        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
+        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
+        dynamic_cast<wxCheckBox *>( paneSizer1->GetItem( 11 * ( rows - 1 ) )->GetWindow() )->Enable();
+        Layout();
+        Fit();
     }
 }
 
