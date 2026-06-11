@@ -23,6 +23,8 @@ libtablewindow/vc_mswuddll/
 libtablewindow/vc_mswudll/
 libpropertieshandlers/vc_mswuddll/
 libpropertieshandlers/vc_mswudll/
+libsqlany/vc_mswuddll/
+libsqlany/vc_mswudll/
 libsqlite/sqlite3.lib
 libpostgres/vc_mswuddll/
 libpostgres/vc_mswudll/
