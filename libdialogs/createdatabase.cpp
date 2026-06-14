@@ -11,6 +11,7 @@
 #include "wx/filepicker.h"
 #include "wx/collpane.h"
 #include "wx/spinctrl.h"
+#include "wx/statline.h"
 #include "database.h"
 #include "sqlserveraddfilespec.h"
 #include "scrolledcolumnlabel.h"
@@ -22,9 +23,9 @@ ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols) : wxPanel( parent, wx
     auto grid = new wxFlexGridSizer( 6, 5, 5 );
     grid->Add( new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
     grid->Add( new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
-    auto sizer = new wxBoxSizer( wxHORIZONTAL );
-    sizer->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
-    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
+    sizer1->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     const wxString choices[] =
     {
         "KB",
@@ -32,9 +33,34 @@ ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols) : wxPanel( parent, wx
         "GB",
         "TB"
     };
-    sizer->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, choices ), 0, wxEXPAND, 0 );
+    sizer1->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, choices ), 0, wxEXPAND, 0 );
+    grid->Add( sizer1, 0, wxEXPAND, 0 );
+    auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
+    sizer2->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer2->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, choices ), 0, wxEXPAND, 0 );
+    grid->Add( sizer2, 0, wxEXPAND, 0 );
+    auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
+    sizer3->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
+    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    const wxString choices1[] =
+    {
+        "KB",
+        "MB",
+        "GB",
+        "TB",
+        "%"
+    };
+    sizer3->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 1, choices1 ), 0, wxEXPAND, 0 );
+    grid->Add( sizer3, 0, wxEXPAND, 0 );
     SetSizer( grid );
     Layout();
+}
+
+void ScrollPanel::ScrollWindow(int dx, int dy, const wxRect *rect)
+{
+    wxPanel::ScrollWindow( dx, dy, rect );
+    m_columns->ScrollWindow( dx, 0, rect );
 }
 
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
@@ -93,7 +119,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         else
             title = _( "ON" );
         m_options = new wxCollapsiblePane( this, wxID_ANY, title );
-        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); this->GetSQLOptons()->Layout(); } );
+        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Freeze(); Layout(); Thaw(); } );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
         second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
@@ -326,14 +352,16 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             labels.push_back( "Primary" );
             ScrolledColumnLabel *cols = new ScrolledColumnLabel( m_scrolled1, labels );
             auto grid1 = new ScrollPanel( m_scrolled1, cols );
-            auto grid = new wxFlexGridSizer( 2, 2, 5, 5 );
-            grid->Add( 5, 25, 0, wxEXPAND, 0 );
-            grid->Add( cols, 0, wxEXPAND, 0 );
-            grid->Add( grid1, 0, wxEXPAND );
-            grid->Add( 5, 5, 0, wxEXPAND, 0 );
-            grid->AddGrowableRow( 1 );
-            m_scrolled1->SetSizer( grid );
+            auto fg1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+            fg1->Add( 5, 25, 0, wxEXPAND, 0 );
+            fg1->Add( cols, 1, wxEXPAND, 0 );
+            fg1->Add( grid1, 1, wxEXPAND );
+            fg1->Add( 5, 5, 0, wxEXPAND, 0 );
+            fg1->AddGrowableRow( 1 );
+            m_scrolled1->SetSizer( fg1 );
             m_scrolled1->SetTargetWindow( grid1 );
+//            m_scrolled1->SetScrollbars( 10, 10, 50, 50 );
+//            m_scrolled1->Bind( wxEVT_SIZE, &CreateDatabase::OnScrolled1Size, this );
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             auto sizer15 = new wxBoxSizer( wxHORIZONTAL );
             sizer_2->Add( sizer15, 0, wxEXPAND, 0 );
@@ -345,6 +373,60 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer15->Add( m_delete, 0, wxEXPAND, 0 );
             sizer15->AddStretchSpacer();
             sizer_2->Add( 5, 5, 0, 0, 0 );
+            sizer_2->Add( new wxStaticLine( win ) );
+            auto sizer_10 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_2->Add( sizer_10, 0, wxEXPAND, 0 );
+            m_filegroup = new wxCheckBox( win, wxID_ANY, "FILEGROUP" );
+            m_filegroup->Bind( wxEVT_CHECKBOX, &CreateDatabase::OnFilegroup, this );
+            sizer_10->Add( m_filegroup, 0, wxEXPAND, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_filegroupName = new wxTextCtrl( win, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+            m_filegroupName->Enable( false );
+            sizer_10->Add( m_filegroupName, 0, wxEXPAND, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            const wxString fgOptions[] =
+            {
+                "DEFAULT",
+                "CONTAINS FILESTREAM"
+            };
+            m_filegroupContains = new wxComboBox( win, wxID_ANY, "DEFAULT", wxDefaultPosition, wxDefaultSize, 2, fgOptions );
+            m_filegroupContains->Enable( false );
+            sizer_10->Add( m_filegroupContains, 0, wxEXPAND, 0 );
+            sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_memoryData = new wxCheckBox( win, wxID_ANY, "CONTAINS MEMORY_OPTIMIZED_DATA" );
+            m_memoryData->Enable( false );
+            sizer_10->Add( m_memoryData, 0, wxEXPAND, 0 );
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            m_scrolled2 = new wxScrolled<wxWindow>( win, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL );
+            sizer_2->Add( m_scrolled2, 1, wxEXPAND, 0 );
+            std::vector<wxString> labels1;
+            labels.push_back( "Name" );
+            labels.push_back( "FileName" );
+            labels.push_back( "Size" );
+            labels.push_back( "MaxSize" );
+            labels.push_back( "FileGrowth" );
+            ScrolledColumnLabel *cols2 = new ScrolledColumnLabel( m_scrolled2, labels1 );
+            auto grid2 = new ScrollPanel( m_scrolled2, cols );
+            auto fg2 = new wxFlexGridSizer( 2, 2, 5, 5 );
+            fg2->Add( 5, 25, 0, wxEXPAND, 0 );
+            fg2->Add( cols2, 1, wxEXPAND, 0 );
+            fg2->Add( grid2, 1, wxEXPAND );
+            fg2->Add( 5, 5, 0, wxEXPAND, 0 );
+            fg2->AddGrowableRow( 1 );
+            m_scrolled2->SetSizer( fg2 );
+            auto sizer_20 = new wxBoxSizer( wxHORIZONTAL );
+            sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_2->Add( sizer_20, 0, wxEXPAND, 0 );
+            m_add1 = new wxButton( win, wxID_ANY, "Add" );
+            m_delete1 = new wxButton( win, wxID_ANY, "Delete" );
+            m_add1->Enable( false );
+            m_delete1->Enable( false );
+            sizer_20->AddStretchSpacer();
+            sizer_20->Add( m_add1, 0, wxEXPAND, 0 );
+            sizer_20->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_20->Add( m_delete1, 0, wxEXPAND, 0 );
+            sizer_20->AddStretchSpacer();
+
             win->SetSizer( sizer_1 );
 /*            auto sizer_3 = new wxBoxSizer( wxVERTICAL );
             sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
@@ -739,4 +821,31 @@ void CreateDatabase::OnPersistentLog(wxCommandEvent &WXUNUSED(event))
         m_dirName2->Enable( true );
     else
         m_dirName2->Enable( false );
+}
+
+void CreateDatabase::OnScrolled1Size(wxSizeEvent &event)
+{
+    wxScrolled<wxWindow> *win = dynamic_cast<wxScrolled<wxWindow> *>( event.GetEventObject() );
+    win->Layout();
+    win->AdjustScrollbars();
+}
+
+void CreateDatabase::OnFilegroup(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_filegroup->IsChecked() )
+    {
+        m_filegroupName->Enable( true );
+        m_filegroupContains->Enable( true );
+        m_memoryData->Enable( true );
+        m_add1->Enable( true );
+        m_delete1->Enable( true );
+    }
+    else
+    {
+        m_filegroupName->Enable( false );
+        m_filegroupContains->Enable( false );
+        m_memoryData->Enable( false );
+        m_add1->Enable( false );
+        m_delete1->Enable( false );
+    }
 }

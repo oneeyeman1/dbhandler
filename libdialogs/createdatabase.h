@@ -13,6 +13,8 @@ class ScrollPanel : public wxPanel
 {
 public:
     ScrollPanel(wxWindow *parent, wxWindow *cols);
+    virtual void ScrollWindow(int dx, int dy, const wxRect *rect) override;
+
 private:
     wxWindow *m_columns;
 };
@@ -30,6 +32,8 @@ protected:
     void OnOKUpdateUI(wxUpdateUIEvent &event);
     void OnOK(wxCommandEvent &event);
     void OnPersistentLog(wxCommandEvent &event);
+    void OnScrolled1Size(wxSizeEvent &event);
+    void OnFilegroup(wxCommandEvent &event);
 private:
     std::shared_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;
@@ -72,7 +76,7 @@ private:
     wxCheckBox *m_ledger = nullptr;
     wxScrolledWindow *m_scrolled = nullptr;
     wxScrolled<wxWindow> *m_scrolled1 = nullptr;
-    wxScrolledWindow *m_scrolled2 = nullptr;
+    wxScrolled<wxWindow> *m_scrolled2 = nullptr;
     int m_position = 12;
     wxCheckBox *m_filegroup = nullptr;
     wxTextCtrl *m_filegroupName = nullptr;
