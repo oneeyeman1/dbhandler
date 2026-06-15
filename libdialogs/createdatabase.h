@@ -34,6 +34,7 @@ protected:
     void OnPersistentLog(wxCommandEvent &event);
     void OnScrolled1Size(wxSizeEvent &event);
     void OnFilegroup(wxCommandEvent &event);
+    void OnLog(wxCommandEvent &event);
 private:
     std::shared_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;
@@ -74,7 +75,7 @@ private:
     wxDirPickerCtrl *m_dirName2 = nullptr;
     wxCheckBox *m_persistantLog = nullptr;
     wxCheckBox *m_ledger = nullptr;
-    wxScrolledWindow *m_scrolled = nullptr;
+    wxScrolled<wxWindow> *m_scrolled3 = nullptr;
     wxScrolled<wxWindow> *m_scrolled1 = nullptr;
     wxScrolled<wxWindow> *m_scrolled2 = nullptr;
     int m_position = 12;
