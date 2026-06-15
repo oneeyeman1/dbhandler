@@ -396,6 +396,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             m_memoryData = new wxCheckBox( win, wxID_ANY, "CONTAINS MEMORY_OPTIMIZED_DATA" );
             m_memoryData->Enable( false );
             sizer_10->Add( m_memoryData, 0, wxEXPAND, 0 );
+            m_memoryData->Bind( wxEVT_CHECKBOX, &CreateDatabase::OnMemoryData, this );
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             m_scrolled2 = new wxScrolled<wxWindow>( win, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL );
             sizer_2->Add( m_scrolled2, 1, wxEXPAND, 0 );
@@ -662,4 +663,12 @@ void CreateDatabase::OnLog(wxCommandEvent &WXUNUSED(event))
         m_add2->Enable( false );
         m_delete2->Enable( false );
     }
+}
+
+void CreateDatabase::OnMemoryData(wxCommandEvent &WXUNUSED(evemt))
+{
+    if( m_memoryData->IsChecked() )
+        m_filegroupContains->Enable( false );
+    else
+        m_filegroupContains->Enable( true );
 }
