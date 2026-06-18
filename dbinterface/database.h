@@ -65,8 +65,14 @@ struct SQLServerCreateDBOptions : public CreateDBOptions
         bool m_isPrimary;
         fileSpec(const std::wstring &name, const std::wstring &fileName, const std::wstring &measure1, const std::wstring &measure2, const std::wstring &measure3, int size, int maxSize, int growth, bool isPrimary) : m_name( name ), m_fileName( fileName ), m_measure1( measure1 ), m_measure2( measure2 ), m_measure3( measure3 ), m_size( size ), m_maxSize( maxSize ), m_growth( growth ), m_isPrimary( isPrimary ) {}
     };
+    struct fileGroup
+    {
+        std::wstring fgName, contaons;
+        std::vector<fileSpec> specs;
+    };
     std::wstring m_containment, m_collation, m_fullText, m_persistentlog;
-    std::vector<fileSpec> m_fileSpecs;
+    std::vector<fileSpec> m_fileSpecs, m_logs;
+    std::vector<fileGroup> m_fileGroups;
     std::vector<std::unique_ptr<SQLServerCharSet> > m_collations;
     std::vector<std::tuple<int, std::wstring> > m_fullTextSearch, m_langs;
     bool m_ledger, m_trustworthy, m_dbchainib, n_nestedtriggera, m_noisewords;
