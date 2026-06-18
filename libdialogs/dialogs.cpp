@@ -104,6 +104,7 @@
 #include "saveview.h"
 #include "createtablespace.h"
 #include "dropindexoptions.h"
+#include "sqlserveraddfilespec.h"
 #include "createdatabase.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)

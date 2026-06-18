@@ -12,11 +12,16 @@
 class ScrollPanel : public wxPanel
 {
 public:
-    ScrollPanel(wxWindow *parent, wxWindow *cols);
+    ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isPrimary, bool isLog);
+    void AddLine(const FileSpec &spec);
     virtual void ScrollWindow(int dx, int dy, const wxRect *rect) override;
 
 private:
     wxWindow *m_columns;
+    wxFlexGridSizer *paneSizer1;
+    bool m_isPrimary, m_isLog;
+    size_t m_position;
+    int m_version;
 };
 
 class WXEXPORT CreateDatabase : public wxDialog
@@ -85,6 +90,7 @@ private:
     wxChoice *m_filegroupContains = nullptr;
     wxCheckBox *m_memoryData = nullptr;
     wxCheckBox *m_log = nullptr;
+    ScrollPanel *m_panel1 = nullptr, *m_panel2 = nullptr, *m_panel3 = nullptr;
 //    wxScrolledWindow *m_canvas1 = nullptr, *m_canvas2 = nullptr, *m_canvas3 = nullptr;
 };
 
