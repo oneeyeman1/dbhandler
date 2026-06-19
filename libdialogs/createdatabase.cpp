@@ -24,7 +24,7 @@ ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isP
     m_version = version;
     int numCols = 5;
     m_isLog = isLog;
-    wxString growth;
+    wxString growth, unit;
     if( isPrimary )
     {
         numCols = 6;
@@ -35,20 +35,38 @@ ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isP
     if( !isLog )
     {
         if( version >= 13 )
+        {
             growth = "64";
+            unit = "MB";
+        }
         else if( version >= 9 && version < 13 )
+        {
             growth = "1";
+            unit = "MB";
+        }
         else
+        {
             growth = "10";
+            unit = "%";
+        }
     }
     else
     {
         if( version >= 13 )
+        {
             growth = "64";
+            unit = "MB";
+        }
         else if( version >= 9 && version < 13 )
+        {
             growth = "10";
+            unit = "%";
+        }
         else
+        {
             growth = "10";
+            unit = "%";
+        }
     }
     paneSizer1 = new wxFlexGridSizer( numCols, 5, 5 );
     paneSizer1->Add( new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
@@ -56,36 +74,28 @@ ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isP
     auto sizer1 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( new wxTextCtrl( this, wxID_ANY, version >= 13 ? "8" : "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    const wxString choices[] =
-    {
-        "KB",
-        "MB",
-        "GB",
-        "TB"
-    };
-    sizer1->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 4, choices ), 0, wxEXPAND, 0 );
+    auto units1 = new wxStaticText( this, wxID_ANY, "MB" );
+    units1->Enable( false );
+    sizer1->Add( units1, 0, wxEXPAND, 0 );
     paneSizer1->Add( sizer1, 0, wxEXPAND, 0 );
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer2->Add( new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer2->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 4, choices ), 0, wxEXPAND, 0 );
+    auto units2 = new wxStaticText( this, wxID_ANY, "MB" );
+    units2->Enable( false );
+    sizer2->Add( units2, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     auto chbox = new wxCheckBox( this, wxID_ANY, "UNLIMITED" );
     chbox->SetValue( true );
+    chbox->Enable( false );
     sizer2->Add( chbox, 0, wxEXPAND, 0 );
     paneSizer1->Add( sizer2, 0, wxEXPAND, 0 );
     auto sizer3 = new wxBoxSizer( wxHORIZONTAL );
     sizer3->Add( new wxTextCtrl( this, wxID_ANY, growth, wxDefaultPosition, wxDefaultSize, wxTE_READONLY ), 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
-    const wxString choices1[] =
-    {
-        "KB",
-        "MB",
-        "GB",
-        "TB",
-        "%"
-    };
-    sizer3->Add( new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 5, choices1 ), 0, wxEXPAND, 0 );
+    auto units3 = new wxStaticText( this, wxID_ANY, unit );
+    units3->Enable( false );
+    sizer3->Add( units3, 0, wxEXPAND, 0 );
     paneSizer1->Add( sizer3, 0, wxEXPAND, 0 );
     if( m_isPrimary )
         paneSizer1->Add( new wxCheckBox( this, wxID_ANY, "PRIMARY" ), 0, wxEXPAND, 0 );
@@ -101,51 +111,67 @@ void ScrollPanel::ScrollWindow(int dx, int dy, const wxRect *rect)
 
 void ScrollPanel::AddLine(const FileSpec &spec)
 {
-    wxString growth;
+    wxString growth, unit;
     if( !m_isLog )
     {
         if( m_version >= 13 )
+        {
             growth = "64";
+            unit = "MB";
+        }
         else if( m_version >= 9 && m_version < 13 )
+        {
             growth = "1";
+            unit = "MB";
+        }
         else
+        {
             growth = "10";
+            unit = "%";
+        }
     }
     else
     {
         if( m_version >= 13 )
+        {
             growth = "64";
+            unit = "MB";
+        }
         else if( m_version >= 9 && m_version < 13 )
+        {
             growth = "10";
+            unit = "%";
+        }
         else
+        {
             growth = "10";
+            unit = "%";
+        }
     }
     auto rows = paneSizer1->GetEffectiveRowsCount();
-    auto name = new wxTextCtrl( this, wxID_ANY, "Default" );
-    name->Enable( false );
+    auto name = new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     paneSizer1->Insert( m_position, name, 0, wxEXPAND, 0 );
     m_position++;
-    auto fileName = new wxTextCtrl( this, wxID_ANY, "Default" );
-    fileName->Enable( false );
+    auto fileName = new wxTextCtrl( this, wxID_ANY, "Default", wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     paneSizer1->Insert( m_position, fileName, 0, wxEXPAND, 0 );
     m_position++;
     auto sizer5 = new wxBoxSizer( wxHORIZONTAL );
     paneSizer1->Insert( m_position, sizer5, 0, wxEXPAND, 0 );
     m_position++;
-    auto size1 = new wxTextCtrl( this, wxID_ANY, m_version >= 13 ? "8" : "1" );
-    size1->Enable( false );
+    auto size1 = new wxTextCtrl( this, wxID_ANY, m_version >= 13 ? "8" : "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     sizer5->Add( size1, 0, wxEXPAND, 0 );
     sizer5->Add( 5, 5, 0, wxEXPAND, 0 );
     auto label1 = new wxStaticText( this, wxID_ANY, "MB" );
+    label1->Enable( false );
     sizer5->Add( label1, 0, wxEXPAND, 0 );
     auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
     paneSizer1->Insert( m_position, sizer6, 0, wxBOTTOM, 0 );
     m_position++;
-    auto size2 = new wxTextCtrl( this, wxID_ANY, "" );
-    size2->Enable( false );
+    auto size2 = new wxTextCtrl( this, wxID_ANY, "1", wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     sizer6->Add( size2, 0, wxEXPAND, 0 );
     sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
     auto label2 = new wxStaticText( this, wxID_ANY, "MB" );
+    label2->Enable( false );
     sizer6->Add( label2, 0, wxEXPAND, 0 );
     auto unlim = new wxCheckBox( this, wxID_ANY, "UNLIMITED" );
     unlim->SetValue( true );
@@ -155,33 +181,30 @@ void ScrollPanel::AddLine(const FileSpec &spec)
     auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
     paneSizer1->Insert( m_position, sizer7, 0, wxEXPAND, 0 );
     m_position++;
-    auto size3 = new wxTextCtrl( this, wxID_ANY, growth );
-    size3->Enable( false );
+    auto size3 = new wxTextCtrl( this, wxID_ANY, growth, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
     sizer7->Add( size3, 0, wxEXPAND, 0 );
     sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto label3 = new wxStaticText( this, wxID_ANY, "%" );
+    auto label3 = new wxStaticText( this, wxID_ANY, unit );
+    label3->Enable( false );
     sizer7->Add( label3, 0, wxEXPAND, 0 );
     if( m_isPrimary )
     {
         auto primary = new wxCheckBox( this, wxID_ANY, "PRIMARY" );
         paneSizer1->Insert( m_position, primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     }
-/*    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 6 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_name );
-    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( 7 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
-    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
-    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
-    if( spec.m_isUnlimited )
+    int col = 0;
+    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + 6 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_name );
+    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + 7 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
+    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
+    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
+    if( !spec.m_isUnlimited )
     {
-        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( "UNLIMITED" );
+        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
+        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
+        dynamic_cast<wxCheckBox *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 4 )->GetWindow() )->SetValue( false );
     }
-    else
-    {
-        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
-        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
-    }
-    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
-    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
-    dynamic_cast<wxCheckBox *>( paneSizer1->GetItem( 11 * ( rows - 1 ) )->GetWindow() )->Enable();*/
+    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
+    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
     Layout();
     Fit();
 }
@@ -669,13 +692,19 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     EndModal( wxID_OK );
 }
 
-void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &WXUNUSED(event))
+void CreateDatabase::OnSQLServerFileSecAdd(wxCommandEvent &event)
 {
+    wxButton *btn = dynamic_cast<wxButton *>( event.GetEventObject() );
     SQLServerAddFileSpec dlg( GetParent(), wxID_ANY, "Add FileSpec", m_versionMajor );
     if( dlg.ShowModal() == wxID_OK )
     {
         auto spec = dlg.GetFileSpec();
-        m_panel1->AddLine( spec );
+        if( btn == m_add )
+            m_panel1->AddLine( spec );
+        if( btn == m_add1 )
+            m_panel2->AddLine( spec );
+        if( btn == m_add2 )
+            m_panel3->AddLine( spec );
     }
 }
 
