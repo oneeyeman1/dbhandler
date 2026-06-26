@@ -105,6 +105,7 @@
 #include "createtablespace.h"
 #include "dropindexoptions.h"
 #include "sqlserveraddfilespec.h"
+#include "scrolledcolumnlabel.h"
 #include "createdatabase.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)

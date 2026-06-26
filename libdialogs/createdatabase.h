@@ -12,12 +12,12 @@
 class ScrollPanel : public wxPanel
 {
 public:
-    ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isPrimary, bool isLog);
+    ScrollPanel(wxWindow *parent, ScrolledColumnLabel *cols, int version, bool isPrimary, bool isLog);
     void AddLine(const FileSpec &spec);
     virtual void ScrollWindow(int dx, int dy, const wxRect *rect) override;
-
+    void RefreshHeader();
 private:
-    wxWindow *m_columns;
+    ScrolledColumnLabel *m_columns;
     wxFlexGridSizer *paneSizer1;
     bool m_isPrimary, m_isLog;
     size_t m_position;
@@ -41,6 +41,7 @@ protected:
     void OnFilegroup(wxCommandEvent &event);
     void OnLog(wxCommandEvent &event);
     void OnMemoryData(wxCommandEvent &evemt);
+    void OnCollapsblePaneChanged(wxCollapsiblePaneEvent &event);
 private:
     std::shared_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;

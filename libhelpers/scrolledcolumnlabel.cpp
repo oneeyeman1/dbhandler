@@ -34,10 +34,10 @@ void ScrolledColumnLabel::OnPaint(wxPaintEvent& WXUNUSED(event))
     m_owner->GetViewStart( &xOrigin, nullptr );
     m_owner->GetScrollPixelsPerUnit( &xScrollUnits, nullptr );
     dc.SetDeviceOrigin( -xOrigin * xScrollUnits, 0 );
-    int x = 5;
+    int i = 0;
     for( auto label : m_labels )
     {
-        dc.DrawText( label, x, 5 );
-        x += 100;
+        dc.DrawText( label, m_pos[i].x, 5 );
+        i++;
     }
 }

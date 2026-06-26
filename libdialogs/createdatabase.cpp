@@ -17,7 +17,7 @@
 #include "scrolledcolumnlabel.h"
 #include "createdatabase.h"
 
-ScrollPanel::ScrollPanel(wxWindow *parent, wxWindow *cols, int version, bool isPrimary, bool isLog) : wxPanel( parent, wxID_ANY )
+ScrollPanel::ScrollPanel(wxWindow *parent, ScrolledColumnLabel *cols, int version, bool isPrimary, bool isLog) : wxPanel( parent, wxID_ANY )
 {
     m_columns = cols;
     m_isPrimary = isPrimary;
@@ -192,21 +192,34 @@ void ScrollPanel::AddLine(const FileSpec &spec)
         auto primary = new wxCheckBox( this, wxID_ANY, "PRIMARY" );
         paneSizer1->Insert( m_position, primary, 0, wxALIGN_CENTER_HORIZONTAL, 0 );
     }
-    int col = 0;
-    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + 6 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_name );
-    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + 7 * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
-    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
-    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 8 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
+    int col = 0, maxcol = m_isPrimary ? 6 : 5;
+    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + maxcol * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_name );
+    dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( col++ + (maxcol + 1) * ( rows - 1 ) )->GetWindow() )->SetValue( spec.m_fileName.GetFullName() );
+    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + (maxcol + 2) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_size );
+    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + (maxcol + 2) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure1 );
     if( !spec.m_isUnlimited )
     {
-        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
-        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
-        dynamic_cast<wxCheckBox *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 9 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 4 )->GetWindow() )->SetValue( false );
+        dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + (maxcol + 3) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_maxSize );
+        dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + (maxcol + 3) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure2 );
+        dynamic_cast<wxCheckBox *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + (maxcol + 3) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 4 )->GetWindow() )->SetValue( false );
     }
-    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
-    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + 10 * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
+    dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col + (maxcol + 4) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->SetValue( spec.m_growth );
+    dynamic_cast<wxStaticText *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( col++ + (maxcol + 4) * ( rows - 1 ) )->GetSizer() )->GetItem( (size_t) 2 )->GetWindow() )->SetLabel( spec.m_measure3 );
     Layout();
     Fit();
+}
+
+void ScrollPanel::RefreshHeader()
+{
+    std::vector<wxPoint> pos;
+    pos.push_back( dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( (size_t) 0 )->GetWindow() )->GetPosition() );
+    pos.push_back( dynamic_cast<wxTextCtrl *>( paneSizer1->GetItem( (size_t) 1 )->GetWindow() )->GetPosition() );
+    pos.push_back( dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 2 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->GetPosition() );
+    pos.push_back( dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 3 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->GetPosition() );
+    pos.push_back( dynamic_cast<wxTextCtrl *>( dynamic_cast<wxBoxSizer *>( paneSizer1->GetItem( 4 )->GetSizer() )->GetItem( (size_t) 0 )->GetWindow() )->GetPosition() );
+    if( m_isPrimary )
+        pos.push_back( dynamic_cast<wxCheckBox *>( paneSizer1->GetItem( (size_t) 5 )->GetWindow() )->GetPosition() );
+    m_columns->SetLabelPositions( pos );
 }
 
 CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
@@ -265,7 +278,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         else
             title = _( "ON" );
         m_options = new wxCollapsiblePane( this, wxID_ANY, title );
-        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
+        m_options->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, &CreateDatabase::OnCollapsblePaneChanged, this );
         sizer2->Add( m_options, 0, wxEXPAND, 0 );
         second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
@@ -506,7 +519,8 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             fg1->AddGrowableRow( 1 );
             m_scrolled1->SetSizer( fg1 );
             m_scrolled1->SetTargetWindow( m_panel1 );
-//            m_scrolled1->SetScrollbars( 10, 10, 50, 50 );
+            m_scrolled1->SetScrollbars( 10, 10, 50, 50 );
+            m_scrolled1->AdjustScrollbars();
 //            m_scrolled1->Bind( wxEVT_SIZE, &CreateDatabase::OnScrolled1Size, this );
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             auto sizer15 = new wxBoxSizer( wxHORIZONTAL );
@@ -554,7 +568,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             labels1.push_back( "MaxSize" );
             labels1.push_back( "FileGrowth" );
             ScrolledColumnLabel *cols2 = new ScrolledColumnLabel( m_scrolled2, labels1 );
-            m_panel2 = new ScrollPanel( m_scrolled2, cols, serverVersionMajor, false, false );
+            m_panel2 = new ScrollPanel( m_scrolled2, cols2, serverVersionMajor, false, false );
             auto fg2 = new wxFlexGridSizer( 2, 2, 5, 5 );
             fg2->Add( 5, 25, 0, wxEXPAND, 0 );
             fg2->Add( cols2, 1, wxEXPAND, 0 );
@@ -566,6 +580,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer_2->Add( sizer_20, 0, wxEXPAND, 0 );
             m_add1 = new wxButton( win, wxID_ANY, "Add" );
+            m_add1->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecAdd, this );
             m_delete1 = new wxButton( win, wxID_ANY, "Delete" );
             m_add1->Enable( false );
             m_delete1->Enable( false );
@@ -583,7 +598,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             sizer_8->Add( m_log );
             m_scrolled3 = new wxScrolled<wxWindow>( win );
             sizer_2->Add( m_scrolled3, 0, wxEXPAND, 0 );
-            auto sizer_13 = new wxFlexGridSizer( 2, 1, 5, 5 );
+            auto sizer_13 = new wxFlexGridSizer( 2, 2, 5, 5 );
             m_scrolled3->SetSizer( sizer_13 );
             std::vector<wxString> labels2;
             labels2.push_back( "Name" );
@@ -592,14 +607,19 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             labels2.push_back( "MaxSize" );
             labels2.push_back( "FileGrowth" );
             ScrolledColumnLabel *cols3 = new ScrolledColumnLabel( m_scrolled3, labels2 );
+            m_panel3 = new ScrollPanel( m_scrolled3, cols3, serverVersionMajor, false, true );
+            sizer_13->Add( 5, 25, 0, wxEXPAND, 0 );
             sizer_13->Add( cols3, 1, wxEXPAND, 0 );
-            m_panel3 = new ScrollPanel( m_scrolled3, cols, serverVersionMajor, false, true );
-            sizer_13->Add( m_panel3, 1, wxEXPAND, 0 );
+            sizer_13->Add( m_panel3, 1, wxEXPAND );
+            sizer_13->Add( 5, 5, 0, wxEXPAND, 0 );
+            sizer_13->AddGrowableRow( 1 );
+            m_scrolled3->SetSizer( sizer_13 );
             auto sizer_18 = new wxBoxSizer( wxHORIZONTAL );
             sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
             sizer_2->Add( sizer_18, 0, wxEXPAND, 0 );
             sizer_18->AddStretchSpacer();
             m_add2 = new wxButton( win, wxID_ANY, "Add" );
+            m_add2->Bind( wxEVT_BUTTON, &CreateDatabase::OnSQLServerFileSecAdd, this );
             m_add2->Enable( false );
             m_delete2 = new wxButton( win, wxID_ANY, "Delete" );
             m_delete2->Enable( false );
@@ -768,4 +788,15 @@ void CreateDatabase::OnMemoryData(wxCommandEvent &WXUNUSED(evemt))
         m_filegroupContains->Enable( false );
     else
         m_filegroupContains->Enable( true );
+}
+
+void CreateDatabase::OnCollapsblePaneChanged(wxCollapsiblePaneEvent &WXUNUSED(event))
+{
+    Layout();
+    if( m_type == L"Microsoft SQL Server" || m_subtype == L"Microsoft SQL Server" )
+    {
+        m_panel1->RefreshHeader();
+        m_panel2->RefreshHeader();
+        m_panel3->RefreshHeader();
+    }
 }
