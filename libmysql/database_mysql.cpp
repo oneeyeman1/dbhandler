@@ -2195,6 +2195,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     short ordinal = 0;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
     int stringLength, precision, scale, pk_flag;
+    std::vector<std::wstring> fk_names, indexes;
     std::vector<std::wstring> origFields, refFelds;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
@@ -2388,6 +2389,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                                                            m_pimpl->m_myconv.from_bytes( refTableField ),
                                                            origFields, refFelds,
                                                            update_constraint, delete_constraint ) );
+                fk_names.push_back( m_pimpl->m_myconv.from_bytes( fieldName ) );
             }
             mysql_free_result( meta1 );
             if( mysql_stmt_close( res1 ) )
@@ -2510,6 +2512,8 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                     int fieldSize, fieldPrecision;
                     std::wstring name = m_pimpl->m_myconv.from_bytes( fieldName );
                     std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
+                    std::wstring def = m_pimpl->m_myconv.from_bytes( fieldDefault );
+                    auto isnull = m_pimpl->m_myconv.from_bytes( nullable ) == L"YES" ? true : false;
                     if( isNull2[2] )
                     {
                         fieldSize = precision;
@@ -2521,7 +2525,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                         fieldPrecision = 0;
                     }
                     auto autoincrement = strcmp( extra, "auto_increment" ) ? false : true;
-                    TableField *field = new TableField( name, type, fieldSize, fieldPrecision, tableName + L"." + name, fieldDefault, nullable, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                    TableField *field = new TableField( name, type, fieldSize, fieldPrecision, schemaName + L"." + tableName + L"." + name, def, isnull, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), name ) != fk_names.end() );
                     if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
                     {
                         std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
