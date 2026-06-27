@@ -2187,25 +2187,26 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 {
     int result = 0;
     long tableId = 0;
-    MYSQL_BIND params[3], results1[8], results2[10];
+    MYSQL_BIND params[3], results1[8], results2[9];
     unsigned long len[3], length1[8];
     MYSQL_STMT *res1 = NULL, *res2 = NULL, *res3 = NULL;
     MYSQL_RES *meta1 = nullptr, *meta2 = nullptr;
-    char constraintName[64], fieldName[64], refTableSchema[64], refTableField[64], refTableName[64], updateCon[64], deleteCon[64], fieldType[64];
+    char constraintName[64], fieldName[64], fieldDefault[64], refTableSchema[64], refTableField[64], refTableName[64], updateCon[64], deleteCon[64], fieldType[64], nullable[5], extra[63];
     short ordinal = 0;
     std::map<unsigned long,std::vector<FKField *> > foreign_keys;
+    int stringLength, precision, scale, pk_flag;
     std::vector<std::wstring> origFields, refFelds;
     FK_ONUPDATE update_constraint = NO_ACTION_UPDATE;
     FK_ONDELETE delete_constraint = NO_ACTION_DELETE;
 #if MYSQL_VERSION_ID > 80001
-    bool isNull1[8], err1[8], isNull2[10], err2[10];
+    bool isNull1[8], err1[8], isNull2[9], err2[9];
 #else
-    char isNull1[8], err1[8], isNull2[10], err2[10];
+    char isNull1[8], err1[8], isNull2[9], err2[9];
 #endif
     if( tableAdded )
     {
         std::wstring owner = L"";
-        std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.character_octet_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ?;";
+        std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ? ORDER BY cols.ordinal_position;";
         std::wstring query3 = L"SELECT kcu.constraint_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
         std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
         memset( params, 0, sizeof( params ) );
@@ -2443,13 +2444,95 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                 result = 1;
             }
         }
-        memset( results2, 0, sizeof( results2 ) );
-        results2[0].buffer_type = MYSQL_TYPE_STRING;
-        results2[0].buffer = &fieldName;
-        results2[0].buffer_length = 63;
-        results2[0].is_null = &isNull2[0];
-        results2[0].length = &len[0];
-        results2[0].error = &err2[0];
+        if( !result )
+        {
+            memset( results2, 0, sizeof( results2 ) );
+            results2[0].buffer_type = MYSQL_TYPE_STRING;
+            results2[0].buffer = &fieldName;
+            results2[0].buffer_length = 63;
+            results2[0].is_null = &isNull2[0];
+            results2[0].length = &len[0];
+            results2[0].error = &err2[0];
+            results2[1].buffer_type = MYSQL_TYPE_STRING;
+            results2[1].buffer = &fieldType;
+            results2[1].buffer_length = 63;
+            results2[1].is_null = &isNull2[1];
+            results2[1].length = &len[1];
+            results2[1].error = &err2[1];
+            results2[2].buffer_type = MYSQL_TYPE_LONG;
+            results2[2].buffer = (char *) &stringLength;
+            results2[2].is_null = &isNull2[2];
+            results2[2].length = &len[2];
+            results2[2].error = &err2[2];
+            results2[3].buffer_type = MYSQL_TYPE_LONG;
+            results2[3].buffer = (char *) &precision;
+            results2[3].is_null = &isNull2[3];
+            results2[3].length = &len[3];
+            results2[3].error = &err2[3];
+            results2[4].buffer_type = MYSQL_TYPE_LONG;
+            results2[4].buffer = (char *) &scale;
+            results2[4].is_null = &isNull2[4];
+            results2[4].length = &len[4];
+            results2[4].error = &err2[4];
+            results2[5].buffer_type = MYSQL_TYPE_STRING;
+            results2[5].buffer = &fieldDefault;
+            results2[5].buffer_length = 63;
+            results2[5].is_null = &isNull2[5];
+            results2[5].length = &len[5];
+            results2[5].error = &err2[5];
+            results2[6].buffer_type = MYSQL_TYPE_STRING;
+            results2[6].buffer = &nullable;
+            results2[6].buffer_length = 5;
+            results2[6].is_null = &isNull2[6];
+            results2[6].length = &len[6];
+            results2[6].error = &err2[6];
+            results2[7].buffer_type = MYSQL_TYPE_STRING;
+            results2[7].buffer = &extra;
+            results2[7].buffer_length = 63;
+            results2[7].is_null = &isNull2[5];
+            results2[7].length = &len[5];
+            results2[7].error = &err2[5];
+            results2[8].buffer_type = MYSQL_TYPE_LONG;
+            results2[8].buffer = (char *) &pk_flag;
+            results2[8].is_null = &isNull2[8];
+            results2[8].length = &len[8];
+            results2[8].error = &err2[8];
+            if( mysql_stmt_bind_result( res2, results2 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+            if( !result )
+            {
+                while( !mysql_stmt_fetch( res2 ) )
+                {
+                    int fieldSize, fieldPrecision;
+                    std::wstring name = m_pimpl->m_myconv.from_bytes( fieldName );
+                    std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
+                    if( isNull2[2] )
+                    {
+                        fieldSize = precision;
+                        fieldPrecision = scale;
+                    }
+                    else
+                    {
+                        fieldSize = stringLength;
+                        fieldPrecision = 0;
+                    }
+                    auto autoincrement = strcmp( extra, "auto_increment" ) ? false : true;
+                    TableField *field = new TableField( name, type, fieldSize, fieldPrecision, tableName + L"." + name, fieldDefault, nullable, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), fieldName ) != fk_names.end() );
+                    if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
+                    {
+                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                        errorMsg.push_back( err );
+                        result = 1;
+                        break;
+                    }
+                }
+                mysql_stmt_close( res2 );
+            }
+        }
         if( !result )
         {
             res3 = mysql_stmt_init( m_db );

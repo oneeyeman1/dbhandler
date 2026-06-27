@@ -19,7 +19,9 @@ libhelpers_a_SOURCES =  \
 	mycombocellrenderer.cpp \
 	mycombocellrenderer.h \
 	mytabletypeeditor.cpp \
-	mytabletypeeditor.h
+	mytabletypeeditor.h \
+	scrolledcolumnlabel.cpp \
+	scrolledcolumnlabel.h
 
 libhelpers_a_CXXFLAGS = -DwxUSE_MASKED_EDIT -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
