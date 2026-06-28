@@ -1596,18 +1596,28 @@ bool MySQLDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vect
 
 int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
+    unsigned long len[5];
     char /**str_data1 = NULL, *str_data2 = NULL, */*str_data3 = NULL;
     int result = 0;
-    const char *table = m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
-    const char *schema = m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
-    const char *owner = m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str();
-    const char *fieldNameReq = m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-    size_t len = strlen( table ) + strlen( schema ) + 2;
-    char *tname = new char[len];
-    memset( tname, '\0', len );
-    strcpy( tname, schema );
-    strcat( tname, "." );
-    strcat( tname, table );
+    len[0] = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() ) + 1;
+    len[1] = strlen( m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() ) + 1;
+    len[2] = strlen( m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() ) + 1;
+    len[3] = strlen( m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() ) + 1;
+    len[4] = len[0] + len[1] + 1;
+    std::unique_ptr<char[]> table( new char[len[0]] );
+    std::unique_ptr<char[]> schema( new char[len[1]] );
+    std::unique_ptr<char[]> owner( new char[len[2]] );
+    std::unique_ptr<char[]> fieldNameReq( new char[len[3]]);
+    std::unique_ptr<char[]> tname( new char[len[4]] );
+    memset( table.get(), '\0', len[0] );
+    memset( schema.get(), '\0', len[1] );
+    memset( fieldNameReq.get(), '\0', len[3] );
+    memset( tname.get(), '\0', len[4] );
+    snprintf( table.get(), len[0], "%s", m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    snprintf( schema.get(), len[1], "%s", m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    snprintf( fieldNameReq.get(), len[3], "%s", m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+    snprintf( tname.get(), len[4], "%s.%s", m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    len[0]--; len[1]--; len[3]--; len[4]--;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
     MYSQL_STMT *stmt = mysql_stmt_init( m_db );
     if( !stmt )
@@ -1620,7 +1630,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     {
         if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
             errorMsg.push_back( err );
             result = 1;
         }
@@ -1629,23 +1639,23 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
             MYSQL_BIND params[3];
             unsigned long str_length1, str_length2, str_length3;
             params[0].buffer_type = MYSQL_TYPE_STRING;
-            params[0].buffer = (char *) tname;
-            params[0].buffer_length = strlen( tname );
+            params[0].buffer = (char *) tname.get();
+            params[0].buffer_length = strlen( tname.get() );
             params[0].is_null = 0;
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
-            params[1].buffer = (char *) owner;
-            params[1].buffer_length = strlen( owner );
+            params[1].buffer = (char *) owner.get();
+            params[1].buffer_length = strlen( owner.get() );
             params[1].is_null = 0;
             params[1].length = &str_length2;
             params[2].buffer_type = MYSQL_TYPE_STRING;
-            params[2].buffer = (char *) fieldNameReq;
-            params[2].buffer_length = strlen( fieldNameReq );
+            params[2].buffer = (char *) fieldNameReq.get();
+            params[2].buffer_length = strlen( fieldNameReq.get() );
             params[2].is_null = 0;
             params[2].length = &str_length3;
             if( mysql_stmt_bind_param( stmt, params ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -1653,7 +1663,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
             {
                 if( mysql_stmt_execute( stmt ) )
                 {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                     errorMsg.push_back( err );
                     result = 1;
                 }
@@ -2210,9 +2220,9 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     if( tableAdded )
     {
         std::wstring owner = L"";
-        std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ? ORDER BY cols.ordinal_position;";
-        std::wstring query3 = L"SELECT kcu.constraint_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?;";
-        std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?;";
+        std::wstring query2 = L"SELECT cols.column_name, cols.data_type, cols.character_maximum_length, cols.numeric_precision, cols.numeric_scale, cols.column_default, cols.is_nullable, cols.extra, (CASE WHEN kcu.column_name = cols.column_name THEN 1 ELSE 0 END) as pk_flag FROM information_schema.columns cols, information_schema.key_column_usage kcu WHERE kcu.constraint_name = 'PRIMARY' AND kcu.table_schema = cols.table_schema AND kcu.table_name = cols.table_name AND cols.table_catalog = ? AND cols.table_schema = ? AND cols.table_name = ? ORDER BY cols.ordinal_position";
+        std::wstring query3 = L"SELECT kcu.constraint_name, kcu.column_name, kcu.ordinal_position, kcu.referenced_table_schema, kcu.referenced_table_name, kcu.referenced_column_name, rc.update_rule, rc.delete_rule FROM information_schema.key_column_usage kcu, information_schema.referential_constraints rc WHERE kcu.constraint_name = rc.constraint_name AND kcu.table_catalog = ? AND kcu.table_schema = ? AND kcu.table_name = ?";
+        std::wstring query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_catalog = ? AND table_schema = ? AND table_name = ?";
         memset( params, 0, sizeof( params ) );
         if( GetTableId( catalog, schemaName, tableName, tableId, errorMsg ) )
             result = 1;
