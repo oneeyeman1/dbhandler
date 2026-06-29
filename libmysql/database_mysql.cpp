@@ -1645,7 +1645,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
             params[1].buffer = (char *) owner.get();
-            params[1].buffer_length = strlen( owner.get() );
+            params[1].buffer_length = 0;
             params[1].is_null = 0;
             params[1].length = &str_length2;
             params[2].buffer_type = MYSQL_TYPE_STRING;
@@ -2518,41 +2518,50 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                 errorMsg.push_back( err );
                 result = 1;
             }
-            if( !result )
+        }
+        if( !result )
+        {
+            if( mysql_stmt_store_result( res2 ) )
             {
-                while( !mysql_stmt_fetch( res2 ) )
-                {
-                    int fieldSize, fieldPrecision;
-                    std::wstring name = m_pimpl->m_myconv.from_bytes( fieldName );
-                    std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
-                    std::wstring def = m_pimpl->m_myconv.from_bytes( fieldDefault );
-                    auto isnull = m_pimpl->m_myconv.from_bytes( nullable ) == L"YES" ? true : false;
-                    if( isNull2[2] )
-                    {
-                        fieldSize = precision;
-                        fieldPrecision = scale;
-                    }
-                    else
-                    {
-                        fieldSize = stringLength;
-                        fieldPrecision = 0;
-                    }
-                    auto autoincrement = strcmp( extra, "auto_increment" ) ? false : true;
-                    TableField *field = new TableField( name, type, fieldSize, fieldPrecision, schemaName + L"." + tableName + L"." + name, def, isnull, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), name ) != fk_names.end() );
-                    if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
-                    {
-                        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                        errorMsg.push_back( err );
-                        result = 1;
-                        break;
-                    }
-                    fields.push_back( field );
-                    if( pk_flag )
-                        pk.push_back( name );
-                    numFields++;
-                }
-                mysql_stmt_close( res2 );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                errorMsg.push_back( err );
+                result = 1;
             }
+        }
+        if( !result )
+        {
+            while( !mysql_stmt_fetch( res2 ) )
+            {
+                int fieldSize, fieldPrecision;
+                std::wstring name = m_pimpl->m_myconv.from_bytes( fieldName );
+                std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
+                std::wstring def = m_pimpl->m_myconv.from_bytes( fieldDefault );
+                auto isnull = m_pimpl->m_myconv.from_bytes( nullable ) == L"YES" ? true : false;
+                if( isNull2[2] )
+                {
+                    fieldSize = precision;
+                    fieldPrecision = scale;
+                }
+                else
+                {
+                    fieldSize = stringLength;
+                    fieldPrecision = 0;
+                }
+                auto autoincrement = strcmp( extra, "auto_increment" ) ? false : true;
+                TableField *field = new TableField( name, type, fieldSize, fieldPrecision, schemaName + L"." + tableName + L"." + name, def, isnull, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), name ) != fk_names.end() );
+                if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
+                {
+                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                    errorMsg.push_back( err );
+                    result = 1;
+                    break;
+                }
+                fields.push_back( field );
+                if( pk_flag )
+                    pk.push_back( name );
+                numFields++;
+            }
+            mysql_stmt_close( res2 );
         }
         if( !result )
         {
