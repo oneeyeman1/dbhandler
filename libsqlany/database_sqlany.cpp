@@ -68,13 +68,15 @@ SQLAnyDatabase::~SQLAnyDatabase()
 int SQLAnyDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg)
 {
     /* failed to connect */
-    char buffer[SACAPI_ERROR_SIZE];
+    char buffer[SACAPI_ERROR_SIZE + 20] {};
     char sqlstate[6];
     int  rc;
     rc = m_api.sqlany_error( m_conn, buffer, sizeof( buffer ) );
     m_api.sqlany_sqlstate( m_conn, sqlstate, sizeof( sqlstate ) );
-	printf( "Failed to connect: error code=%d error message=%s, sqlstate=%s\n", rc, buffer, sqlstate );
-	return true;
+    strcat( buffer, "SQLSTATE: " );
+    strcat( buffer, sqlstate );
+    errorMsg.push_back( sqlany_pimpl->m_myconv.from_bytes( buffer ) );
+    return true;
 }
 
 int SQLAnyDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
