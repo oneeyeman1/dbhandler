@@ -2281,7 +2281,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 
             if( mysql_stmt_bind_param( res1, params ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2300,7 +2300,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             meta1 = mysql_stmt_result_metadata( res1 );
             if( !meta1 )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2372,7 +2372,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 
             if( mysql_stmt_bind_result( res1, results1 ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2404,10 +2404,21 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                                                            update_constraint, delete_constraint ) );
                 fk_names.push_back( m_pimpl->m_myconv.from_bytes( fieldName ) );
             }
-            mysql_free_result( meta1 );
+        }
+        if( !result )
+        {
+            if( mysql_stmt_free_result( res1 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res1 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
             if( mysql_stmt_close( res1 ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2473,7 +2484,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             results2[1].buffer_length = 63;
             results2[1].is_null = &isNull2[1];
             results2[1].length = &len[1];
-            results2[1].error = &err2[1];
+            results2[1].error = &err2[1];            {
             results2[2].buffer_type = MYSQL_TYPE_LONG;
             results2[2].buffer = (char *) &stringLength;
             results2[2].is_null = &isNull2[2];
@@ -2551,8 +2562,10 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                 TableField *field = new TableField( name, type, fieldSize, fieldPrecision, schemaName + L"." + tableName + L"." + name, def, isnull, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), name ) != fk_names.end() );
                 if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
                 {
-                    std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-                    errorMsg.push_back( err );
+                    fields.erase( fields.begin(), fields.end() );
+                    pk.erase( pk.begin(), pk.end() );
+                    foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                    numFields = 0;
                     result = 1;
                     break;
                 }
@@ -2561,7 +2574,24 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                     pk.push_back( name );
                 numFields++;
             }
-            mysql_stmt_close( res2 );
+        }
+        if( !result )
+        {
+            if( mysql_stmt_free_result( res2 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            if( mysql_stmt_close( res2 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
         if( !result )
         {
@@ -2574,6 +2604,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             {
                 fields.erase( fields.begin(), fields.end() );
                 foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
+                pk.erase( pk.begin(), pk.end() );
                 delete table;
                 table = nullptr;
                 result = 1;
@@ -2602,7 +2633,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         {
             if( mysql_stmt_bind_param( res3, params ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2611,7 +2642,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
         {
             if( mysql_stmt_execute( res3 ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2621,7 +2652,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             meta3 = mysql_stmt_result_metadata( res3 );
             if( !meta3 )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
@@ -2638,16 +2669,19 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
 
             if( mysql_stmt_bind_result( res3, results2 ) )
             {
-                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
                 errorMsg.push_back( err );
                 result = 1;
             }
         }
-        if( mysql_stmt_store_result( res3 ) )
+        if( !result )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
-            errorMsg.push_back( err );
-            result = 1;
+            if( mysql_stmt_store_result( res3 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
         if( !result )
         {
@@ -2663,12 +2697,23 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             foreign_keys.erase( foreign_keys.begin(), foreign_keys.end() );
             fk_names.clear();
         }
-        mysql_free_result( meta3 );
-        if( mysql_stmt_close( res3 ) )
+        if( !result )
         {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res2 ) );
-            errorMsg.push_back( err );
-            result = 1;
+            if( mysql_stmt_free_result( res3 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            if( mysql_stmt_close( res3 ) )
+            {
+                std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res3 ) );
+                errorMsg.push_back( err );
+                result = 1;
+            }
         }
     }
     return result;
