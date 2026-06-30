@@ -2484,7 +2484,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             results2[1].buffer_length = 63;
             results2[1].is_null = &isNull2[1];
             results2[1].length = &len[1];
-            results2[1].error = &err2[1];            {
+            results2[1].error = &err2[1];
             results2[2].buffer_type = MYSQL_TYPE_LONG;
             results2[2].buffer = (char *) &stringLength;
             results2[2].is_null = &isNull2[2];
