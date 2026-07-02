@@ -105,6 +105,14 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
         else
             event.Enable( true );
     }
+    else if( GetCurrentPage() == page8 )
+    {
+        auto page = dynamic_cast<SQLAnywhere *>( page8 );
+        if( !page->GetPasswordCtrl()->IsEmpty() && ( !page->GetDatabaseServerCtrl()->IsEmpty() || !page->GetDatabaseNameCtrl()->GetPath().IsEmpty() ) )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
 }
 
 void DatabaseType::OnPageChanging(wxWizardEvent &event)
@@ -236,6 +244,10 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         wxString options = page5->GetOptions();
         if( !options.IsEmpty() )
             m_connStr += options;
+    }
+    if( m_dbEngine == "SQL Anywhere" )
+    {
+
     }
 }
 
@@ -830,11 +842,6 @@ wxWizardPage *mySQLConnect::GetPrev() const
 wxWizardPage *mySQLConnect::GetNext() const
 {
     return nullptr;
-}
-
-wxTextCtrl *mySQLConnect::GetDatabaseName()
-{
-    return m_dbName;
 }
 
 wxTextCtrl *mySQLConnect::GetHost() const

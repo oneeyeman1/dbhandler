@@ -133,7 +133,6 @@ public:
     mySQLConnect(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const wxOVERRIDE;
     virtual wxWizardPage *GetNext() const wxOVERRIDE;
-    wxTextCtrl *GetDatabaseName();
     wxTextCtrl *GetHost() const;
     wxMaskedEditText *GetHostAddr() const;
     wxTextCtrl *GetPort() const;
@@ -191,6 +190,9 @@ public:
     SQLAnywhere(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const wxOVERRIDE;
     virtual wxWizardPage *GetNext() const wxOVERRIDE;
+    wxTextCtrl *GetPasswordCtrl() const { return m_password; }
+    wxTextCtrl *GetDatabaseServerCtrl() const { return m_serverName; }
+    wxFilePickerCtrl *GetDatabaseNameCtrl() const { return m_dbName; }
 protected:
     void OnExtra(wxCommandEvent &event);
 private:
