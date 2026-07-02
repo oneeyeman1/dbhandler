@@ -203,7 +203,7 @@ private:
     wxStaticText *m_label4 = nullptr;
     wxTextCtrl *m_password = nullptr;
     wxStaticText *m_label5 = nullptr;
-    wxTextCtrl *m_dbName = nullptr;
+    wxFilePickerCtrl *m_dbName = nullptr;
     wxStaticText *m_label6 = nullptr;
     wxTextCtrl *m_serverName = nullptr;
     wxButton *m_extra = nullptr;
