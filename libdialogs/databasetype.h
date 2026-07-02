@@ -190,11 +190,16 @@ public:
     SQLAnywhere(wxWizard *parent);
     virtual wxWizardPage *GetPrev() const wxOVERRIDE;
     virtual wxWizardPage *GetNext() const wxOVERRIDE;
+    wxTextCtrl *GetHostCtrl() const { return m_host; }
+    wxTextCtrl *GetPortCtrl() const { return m_port; }
+    wxTextCtrl *GetUserCtrl() const { return m_userId; }
     wxTextCtrl *GetPasswordCtrl() const { return m_password; }
     wxTextCtrl *GetDatabaseServerCtrl() const { return m_serverName; }
     wxFilePickerCtrl *GetDatabaseNameCtrl() const { return m_dbName; }
 protected:
     void OnExtra(wxCommandEvent &event);
+    void OnUserIDKillFocus(wxFocusEvent &event);
+    void OnPasswordKillFocus(wxFocusEvent &event);
 private:
     wxStaticText *m_label1 = nullptr;
     wxTextCtrl *m_host = nullptr;

@@ -247,7 +247,20 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
     }
     if( m_dbEngine == "SQL Anywhere" )
     {
-
+        wxString value1 = page8->GetHostCtrl()->GetValue();
+        wxString value2 = page8->GetPortCtrl()->GetValue();
+        wxString value = value1 + ":" + value2;
+        m_connStr = "Host=" + value + ";";
+        value = page8->GetUserCtrl()->GetValue();
+        m_connStr += "UID=" + value + ";";
+        value = page8->GetPasswordCtrl()->GetValue();
+        m_connStr += "PWD=" + value + ";";
+        value1 = page8->GetDatabaseServerCtrl()->GetValue();
+        value2 = page8->GetDatabaseNameCtrl()->GetPath();
+        if( value2.IsEmpty() )
+            m_connStr += "DBN=" + value1 + ";";
+        else
+            m_connStr += "DBF=" + value2 + ";";
     }
 }
 
@@ -284,6 +297,8 @@ wxTextCtrl *DatabaseType::GetUserControl() const
         return page4->GetUserID();
     if( m_dbEngine == "mySQL" )
         return page5->GetUserID();
+    if( m_dbEngine == "SQL Anywhere" )
+        return page8->GetUserCtrl();
     return nullptr;
 }
 
@@ -1116,18 +1131,21 @@ SQLAnywhere::SQLAnywhere(wxWizard *parent) : wxWizardPage( parent )
     m_label3 = new wxStaticText( this, wxID_ANY, "UserID" );
     sizer3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_userId = new wxTextCtrl( this, wxID_ANY, "dba" );
+    m_userId->Bind( wxEVT_KILL_FOCUS, &SQLAnywhere::OnUserIDKillFocus, this );
     sizer3->Add( m_userId, 0, wxEXPAND, 0 );
     m_label4 = new wxStaticText( this, wxID_ANY, "Password" );
     sizer3->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_password = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_password->SetMaxLength( 255 );
+    m_password->Bind( wxEVT_KILL_FOCUS, &SQLAnywhere::OnPasswordKillFocus, this );
     sizer3->Add( m_password, 0, wxEXPAND, 0 );
     m_label6 = new wxStaticText( this, wxID_ANY, "DB Server Name" );
     sizer3->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_serverName = new wxTextCtrl( this, wxID_ANY, "" );
     sizer3->Add( m_serverName, 0, wxEXPAND, 0 );
-    m_label5 = new wxStaticText( this, wxID_ANY, "Database Name" );
+    m_label5 = new wxStaticText( this, wxID_ANY, "Database File Name" );
     sizer3->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_dbName = new wxFilePickerCtrl( this, wxID_ANY, "" );
+    m_dbName = new wxFilePickerCtrl( this, wxID_ANY, "", "Choose Database File", "*.db" );
     sizer3->Add( m_dbName, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -1152,6 +1170,27 @@ wxWizardPage *SQLAnywhere::GetPrev() const
 wxWizardPage *SQLAnywhere::GetNext() const
 {
     return nullptr;
+}
+
+void SQLAnywhere::OnUserIDKillFocus(wxFocusEvent &event)
+{
+    wxString value = m_userId->GetValue();
+    if( value.Contains( ";" ) || value.EndsWith( " " ) || value[0] == ' ' || value[0] == '\'' || value[0] == '\"' )
+    {
+        m_userId->SetFocus();
+        return;
+    }
+    event.Skip();
+}
+void SQLAnywhere::OnPasswordKillFocus(wxFocusEvent &event)
+{
+    wxString value = m_password->GetValue();
+    if( value.Contains( ";" ) || value.EndsWith( " " ) || value[0] == ' ' || value[0] == '\'' || value[0] == '\"' )
+    {
+        m_password->SetFocus();
+        return;
+    }
+    event.Skip();
 }
 
 SybaseSQLServer::SybaseSQLServer(wxWizard* parent, bool isSQLServer) : wxWizardPage( parent )
