@@ -1145,11 +1145,11 @@ SQLAnywhere::SQLAnywhere(wxWizard *parent) : wxWizardPage( parent )
     sizer3->Add( m_serverName, 0, wxEXPAND, 0 );
     m_label5 = new wxStaticText( this, wxID_ANY, "Database File Name" );
     sizer3->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_dbName = new wxFilePickerCtrl( this, wxID_ANY, "", "Choose Database File", "*.db" );
+    m_dbName = new wxFilePickerCtrl( this, wxID_ANY, "", _( "Choose Database File" ), "*.db" );
     sizer3->Add( m_dbName, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_extra = new wxButton( this, wxID_ANY, "Additional Parameters" );
+    m_extra = new wxButton( this, wxID_ANY, _( "Additional Parameters" ) );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer1->Add( m_extra, 0, wxEXPAND, 0 );

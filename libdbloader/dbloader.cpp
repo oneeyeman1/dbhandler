@@ -41,6 +41,7 @@
 #include "database_odbc.h"
 #include "database_postgres.h"
 #include "database_mysql.h"
+#include "database_sqlany.h"
 
 struct Profile
 {
@@ -193,6 +194,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
             else if( engine == "mySQL" || engine == "MySQL" )
                 pdb = new MySQLDatabase( osId, desktop.ToStdWstring() );
+            else if( engine == "SQL Anywhere" )
+                pdb = new SQLAnyDatabase( osId, desktop.ToStdWstring() );
             else
             {
                 wxMessageBox( _( "Unknown engine. Please try to reinstall the program!" ) );
