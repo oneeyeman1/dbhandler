@@ -36,6 +36,7 @@
 #include "sqlite3.h"
 #include <libpq-fe.h>
 #include <mysql.h>
+#include <sacapidll.h>
 #include "database.h"
 #include "database_sqlite.h"
 #include "database_odbc.h"
