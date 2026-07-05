@@ -37,6 +37,9 @@ else
 fi
 AC_MSG_NOTICE([Found PostgreSQL version: $POSTGRESQL_VERSION])
 
+MYSQL_VERSION=`mysql --version | awk '{ print $3 }'`
+AC_MSG_NOTICE([Found MySQL version: $MYSQL_VERSION])
+
 AC_PROG_AWK
 AC_PROG_GREP
 
