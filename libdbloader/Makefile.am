@@ -20,7 +20,7 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	--includedir` \
 	`mysql_config \
 	--cflags` \
-	-I$(SQLANYVAR)/sdk/include \
+	-I@SQLANY@/sdk/include \
 	`wx-config \
 	--cxxflags`
 
@@ -31,7 +31,7 @@ libdbloader_la_LDFLAGS = -L../dbinterface \
 	-L../libpostgres \
 	-L../libmysql \
 	-L../libsqlany \
-	-L$(SQLANYVAR)/lib64 \
+	-L@SQLANY@/lib64 \
 	-lsqlite_lib \
 	-lodbc_lib \
 	-lpostgres \
@@ -45,6 +45,6 @@ libdbloader_la_LDFLAGS = -L../dbinterface \
 	-lpq \
 	`mysql_config \
 	--libs` \
-	-llibdbcapi
+	-ldbcapi \
 	`wx-config \
 	--libs`

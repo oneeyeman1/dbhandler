@@ -195,8 +195,8 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             }
             else if( engine == "mySQL" || engine == "MySQL" )
                 pdb = new MySQLDatabase( osId, desktop.ToStdWstring() );
-            else if( engine == "SQL Anywhere" )
-                pdb = new SQLAnyDatabase( osId, desktop.ToStdWstring() );
+//            else if( engine == "SQL Anywhere" )
+//                pdb = new SQLAnyDatabase( osId, desktop.ToStdWstring() );
             else
             {
                 wxMessageBox( _( "Unknown engine. Please try to reinstall the program!" ) );
