@@ -30,7 +30,7 @@ std::mutex Impl::my_mutex;
 
 SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
-#ifdef __WXMSW__
+#ifdef WIN32
     if( !sqlany_initialize_interface( &m_api, NULL ) )
     {
         m_initialized = false;
@@ -40,7 +40,7 @@ SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Da
 #endif
         if( !m_api.sqlany_init( "dbhnadler", SQLANY_API_VERSION_1, &max_ver ) )
         {
-#ifdef __WXMSW__
+#ifdef WIN32
             sqlany_finalize_interface( &m_api );
 #endif
             m_initialized = false;
@@ -54,7 +54,7 @@ SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Da
             connectToDatabase = false;
             m_fieldsInRecordSet = 0;
 		}
-#ifdef __WXMSW__
+#ifdef WIN32
     }
 #endif
 }
@@ -62,7 +62,7 @@ SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Da
 SQLAnyDatabase::~SQLAnyDatabase()
 {
     m_api.sqlany_fini();
-#ifdef __WXMSW__
+#ifdef WIN32
     sqlany_finalize_interface( &m_api );
 #endif
 /*    RETCODE ret;
