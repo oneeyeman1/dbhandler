@@ -13,12 +13,14 @@ libdbloader_la_CXXFLAGS = -I/usr/include \
 	-I../../libodbc \
 	-I../../libpostgres \
 	-I../../libmysql \
+	-I../../libsqlany \
 	`odbc_config \
 	--cflags` \
 	-I`pg_config \
 	--includedir` \
 	`mysql_config \
 	--cflags` \
+	-I$(SQLANYVAR)/sdk/include \
 	`wx-config \
 	--cxxflags`
 

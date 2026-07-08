@@ -15,16 +15,32 @@ AC_PROG_CC
 
 PKG_PROG_PKG_CONFIG
 
-AC_CHECK_PROG([ODBC_CONFIG], [odbc_config], [odbc_config], [no])
+AC_CONFIG_MACRO_DIRS([m4])
 
-AS_IF([test "x$ODBC_CONFIG" != "xno"], [
-    ODBC_CFLAGS=`$ODBC_CONFIG --cflags`
-    ODBC_LIBS=`$ODBC_CONFIG --libs`
-], [
-    PKG_CHECK_MODULES([ODBC], [odbc])
-])
+#AC_CHECK_PROG([ODBC_CONFIG], [odbc_config], [odbc_config], [no])
+#AS_IF([test "x$ODBC_CONFIG" != "xno"], [
+#    ODBC_CFLAGS=`$ODBC_CONFIG --cflags`
+#    ODBC_LIBS=`$ODBC_CONFIG --libs`
+#], [
+#    PKG_CHECK_MODULES([ODBC], [odbc])
+#])
+#ODBC_LIBS="$ODBC_LIBS -lodbcinst"
+#m4_pattern_forbid([^PKG_CHECK_MODULES])dnl
+#PKG_CHECK_MODULES([ODBC],     [odbc])
+#PKG_CHECK_MODULES([ODBCINST], [odbcinst])
 
-ODBC_LIBS="$ODBC_LIBS -lodbcinst"
+AC_CHECK_PROG(ODBC,odbc_config,yes)
+if test x"${ODBC}" == x"yes" ; then
+	ODBC_CFLAGS=`odbc_config --cflags`
+	ODBC_LIBS="`odbc_config --libs` -lodbcinst"
+	AC_MSG_NOTICE(ODBC_CONFIG Variable is $ODBC_CFLAGS)
+	AC_MSG_NOTICE(ODBC_CONFIG Variable is $ODBC_LIBS)
+else
+	ODBC_CFLAGS=`pkg-config odbc --cflags`
+	ODBC_LIBS=`pkg-config odbc  --libs` -lodbcinst
+	AC_MSG_NOTICE(PKG-CONFIG Variable is $ODBC_CFLAGS)
+	AC_MSG_NOTICE(PKG-CONFIG Variable is $ODBC_LIBS)
+fi
 
 AC_SUBST(ODBC_CFLAGS)
 AC_SUBST(ODBC_LIBS)
