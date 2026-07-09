@@ -1,5 +1,5 @@
-#ifndef DBMANAGER_ODBC
-#define DBMANAGER_ODBC
+#ifndef DBMANAGER_SQLANYWHERE
+#define DBMANAGER_SQLANYWHERE
 
 #ifdef WIN32
 class __declspec(dllexport) SQLAnyDatabase : public Database
