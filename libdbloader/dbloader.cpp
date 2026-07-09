@@ -36,6 +36,7 @@
 #include "sqlite3.h"
 #include <libpq-fe.h>
 #include <mysql.h>
+#include <sacapidll.h>
 #include "database.h"
 #include "database_sqlite.h"
 #include "database_odbc.h"
@@ -195,8 +196,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             else if( engine == "mySQL" || engine == "MySQL" )
                 pdb = new MySQLDatabase( osId, desktop.ToStdWstring() );
             else if( engine == "SQL Anywhere" )
-                pdb = new SQLAnyDatabase;
-//                pdb = new SQLAnyDatabase( osId, desktop.ToStdWstring() );
+                pdb = new SQLAnyDatabase( osId, desktop.ToStdWstring() );
             else
             {
                 wxMessageBox( _( "Unknown engine. Please try to reinstall the program!" ) );

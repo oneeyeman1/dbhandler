@@ -45,13 +45,23 @@ fi
 AC_SUBST(ODBC_CFLAGS)
 AC_SUBST(ODBC_LIBS)
 
+AC_PATH_PROG([PG_CONFIG], [pg_config], [no])
+if test "x$PG_CONFIG" = "xno"; then
+    POSTGRESQL_VERSION=`pkg-config --modversion libpq`
+else
+    POSTGRESQL_VERSION=`$PG_CONFIG --version | sed -e 's#PostgreSQL ##'`
+fi
+AC_MSG_NOTICE([Found PostgreSQL version: $POSTGRESQL_VERSION])
+
+MYSQL_VERSION=`mysql --version | awk '{ print $3 }'`
+AC_MSG_NOTICE([Found MySQL version: $MYSQL_VERSION])
+
 AC_PROG_AWK
 AC_PROG_GREP
 
-[SQLANY=$(set | $GREP -E 'SQLANY[0-9]{1,}')]
-[SQLANYVAR=$(echo "$SQLANY" | $AWK -F= '{ print $2 }')]
-
-AC_SUBST(SQLANYVAR)
+[SQLANY=$(set | $GREP -E 'SQLANY[0-9]{1,}' | $AWK -F= '{ print $2}')]
+AC_MSG_NOTICE([SQLANY variable is $SQLANY])
+AC_SUBST([SQLANY])
 
 WXCONFIG=wx-config
 AC_ARG_WITH(wx-config,

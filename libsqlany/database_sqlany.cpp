@@ -30,15 +30,19 @@ std::mutex Impl::my_mutex;
 
 SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
+#ifdef WIN32
     if( !sqlany_initialize_interface( &m_api, NULL ) )
     {
         m_initialized = false;
     }
     else
     {
+#endif
         if( !m_api.sqlany_init( "dbhnadler", SQLANY_API_VERSION_1, &max_ver ) )
         {
+#ifdef WIN32
             sqlany_finalize_interface( &m_api );
+#endif
             m_initialized = false;
         }
         else
@@ -50,13 +54,17 @@ SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Da
             connectToDatabase = false;
             m_fieldsInRecordSet = 0;
 		}
+#ifdef WIN32
     }
+#endif
 }
 
 SQLAnyDatabase::~SQLAnyDatabase()
 {
     m_api.sqlany_fini();
+#ifdef WIN32
     sqlany_finalize_interface( &m_api );
+#endif
 /*    RETCODE ret;
     std::vector<std::wstring> errorMsg;
     delete[] m_connectString;
@@ -322,6 +330,7 @@ int SQLAnyDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
         pimpl.m_type = L"SQL Anywhere";
 		pimpl.m_subtype = L"";
         pimpl.m_pgLogFile = L"";
+        pimpl.m_connectString = selectedDSN;
         if( ( m_stmt = m_api.sqlany_execute_direct( m_conn, "SELECT DB_NAME()" ) ) == nullptr )
         {
             GetErrorMessage( errorMsg );
@@ -354,161 +363,45 @@ int SQLAnyDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             }
         }
     }
+    if( !result )
+    {
+        if( ( m_stmt = m_api.sqlany_execute_direct( m_conn, "SELECT USER_NAME()" ) ) == nullptr )
+        {
+            GetErrorMessage( errorMsg );
+            result = 1;
+		}
+    }
+    if( !result )
+    {
+        a_sqlany_data_value value;
+        while( m_api.sqlany_fetch_next( m_stmt ) )
+        {
+            if( !m_api.sqlany_get_column( m_stmt, 0, &value ) )
+            {
+                GetErrorMessage( errorMsg );
+                result = 1;
+                break;
+            }
+            else
+            {
+                if( value.type == A_STRING )
+                {
+                    pimpl.m_connectedUser = sqlany_pimpl->m_myconv.from_bytes( value.buffer );
+                }
+                else
+                {
+                    errorMsg.push_back( L"Received incorrect data type" );
+                    result = 1;
+                    break;
+                }
+            }
+        }
+    }
+    if( !pimpl.m_dbName.empty() )
+        connectToDatabase = true;
 /*    std::vector<SQLWCHAR *> errorMessage;
                 if( !result )
                 {
-                    str_to_uc_cpy( pimpl.m_connectString, m_connectString );
-                    ret = SQLGetInfo( m_hdbc, SQL_DBMS_NAME, dbType, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
-                    }
-                }
-                if( !result )
-                {
-                    str_to_uc_cpy( pimpl.m_subtype, dbType );
-                    bufferSize = 1024;
-                    ret = SQLGetInfo( m_hdbc, SQL_DRIVER_NAME, driverName, 1024, (SQLSMALLINT *) &bufferSize );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
-                    }
-                }
-                if( !result )
-                {
-                    str_to_uc_cpy( odbc_pimpl->m_driverName, driverName );
-                    bufferSize = 1024;
-                    ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
-                    }
-                    else if( pimpl.m_subtype == L"Oracle" && dbName[0] == '\0' )
-                    {
-                        bufferSize = 1024;
-                        ret = SQLGetInfo( m_hdbc, SQL_SERVER_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, CONN_ERROR );
-                            result = 1;
-                        }
-                    }
-                }
-                if( !result )
-                {
-                    str_to_uc_cpy( pimpl.m_dbName, dbName );
-                    bufferSize = 1024;
-                    ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, CONN_ERROR );
-                        result = 1;
-                    }
-                }
-                if( !result && pimpl.m_subtype == L"Adaptive Server Enterprise" )
-                {
-                    std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[200] );
-                    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-                    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                    {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
-                    }
-                    if( !result )
-                    {
-                        memset( qry.get(), '\0', 200 );
-                        uc_to_str_cpy( qry.get(), L"USE master" );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        memset( qry.get(), '\0', 200 );
-                        uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'allow nulls by default', 'true'" );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        memset( qry.get(), '\0', 200 );
-                        std::wstring temp = L"sp_dboption ";
-                        temp += pimpl.m_dbName;
-                        temp += L", 'allow nulls by default', 'true'";
-                        uc_to_str_cpy( qry.get(), temp );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        memset(  qry.get(), '\0', 200 );
-                        uc_to_str_cpy( qry.get(), L"sp_dboption tempdb, 'ddl in tran', 'true'" );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        memset(  qry.get(), '\0', 200 );
-                        std::wstring temp = L"sp_dboption ";
-                        temp += pimpl.m_dbName;
-                        temp += L", 'ddl in tran', 'true'";
-                        uc_to_str_cpy( qry.get(), temp );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        memset( qry.get(), '\0', 200 );
-                        std::wstring temp = L"USE " + pimpl.m_dbName;
-                        uc_to_str_cpy( qry.get(), temp );
-                        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                    if( !result )
-                    {
-                        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR );
-                            result = 1;
-                        }
-                    }
-                }
-                if( !result )
-                    str_to_uc_cpy( pimpl.m_connectedUser, userName );
-                if( pimpl.m_subtype == L"ACCESS" )
-                {
-                    pimpl.m_dbName = pimpl.m_dbName.substr( pimpl.m_dbName.find_last_of( L'\\' ) + 1 );
-                    pimpl.m_dbName = pimpl.m_dbName.substr( 0, pimpl.m_dbName.find( L'.' ) );
-                }
-                if( !pimpl.m_dbName.empty() )
-                    connectToDatabase = true;
                 if( !result && GetServerVersion( errorMsg ) )
                 {
                     result = 1;

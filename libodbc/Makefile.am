@@ -11,10 +11,10 @@ libodbc_lib_la_SOURCES =  \
 libodbc_lib_la_CXXFLAGS = -I../../dbinterface \
 	-DUNICODE \
 	-DUNIXODBC \
-	$(ODBC_CFLAGS) \
+	@ODBC_CFLAGS@ \
 	@DBTOOLKIT@
 
 libodbc_lib_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \
-	$(ODBC_LIBS) \
-	-lodbcinst
+	@ODBC_LIBS@
+

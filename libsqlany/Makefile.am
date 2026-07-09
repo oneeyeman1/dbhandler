@@ -9,7 +9,7 @@ libsqlany_la_SOURCES =  \
 	database_sqlany.h
 
 libsqlany_la_CXXFLAGS = -I../../dbinterface \
-	-I$(SQLANYVAR)/sdk/include
+	-I@SQLANY@/sdk/include
 
 libsqlany_lib_la_LDFLAGS =
-	-L$(SQLANYVAR)/lib64 -llibdbcapi
+	-L@SQLANY@/lib64 -ldbcapi
