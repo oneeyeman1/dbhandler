@@ -48,13 +48,25 @@ AC_SUBST(ODBC_LIBS)
 AC_PATH_PROG([PG_CONFIG], [pg_config], [no])
 if test "x$PG_CONFIG" = "xno"; then
     POSTGRESQL_VERSION=`pkg-config --modversion libpq`
+    POSTGRES_CXXFLAGS=`pkg-config --cflags libpq`
+    POSTGRES_LIBS=`pkg-config --libs libpq`
 else
     POSTGRESQL_VERSION=`$PG_CONFIG --version | sed -e 's#PostgreSQL ##'`
+    POSTGRES_CXXFLAGS="-I`$PG_CONFIG --includedir`"
+    POSTGRES_LIBS="-L`$PG_CONFIG --libdir` -lpq"
 fi
 AC_MSG_NOTICE([Found PostgreSQL version: $POSTGRESQL_VERSION])
 
+AC_SUBST(POSTGRES_CXXFLAGS)
+AC_SUBST(POSTGRES_LIBS)
+
 MYSQL_VERSION=`mysql --version | awk '{ print $3 }'`
 AC_MSG_NOTICE([Found MySQL version: $MYSQL_VERSION])
+MYSQL_CXXFLAGS=`mysql_config --cflags`
+MYSQL_LIBS=`mysql_config --libs`
+
+AC_SUBST(MYSQL_CXXFLAGS)
+AC_SUBST(MYSQL_LIBS)
 
 AC_PROG_AWK
 AC_PROG_GREP

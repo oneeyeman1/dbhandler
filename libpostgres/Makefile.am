@@ -11,11 +11,9 @@ libpostgres_la_SOURCES =  \
 
 libpostgres_la_CXXFLAGS = @DBTOOLKIT@ \
 	-I../../dbinterface \
-	-I`pg_config \
-	--includedir` 
+	@POSTGRES_CXXFLAGS@
 
 libpostgres_la_LDFLAGS = -L../dbinterface \
 	-ldbinterface \
-	-L`pg_config \
-	--libdir` \
-	-lpq 
+	@POSTGRES_LIBS@
+
