@@ -1838,8 +1838,8 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '0', '0', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00', '0.00', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0.00');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '#.##0', '#.##0', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '#.##0,00', '#.##0,00', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0.00');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[$#.##0]');');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '#.##0,00', '#.##0,00', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0,00');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[$#.##0]');;" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[RED][$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[RED][$#.##0]')");
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[$#.##0,00]');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[RED][$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[RED][$#.##0,00]');" );
@@ -1859,11 +1859,11 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm/dd/yyyy', 'mm/dd/yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'mm/dd/yyyy');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT 'salary', '$###,##0.00', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'salary');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'mm-dd-yyyy');" );
-            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
-            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
-            queries2.push_back( L"INSERT INTO abcatvld SELECT 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
-            queries2.push_back( L"INSERT INTO abcatvld SELECT 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
+            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = 'Multiple_of_100');" );
+            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = 'Positive_number');");
+            queries2.push_back( L"INSERT INTO abcatvld SELECT 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = 'Y_or_N');");
+            queries2.push_back( L"INSERT INTO abcatvld SELECT 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = 'must_be_number');");
+            queries2.push_back( L"INSERT INTO abcatvld SELECT 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = 'valid status');");
         }
     }
     if( pimpl.m_subtype == L"Oracle" )
@@ -3325,9 +3325,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             statement = 0;
         }
     }
-    for( int i = 0; i < 5; i++ )
+    if( pimpl.m_subtype != L"Sybase SQL Anywhere" )
     {
-        if( pimpl.m_subtype != L"Sybase SQL Anywhere" )
+        for( int i = 0; i < 5; i++ )
         {
             free( catalog[i].TargetValuePtr );
             catalog[i].TargetValuePtr = nullptr;
