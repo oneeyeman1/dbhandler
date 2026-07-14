@@ -81,7 +81,7 @@ int SQLAnyDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg)
     int  rc;
     rc = m_api.sqlany_error( m_conn, buffer, sizeof( buffer ) );
     m_api.sqlany_sqlstate( m_conn, sqlstate, sizeof( sqlstate ) );
-    strcat( buffer, "SQLSTATE: " );
+    strcat( buffer, ": SQLSTATE: " );
     strcat( buffer, sqlstate );
     errorMsg.push_back( sqlany_pimpl->m_myconv.from_bytes( buffer ) );
     return true;
