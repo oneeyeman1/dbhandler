@@ -1185,7 +1185,7 @@ void SQLAnywhere::OnUserIDKillFocus(wxFocusEvent &event)
 void SQLAnywhere::OnPasswordKillFocus(wxFocusEvent &event)
 {
     wxString value = m_password->GetValue();
-    if( value.Contains( ";" ) || value.EndsWith( " " ) || value[0] == ' ' || value[0] == '\'' || value[0] == '\"' )
+    if( !value.IsEmpty() && ( value.Contains( ";" ) || value.EndsWith( " " ) || value[0] == ' ' || value[0] == '\'' || value[0] == '\"' ) )
     {
         m_password->SetFocus();
         return;
