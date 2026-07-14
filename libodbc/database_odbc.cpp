@@ -1839,26 +1839,26 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00', '0.00', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0.00');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '#.##0', '#.##0', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0');" );
             queries2.push_back( L"INSERT INTO abcatfmt SELECT '#.##0,00', '#.##0,00', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '#.##0.00');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0[$#.##0]');');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[RED][$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '')");
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[RED][$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0%', '0%', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00%', '0.00%', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00E+00', '0.00E+00', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'm/d/yy', 'm/d/yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'd-mmm-yy', 'd-mmm-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'd-mmm', 'd-mmm', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mmm-yy', 'mmm-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm AM/PM', 'h:mm AM/PM', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm:ss AM/PM', 'h:mm:ss AM/PM', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm:ss', 'h:mm:ss', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'Phone_format', '(@@@)) @@@-@@@@', 80, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'm-d-yy', 'm-d-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'soc_sec_number', '@@@-@@-@@@@', 80, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm/dd/yyyy', 'mm/dd/yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'salary', '$###,##0.00', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
-            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[$#.##0]', '$#.##0;[$#.##0]', 81, 0  FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[$#.##0]');');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0;[RED][$#.##0]', '$#.##0;|RED|[$#.##0]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0;[RED][$#.##0]')");
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[$#.##0,00]', '$#.##0,00;[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[$#.##0,00]');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '$#.##0,00;[RED][$#.##0,00]', '$#.##0,00;|RED|[$#.##0,00]', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '$#.##0,00;[RED][$#.##0,00]');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0%', '0%', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0%');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00%', '0.00%', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0.00%');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT '0.00E+00', '0.00E+00', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = '0.00E+00');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'm/d/yy', 'm/d/yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'm/d/yy');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'd-mmm-yy', 'd-mmm-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'd-mmm-yy');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'd-mmm', 'd-mmm', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'd-mmm');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mmm-yy', 'mmm-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'mmm-yy');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm AM/PM', 'h:mm AM/PM', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'h:mm AM/PM');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm:ss AM/PM', 'h:mm:ss AM/PM', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'h:mm:ss AM/PM');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'h:mm:ss', 'h:mm:ss', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'h:mm:ss');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'Phone_format', '(@@@)) @@@-@@@@', 80, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'Phone_format');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'm-d-yy', 'm-d-yy', 84, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'm-d-yy');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'soc_sec_number', '@@@-@@-@@@@', 80, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'soc_sec_number');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm/dd/yyyy', 'mm/dd/yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'mm/dd/yyyy');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'salary', '$###,##0.00', 81, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'salary');" );
+            queries2.push_back( L"INSERT INTO abcatfmt SELECT 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatfmt WHERE abf_name = 'mm-dd-yyyy');" );
             queries2.push_back( L"INSERT INTO abcatvld SELECT 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');" );
             queries2.push_back( L"INSERT INTO abcatvld SELECT 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
             queries2.push_back( L"INSERT INTO abcatvld SELECT 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' FROM dummy WHERE NOT EXISTS(SELECT 1 FROM abcatvld WHERE abv_name = '');");
@@ -6302,11 +6302,14 @@ int ODBCDatabase::GetServerVersion(std::vector<std::wstring> &errorMsg)
 				}
                 if( !result )
                 {
-                    retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
-                    if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                    if( pimpl.m_subtype != L"Sybase SQL Anywhere" && pimpl.m_subtype != L"SQL Anywhere" && pimpl.m_subtype != L"Oracle" )
                     {
-                        GetErrorMessage( errorMsg, STMT_ERROR );
-                        result = 1;
+                        retcode = SQLBindCol( m_hstmt, 3, SQL_C_SLONG, &versionMinor, 0, 0 );
+                        if( retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO )
+                        {
+                            GetErrorMessage( errorMsg, STMT_ERROR );
+                            result = 1;
+                        }
                     }
 				}
 			}
