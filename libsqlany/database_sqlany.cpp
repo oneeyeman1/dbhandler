@@ -1375,307 +1375,157 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         break;
                     }
                 }
-            }
-        }
-    }
-/*
-        if( !result )
-        {
-            for( std::map<std::wstring, std::vector<TableDefinition> >::iterator it = pimpl.m_tableDefinitions.begin(); it != pimpl.m_tableDefinitions.end(); ++it )
-            {
-                for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
+                if( !m_api.sqlany_describe_bind_param( m_stmt, 2, &param ) )
                 {
-                    auto len = (*it1).schemaName.length() + 2 + (*it1).tableName.length() + 2;
-                    auto tableNameLen = (*it1).tableName.length() + 2;
-                    auto schemaNameLen = (*it1).schemaName.length() + 2;
-                    std::unique_ptr<SQLWCHAR[]> tableName( new SQLWCHAR[tableNameLen] );
-                    std::unique_ptr<SQLWCHAR[]> schemaName( new SQLWCHAR[schemaNameLen] );
-                    std::unique_ptr<SQLWCHAR[]> fullName( new SQLWCHAR[len] );
-                    memset( fullName.get(), '\0', len );
-                    memset( tableName.get(), '\0', tableNameLen );
-                    memset( schemaName.get(), '\0', schemaNameLen );
-                    uc_to_str_cpy( tableName.get(), (*it1).tableName );
-                    uc_to_str_cpy( schemaName.get(), (*it1).schemaName );
-                    if( (*it1).schemaName.empty() && !cat.empty() )
-                    {
-                        schema = cat;
-                        copy_uc_to_uc( fullName.get(), catalogName );
-                        uc_to_str_cpy( fullName.get(), L"." );
-                        uc_to_str_cpy( fullName.get(), (*it1).tableName );
-                    }
-                    else
-                    {
-                        uc_to_str_cpy( fullName.get(), (*it1).schemaName );
-                        uc_to_str_cpy( fullName.get(), L"." );
-                        uc_to_str_cpy( fullName.get(), (*it1).tableName );
-                    }
-                    if( !result )
-                    {
-                        ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, m_valueType, m_paramType, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if( !result )
-                    {
-                        if( pimpl.m_subtype != L"Oracle" )
-                        {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, m_valueType, m_paramType, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                    }
-                    if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
-                    {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[4] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, len, 0, fullName.get(), 0, &cbParam[4] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[5] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 8, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                            }
-                        }
-                    }
-                    if( pimpl.m_subtype == L"MySQL" )
-                    {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                    }
-                    if( pimpl.m_subtype == L"PostgreSQL" )
-                    {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableNameLen, 0, tableName.get(), 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                    }
-                    if( pimpl.m_subtype == L"SQL Anywhere" || L"Sybase SQL Anywhere" )
-                    {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 5, SQL_PARAM_INPUT, m_valueType, m_paramType, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 6, SQL_PARAM_INPUT, m_valueType, m_paramType, 128, 0, fullName.get(), ( len + 1 ) * sizeof( SQLWCHAR ), &cbParam[1] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, m_valueType, m_paramType, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 8, SQL_PARAM_INPUT, SQL_C_TINYINT, SQL_TINYINT, 0, 0, &osid, 0, &cbParam[2] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                            }
-                        }
-                    }
-					if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
-                    {
-                        if( !result )
-                        {
-                            ret = SQLBindParameter( statement, 7, SQL_PARAM_INPUT, m_valueType, m_paramType, schemaNameLen, 0, schemaName.get(), 0, &cbParam[3] );
-                            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                            {
-                                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                                result = 1;
-                                break;
-                            }
-                        }
-                    }
-                    if( !result )
-                    {
-                        ret = SQLExecute( statement );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                            result = 1;
-                            break;
-                        }
-                    }
-                    if( !result && ( pimpl.m_subtype == L"Sybase SQL Anywhere" && pimpl.m_versionMajor <= 9 ) )
-                    {
-                        ret = SQLCloseCursor( statement );
-                        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-                        {
-                            GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                            result = 1;
-                            break;
-                        }
-                    }
-                }
-            }
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                result = 1;
-            }
-            if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
-            {
-                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
-                memset( qry1.get(), '\0', 30 );
-                uc_to_str_cpy( qry1.get(), L"SET NOCOUNT OFF" );
-                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-                {
-                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                    GetErrorMessage( errorMsg );
                     result = 1;
+                    break;
                 }
-            }
-            if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
-            {
-                std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[50] );
-                memset( qry1.get(), '\0', 50 );
-                uc_to_str_cpy( qry1.get(), L"SET TRANSACTION ISOLATION LEVEL READ COMMITTED" );
-                ret = SQLExecDirect( statement, qry1.get(), SQL_NTS );
-                if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+                if( !result )
                 {
-                    GetErrorMessage( errorMsg, STMT_ERROR, statement );
+                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                    param.value.length = &len;
+                    param.value.type = A_STRING;
+                    param.value.is_null = &isNull;
+                    if( !m_api.sqlany_bind_param( m_stmt, 2, &param ) )
+                    {
+                        GetErrorMessage( errorMsg );
+                        result = 1;
+                        break;
+                    }
+                }
+                if( !m_api.sqlany_describe_bind_param( m_stmt, 3, &param ) )
+                {
+                    GetErrorMessage( errorMsg );
                     result = 1;
+                    break;
+                }
+                if( !result )
+                {
+                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).tableName.c_str() ).c_str() );
+                    param.value.length = &len;
+                    param.value.type = A_STRING;
+                    param.value.is_null = &isNull;
+                    if( !m_api.sqlany_bind_param( m_stmt, 3, &param ) )
+                    {
+                        GetErrorMessage( errorMsg );
+                        result = 1;
+                        break;
+                    }
+                }
+                if( !m_api.sqlany_describe_bind_param( m_stmt, 4, &param ) )
+                {
+                    GetErrorMessage( errorMsg );
+                    result = 1;
+                    break;
+                }
+                if( !result )
+                {
+                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                    param.value.length = &len;
+                    param.value.type = A_STRING;
+                    param.value.is_null = &isNull;
+                    if( !m_api.sqlany_bind_param( m_stmt, 4, &param ) )
+                    {
+                        GetErrorMessage( errorMsg );
+                        result = 1;
+                        break;
+                    }
+                }
+                if( pimpl.m_versionMajor < 9 )
+                {
+                    if( !result )
+                    {
+                        if( !m_api.sqlany_describe_bind_param( m_stmt, 5, &param ) )
+                        {
+                            GetErrorMessage( errorMsg );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
+                        param.value.length = &len;
+                        param.value.type = A_STRING;
+                        param.value.is_null = &isNull;
+                        if( !m_api.sqlany_bind_param( m_stmt, 5, &param ) )
+                        {
+                            GetErrorMessage( errorMsg );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !m_api.sqlany_describe_bind_param( m_stmt, 6, &param ) )
+                    {
+                        GetErrorMessage( errorMsg );
+                        result = 1;
+                        break;
+                    }
+                    if( !result )
+                    {
+                        param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                        param.value.length = &len;
+                        param.value.type = A_STRING;
+                        param.value.is_null = &isNull;
+                        if( !m_api.sqlany_bind_param( m_stmt, 6, &param ) )
+                        {
+                            GetErrorMessage( errorMsg );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        if( !m_api.sqlany_describe_bind_param( m_stmt, 7, &param ) )
+                        {
+                            GetErrorMessage( errorMsg );
+                            result = 1;
+                            break;
+                        }
+                    }
+                    if( !result )
+                    {
+                        param.value.buffer = (char *) &osid;
+                        param.value.is_null = nullptr;
+                        param.value.type = A_UVAL32;
+                        if( !m_api.sqlany_bind_param( m_stmt, 7, &param ) )
+                        {
+                            GetErrorMessage( errorMsg );
+                            result = 1;
+                            break;
+                        }
+                    }
+                }
+                if( !result )
+                {
+                    if( !m_api.sqlany_execute( m_stmt ) )
+                    {
+                        GetErrorMessage( errorMsg );
+                        result = 1;
+                        break;
+                    }
                 }
             }
-            if( !result )
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-            else
-                ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, statement );
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR, statement );
-                result = 1;
-            }
-            statement = 0;
         }
     }
-    for( int i = 0; i < 5; i++ )
-    {
-        if( pimpl.m_subtype != L"Sybase SQL Anywhere" )
-        {
-            free( catalog[i].TargetValuePtr );
-            catalog[i].TargetValuePtr = nullptr;
-        }
-    }
-    free( catalog );
-    catalog = nullptr;
     if( !result )
-        m_numOfTables = count;*/
+    {
+        m_numOfTables = count;
+        if( !m_api.sqlany_execute_immediate( m_conn, "COMMIT" ) )
+        {
+            GetErrorMessage( errorMsg );
+            result = 1;
+        }
+    }
+    else
+    {
+        if( !m_api.sqlany_execute_immediate( m_conn, "ROLLBACK" ) )
+        {
+            GetErrorMessage( errorMsg );
+            result = 1;
+        }
+    }
     return result;
 }
 
