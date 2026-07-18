@@ -30,19 +30,15 @@ std::mutex Impl::my_mutex;
 
 SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Database( osId, desktop )
 {
-#ifdef WIN32
     if( !sqlany_initialize_interface( &m_api, NULL ) )
     {
         m_initialized = false;
     }
     else
     {
-#endif
         if( !m_api.sqlany_init( "dbhnadler", SQLANY_API_VERSION_1, &max_ver ) )
         {
-#ifdef WIN32
             sqlany_finalize_interface( &m_api );
-#endif
             m_initialized = false;
         }
         else
@@ -54,17 +50,13 @@ SQLAnyDatabase::SQLAnyDatabase(const int osId, const std::wstring &desktop) : Da
             connectToDatabase = false;
             m_fieldsInRecordSet = 0;
 		}
-#ifdef WIN32
     }
-#endif
 }
 
 SQLAnyDatabase::~SQLAnyDatabase()
 {
     m_api.sqlany_fini();
-#ifdef WIN32
     sqlany_finalize_interface( &m_api );
-#endif
 /*    RETCODE ret;
     std::vector<std::wstring> errorMsg;
     delete[] m_connectString;
