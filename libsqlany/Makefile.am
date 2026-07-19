@@ -12,6 +12,7 @@ libsqlany_la_SOURCES =  \
 	sacapi.h
 
 libsqlany_la_CXXFLAGS = -I../../dbinterface \
+	-DUNICODE \
 	-I@SQLANY@/sdk/include
 
 libsqlany_la_LDFLAGS =
