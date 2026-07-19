@@ -108,7 +108,10 @@ void DatabaseType::OnButtonUpdateUI(wxUpdateUIEvent &event)
     else if( GetCurrentPage() == page8 )
     {
         auto page = dynamic_cast<SQLAnywhere *>( page8 );
-        if( !page->GetPasswordCtrl()->IsEmpty() && ( !page->GetDatabaseServerCtrl()->IsEmpty() || !page->GetDatabaseNameCtrl()->GetPath().IsEmpty() ) )
+        if( !page->GetPasswordCtrl()->IsEmpty() &&
+          ( !page->GetDatabaseServerCtrl()->IsEmpty() ||
+            !page->GetDatabaseFileNameCtrl()->GetPath().IsEmpty() ||
+            !page->GetDBNameCtrl()->GetValue().IsEmpty() ) )
             event.Enable( true );
         else
             event.Enable( false );
@@ -256,11 +259,20 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         value = page8->GetPasswordCtrl()->GetValue();
         m_connStr += "PWD=" + value + ";";
         value1 = page8->GetDatabaseServerCtrl()->GetValue();
-        value2 = page8->GetDatabaseNameCtrl()->GetPath();
-        if( value2.IsEmpty() )
-            m_connStr += "DBN=" + value1 + ";";
-        else
+        value2 = page8->GetDatabaseFileNameCtrl()->GetPath();
+        wxString value3 = page8->GetDBNameCtrl()->GetValue();
+        if( value2.IsEmpty() && value3.IsEmpty() )
+            m_connStr += "Server=" + value1 + ";";
+        else if( value1.IsEmpty() && value3.IsEmpty() )
             m_connStr += "DBF=" + value2 + ";";
+        else if( value1.IsEmpty() && value2.IsEmpty() )
+            m_connStr += "DBN=" + value3 + ";";
+        else if( value1.IsEmpty() )
+            m_connStr += "DBF=" + value2 + ";DBN=" + value3 + ";";
+        else if( value2.IsEmpty() )
+            m_connStr += "Server=" + value1 + ";DBN=" + value3 + ";";
+        else if( value3.IsEmpty() )
+            m_connStr += "Server=" + value1 + ";DBF=" + value2 + ";";
     }
 }
 
@@ -1119,7 +1131,7 @@ SQLAnywhere::SQLAnywhere(wxWizard *parent) : wxWizardPage( parent )
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer3 = new wxFlexGridSizer( 6, 2, 5, 5 );
+    auto sizer3 = new wxFlexGridSizer( 7, 2, 5, 5 );
     m_label1 = new wxStaticText( this, wxID_ANY, "Host" );
     sizer3->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_host = new wxTextCtrl( this, wxID_ANY, "localhost" );
@@ -1143,10 +1155,14 @@ SQLAnywhere::SQLAnywhere(wxWizard *parent) : wxWizardPage( parent )
     sizer3->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_serverName = new wxTextCtrl( this, wxID_ANY, "" );
     sizer3->Add( m_serverName, 0, wxEXPAND, 0 );
+    m_label7 = new wxStaticText( this, wxID_ANY, "Database Name" );
+    sizer3->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_dbName = new wxTextCtrl( this, wxID_ANY, "" );
+    sizer3->Add( m_dbName, 0, wxEXPAND, 0 );
     m_label5 = new wxStaticText( this, wxID_ANY, "Database File Name" );
     sizer3->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_dbName = new wxFilePickerCtrl( this, wxID_ANY, "", _( "Choose Database File" ), "*.db" );
-    sizer3->Add( m_dbName, 0, wxEXPAND, 0 );
+    m_dbFileName = new wxFilePickerCtrl( this, wxID_ANY, "", _( "Choose Database File" ), "*.db" );
+    sizer3->Add( m_dbFileName, 0, wxEXPAND, 0 );
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_extra = new wxButton( this, wxID_ANY, _( "Additional Parameters" ) );

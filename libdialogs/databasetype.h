@@ -195,7 +195,8 @@ public:
     wxTextCtrl *GetUserCtrl() const { return m_userId; }
     wxTextCtrl *GetPasswordCtrl() const { return m_password; }
     wxTextCtrl *GetDatabaseServerCtrl() const { return m_serverName; }
-    wxFilePickerCtrl *GetDatabaseNameCtrl() const { return m_dbName; }
+    wxFilePickerCtrl *GetDatabaseFileNameCtrl() const { return m_dbFileName; }
+    wxTextCtrl *GetDBNameCtrl() const { return m_dbName; }
 protected:
     void OnExtra(wxCommandEvent &event);
     void OnUserIDKillFocus(wxFocusEvent &event);
@@ -210,9 +211,11 @@ private:
     wxStaticText *m_label4 = nullptr;
     wxTextCtrl *m_password = nullptr;
     wxStaticText *m_label5 = nullptr;
-    wxFilePickerCtrl *m_dbName = nullptr;
+    wxFilePickerCtrl *m_dbFileName = nullptr;
     wxStaticText *m_label6 = nullptr;
     wxTextCtrl *m_serverName = nullptr;
+    wxStaticText *m_label7 = nullptr;
+    wxTextCtrl *m_dbName = nullptr;
     wxButton *m_extra = nullptr;
     unsigned long m_value;
 };
