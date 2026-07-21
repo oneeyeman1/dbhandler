@@ -1347,7 +1347,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
             for( std::vector<TableDefinition>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end(); ++it1 )
             {
                 sacapi_bool isNull;
-                size_t len;
+                size_t len1, len2, len3, len4, len5, len6;
                 if( !m_api.sqlany_describe_bind_param( m_stmt, 1, &param ) )
                 {
                     GetErrorMessage( errorMsg );
@@ -1356,9 +1356,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
+                    len1 = (*it1).fullName.length();
                     param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
-                    param.value.length = &len;
-                    param.value.type = A_STRING;
+                    param.value.length = &len1;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 1, &param ) )
                     {
@@ -1375,9 +1375,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
+                    len2 = (*it1).schemaName.length();
                     param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
-                    param.value.length = &len;
-                    param.value.type = A_STRING;
+                    param.value.length = &len2;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 2, &param ) )
                     {
@@ -1394,9 +1394,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
+                    len3 = (*it1).tableName.length();
                     param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).tableName.c_str() ).c_str() );
-                    param.value.length = &len;
-                    param.value.type = A_STRING;
+                    param.value.length = &len3;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 3, &param ) )
                     {
@@ -1413,9 +1413,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
+                    len4 = (*it1).schemaName.length();
                     param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
-                    param.value.length = &len;
-                    param.value.type = A_STRING;
+                    param.value.length = &len4;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 4, &param ) )
                     {
@@ -1437,9 +1437,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
+                        len5 = (*it1).fullName.length();
                         param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
-                        param.value.length = &len;
-                        param.value.type = A_STRING;
+                        param.value.length = &len5;
                         param.value.is_null = &isNull;
                         if( !m_api.sqlany_bind_param( m_stmt, 5, &param ) )
                         {
@@ -1456,8 +1456,9 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     }
                     if( !result )
                     {
+                        len6 = (*it1).schemaName.length();
                         param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
-                        param.value.length = &len;
+                        param.value.length = &len6;
                         param.value.type = A_STRING;
                         param.value.is_null = &isNull;
                         if( !m_api.sqlany_bind_param( m_stmt, 6, &param ) )
