@@ -262,17 +262,17 @@ void DatabaseType::OnConnect(wxWizardEvent &WXUNUSED(event))
         value2 = page8->GetDatabaseFileNameCtrl()->GetPath();
         wxString value3 = page8->GetDBNameCtrl()->GetValue();
         if( value2.IsEmpty() && value3.IsEmpty() )
-            m_connStr += "Server=" + value1 + ";";
+            m_connStr += "Server=" + value1;
         else if( value1.IsEmpty() && value3.IsEmpty() )
-            m_connStr += "DBF=" + value2 + ";";
+            m_connStr += "DBF=" + value2;
         else if( value1.IsEmpty() && value2.IsEmpty() )
-            m_connStr += "DBN=" + value3 + ";";
+            m_connStr += "DBN=" + value3;
         else if( value1.IsEmpty() )
-            m_connStr += "DBF=" + value2 + ";DBN=" + value3 + ";";
+            m_connStr += "DBF=" + value2 + ";DBN=" + value3;
         else if( value2.IsEmpty() )
-            m_connStr += "Server=" + value1 + ";DBN=" + value3 + ";";
+            m_connStr += "Server=" + value1 + ";DBN=" + value3;
         else if( value3.IsEmpty() )
-            m_connStr += "Server=" + value1 + ";DBF=" + value2 + ";";
+            m_connStr += "Server=" + value1 + ";DBF=" + value2;
     }
 }
 
