@@ -62,7 +62,10 @@ libdialogs_la_SOURCES =  \
 	createdatabase.cpp \
 	createdatabase.h \
 	sqlserveraddfilespec.cpp \
-	sqlserveraddfilespec.h
+	sqlserveraddfilespec.h \m
+	mysqlodbcsetup.cpp \
+	mysqlodbcsetup.h
+	
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \
