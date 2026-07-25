@@ -19,7 +19,10 @@
 #include "logomysql.h"
 #endif
 
-mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : wxDialog( parent, wxID_ANY, "" )
+#include "wx/statline.h"
+#include "mysqlodbcsetup.h"
+
+mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : wxDialog( parent, wxID_ANY, "" )
 {
     SetTitle( "MySQL ODBC Data Source Configuration" );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
@@ -31,15 +34,15 @@ mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : w
     sizer2->Add( sizer3, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
 #if defined( __WXGTK__ ) || defined( __WXQT__ )
-    m_logo = new wxStaticBitmap( m_panel, wxID_ANY, wxBitmapBundle::FromSVG() );
+    m_logo = new wxStaticBitmap( m_panel, wxID_ANY, wxBitmapBundle::FromSVG( logomysql, wxSize( 16, 16 ) ) );
 #else
-    m_logo = new wxStaticBitmap( m_panel, wxID_ANY, wxBitmapBundle::FromSVGResource() );
+    m_logo = new wxStaticBitmap( m_panel, wxID_ANY, wxBitmapBundle::FromSVGResource( "logomysql", wxSize( 16, 16 ) ) );
 #endif
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer2 );
     SetSizer( sizer );
-    sizer->Fit();
+    sizer->Fit( this );
     Layout();
 }
 
