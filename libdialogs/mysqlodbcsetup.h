@@ -12,5 +12,6 @@ private:
     wxTextCtrl *m_name, *m_desc, *m_serverName, *m_port, *m_pipeName, *m_user, *m_password, *m_dbName;
     wxRadioButton *m_network, *m_pipe;
     wxButton *m_test;
+    wxCollapsiblePane *m_details;
 };
 

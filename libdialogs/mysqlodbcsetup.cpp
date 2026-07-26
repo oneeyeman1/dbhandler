@@ -20,6 +20,7 @@
 #endif
 
 #include "wx/statline.h"
+#include "wx/collpane.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : wxDialog( parent, wxID_ANY, "" )
@@ -89,6 +90,14 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
     m_test = new wxButton( m_panel, wxID_ANY, _( "Test" ) );
     sizer6->Add( m_test, 0, wxEXPAND, 0 );
+    auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
+    sizer3->Add( sizer7, 0, wxEXPAND, 0 );
+    m_details = new wxCollapsiblePane( m_panel, wxID_ANY, "Details" );
+    sizer7->Add( m_details, 0, wxEXPAND, 0 );
+    m_details->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
+    auto win = m_details->GetPane();
+    auto buttons = CreateStdDialogButtonSizer();
+    sizer7->Add( buttons, 0, wxRIGHT, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
     m_panel->SetSizer( sizer2 );
