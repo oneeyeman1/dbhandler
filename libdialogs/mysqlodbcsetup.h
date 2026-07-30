@@ -13,5 +13,6 @@ private:
     wxRadioButton *m_network, *m_pipe;
     wxButton *m_test;
     wxCollapsiblePane *m_details;
+    wxNotebook *m_detailsOptions;
 };
 
