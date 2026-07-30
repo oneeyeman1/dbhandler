@@ -96,7 +96,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     sizer7->Add( m_details, 0, wxEXPAND, 0 );
     m_details->Bind( wxEVT_COLLAPSIBLEPANE_CHANGED, [this](wxCollapsiblePaneEvent &) { Layout(); } );
     auto win = m_details->GetPane();
-    auto buttons = CreateStdDialogButtonSizer();
+	auto buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
     sizer7->Add( buttons, 0, wxRIGHT, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
