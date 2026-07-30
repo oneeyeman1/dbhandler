@@ -410,10 +410,16 @@ typedef struct SQLAnywhereInterface {
  * \param optional_path_to_dll An optional argument that specifies a path to the SQL Anywhere C API DLL.
  * \return 1 on successful initialization, and 0 on failure.
  */
+#if defined( __cplusplus )
+extern "C" {
+#endif
 #ifdef _UNICODE
 int sqlany_initialize_interface( SQLAnywhereInterface * api, LPCWSTR optional_path_to_dll );
 #else
 int sqlany_initialize_interface( SQLAnywhereInterface * api, const char * optional_path_to_dll );
+#endif
+#if defined( __cplusplus )
+}
 #endif
 /** Unloads the C API DLL library and resets the SQLAnywhereInterface structure.
  *
@@ -432,6 +438,12 @@ int sqlany_initialize_interface( SQLAnywhereInterface * api, const char * option
  * \param api An initialized structure to finalize.
  */
 
+#if defined( __cplusplus )
+extern "C" {
+#endif
 void sqlany_finalize_interface( SQLAnywhereInterface * api );
+#if defined( __cplusplus )
+}
+#endif
 
 #endif 
