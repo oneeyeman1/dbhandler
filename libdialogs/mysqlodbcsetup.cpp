@@ -91,6 +91,8 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     sizer7->Add( m_dbName, 1, wxEXPAND, 0 );
     sizer7->Add( 5, 5, 0, wxEXPAND, 0 );
     m_test = new wxButton( sizer4->GetStaticBox(), wxID_ANY, _( "Test" ) );
+    m_test->Disable();
+    m_test->Bind( wxEVT_UPDATE_UI, &mySQLODBCSetupDialog::OnTestUpdateUI, this );
     sizer7->Add( m_test, 0, wxEXPAND, 0 );
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
     auto page1 = new MySQLODBCSetupConnection( m_detailsOptions );
@@ -101,6 +103,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     auto sizer8 = new wxBoxSizer( wxHORIZONTAL );
     sizer3->Add( sizer8, 0, wxEXPAND, 0 );
     m_details = new wxButton( this, 0, _( "Details >>" ) );
+    m_details->Bind( wxEVT_BUTTON, &mySQLODBCSetupDialog::OnDetails, this );
     sizer8->Add( m_details, 0, wxEXPAND, 0 );
     sizer8->AddStretchSpacer();
     auto *buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
@@ -112,3 +115,26 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     Layout();
 }
 
+void mySQLODBCSetupDialog::OnTestUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_name->GetValue().Length() > 0 )
+        event.Enable( true );
+    else
+        event.Enable( false );
+}
+
+void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
+{
+    if( !m_detailsShown )
+	{
+        m_detailsOptions->Show();
+        m_details->SetLabel( _( "Details <<" ) );
+    }
+    else
+    {
+        m_detailsOptions->Hide();
+        m_details->SetLabel( _( "Details >>" ) );
+    }
+    Layout();
+    m_detailsShown = !m_detailsShown;
+}

@@ -4,6 +4,9 @@ class mySQLODBCSetupDialog : public wxDialog
 {
 public:
     mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title);
+protected:
+    void OnTestUpdateUI(wxUpdateUIEvent &event);
+    void OnDetails(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticBitmap *m_logo;
@@ -14,5 +17,6 @@ private:
     wxButton *m_test;
     wxButton *m_details;
     wxNotebook *m_detailsOptions;
+    bool m_detailsShown = false;
 };
 
