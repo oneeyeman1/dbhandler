@@ -33,7 +33,10 @@
 #include "wx/stdpaths.h"
 #include "wx/filename.h"
 #include "wx/vector.h"
+#include "wx/statline.h"
+#include "wx/notebook.h"
 #include "database.h"
+#include "mysqlodbcsetup.h"
 #include "odbcconfigure.h"
 /*#include "resource.h"
 #include "table.h"*/
@@ -181,11 +184,19 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "No driver specified to create a Data Source Name!" ), _( "Error Creating DSN!" ), wxOK | wxICON_ERROR );
         return;
     };
+#ifdef __WXMSW__
     ADDNEWDSN func = (ADDNEWDSN) m_lib->GetSymbol( "AddNewDSN" );
     if( func( m_db, this, driver ) )
     {
         return;
     }
+#else
+    if( driver.Contains( "my" ) )
+    {
+        mySQLODBCSetupDialog dlg( GetParent(), wxID_ANY, "" );
+        dlg.ShowModal();
+    }
+#endif
     if( m_dsn->GetCount() > 0 )
         m_dsn->Clear();
     FillDSNComboBox();

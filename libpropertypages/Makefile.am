@@ -55,7 +55,9 @@ libpropertypages_la_SOURCES =  \
 	fieldvalidation.cpp \
 	fieldvalidation.h \
 	indexproperties.cpp \
-	indexproperties.h
+	indexproperties.h \
+	mysqlodbcsetupgeneric.cpp \
+	mysqlodbcsetupgeneric.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \
