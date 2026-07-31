@@ -22,7 +22,7 @@
 #include "wx/statline.h"
 #include "wx/collpane.h"
 #include "wx/notebook.h"
-#include "mysqlodbcsetupgeneric.h"
+#include "mysqlodbcsetupconnection.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : wxDialog( parent, wxID_ANY, "" )
@@ -93,7 +93,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     m_test = new wxButton( sizer4->GetStaticBox(), wxID_ANY, _( "Test" ) );
     sizer7->Add( m_test, 0, wxEXPAND, 0 );
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
-    auto page1 = new MySQLODBCSetupGeneric( m_detailsOptions );
+    auto page1 = new MySQLODBCSetupConnection( m_detailsOptions );
     m_detailsOptions->AddPage( page1, _( "Connection" ) );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
