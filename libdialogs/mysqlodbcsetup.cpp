@@ -66,7 +66,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     sizer6->Add( m_serverName, 0, wxEXPAND, 0 );
     sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label4 = new wxStaticText( sizer4->GetStaticBox(), wxID_ANY, "Port" );
-    sizer6->Add( m_label4, 0, wxEXPAND, 0 );
+    sizer6->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer6->Add( 5, 5, 0, wxEXPAND, 0 );
     m_port = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, "" );
     sizer6->Add( m_port, 0, wxEXPAND, 0 );
@@ -135,6 +135,7 @@ void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
         m_detailsOptions->Hide();
         m_details->SetLabel( _( "Details >>" ) );
     }
+    Fit();
     Layout();
     m_detailsShown = !m_detailsShown;
 }
