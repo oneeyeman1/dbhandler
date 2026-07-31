@@ -11,7 +11,7 @@
 #include <wx/wx.h>
 #include "mysqlodbcsetupconnection.h"
 
-MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel()
+MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( parent )
 {
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );

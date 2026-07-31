@@ -1,9 +1,9 @@
 #pragma once
 
-class WXEXPORT MySQLODBCSetupGeneric : public wxPanel
+class WXEXPORT MySQLODBCSetupConnection : public wxPanel
 {
 public:
-    MySQLODBCSetupGeneric(wxWindow *parent);
+    MySQLODBCSetupConnection(wxWindow *parent);
 private:
     wxCheckBox* m_allowBgResultSet;
     wxCheckBox* checkbox_1;
