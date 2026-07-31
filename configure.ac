@@ -25,7 +25,7 @@ if test x"${ODBC}" == x"yes" ; then
 	AC_MSG_NOTICE(ODBC_CONFIG Variable is $ODBC_LIBS)
 else
 	ODBC_CFLAGS=`pkg-config odbc --cflags`
-	ODBC_LIBS=`pkg-config odbc  --libs` -lodbcinst
+	ODBC_LIBS=`pkg-config odbc odbcinst --libs`
 	AC_MSG_NOTICE(PKG-CONFIG Variable is $ODBC_CFLAGS)
 	AC_MSG_NOTICE(PKG-CONFIG Variable is $ODBC_LIBS)
 fi
