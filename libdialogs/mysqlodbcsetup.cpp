@@ -23,6 +23,8 @@
 #include "wx/collpane.h"
 #include "wx/notebook.h"
 #include "mysqlodbcsetupconnection.h"
+#include "mysqlodbcsetupmeta.h"
+#include "mysqlodbcsetupcursor.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title) : wxDialog( parent, wxID_ANY, "" )
@@ -97,6 +99,10 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, cons
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
     auto page1 = new MySQLODBCSetupConnection( m_detailsOptions );
     m_detailsOptions->AddPage( page1, _( "Connection" ) );
+    auto page2 = new MySQLODBCSetupMeta( m_detailsOptions );
+    m_detailsOptions->AddPage( page2, _( "Metadata" ) );
+    auto page3 = new MySQLODBCSetupCursor( m_detailsOptions );
+    m_detailsOptions->AddPage( page3, _( "Cursors/Results" ) );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
