@@ -64,7 +64,9 @@ libdialogs_la_SOURCES =  \
 	sqlserveraddfilespec.cpp \
 	sqlserveraddfilespec.h \
 	mysqlodbcsetup.cpp \
-	mysqlodbcsetup.h
+	mysqlodbcsetup.h \
+	postgresodbcsetup.cpp \
+	postgresodbcsetup.h
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \

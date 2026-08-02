@@ -36,6 +36,7 @@
 #include "wx/statline.h"
 #include "wx/notebook.h"
 #include "database.h"
+#include "postgresodbcsetup.h"
 #include "mysqlodbcsetup.h"
 #include "odbcconfigure.h"
 /*#include "resource.h"
@@ -199,6 +200,11 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
     if( drvName.Contains( "myodbc" ) )
     {
         mySQLODBCSetupDialog dlg( GetParent(), wxID_ANY, "" );
+        dlg.ShowModal();
+    }
+    if( drvName.Contains( "psql" ) )
+    {
+        PostgresODBCSetupDialog dlg( GetParent() );
         dlg.ShowModal();
     }
 #endif
