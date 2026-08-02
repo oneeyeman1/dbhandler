@@ -71,7 +71,7 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
     m_createdsn = new wxButton( panel_1, wxID_ANY, _( "&Create..." ) );
     m_editdsn = new wxButton( panel_1, wxID_ANY, _( "&Edit..." ) );
     m_removedsn = new wxButton( panel_1, wxID_ANY, _( "&Remove..." ) );
-	
+
     set_properties();
     do_layout();
 }
@@ -196,7 +196,7 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
     GETDRIVERNAME func = (GETDRIVERNAME) m_lib->GetSymbol( "GetDriverNameFromConfigFile" );
     func( m_db, driver.ToStdWstring(), driverName );
     wxString drvName( driverName );
-    if( drvName.Contains( "my" ) )
+    if( drvName.Contains( "myodbc" ) )
     {
         mySQLODBCSetupDialog dlg( GetParent(), wxID_ANY, "" );
         dlg.ShowModal();
