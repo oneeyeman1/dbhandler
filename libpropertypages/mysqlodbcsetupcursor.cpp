@@ -48,6 +48,8 @@ MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
     m_padChar = new wxCheckBox( this, wxID_ANY, _( "Pad CHAR to full length with space" ) );
     sizer1->Add( m_padChar, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_zeroDate = new wxCheckBox( this, wxID_ANY, _( "Return SQL_NULL_DATA for zero date" ) );
+    sizer1->Add( m_zeroDate, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer );
     sizer->Fit( this );
