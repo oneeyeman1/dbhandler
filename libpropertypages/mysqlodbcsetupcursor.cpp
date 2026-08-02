@@ -13,5 +13,43 @@
 
 MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
 {
+    auto sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer1 = new wxBoxSizer( wxVERTICAL );
+    sizer->Add( sizer1, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_dynamicCursor = new wxCheckBox( this, wxID_ANY, _( "Enable dynamic cursors" ) );
+    sizer1->Add( m_dynamicCursor, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_disableDriverCursor = new wxCheckBox( this, wxID_ANY, _( "Disable driver provided cursor support" ) );
+    sizer1->Add( m_disableDriverCursor, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_cacheForwardOnlyCursor = new wxCheckBox(this, wxID_ANY, _( "Don't cache results of forward-only cursors" ) );
+    sizer1->Add( m_cacheForwardOnlyCursor, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_forceForwardOnlyCursor = new wxCheckBox( this, wxID_ANY, _( "Force use of forward-only cursors" ) );
+    sizer1->Add( m_forceForwardOnlyCursor, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
+    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    m_prefetch = new wxCheckBox( this, wxID_ANY, _( "Prefetch from server by" ) );
+    sizer2->Add( m_prefetch, 0, wxEXPAND, 0 );
+    m_rows = new wxTextCtrl( this, wxID_ANY, "" );
+    sizer2->Add( m_rows, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    m_label = new wxStaticText( this, wxID_ANY, _( "rows at a time" ) );
+    sizer2->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_matchedRows = new wxCheckBox( this, wxID_ANY, _( "Returned matched rows instead of affected rows" ) );
+    sizer1->Add( m_matchedRows, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_autoISNULL = new wxCheckBox( this, wxID_ANY, _( "Enable SQL_AUTO_IS_NULL" ) );
+    sizer1->Add( m_autoISNULL, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_padChar = new wxCheckBox( this, wxID_ANY, _( "Pad CHAR to full length with space" ) );
+    sizer1->Add( m_padChar, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer );
+    sizer->Fit( this );
 }
 
