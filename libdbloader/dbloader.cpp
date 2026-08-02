@@ -290,3 +290,10 @@ extern "C" WXEXPORT int RemoveDSN(Database *db, const wxString &driver, const wx
     }
     return result;
 }
+
+extern "C" WXEXPORT int GetDriverNameFromConfigFile(Database *db, std::wstring &desc, std::wstring &driverName)
+{
+    static_cast<ODBCDatabase *>( db )->GetDriverNameFromConfigFile( desc, driverName );
+    return 0;
+}
+

@@ -10433,3 +10433,23 @@ int ODBCDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, 
     return result;
 }
 
+int ODBCDatabase::GetDriverNameFromConfigFile(const std::wstring &desc, std::wstring &driverName)
+{
+    int result = 0;
+    SQLWCHAR entry[10];
+    SQLWCHAR defValue[50];
+    SQLWCHAR retBuffer[256];
+    SQLWCHAR fileName[16];
+    memset( defValue, '\0', 50 );
+    memset( entry, '\0', 10 );
+    uc_to_str_cpy( entry, L"Driver" );
+    uc_to_str_cpy( fileName, L"odbcinst.ini" );
+    std::unique_ptr<SQLWCHAR[]> dsn( new SQLWCHAR[desc.length() + 2] );
+    memset( dsn.get(), '\0', desc.length() + 2 );
+    uc_to_str_cpy( dsn.get(), desc );
+    int ret = SQLGetPrivateProfileString( dsn.get(), entry, defValue, retBuffer, 256, fileName );
+    if( ret > 0 )
+        str_to_uc_cpy( driverName, retBuffer );
+    return result;
+}
+

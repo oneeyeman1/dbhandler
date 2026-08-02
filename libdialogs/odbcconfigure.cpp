@@ -45,6 +45,7 @@ typedef Database *(*GETDRIVERLIST)(std::map<std::wstring, std::vector<std::wstri
 typedef int (*ADDNEWDSN)(Database *, wxWindow *, const wxString &);
 typedef int (*EDITDSN)(Database *, wxWindow *, const wxString &, const wxString &);
 typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
+typedef int (*GETDRIVERNAME)(Database *db, const std::wstring &, std::wstring &);
 
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
 {
@@ -191,7 +192,11 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         return;
     }
 #else
-    if( driver.Contains( "my" ) )
+    std::wstring driverName;
+    GETDRIVERNAME func = (GETDRIVERNAME) m_lib->GetSymbol( "GetDriverNameFromConfigFile" );
+    func( m_db, driver.ToStdWstring(), driverName );
+    wxString drvName( driverName );
+    if( drvName.Contains( "my" ) )
     {
         mySQLODBCSetupDialog dlg( GetParent(), wxID_ANY, "" );
         dlg.ShowModal();
