@@ -39,16 +39,16 @@
 #include "postgresodbcsetup.h"
 #include "mysqlodbcsetup.h"
 #include "odbcconfigure.h"
-/*#include "resource.h"
-#include "table.h"*/
 
 typedef Database *(*GETDRIVERLIST)(std::map<std::wstring, std::vector<std::wstring> > &, std::vector<std::wstring> &);
 typedef int (*ADDNEWDSN)(Database *, wxWindow *, const wxString &);
 typedef int (*EDITDSN)(Database *, wxWindow *, const wxString &, const wxString &);
 typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
-typedef int (*GETDRIVERNAME)(Database *db, const std::wstring &, std::wstring &);
+typedef int (*GETDRIVERNAME)(Database *, const std::wstring &, std::wstring &);
+typedef int (*GETDSNLIST)(Database *, const std::wstring &, std::map<std::wstring, std::wstring> &);
 
-CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title) :
+    wxDialog( parent, id, title )
 {
     m_db = NULL;
 	m_lib = new wxDynamicLibrary();
@@ -61,7 +61,6 @@ CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title, 
 #else
     m_lib->Load( "libdbloader" );
 #endif
-    style = style;
     panel_1 = new wxPanel( this, -1 );
     label_1 = new wxStaticText( panel_1, wxID_ANY, _( "Installed Drivers:" ) );
     m_drivers = new wxListBox( panel_1, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE | wxLB_SORT );
@@ -218,11 +217,21 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     std::vector<char *> errorMsg;
     wxString driver = m_drivers->GetStringSelection();
     wxString dsnStr = m_dsn->GetStringSelection();
+#ifdef __WXMSW__
     EDITDSN func = (EDITDSN) m_lib->GetSymbol( "EditDSN" );
     if( func( m_db, this, driver, dsnStr ) )
     {
         return;
     }
+#else
+    std::map<std::wstring, std::wstring> values;
+    std::wstring driverName;
+    GETDRIVERNAME func = (GETDRIVERNAME) m_lib->GetSymbol( "GetDriverNameFromConfigFile" );
+    func( m_db, driver.ToStdWstring(), driverName );
+    GETDSNLIST func1 = (GETDSNLIST) m_lib->GetSymbol( "GetDSNKeys" );
+    func1( m_db, dsnStr.ToStdWstring(), values );
+//    wxMessageBox( values );
+#endif
 }
 
 void CODBCConfigure::OnRemoveDSN(wxCommandEvent &event)
