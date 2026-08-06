@@ -77,6 +77,7 @@ protected:
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
     void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
     void copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src);
+    int mystrlen(SQLWCHAR *ptr);
     bool equal(SQLWCHAR *dest, SQLWCHAR *src);
     int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
     int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);

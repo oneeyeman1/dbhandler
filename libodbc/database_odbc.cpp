@@ -10472,15 +10472,23 @@ int ODBCDatabase::GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std
     if( ret > 0 )
     {
         ptr = retBuffer;
-        while( strlen( ptr ) > 0 )
+        while( mystrlen( ptr ) > 0 )
         {
             std::wstring value1, value2;
             str_to_uc_cpy( value1, ptr );
             int ret = SQLGetPrivateProfileString( dsnValue.get(), ptr, defValue, value, 1024, fileName );
             str_to_uc_cpy( value2, value );
             values[value1] = value2;
-            ptr += strlen( ptr ) + 1;
+            ptr += mystrlen( ptr ) + 1;
         }
     }
     return result;
+}
+
+int ODBCDatabase::mystrlen(SQLWCHAR *ptr)
+{
+    int len = 0;
+    while( *ptr++ )
+        len++;
+    return len;
 }
