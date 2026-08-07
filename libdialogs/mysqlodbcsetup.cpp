@@ -24,6 +24,7 @@
 #include "wx/valnum.h"
 #include "wx/collpane.h"
 #include "wx/notebook.h"
+#include "wx/process.h"
 #include "mysqlodbcsetupconnection.h"
 #include "mysqlodbcsetupmeta.h"
 #include "mysqlodbcsetupcursor.h"
@@ -125,7 +126,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     Layout();
 }
 
-void mySQLODBCSetupDialog::m_test(wxUpdateUIEvent &event)
+void mySQLODBCSetupDialog::OnTestUpdateUI(wxUpdateUIEvent &event)
 {
     if( m_name->GetValue().Length() > 0 )
         event.Enable( true );
@@ -150,6 +151,16 @@ void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
     m_detailsShown = !m_detailsShown;
 }
 
-void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
+void mySQLODBCSetupDialog::OnTest(wxCommandEvent &event)
 {
+    wxString command = "mysql ";
+    auto user = m_user->GetValue();
+    command += "-u " + user;
+    auto password = m_password->GetValue();
+    command += " -p" + password;
+    auto database = m_dbName->GetValue();
+    command += " -D " + database;
+    command += " -e do 1";
+    auto process = new wxProcess();
+    auto res = wxExecute( command, wxEXEC_SYNC, process ); 
 }
