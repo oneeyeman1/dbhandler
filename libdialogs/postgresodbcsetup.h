@@ -3,7 +3,7 @@
 class PostgresODBCSetupDialog : public wxDialog
 {
 public:
-    PostgresODBCSetupDialog(wxWindow *parent);
+    PostgresODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values);
 private:
     wxPanel *m_panel;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7, *m_label8;

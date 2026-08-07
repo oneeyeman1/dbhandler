@@ -192,18 +192,19 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         return;
     }
 #else
+    std::map<std::wstring, std::wstring> values;
     std::wstring driverName;
     GETDRIVERNAME func = (GETDRIVERNAME) m_lib->GetSymbol( "GetDriverNameFromConfigFile" );
     func( m_db, driver.ToStdWstring(), driverName );
     wxString drvName( driverName );
     if( drvName.Contains( "myodbc" ) )
     {
-        mySQLODBCSetupDialog dlg( GetParent(), wxID_ANY, "" );
+        mySQLODBCSetupDialog dlg( GetParent(), values );
         dlg.ShowModal();
     }
     if( drvName.Contains( "psql" ) )
     {
-        PostgresODBCSetupDialog dlg( GetParent() );
+        PostgresODBCSetupDialog dlg( GetParent(), values );
         dlg.ShowModal();
     }
 #endif
@@ -230,7 +231,17 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     func( m_db, driver.ToStdWstring(), driverName );
     GETDSNLIST func1 = (GETDSNLIST) m_lib->GetSymbol( "GetDSNKeys" );
     func1( m_db, dsnStr.ToStdWstring(), values );
-//    wxMessageBox( values );
+    values[L"Name"] = dsnStr;
+    if( driver.Contains( "myodbc" ) )
+    {
+        mySQLODBCSetupDialog dlg( GetParent(), values );
+        dlg.ShowModal();
+    }
+    if( driver.Contains( "psql" ) )
+    {
+        PostgresODBCSetupDialog dlg( GetParent(), values );
+        dlg.ShowModal();
+    }
 #endif
 }
 
