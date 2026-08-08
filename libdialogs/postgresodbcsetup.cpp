@@ -68,11 +68,11 @@ PostgresODBCSetupDialog::PostgresODBCSetupDialog(wxWindow *parent) : wxDialog( p
     m_global = new wxButton( sizer5->GetStaticBox(), wxID_ANY, _( "Global" ) );
     sizer5->Add( m_global, 0, wxEXPAND, 0 );
     auto sizer6 = new wxBoxSizer( wxVERTICAL );
-    sizer2->Add( sizer6, 0, wxRIGHT, 0 );
+    sizer4->Add( sizer6, 0, wxEXPAND, 0 );
     m_test = new wxButton( m_panel, wxID_ANY, _( "Test" ) );
     sizer6->Add( m_test, 0, wxRIGHT, 0 );
     auto sizer7 = new wxBoxSizer( wxHORIZONTAL );
-    sizer6->Add( sizer7, 0, wxRIGHT, 0 );
+    sizer6->Add( sizer6, 0, wxRIGHT, 0 );
     m_save = new wxButton( m_panel, wxID_OK, _( "Save" ) );
     m_save->SetDefault();
     sizer7->Add( m_save, 0, wxEXPAND, 0 );
