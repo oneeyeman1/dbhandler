@@ -8,6 +8,8 @@ protected:
     void OnTestUpdateUI(wxUpdateUIEvent &event);
     void OnTest(wxCommandEvent &event);
     void OnDetails(wxCommandEvent &event);
+    void OnPipe(wxCommandEvent &event);
+    void OnServer(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticBitmap *m_logo;

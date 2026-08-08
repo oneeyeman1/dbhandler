@@ -65,6 +65,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_desc = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, values[L"Description"] );
     sizer5->Add( m_desc, 1, wxEXPAND, 0 );
     m_network = new wxRadioButton( sizer4->GetStaticBox(), wxID_ANY, "TCP/IP Server" );
+    m_network->Bind( wxEVT_RADIOBUTTON, &mySQLODBCSetupDialog::OnServer, this );
     sizer5->Add( m_network, 0, wxALIGN_CENTER_VERTICAL, 0 );
     auto sizer6 = new wxBoxSizer( wxHORIZONTAL );
     sizer5->Add( sizer6, 0, wxRIGHT, 0 );
@@ -77,13 +78,14 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_port = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
     sizer6->Add( m_port, 0, wxEXPAND, 0 );
     m_pipe = new wxRadioButton( sizer4->GetStaticBox(), wxID_ANY, "Named Pipe:" );
+    m_pipe->Bind( wxEVT_RADIOBUTTON, &mySQLODBCSetupDialog::OnPipe, this );
     sizer5->Add( m_pipe, 0, wxEXPAND, 0 );
     m_pipeName = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, "" );
     m_pipeName->Enable( false );
     sizer5->Add( m_pipeName, 0, wxEXPAND, 0 );
     m_label5 = new wxStaticText( sizer4->GetStaticBox(), wxID_ANY, "User" );
     sizer5->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 0 );
-    m_user = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, values[L"User"] );
+    m_user = new wxTextCtrl( sizer4->GetStaticBox(), wxID_ANY, values[L"User"] == L"" ? values[L"UID"] : values[L"User"] );
     sizer5->Add( m_user, 1, wxEXPAND, 0 );
     m_label6 = new wxStaticText( sizer4->GetStaticBox(), wxID_ANY, "Password" );
     sizer5->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 0 );
@@ -162,5 +164,20 @@ void mySQLODBCSetupDialog::OnTest(wxCommandEvent &event)
     command += " -D " + database;
     command += " -e do 1";
     auto process = new wxProcess();
-    auto res = wxExecute( command, wxEXEC_SYNC, process ); 
+    auto res = wxExecute( command, wxEXEC_SYNC, process );
 }
+
+void mySQLODBCSetupDialog::OnPipe(wxCommandEvent &event)
+{
+    m_pipeName->Enable( true );
+    m_serverName->Enable( false );
+    m_port->Enable( false );
+}
+
+void mySQLODBCSetupDialog::OnServer(wxCommandEvent &event)
+{
+    m_pipeName->Enable( false );
+    m_serverName->Enable( true );
+    m_port->Enable( true );
+}
+
