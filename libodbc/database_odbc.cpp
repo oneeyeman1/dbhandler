@@ -10455,6 +10455,7 @@ int ODBCDatabase::GetDriverNameFromConfigFile(const std::wstring &desc, std::wst
 
 int ODBCDatabase::GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std::wstring> &values)
 {
+    std::vector<std::wstring> errorMsg;
     int result = 0;
     SQLWCHAR *ptr;
     SQLWCHAR defValue[50];
@@ -10468,7 +10469,7 @@ int ODBCDatabase::GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std
     std::unique_ptr<SQLWCHAR[]> dsnValue( new SQLWCHAR[dsn.length() + 2] );
     memset( dsnValue.get(), '\0', dsn.length() + 2 );
     uc_to_str_cpy( dsnValue.get(), dsn );
-    int ret = SQLGetPrivateProfileString( dsnValue.get(), nullptr, defValue, retBuffer, 512, fileName );
+    int ret = SQLGetPrivateProfileString( dsnValue.get(), nullptr, defValue, retBuffer, 1024, fileName );
     if( ret > 0 )
     {
         ptr = retBuffer;
@@ -10482,6 +10483,11 @@ int ODBCDatabase::GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std
             ptr += mystrlen( ptr ) + 1;
         }
     }
+    else
+    {
+        GetDSNErrorMessage( errorMsg );
+        result = 1;
+    }
     return result;
 }
 
@@ -10492,3 +10498,4 @@ int ODBCDatabase::mystrlen(SQLWCHAR *ptr)
         len++;
     return len;
 }
+
