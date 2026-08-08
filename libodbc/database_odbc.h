@@ -67,6 +67,7 @@ public:
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg) override;
     int GetDriverNameFromConfigFile(const std::wstring &desc, std::wstring &driverName);
+    int GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std::wstring> &values);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
@@ -76,6 +77,7 @@ protected:
     void str_to_uc_cpy(std::wstring &dest, const SQLWCHAR *src);
     void uc_to_str_cpy(SQLWCHAR *dest, const std::wstring &src);
     void copy_uc_to_uc(SQLWCHAR *dest, SQLWCHAR *src);
+    int mystrlen(SQLWCHAR *ptr);
     bool equal(SQLWCHAR *dest, SQLWCHAR *src);
     int GetErrorMessage(std::vector<std::wstring> &errorMsg, int type, SQLHSTMT stmt = 0);
     int GetDSNErrorMessage(std::vector<std::wstring> &errorMsg);

@@ -11,9 +11,10 @@
 #include "wx/wx.h"
 #endif
 
+#include <map>
 #include "postgresodbcsetup.h"
 
-PostgresODBCSetupDialog::PostgresODBCSetupDialog(wxWindow *parent) : wxDialog( parent, wxID_ANY, _( "PostgreSQL ODBC Driver (psqlODBC) Setup" ) )
+PostgresODBCSetupDialog::PostgresODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values) : wxDialog( parent, wxID_ANY, _( "PostgreSQL ODBC Driver (psqlODBC) Setup" ) )
 {
     m_panel = new wxPanel( this );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );

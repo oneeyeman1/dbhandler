@@ -3,9 +3,10 @@
 class mySQLODBCSetupDialog : public wxDialog
 {
 public:
-    mySQLODBCSetupDialog(wxWindow *parent, wxWindowID id, const wxString &title);
+    mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values);
 protected:
     void OnTestUpdateUI(wxUpdateUIEvent &event);
+    void OnTest(wxCommandEvent &event);
     void OnDetails(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
@@ -18,5 +19,6 @@ private:
     wxButton *m_details;
     wxNotebook *m_detailsOptions;
     bool m_detailsShown = false;
+    unsigned long m_value = 3306;
 };
 

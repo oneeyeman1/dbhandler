@@ -297,3 +297,8 @@ extern "C" WXEXPORT int GetDriverNameFromConfigFile(Database *db, std::wstring &
     return 0;
 }
 
+extern "C" WXEXPORT int GetDSNKeys(Database *db, const std::wstring &dsn, std::map<std::wstring, std::wstring> &values)
+{
+    static_cast<ODBCDatabase *>( db )->GetDSNKeys( dsn, values );
+    return 0;
+}
