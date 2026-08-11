@@ -5,7 +5,7 @@ class mySQLODBCSetupDialog : public wxDialog
 public:
     mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values);
     const std::map<std::wstring, std::wstring> &GetDSNData() const { return m_data; }
-    const std::wstring &GetDSNName() const { return m_name->GetValue().ToStdWstring(); }
+    const std::wstring GetDSNName() const { return m_name->GetValue().ToStdWstring(); }
 protected:
     void OnTestUpdateUI(wxUpdateUIEvent &event);
     void OnTest(wxCommandEvent &event);

@@ -68,6 +68,7 @@ public:
     virtual int GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg) override;
     int GetDriverNameFromConfigFile(const std::wstring &desc, std::wstring &driverName);
     int GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std::wstring> &values);
+    int SaveDSNData(const std::wstring &dsn, const std::map<std::wstring, std::wstring> &values, std::vector<std::wstring> &errorMsg);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

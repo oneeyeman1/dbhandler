@@ -203,8 +203,10 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         mySQLODBCSetupDialog dlg( GetParent(), values );
         if( dlg.ShowModal() == wxID_OK )
         {
+            std::wstring dsn = dlg.GetDSNName();
+            auto values = dlg.GetDSNData();
             SAVEDSNDATA func = (SAVEDSNDATA) m_lib->GetSymbol( "SaveDSNData" );
-            func( m_db, dlg.GetDSNName(), dlg.GetDSNData() );
+            func( m_db, dsn, values );
         }
     }
     if( drvName.Contains( "psql" ) )

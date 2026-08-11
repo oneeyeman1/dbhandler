@@ -10499,3 +10499,58 @@ int ODBCDatabase::mystrlen(SQLWCHAR *ptr)
     return len;
 }
 
+int ODBCDatabase::SaveDSNData(const std::wstring &dsn, const std::map<std::wstring, std::wstring> &values, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    UWORD mode;
+    BOOL res = SQLGetConfigMode( &mode );
+    if( !res )
+    {
+        GetDSNErrorMessage( errorMsg );
+        result = 1;
+    }
+    if( !result )
+    {
+        res = SQLSetConfigMode( ODBC_BOTH_DSN );
+        if( !res )
+        {
+            GetDSNErrorMessage( errorMsg );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        std::vector<std::wstring> errorMsg;
+        std::unique_ptr<SQLWCHAR[]> fName( new SQLWCHAR[10] );
+        std::unique_ptr<SQLWCHAR[]> name( new SQLWCHAR[dsn.length() + 2] );
+        memset( fName.get(), '\0', 10 );
+        memset( name.get(), '\0', dsn.length() + 2 );
+        uc_to_str_cpy( fName.get(), L"odbc.ini" );
+        uc_to_str_cpy( name.get(), dsn );
+        for( auto value: values )
+        {
+            std::unique_ptr<SQLWCHAR[]> key( new SQLWCHAR[value.first.length() + 2] );
+            std::unique_ptr<SQLWCHAR[]> val( new SQLWCHAR[value.second.length() + 2] );
+            memset( key.get(), '\0', value.first.length() + 2 );
+            memset( val.get(), '\0', value.second.length() + 2 );
+            uc_to_str_cpy( key.get(), value.first );
+            uc_to_str_cpy( val.get(), value.second );
+            res = SQLWritePrivateProfileString( name.get(), key.get(), val.get(), fName.get() );
+            if( !res )
+            {
+                GetDSNErrorMessage( errorMsg );
+                result = 1;
+            }
+        }
+    }
+    if( !result )
+    {
+        res = SQLSetConfigMode( mode );
+        if( !res )
+        {
+            GetDSNErrorMessage( errorMsg );
+            result = 1;
+        }
+    }
+    return result;
+}

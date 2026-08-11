@@ -187,6 +187,15 @@ void mySQLODBCSetupDialog::OnServer(wxCommandEvent &event)
 void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
 {
     m_data[L"Description"] = m_desc->GetValue().ToStdWstring();
+    if( m_network->GetValue() )
+    {
+        m_data[L"Server"] = m_serverName->GetValue().ToStdWstring();
+        m_data[L"Port"] = m_port->GetValue().ToStdWstring();
+    }
+    else
+        m_data[L"Socket"] = m_pipeName->GetValue().ToStdWstring();
+    m_data[L"UID"] = m_user->GetValue().ToStdWstring();
+    m_data[L"PWD"] = m_password->GetValue().ToStdWstring();
+    m_data[L"DATABASE"] = m_dbName->GetValue().ToStdWstring();
     EndModal( wxID_OK );
-    
 }

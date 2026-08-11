@@ -305,5 +305,9 @@ extern "C" WXEXPORT int GetDSNKeys(Database *db, const std::wstring &dsn, std::m
 
 extern "C" WXEXPORT int SaveDSNData(Database *db, const std::wstring &dsn, const std::map<std::wstring, std::wstring> &data)
 {
+    std::vector<std::wstring> errorMsg;
+    static_cast<ODBCDatabase *>( db )->SaveDSNData( dsn, data, errorMsg );
+    for( auto msg: errorMsg )
+        wxMessageBox( msg );
     return 0;
 }
