@@ -4,12 +4,15 @@ class mySQLODBCSetupDialog : public wxDialog
 {
 public:
     mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values);
+    const std::map<std::wstring, std::wstring> &GetDSNData() const { return m_data; }
+    const std::wstring &GetDSNName() const { return m_name->GetValue().ToStdWstring(); }
 protected:
     void OnTestUpdateUI(wxUpdateUIEvent &event);
     void OnTest(wxCommandEvent &event);
     void OnDetails(wxCommandEvent &event);
     void OnPipe(wxCommandEvent &event);
     void OnServer(wxCommandEvent &event);
+    void OnOK(wxCommandEvent &event);
 private:
     wxPanel *m_panel;
     wxStaticBitmap *m_logo;
@@ -22,5 +25,6 @@ private:
     wxNotebook *m_detailsOptions;
     bool m_detailsShown = false;
     unsigned long m_value = 3306;
+    std::map<std::wstring, std::wstring> m_data;
 };
 

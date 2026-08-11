@@ -46,6 +46,7 @@ typedef int (*EDITDSN)(Database *, wxWindow *, const wxString &, const wxString 
 typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
 typedef int (*GETDRIVERNAME)(Database *, const std::wstring &, std::wstring &);
 typedef int (*GETDSNLIST)(Database *, const std::wstring &, std::map<std::wstring, std::wstring> &);
+typedef int (*SAVEDSNDATA)(Database *db, const std::wstring &, const std::map<std::wstring, std::wstring> &);
 
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title) :
     wxDialog( parent, id, title )
@@ -200,7 +201,11 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
     if( drvName.Contains( "myodbc" ) )
     {
         mySQLODBCSetupDialog dlg( GetParent(), values );
-        dlg.ShowModal();
+        if( dlg.ShowModal() == wxID_OK )
+        {
+            SAVEDSNDATA func = (SAVEDSNDATA) m_lib->GetSymbol( "SaveDSNData" );
+            func( m_db, dlg.GetDSNName(), dlg.GetDSNData() );
+        }
     }
     if( drvName.Contains( "psql" ) )
     {
@@ -235,7 +240,11 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     if( driver.Contains( "myodbc" ) )
     {
         mySQLODBCSetupDialog dlg( GetParent(), values );
-        dlg.ShowModal();
+        if( dlg.ShowModal() == wxID_OK )
+        {
+            SAVEDSNDATA func = (SAVEDSNDATA) m_lib->GetSymbol( "SaveDSNData" );
+            func( m_db, dlg.GetDSNName(), dlg.GetDSNData() );
+        }
     }
     if( driver.Contains( "psql" ) )
     {

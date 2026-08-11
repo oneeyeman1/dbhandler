@@ -302,3 +302,8 @@ extern "C" WXEXPORT int GetDSNKeys(Database *db, const std::wstring &dsn, std::m
     static_cast<ODBCDatabase *>( db )->GetDSNKeys( dsn, values );
     return 0;
 }
+
+extern "C" WXEXPORT int SaveDSNData(Database *db, const std::wstring &dsn, const std::map<std::wstring, std::wstring> &data)
+{
+    return 0;
+}

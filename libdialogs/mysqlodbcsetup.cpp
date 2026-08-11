@@ -120,6 +120,7 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     sizer8->Add( m_details, 0, wxEXPAND, 0 );
     sizer8->AddStretchSpacer();
     auto *buttons = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
+    FindWindowById( wxID_OK, this )->Bind( wxEVT_BUTTON, &mySQLODBCSetupDialog::OnOK, this );
 	sizer8->Add( buttons, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -171,6 +172,7 @@ void mySQLODBCSetupDialog::OnPipe(wxCommandEvent &event)
 {
     m_pipeName->Enable( true );
     m_serverName->Enable( false );
+    m_label4->Enable( false );
     m_port->Enable( false );
 }
 
@@ -178,6 +180,13 @@ void mySQLODBCSetupDialog::OnServer(wxCommandEvent &event)
 {
     m_pipeName->Enable( false );
     m_serverName->Enable( true );
+    m_label4->Enable( true );
     m_port->Enable( true );
 }
 
+void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
+{
+    m_data[L"Description"] = m_desc->GetValue().ToStdWstring();
+    EndModal( wxID_OK );
+    
+}
