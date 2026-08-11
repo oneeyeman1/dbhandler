@@ -19,22 +19,28 @@ MySQLODBCSetupMeta::MySQLODBCSetupMeta(wxWindow *parent) : wxPanel( parent )
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_bigintAsInt = new wxCheckBox( this, wxID_ANY, _( "Treat BIGINT columns as INT columns" ) );
+    m_bigintAsInt->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_bigintAsInt, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_binaryResultsAsChar = new wxCheckBox( this, wxID_ANY, _( "Always handle binary function results as character data" ) );
+    m_binaryResultsAsChar->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_binaryResultsAsChar, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_tableNameInDescribeCol = new wxCheckBox( this, wxID_ANY, _( "Include table name in SQLDescribeCol" ) );
+    m_tableNameInDescribeCol->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_tableNameInDescribeCol, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_disableCatalog = new wxCheckBox( this, wxID_ANY, _( "Disable catalog support" ) );
+    m_disableCatalog->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_disableCatalog, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_disableSchema = new wxCheckBox( this, wxID_ANY, _( "Disable schema support") );
+    m_disableSchema->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     m_disableSchema->SetValue( true );
     sizer1->Add( m_disableSchema, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_limitColumnSize = new wxCheckBox( this, wxID_ANY, _( "Limit column size to signed 32-bit range" ) );
+    m_limitColumnSize->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_limitColumnSize, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -42,3 +48,7 @@ MySQLODBCSetupMeta::MySQLODBCSetupMeta(wxWindow *parent) : wxPanel( parent )
     sizer->Fit( this );
 }
 
+void MySQLODBCSetupMeta::DataChanged(wxCommandEvent &event)
+{
+    m_changed = true;
+}

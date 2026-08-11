@@ -4,6 +4,9 @@ class WXEXPORT MySQLODBCSetupConnection : public wxPanel
 {
 public:
     MySQLODBCSetupConnection(wxWindow *parent);
+    bool IsChanged() { return m_changed; }
+protected:
+    void DataChanged(wxCommandEvent &event);
 private:
     wxCheckBox* m_allowBgResultSet;
     wxCheckBox* checkbox_1;
@@ -21,4 +24,5 @@ private:
     wxTextCtrl* text_ctrl_2;
     wxTextCtrl* text_ctrl_3;
     wxTextCtrl* text_ctrl_4;
+    bool m_changed = false;
 };

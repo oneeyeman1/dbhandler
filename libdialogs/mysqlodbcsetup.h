@@ -26,5 +26,8 @@ private:
     bool m_detailsShown = false;
     unsigned long m_value = 3306;
     std::map<std::wstring, std::wstring> m_data;
+    MySQLODBCSetupConnection *m_page1;
+    MySQLODBCSetupMeta *m_page2;
+    MySQLODBCSetupCursor *m_page3;
 };
 

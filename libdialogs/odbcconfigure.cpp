@@ -37,6 +37,9 @@
 #include "wx/notebook.h"
 #include "database.h"
 #include "postgresodbcsetup.h"
+#include "mysqlodbcsetupconnection.h"
+#include "mysqlodbcsetupmeta.h"
+#include "mysqlodbcsetupcursor.h"
 #include "mysqlodbcsetup.h"
 #include "odbcconfigure.h"
 

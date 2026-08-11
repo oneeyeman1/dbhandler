@@ -22,26 +22,37 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( 
     auto grid_sizer_1 = new wxFlexGridSizer( 6, 2, 5, 5 );
     sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     m_allowBgResultSet = new wxCheckBox( this, wxID_ANY, _( "Allow big result set" ) );
+    m_allowBgResultSet->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( m_allowBgResultSet, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_1 = new wxCheckBox( this, wxID_ANY, _( "Can Handle Expired Password" ) );
+    checkbox_1->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_2 = new wxCheckBox( this, wxID_ANY, _( "Use compression" ) );
+    checkbox_2->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_3 = new wxCheckBox( this, wxID_ANY, _( "Enable Cleartext Authentiication" ) );
+    checkbox_3->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_4 = new wxCheckBox( this, wxID_ANY, _( "Enable automatic reconnect" ) );
+    checkbox_4->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_5 = new wxCheckBox( this, wxID_ANY, _( "Get Server Public Key" ) );
+    checkbox_5->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_6 = new wxCheckBox( this, wxID_ANY, _( "Don't prompt when connecting" ) );
+    checkbox_6->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_7 = new wxCheckBox( this, wxID_ANY, _( "Use DNS SRV records" ) );
+    checkbox_7->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_7, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_8 = new wxCheckBox( this, wxID_ANY, _( "Allow multiple statements" ) );
+    checkbox_8->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_8, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_9 = new wxCheckBox( this, wxID_ANY, _( "Multi Host" ) );
+    checkbox_9->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_9, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_10 = new wxCheckBox( this, wxID_ANY, _( "Interactive Client" ) );
+    checkbox_10->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_10, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -50,22 +61,27 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( 
     auto label_1 = new wxStaticText( this, wxID_ANY, _( "Character Set" ) );
     grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     combo_box_1 = new wxComboBox( this, wxID_ANY, "" );
+    combo_box_1->Bind( wxEVT_COMBOBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( combo_box_1, 0, 0, 0 );
     wxStaticText* label_2 = new wxStaticText( this, wxID_ANY, _( "Initial Statement" ) );
     grid_sizer_2->Add( label_2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    text_ctrl_1->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_1, 0, 0, 0 );
     wxStaticText* label_3 = new wxStaticText( this, wxID_ANY, _( "Plugin Directory" ) );
     grid_sizer_2->Add( label_3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    text_ctrl_2->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_2, 0, 0, 0 );
     wxStaticText* label_4 = new wxStaticText( this, wxID_ANY, _( "Authentication" ) );
     grid_sizer_2->Add( label_4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_3 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    text_ctrl_3->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_3, 0, 0, 0 );
     wxStaticText* label_5 = new wxStaticText( this, wxID_ANY, _( "OCI Config File" ) );
     grid_sizer_2->Add( label_5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_4 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    text_ctrl_4->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_4, 0, 0, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -73,4 +89,9 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( 
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+}
+
+void MySQLODBCSetupConnection::DataChanged(wxCommandEvent &event)
+{
+    m_changed = true;
 }

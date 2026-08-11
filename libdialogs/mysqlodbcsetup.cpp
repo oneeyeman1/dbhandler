@@ -104,12 +104,12 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_test->Bind( wxEVT_BUTTON, &mySQLODBCSetupDialog::OnTest, this );
     sizer7->Add( m_test, 0, wxEXPAND, 0 );
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
-    auto page1 = new MySQLODBCSetupConnection( m_detailsOptions );
-    m_detailsOptions->AddPage( page1, _( "Connection" ) );
-    auto page2 = new MySQLODBCSetupMeta( m_detailsOptions );
-    m_detailsOptions->AddPage( page2, _( "Metadata" ) );
-    auto page3 = new MySQLODBCSetupCursor( m_detailsOptions );
-    m_detailsOptions->AddPage( page3, _( "Cursors/Results" ) );
+    m_page1 = new MySQLODBCSetupConnection( m_detailsOptions );
+    m_detailsOptions->AddPage( m_page1, _( "Connection" ) );
+    m_page2 = new MySQLODBCSetupMeta( m_detailsOptions );
+    m_detailsOptions->AddPage( m_page2, _( "Metadata" ) );
+    m_page3 = new MySQLODBCSetupCursor( m_detailsOptions );
+    m_detailsOptions->AddPage( m_page3, _( "Cursors/Results" ) );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -197,5 +197,14 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     m_data[L"UID"] = m_user->GetValue().ToStdWstring();
     m_data[L"PWD"] = m_password->GetValue().ToStdWstring();
     m_data[L"DATABASE"] = m_dbName->GetValue().ToStdWstring();
+    if( m_page1->IsChanged() )
+    {
+    }
+    if( m_page2->IsChanged() )
+    {
+    }
+    if( m_page3->IsChanged() )
+    {
+    }
     EndModal( wxID_OK );
 }
