@@ -205,6 +205,7 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
         {
             std::wstring dsn = dlg.GetDSNName();
             auto values = dlg.GetDSNData();
+            values[L"Driver"] = driver.ToStdWstring();
             SAVEDSNDATA func = (SAVEDSNDATA) m_lib->GetSymbol( "SaveDSNData" );
             func( m_db, dsn, values );
         }
