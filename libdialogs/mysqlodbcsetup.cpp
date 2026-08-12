@@ -199,6 +199,10 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     m_data[L"DATABASE"] = m_dbName->GetValue().ToStdWstring();
     if( m_page1->IsChanged() )
     {
+        m_data[L"BIG_PACKETS"] = m_page1->Get1Check()->GetValue() ? L"1" : L"0";
+        m_data[L"CAN_HANDLE_EXP_PWD"] = m_page1->Get3Check()->GetValue() ? L"1" : L"0";
+        m_data[L"COMPRESSED_PROTO"] = m_page1->Get2Check()->GetValue() ? L"1" : L"0";
+        m_data[L"ENABLE_CLEARTEXT_PLUGIN"] = m_page1->Get4Check()->GetValue() ? L"1" : L"0";
     }
     if( m_page2->IsChanged() )
     {
