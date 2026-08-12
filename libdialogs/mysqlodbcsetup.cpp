@@ -203,6 +203,13 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
         m_data[L"CAN_HANDLE_EXP_PWD"] = m_page1->Get3Check()->GetValue() ? L"1" : L"0";
         m_data[L"COMPRESSED_PROTO"] = m_page1->Get2Check()->GetValue() ? L"1" : L"0";
         m_data[L"ENABLE_CLEARTEXT_PLUGIN"] = m_page1->Get4Check()->GetValue() ? L"1" : L"0";
+        m_data[L"AUTO_RECONNECT"] = m_page1->Get5Check()->GetValue() ? L"1" : L"0";
+        m_data[L"GET_SERVER_PUBLIC_KEY"] = m_page1->Get6Check()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_PROMPT"] = m_page1->Get7Check()->GetValue() ? L"1" : L"0";
+        m_data[L"ENABLE_DNS_SRV"] = m_page1->Get8Check()->GetValue() ? L"1" : L"0";
+        m_data[L"MULTI_STATEMENTS"] = m_page1->Get9Check()->GetValue() ? L"1" : L"0";
+        m_data[L"MULTI_HOST"] = m_page1->Get10Check()->GetValue() ? L"1" : L"0";
+        m_data[L"INTERACTIVE"] = m_page1->Get11Check()->GetValue() ? L"1" : L"0";
     }
     if( m_page2->IsChanged() )
     {

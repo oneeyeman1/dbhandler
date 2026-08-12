@@ -9,6 +9,13 @@ public:
     wxCheckBox *Get2Check() { return checkbox_2; }
     wxCheckBox *Get3Check() { return checkbox_1; }
     wxCheckBox *Get4Check() { return checkbox_3; }
+    wxCheckBox *Get5Check() { return checkbox_4; }
+    wxCheckBox *Get6Check() { return checkbox_5; }
+	wxCheckBox *Get7Check() { return checkbox_6; }
+    wxCheckBox *Get8Check() { return checkbox_7; }
+    wxCheckBox *Get9Check() { return checkbox_8; }
+    wxCheckBox *Get10Check() { return checkbox_9; }
+    wxCheckBox *Get11Check() { return checkbox_10; }
 protected:
     void DataChanged(wxCommandEvent &event);
 private:
