@@ -5,6 +5,15 @@ class WXEXPORT MySQLODBCSetupCursor : public wxPanel
 public:
     MySQLODBCSetupCursor(wxWindow *parent);
     bool IsChanged() { return m_changed; }
+    wxCheckBox *GetDynamicCursor() const { return m_dynamicCursor; }
+    wxCheckBox *GetDriverCursor() const { return m_disableDriverCursor; }
+    wxCheckBox *GetCacheCursor() const { return m_cacheForwardOnlyCursor; }
+    wxCheckBox *GetForwardOnlyCursor() const { return m_forceForwardOnlyCursor; }
+    wxTextCtrl *GetPrefetchRows() const { return m_rows; }
+    wxCheckBox *GetMatchedRows() const { return m_matchedRows; }
+    wxCheckBox *GetIsNULL() const { return m_autoISNULL; }
+    wxCheckBox *GetPadSpace() const { return m_padChar; }
+    wxCheckBox *GetZeroDate() const { return m_zeroDate; }
 protected:
     void DataChanged(wxCommandEvent &event);
 private:

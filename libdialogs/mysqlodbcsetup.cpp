@@ -228,6 +228,15 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     }
     if( m_page3->IsChanged() )
     {
+        m_data[L"DYNAMIC_CURSOR"] = m_page3->GetDynamicCursor()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_DEFAULT_CURSOR"] = m_page3->GetDriverCursor()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_CACHE"] = m_page3->GetCacheCursor()->GetValue() ? L"1" : L"0";
+        m_data[L"FORWARD_CURSOR"] = m_page3->GetForwardOnlyCursor()->GetValue() ? L"1" : L"0";
+        m_data[L"PREFETCH"] = m_page3->GetPrefetchRows()->GetValue().ToStdWstring();
+        m_data[L"FOUND_ROWS"] = m_page3->GetMatchedRows()->GetValue() ? L"1" : L"0";
+        m_data[L"AUTO_IS_NULL"] = m_page3->GetIsNULL()->GetValue() ? L"1" : L"0";
+        m_data[L"PAD_SPACE"] = m_page3->GetPadSpace()->GetValue() ? L"1" : L"0";
+        m_data[L"ZERO_DATE_TO_MIN"] = m_page3->GetZeroDate()->GetValue() ? L"1" : L"0";
     }
     EndModal( wxID_OK );
 }
