@@ -34,6 +34,7 @@
 #include "wx/filename.h"
 #include "wx/vector.h"
 #include "wx/statline.h"
+#include <wx/filepicker.h>
 #include "wx/notebook.h"
 #include "database.h"
 #include "postgresodbcsetup.h"

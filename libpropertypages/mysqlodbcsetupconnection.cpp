@@ -9,6 +9,7 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
+#include "wx/filepicker.h"
 #include "mysqlodbcsetupconnection.h"
 
 MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( parent )
@@ -62,27 +63,27 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( 
     grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     combo_box_1 = new wxComboBox( this, wxID_ANY, "" );
     combo_box_1->Bind( wxEVT_COMBOBOX, &MySQLODBCSetupConnection::DataChanged, this );
-    grid_sizer_2->Add( combo_box_1, 0, 0, 0 );
+    grid_sizer_2->Add( combo_box_1, 1, wxEXPAND, 0 );
     wxStaticText* label_2 = new wxStaticText( this, wxID_ANY, _( "Initial Statement" ) );
     grid_sizer_2->Add( label_2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     text_ctrl_1->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
-    grid_sizer_2->Add( text_ctrl_1, 0, 0, 0 );
+    grid_sizer_2->Add( text_ctrl_1, 1, wxEXPAND, 0 );
     wxStaticText* label_3 = new wxStaticText( this, wxID_ANY, _( "Plugin Directory" ) );
     grid_sizer_2->Add( label_3, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    text_ctrl_2 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    text_ctrl_2->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
-    grid_sizer_2->Add( text_ctrl_2, 0, 0, 0 );
+    m_plugin = new wxDirPickerCtrl( this, wxID_ANY, "" );
+    m_plugin->Bind( wxEVT_DIRPICKER_CHANGED, &MySQLODBCSetupConnection::DataChanged, this );
+    grid_sizer_2->Add( m_plugin, 1, wxEXPAND, 0 );
     wxStaticText* label_4 = new wxStaticText( this, wxID_ANY, _( "Authentication" ) );
     grid_sizer_2->Add( label_4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_3 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
     text_ctrl_3->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
-    grid_sizer_2->Add( text_ctrl_3, 0, 0, 0 );
+    grid_sizer_2->Add( text_ctrl_3, 1, wxEXPAND, 0 );
     wxStaticText* label_5 = new wxStaticText( this, wxID_ANY, _( "OCI Config File" ) );
     grid_sizer_2->Add( label_5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    text_ctrl_4 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
-    text_ctrl_4->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
-    grid_sizer_2->Add( text_ctrl_4, 0, 0, 0 );
+    m_ociFile = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString );
+    m_ociFile->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupConnection::DataChanged, this );
+    grid_sizer_2->Add( m_ociFile, 1, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     

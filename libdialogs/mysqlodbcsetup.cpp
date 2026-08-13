@@ -24,6 +24,7 @@
 #include "wx/valnum.h"
 #include "wx/collpane.h"
 #include "wx/notebook.h"
+#include <wx/filepicker.h>
 #include "wx/process.h"
 #include "mysqlodbcsetupconnection.h"
 #include "mysqlodbcsetupmeta.h"
@@ -210,9 +211,20 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
         m_data[L"MULTI_STATEMENTS"] = m_page1->Get9Check()->GetValue() ? L"1" : L"0";
         m_data[L"MULTI_HOST"] = m_page1->Get10Check()->GetValue() ? L"1" : L"0";
         m_data[L"INTERACTIVE"] = m_page1->Get11Check()->GetValue() ? L"1" : L"0";
+        m_data[L"CHARSET"] = m_page1->GetCharSet()->GetValue().ToStdWstring();
+        m_data[L"INITSTMT"] = m_page1->GetInitStmt()->GetValue().ToStdWstring();
+        m_data[L"PLUGIN_DIR"] = m_page1->GetPluginDir()->GetPath().ToStdWstring();
+        m_data[L"DEFAULT_AUTH"] = m_page1->GetAuth()->GetValue().ToStdWstring();
+        m_data[L"OCI_CONFIG_FILE"] = m_page1->GetOCI()->GetFileName().GetFullPath().ToStdWstring();
     }
     if( m_page2->IsChanged() )
     {
+        m_data[L"NO_BIGINT"] = m_page2->GetBigInt()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_BINARY_RESULT"] = m_page2->GetNoBinary()->GetValue() ? L"1" : L"0";
+        m_data[L"FULL_COLUMN_NAMES"] = m_page2->GetFullName()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_CATALOG"] = m_page2->GetNoCatalog()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_SCHEMA"] = m_page2->GetNoSchema()->GetValue() ? L"1" : L"0";
+        m_data[L"COLUMN_SIZE_S32"] = m_page2->GetLimitColumn()->GetValue() ? L"1" : L"0";
     }
     if( m_page3->IsChanged() )
     {
