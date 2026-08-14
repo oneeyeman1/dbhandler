@@ -42,6 +42,7 @@
 #include "mysqlodbcsetupmeta.h"
 #include "mysqlodbcsetupcursor.h"
 #include "mysqlodbcsetupdebug.h"
+#include "mysqlodbcsetupssl.h"
 #include "mysqlodbcsetup.h"
 #include "odbcconfigure.h"
 

@@ -30,5 +30,6 @@ private:
     MySQLODBCSetupMeta *m_page2;
     MySQLODBCSetupCursor *m_page3;
     MySQLODBCSetupDebug *m_page4;
+    MySQLODBCSetupSSL *m_page5;
 };
 

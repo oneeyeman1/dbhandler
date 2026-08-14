@@ -30,6 +30,7 @@
 #include "mysqlodbcsetupmeta.h"
 #include "mysqlodbcsetupcursor.h"
 #include "mysqlodbcsetupdebug.h"
+#include "mysqlodbcsetupssl.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values) : wxDialog( parent, wxID_ANY, "" )
@@ -108,12 +109,14 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
     m_page1 = new MySQLODBCSetupConnection( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page1, _( "Connection" ) );
-    m_page2 = new MySQLODBCSetupMeta( m_detailsOptions/*, values*/ );
+    m_page2 = new MySQLODBCSetupMeta( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page2, _( "Metadata" ) );
     m_page3 = new MySQLODBCSetupCursor( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page3, _( "Cursors/Results" ) );
-    m_page4 = new MySQLODBCSetupDebug( m_detailsOptions );
+    m_page4 = new MySQLODBCSetupDebug( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page4, _( "Debug" ) );
+    m_page5 = new MySQLODBCSetupSSL( m_detailsOptions, values );
+    m_detailsOptions->AddPage( m_page5, "SSL" );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -246,5 +249,6 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     }
     if( m_page4->IsChanged() )
         m_data[L"LOG_QUERY"] = m_page4->GetLogQueries()->GetValue() ? L"1" : L"0";
+    
     EndModal( wxID_OK );
 }
