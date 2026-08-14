@@ -249,6 +249,9 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     }
     if( m_page4->IsChanged() )
         m_data[L"LOG_QUERY"] = m_page4->GetLogQueries()->GetValue() ? L"1" : L"0";
-    
+    if( m_page5->IsChanged() )
+    {
+        m_data[L"SSLKEY"] = m_page5->GetSSLKey()->GetPath().ToStdWstring();
+    }
     EndModal( wxID_OK );
 }

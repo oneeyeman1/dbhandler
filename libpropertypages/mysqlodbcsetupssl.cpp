@@ -1,27 +1,40 @@
-//           mysqlodbcsetupssl.cpp
-//  Fri August 14 14:23:21 2026
-//  Copyright  2026  Unknown
-//  <user@host>
-// mysqlodbcsetupssl.cpp
-//
-// Copyright (C) 2026 - Unknown
-//
-// This program is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program. If not, see <http://www.gnu.org/licenses/>.
+/***************************************************************************
+ *   Copyright (C) 2005 by Igor Korot                                      *
+ *   igor@IgorsGentoo                                                      *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
 #include <map>
 #include "wx/wx.h"
+#include "wx/filepicker.h"
 #include "mysqlodbcsetupssl.h"
 
 MySQLODBCSetupSSL::MySQLODBCSetupSSL(wxWindow *parent, const std::map<std::wstring, std::wstring> &values) : wxPanel( parent )
 {
+    auto sizer = new wxBoxSizer( wxHORIZONTAL );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer1 = new wxBoxSizer( wxVERTICAL );
+    sizer->Add( sizer1, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_ssl = new wxFilePickerCtrl( this, wxID_ANY, "SSL key" );
+    if( values.find( L"SSLKEY" ) != values.end() )
+        m_ssl->SetFileName( wxFileName( values.at( L"SSLKEY" ) ) );
+    m_ssl->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupSSL::DataChanged, this );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer->Add( 5, 5, 0, wxEXPAND, 0 );
+    SetSizer( sizer );
+    sizer->Fit( this );
 }
