@@ -9,10 +9,12 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
+#include <wx/valnum.h>
 #include "mysqlodbcsetupcursor.h"
 
 MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
 {
+    wxIntegerValidator<unsigned long> val( &m_value, wxNUM_VAL_ZERO_AS_BLANK );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
@@ -39,8 +41,12 @@ MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
     m_prefetch = new wxCheckBox( this, wxID_ANY, _( "Prefetch from server by" ) );
 	m_prefetch->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer2->Add( m_prefetch, 0, wxEXPAND, 0 );
-    m_rows = new wxTextCtrl( this, wxID_ANY, "" );
+    m_rows = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
 	m_rows->Bind( wxEVT_TEXT, &MySQLODBCSetupCursor::DataChanged, this );
+    if( m_prefetch->GetValue() )
+        m_rows->Enable( true );
+    else
+        m_rows->Enable( false );
     sizer2->Add( m_rows, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_label = new wxStaticText( this, wxID_ANY, _( "rows at a time" ) );
     sizer2->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -67,5 +73,13 @@ MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
 
 void MySQLODBCSetupCursor::DataChanged(wxCommandEvent &event)
 {
+    if( event.GetEventObject() == m_prefetch )
+    {
+        if( m_prefetch->GetValue() )
+            m_rows->Enable( true );
+        else
+            m_rows->Enable( false );
+        m_rows->SetValue( "100" );
+    }
     m_changed = true;
 }

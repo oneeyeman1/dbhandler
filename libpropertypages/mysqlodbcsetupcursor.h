@@ -22,5 +22,6 @@ private:
     wxStaticText *m_label;
     wxCheckBox *m_matchedRows, *m_autoISNULL, *m_padChar, *m_zeroDate;
     bool m_changed = false;
+    unsigned long m_value = 0;
 };
 
