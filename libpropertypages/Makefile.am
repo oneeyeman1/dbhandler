@@ -61,7 +61,9 @@ libpropertypages_la_SOURCES =  \
 	mysqlodbcsetupmeta.cpp \
 	mysqlodbcsetupmeta.h \
 	mysqlodbcsetupcursor.cpp \
-	mysqlodbcsetupcursor.h
+	mysqlodbcsetupcursor.h \
+	mysqlodbcsetupdebug.cpp \
+	mysqlodbcsetupdebug.h
 
 libpropertypages_la_CXXFLAGS = -I../../dbinterface \
 	-I../../libshapeframework \

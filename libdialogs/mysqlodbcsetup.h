@@ -29,5 +29,6 @@ private:
     MySQLODBCSetupConnection *m_page1;
     MySQLODBCSetupMeta *m_page2;
     MySQLODBCSetupCursor *m_page3;
+    MySQLODBCSetupDebug *m_page4;
 };
 

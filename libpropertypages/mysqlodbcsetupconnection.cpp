@@ -12,7 +12,7 @@
 #include "wx/filepicker.h"
 #include "mysqlodbcsetupconnection.h"
 
-MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent) : wxPanel( parent )
+MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent, const std::map<std::wstring, std::wstring> &values) : wxPanel( parent )
 {
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );

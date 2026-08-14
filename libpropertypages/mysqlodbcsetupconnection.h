@@ -3,7 +3,7 @@
 class WXEXPORT MySQLODBCSetupConnection : public wxPanel
 {
 public:
-    MySQLODBCSetupConnection(wxWindow *parent);
+    MySQLODBCSetupConnection(wxWindow *parent, const std::map<std::wstring, std::wstring> &values);
     bool IsChanged() { return m_changed; }
     wxCheckBox *Get1Check() const { return m_allowBgResultSet; }
     wxCheckBox *Get2Check() const { return checkbox_2; }

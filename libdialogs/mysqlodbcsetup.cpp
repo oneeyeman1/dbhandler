@@ -29,6 +29,7 @@
 #include "mysqlodbcsetupconnection.h"
 #include "mysqlodbcsetupmeta.h"
 #include "mysqlodbcsetupcursor.h"
+#include "mysqlodbcsetupdebug.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values) : wxDialog( parent, wxID_ANY, "" )
@@ -105,12 +106,14 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_test->Bind( wxEVT_BUTTON, &mySQLODBCSetupDialog::OnTest, this );
     sizer7->Add( m_test, 0, wxEXPAND, 0 );
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
-    m_page1 = new MySQLODBCSetupConnection( m_detailsOptions );
+    m_page1 = new MySQLODBCSetupConnection( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page1, _( "Connection" ) );
     m_page2 = new MySQLODBCSetupMeta( m_detailsOptions );
     m_detailsOptions->AddPage( m_page2, _( "Metadata" ) );
     m_page3 = new MySQLODBCSetupCursor( m_detailsOptions );
     m_detailsOptions->AddPage( m_page3, _( "Cursors/Results" ) );
+    m_page4 = new MySQLODBCSetupDebug( m_detailsOptions );
+    m_detailsOptions->AddPage( m_page4, _( "Debug" ) );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -238,5 +241,7 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
         m_data[L"PAD_SPACE"] = m_page3->GetPadSpace()->GetValue() ? L"1" : L"0";
         m_data[L"ZERO_DATE_TO_MIN"] = m_page3->GetZeroDate()->GetValue() ? L"1" : L"0";
     }
+    if( m_page4->IsChanged() )
+        m_data[L"LOG_QUERY"] = m_page4->GetLogQueries()->GetValue() ? L"1" : L"0";
     EndModal( wxID_OK );
 }
