@@ -31,5 +31,6 @@ private:
     MySQLODBCSetupCursor *m_page3;
     MySQLODBCSetupDebug *m_page4;
     MySQLODBCSetupSSL *m_page5;
+    MySQLODBCSetupMisc *m_page6;
 };
 

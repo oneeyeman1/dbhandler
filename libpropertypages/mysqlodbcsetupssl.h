@@ -29,5 +29,5 @@ protected:
     void DataChanged(wxCommandEvent &event);
 private:
     bool m_changed = false;
-    wxFilePickerCtrl *m_ssl;
+    wxFilePickerCtrl *m_ssl, *m_sslCert;
 };

@@ -29,12 +29,26 @@ MySQLODBCSetupSSL::MySQLODBCSetupSSL(wxWindow *parent, const std::map<std::wstri
     auto sizer1 = new wxBoxSizer( wxVERTICAL );
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_ssl = new wxFilePickerCtrl( this, wxID_ANY, "SSL key" );
+    m_ssl = new wxFilePickerCtrl( this, wxID_ANY, "" );
+    if( values.find( L"SSLKEY" ) != values.end() )
+        m_ssl->SetFileName( wxFileName( values.at( L"SSLKEY" ) ) );
+    m_ssl->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupSSL::DataChanged, this );
     if( values.find( L"SSLKEY" ) != values.end() )
         m_ssl->SetFileName( wxFileName( values.at( L"SSLKEY" ) ) );
     m_ssl->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupSSL::DataChanged, this );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_sslCert = new wxFilePickerCtrl( this, wxID_ANY, "" );
+    if( values.find( L"SSLKEY" ) != values.end() )
+        m_sslCert->SetFileName( wxFileName( values.at( L"SSLKEY" ) ) );
+    m_sslCert->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupSSL::DataChanged, this );
+    sizer1->Add( m_sslCert, 0, wxEXPAND, 0 );
+    sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer );
     sizer->Fit( this );
+}
+
+void MySQLODBCSetupSSL::DataChanged(wxCommandEvent &event)
+{
+    m_changed = true;
 }

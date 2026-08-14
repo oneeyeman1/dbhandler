@@ -31,6 +31,7 @@
 #include "mysqlodbcsetupcursor.h"
 #include "mysqlodbcsetupdebug.h"
 #include "mysqlodbcsetupssl.h"
+#include "mysqlodbcsetupmisc.h"
 #include "mysqlodbcsetup.h"
 
 mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstring, std::wstring> &values) : wxDialog( parent, wxID_ANY, "" )
@@ -117,6 +118,8 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_detailsOptions->AddPage( m_page4, _( "Debug" ) );
     m_page5 = new MySQLODBCSetupSSL( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page5, "SSL" );
+    m_page6 = new MySQLODBCSetupMisc( m_detailsOptions, values );
+    m_detailsOptions->AddPage( m_page6, "Misc" );
     m_detailsOptions->Hide();
     sizer3->Add( m_detailsOptions, 0, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
