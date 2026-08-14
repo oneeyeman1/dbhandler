@@ -3,7 +3,7 @@
 class WXEXPORT MySQLODBCSetupCursor : public wxPanel
 {
 public:
-    MySQLODBCSetupCursor(wxWindow *parent);
+    MySQLODBCSetupCursor(wxWindow *parent, const std::map<std::wstring, std::wstring> &values);
     bool IsChanged() { return m_changed; }
     wxCheckBox *GetDynamicCursor() const { return m_dynamicCursor; }
     wxCheckBox *GetDriverCursor() const { return m_disableDriverCursor; }

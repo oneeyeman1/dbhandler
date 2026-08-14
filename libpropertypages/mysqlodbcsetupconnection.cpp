@@ -8,6 +8,7 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
+#include <map>
 #include <wx/wx.h>
 #include "wx/filepicker.h"
 #include "mysqlodbcsetupconnection.h"
@@ -24,35 +25,57 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent, const std::
     sizer_2->Add( grid_sizer_1, 0, wxEXPAND, 0 );
     m_allowBgResultSet = new wxCheckBox( this, wxID_ANY, _( "Allow big result set" ) );
     m_allowBgResultSet->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
+    if( values.find( L"BIG_PACKETS" ) != values.end() )
+        m_allowBgResultSet->SetValue( values.at( L"BIG_PACKETS" ) == L"1" ? true : false );
     grid_sizer_1->Add( m_allowBgResultSet, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_1 = new wxCheckBox( this, wxID_ANY, _( "Can Handle Expired Password" ) );
     checkbox_1->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
+    if( values.find( L"CAN_HANDLE_EXP_PWD" ) != values.end() )
+        checkbox_1->SetValue( values.at( L"CAN_HANDLE_EXP_PWD" ) == L"1" ? true : false );
     grid_sizer_1->Add( checkbox_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_2 = new wxCheckBox( this, wxID_ANY, _( "Use compression" ) );
+    if( values.find( L"COMPRESSED_PROTO" ) != values.end() )
+        checkbox_2->SetValue( values.at( L"COMPRESSED_PROTO" ) == L"1" ? true : false );
     checkbox_2->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_3 = new wxCheckBox( this, wxID_ANY, _( "Enable Cleartext Authentiication" ) );
+    if( values.find( L"ENABLE_CLEARTEXT_PLUGIN" ) != values.end() )
+        checkbox_3->SetValue( values.at( L"ENABLE_CLEARTEXT_PLUGIN" ) == L"1" ? true : false );
     checkbox_3->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_4 = new wxCheckBox( this, wxID_ANY, _( "Enable automatic reconnect" ) );
+    if( values.find( L"AUTO_RECONNECT" ) != values.end() )
+        checkbox_4->SetValue( values.at( L"AUTO_RECONNECT" ) == L"1" ? true : false );
     checkbox_4->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_5 = new wxCheckBox( this, wxID_ANY, _( "Get Server Public Key" ) );
+    if( values.find( L"GET_SERVER_PUBLIC_KEY" ) != values.end() )
+        checkbox_5->SetValue( values.at( L"GET_SERVER_PUBLIC_KEY" ) == L"1" ? true : false );
     checkbox_5->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_6 = new wxCheckBox( this, wxID_ANY, _( "Don't prompt when connecting" ) );
+    if( values.find( L"NO_PROMPT" ) != values.end() )
+        checkbox_6->SetValue( values.at( L"NO_PROMPT" ) == L"1" ? true : false );
     checkbox_6->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_6, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_7 = new wxCheckBox( this, wxID_ANY, _( "Use DNS SRV records" ) );
+    if( values.find( L"ENABLE_DNS_SRV" ) != values.end() )
+        checkbox_7->SetValue( values.at( L"ENABLE_DNS_SRV" ) == L"1" ? true : false );
     checkbox_7->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_7, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_8 = new wxCheckBox( this, wxID_ANY, _( "Allow multiple statements" ) );
+    if( values.find( L"MULTI_STATEMENTS" ) != values.end() )
+        checkbox_8->SetValue( values.at( L"MULTI_STATEMENTS" ) == L"1" ? true : false );
     checkbox_8->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_8, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_9 = new wxCheckBox( this, wxID_ANY, _( "Multi Host" ) );
+    if( values.find( L"MULTI_HOST" ) != values.end() )
+        checkbox_9->SetValue( values.at( L"MULTI_HOST" ) == L"1" ? true : false );
     checkbox_9->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_9, 0, wxALIGN_CENTER_VERTICAL, 0 );
     checkbox_10 = new wxCheckBox( this, wxID_ANY, _( "Interactive Client" ) );
+    if( values.find( L"INTERACTIVE" ) != values.end() )
+        checkbox_10->SetValue( values.at( L"INTERACTIVE" ) == L"1" ? true : false );
     checkbox_10->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_1->Add( checkbox_10, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
@@ -62,26 +85,36 @@ MySQLODBCSetupConnection::MySQLODBCSetupConnection(wxWindow *parent, const std::
     auto label_1 = new wxStaticText( this, wxID_ANY, _( "Character Set" ) );
     grid_sizer_2->Add( label_1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     combo_box_1 = new wxComboBox( this, wxID_ANY, "" );
+    if( values.find( L"CHARSET" ) != values.end() )
+        combo_box_1->SetValue( values.at( L"CHARSET" ) );
     combo_box_1->Bind( wxEVT_COMBOBOX, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( combo_box_1, 1, wxEXPAND, 0 );
     wxStaticText* label_2 = new wxStaticText( this, wxID_ANY, _( "Initial Statement" ) );
     grid_sizer_2->Add( label_2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_1 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    if( values.find( L"INITSTMT" ) != values.end() )
+        text_ctrl_1->SetValue( values.at( L"INITSTMT" ) );
     text_ctrl_1->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_1, 1, wxEXPAND, 0 );
     wxStaticText* label_3 = new wxStaticText( this, wxID_ANY, _( "Plugin Directory" ) );
     grid_sizer_2->Add( label_3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_plugin = new wxDirPickerCtrl( this, wxID_ANY, "" );
+    if( values.find( L"PLUGIN_DIR" ) != values.end() )
+        m_plugin->SetPath( values.at( L"PLUGIN_DIR" ) );
     m_plugin->Bind( wxEVT_DIRPICKER_CHANGED, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( m_plugin, 1, wxEXPAND, 0 );
     wxStaticText* label_4 = new wxStaticText( this, wxID_ANY, _( "Authentication" ) );
     grid_sizer_2->Add( label_4, 0, wxALIGN_CENTER_VERTICAL, 0 );
     text_ctrl_3 = new wxTextCtrl( this, wxID_ANY, wxEmptyString );
+    if( values.find( L"DEFAULT_AUTH" ) != values.end() )
+        text_ctrl_3->SetValue( values.at( L"DEFAULT_AUTH" ) );
     text_ctrl_3->Bind( wxEVT_TEXT, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( text_ctrl_3, 1, wxEXPAND, 0 );
     wxStaticText* label_5 = new wxStaticText( this, wxID_ANY, _( "OCI Config File" ) );
     grid_sizer_2->Add( label_5, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_ociFile = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString );
+    if( values.find( L"OCI_CONFIG_FILE" ) != values.end() )
+        m_ociFile->SetFileName( wxFileName( values.at( L"OCI_CONFIG_FILE" ) ) );
     m_ociFile->Bind( wxEVT_FILEPICKER_CHANGED, &MySQLODBCSetupConnection::DataChanged, this );
     grid_sizer_2->Add( m_ociFile, 1, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );

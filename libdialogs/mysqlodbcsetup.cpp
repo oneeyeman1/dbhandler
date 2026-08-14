@@ -108,9 +108,9 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     m_detailsOptions = new wxNotebook( this, wxID_ANY );
     m_page1 = new MySQLODBCSetupConnection( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page1, _( "Connection" ) );
-    m_page2 = new MySQLODBCSetupMeta( m_detailsOptions );
+    m_page2 = new MySQLODBCSetupMeta( m_detailsOptions/*, values*/ );
     m_detailsOptions->AddPage( m_page2, _( "Metadata" ) );
-    m_page3 = new MySQLODBCSetupCursor( m_detailsOptions );
+    m_page3 = new MySQLODBCSetupCursor( m_detailsOptions, values );
     m_detailsOptions->AddPage( m_page3, _( "Cursors/Results" ) );
     m_page4 = new MySQLODBCSetupDebug( m_detailsOptions );
     m_detailsOptions->AddPage( m_page4, _( "Debug" ) );
@@ -235,7 +235,10 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
         m_data[L"NO_DEFAULT_CURSOR"] = m_page3->GetDriverCursor()->GetValue() ? L"1" : L"0";
         m_data[L"NO_CACHE"] = m_page3->GetCacheCursor()->GetValue() ? L"1" : L"0";
         m_data[L"FORWARD_CURSOR"] = m_page3->GetForwardOnlyCursor()->GetValue() ? L"1" : L"0";
-        m_data[L"PREFETCH"] = m_page3->GetPrefetchRows()->GetValue().ToStdWstring();
+        if( m_page3->GetPrefetchRows()->IsEnabled() )
+            m_data[L"PREFETCH"] = m_page3->GetPrefetchRows()->GetValue().ToStdWstring();
+        else
+            m_data[L"PREFETCH"] = L"0";
         m_data[L"FOUND_ROWS"] = m_page3->GetMatchedRows()->GetValue() ? L"1" : L"0";
         m_data[L"AUTO_IS_NULL"] = m_page3->GetIsNULL()->GetValue() ? L"1" : L"0";
         m_data[L"PAD_SPACE"] = m_page3->GetPadSpace()->GetValue() ? L"1" : L"0";

@@ -8,11 +8,12 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-#include <wx/wx.h>
-#include <wx/valnum.h>
+#include <map>
+#include "wx/wx.h"
+#include "wx/valnum.h"
 #include "mysqlodbcsetupcursor.h"
 
-MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
+MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent, const std::map<std::wstring, std::wstring> &values) : wxPanel( parent )
 {
     wxIntegerValidator<unsigned long> val( &m_value, wxNUM_VAL_ZERO_AS_BLANK );
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
@@ -21,24 +22,38 @@ MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_dynamicCursor = new wxCheckBox( this, wxID_ANY, _( "Enable dynamic cursors" ) );
+    if( values.find( L"DYNAMIC_CURSOR" ) != values.end() )
+        m_dynamicCursor->SetValue( values.at( L"DYNAMIC_CURSOR" ) == L"1" ? true : false );
 	m_dynamicCursor->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_dynamicCursor, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_disableDriverCursor = new wxCheckBox( this, wxID_ANY, _( "Disable driver provided cursor support" ) );
+    if( values.find( L"NO_DEFAULT_CURSOR" ) != values.end() )
+        m_disableDriverCursor->SetValue( values.at( L"NO_DEFAULT_CURSOR" ) == L"1" ? true : false );
 	m_disableDriverCursor->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_disableDriverCursor, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_cacheForwardOnlyCursor = new wxCheckBox(this, wxID_ANY, _( "Don't cache results of forward-only cursors" ) );
+    if( values.find( L"NO_CACHE" ) != values.end() )
+        m_cacheForwardOnlyCursor->SetValue( values.at( L"NO_CACHE" ) == L"1" ? true : false );
 	m_cacheForwardOnlyCursor->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_cacheForwardOnlyCursor, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_forceForwardOnlyCursor = new wxCheckBox( this, wxID_ANY, _( "Force use of forward-only cursors" ) );
+    if( values.find( L"FORWARD_CURSOR" ) != values.end() )
+        m_forceForwardOnlyCursor->SetValue( values.at( L"FORWARD_CURSOR" ) == L"1" ? true : false );
 	m_forceForwardOnlyCursor->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_forceForwardOnlyCursor, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer2 = new wxBoxSizer( wxHORIZONTAL );
     sizer1->Add( sizer2, 0, wxEXPAND, 0 );
     m_prefetch = new wxCheckBox( this, wxID_ANY, _( "Prefetch from server by" ) );
+    if( values.find( L"PREFETCH" ) != values.end() )
+    {
+        m_prefetch->SetValue( values.at( L"PREFETCH" ) == L"0" ? false : true );
+        if( values.at( L"PREFETCH" ) != L"0" )
+            m_rows->SetValue( values.at( L"PREFETCH" ) );
+    }
 	m_prefetch->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer2->Add( m_prefetch, 0, wxEXPAND, 0 );
     m_rows = new wxTextCtrl( this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, val );
@@ -52,18 +67,26 @@ MySQLODBCSetupCursor::MySQLODBCSetupCursor(wxWindow *parent) : wxPanel( parent )
     sizer2->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_matchedRows = new wxCheckBox( this, wxID_ANY, _( "Returned matched rows instead of affected rows" ) );
+    if( values.find( L"FOUND_ROWS" ) != values.end() )
+        m_matchedRows->SetValue( values.at( L"FOUND_ROWS" ) == L"1" ? true : false );
 	m_matchedRows->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_matchedRows, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_autoISNULL = new wxCheckBox( this, wxID_ANY, _( "Enable SQL_AUTO_IS_NULL" ) );
+    if( values.find( L"AUTO_IS_NULL" ) != values.end() )
+        m_autoISNULL->SetValue( values.at( L"AUTO_IS_NULL" ) == L"1" ? true : false );
 	m_autoISNULL->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_autoISNULL, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_padChar = new wxCheckBox( this, wxID_ANY, _( "Pad CHAR to full length with space" ) );
+    if( values.find( L"PAD_SPACE" ) != values.end() )
+        m_padChar->SetValue( values.at( L"PAD_SPACE" ) == L"1" ? true : false );
 	m_padChar->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_padChar, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_zeroDate = new wxCheckBox( this, wxID_ANY, _( "Return SQL_NULL_DATA for zero date" ) );
+    if( values.find( L"ZERO_DATE_TO_MIN" ) != values.end() )
+        m_zeroDate->SetValue( values.at( L"ZERO_DATE_TO_MIN" ) == L"1" ? true : false );
 	m_zeroDate->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupCursor::DataChanged, this );
     sizer1->Add( m_zeroDate, 0, wxEXPAND, 0 );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
