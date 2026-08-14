@@ -3,7 +3,7 @@
 class WXEXPORT MySQLODBCSetupMeta : public wxPanel
 {
 public:
-    MySQLODBCSetupMeta(wxWindow *parent);
+    MySQLODBCSetupMeta(wxWindow *parent, const std::map<std::wstring, std::wstring> &values);
     bool IsChanged() { return m_changed; }
     wxCheckBox *GetBigInt() const { return m_bigintAsInt; }
     wxCheckBox *GetNoBinary() const { return m_binaryResultsAsChar; }

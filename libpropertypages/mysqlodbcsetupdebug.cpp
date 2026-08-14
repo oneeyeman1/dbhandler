@@ -8,10 +8,11 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-#include <wx/wx.h>
+#include <map>
+#include "wx/wx.h"
 #include "mysqlodbcsetupdebug.h"
 
-MySQLODBCSetupDebug::MySQLODBCSetupDebug(wxWindow *parent) : wxPanel( parent )
+MySQLODBCSetupDebug::MySQLODBCSetupDebug(wxWindow *parent, const std::map<std::wstring, std::wstring> &values) : wxPanel( parent )
 {
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -19,6 +20,8 @@ MySQLODBCSetupDebug::MySQLODBCSetupDebug(wxWindow *parent) : wxPanel( parent )
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_logQueries = new wxCheckBox( this, wxID_ANY, _( "Log queries to $TEMP/myodbc.sql" ) );
+    if( values.find( L"LOG_QUERY" ) != values.end() )
+        m_logQueries->SetValue( values.at( L"LOG_QUERY" ) == L"1" ? true : false );
     m_logQueries->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupDebug::DataChanged, this );
     sizer1->Add( m_logQueries, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );

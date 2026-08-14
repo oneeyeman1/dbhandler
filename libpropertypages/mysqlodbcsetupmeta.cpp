@@ -8,10 +8,11 @@
 // Example for compiling a multi file project under Linux using g++:
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
-#include <wx/wx.h>
+#include <map>
+#include "wx/wx.h"
 #include "mysqlodbcsetupmeta.h"
 
-MySQLODBCSetupMeta::MySQLODBCSetupMeta(wxWindow *parent) : wxPanel( parent )
+MySQLODBCSetupMeta::MySQLODBCSetupMeta(wxWindow *parent, const std::map<std::wstring, std::wstring> &values) : wxPanel( parent )
 {
     auto sizer = new wxBoxSizer( wxHORIZONTAL );
     sizer->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -19,27 +20,39 @@ MySQLODBCSetupMeta::MySQLODBCSetupMeta(wxWindow *parent) : wxPanel( parent )
     sizer->Add( sizer1, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_bigintAsInt = new wxCheckBox( this, wxID_ANY, _( "Treat BIGINT columns as INT columns" ) );
+    if( values.find( L"NO_BIGINT" ) != values.end() )
+        m_bigintAsInt->SetValue( values.at( L"NO_BIGINT" ) == L"1" ? true : false );
     m_bigintAsInt->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_bigintAsInt, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_binaryResultsAsChar = new wxCheckBox( this, wxID_ANY, _( "Always handle binary function results as character data" ) );
+    if( values.find( L"NO_BINARY_RESULT" ) != values.end() )
+        m_binaryResultsAsChar->SetValue( values.at( L"NO_BINARY_RESULT" ) == L"1" ? true : false );
     m_binaryResultsAsChar->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_binaryResultsAsChar, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_tableNameInDescribeCol = new wxCheckBox( this, wxID_ANY, _( "Include table name in SQLDescribeCol" ) );
+    if( values.find( L"FULL_COLUMN_NAMES" ) != values.end() )
+        m_tableNameInDescribeCol->SetValue( values.at( L"FULL_COLUMN_NAMES" ) == L"1" ? true : false );
     m_tableNameInDescribeCol->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_tableNameInDescribeCol, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_disableCatalog = new wxCheckBox( this, wxID_ANY, _( "Disable catalog support" ) );
+    if( values.find( L"NO_CATALOG" ) != values.end() )
+        m_disableCatalog->SetValue( values.at( L"NO_CATALOG" ) == L"1" ? true : false );
     m_disableCatalog->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_disableCatalog, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_disableSchema = new wxCheckBox( this, wxID_ANY, _( "Disable schema support") );
+    if( values.find( L"NO_SCHEMA" ) != values.end() )
+        m_disableSchema->SetValue( values.at( L"NO_SCHEMA" ) == L"1" ? true : false );
     m_disableSchema->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     m_disableSchema->SetValue( true );
     sizer1->Add( m_disableSchema, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     m_limitColumnSize = new wxCheckBox( this, wxID_ANY, _( "Limit column size to signed 32-bit range" ) );
+    if( values.find( L"COLUMN_SIZE_S32" ) != values.end() )
+        m_limitColumnSize->SetValue( values.at( L"COLUMN_SIZE_S32" ) == L"1" ? true : false );
     m_limitColumnSize->Bind( wxEVT_CHECKBOX, &MySQLODBCSetupMeta::DataChanged, this );
     sizer1->Add( m_limitColumnSize, 0, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );

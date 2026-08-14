@@ -3,7 +3,7 @@
 class WXEXPORT MySQLODBCSetupDebug : public wxPanel
 {
 public:
-    MySQLODBCSetupDebug(wxWindow *parent);
+    MySQLODBCSetupDebug(wxWindow *parent, const std::map<std::wstring, std::wstring> &values);
     bool IsChanged() { return m_changed; }
     wxCheckBox *GetLogQueries() const { return m_logQueries; }
 protected:
