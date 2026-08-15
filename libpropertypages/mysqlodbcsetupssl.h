@@ -30,4 +30,5 @@ protected:
 private:
     bool m_changed = false;
     wxFilePickerCtrl *m_ssl, *m_sslCert;
+    wxStaticText *m_label1, *m_label2;
 };
