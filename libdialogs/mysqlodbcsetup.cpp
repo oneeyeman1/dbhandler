@@ -256,5 +256,19 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     {
         m_data[L"SSLKEY"] = m_page5->GetSSLKey()->GetPath().ToStdWstring();
     }
+    if( m_page6->IsChanged() )
+    {
+        m_data[L"SAFE"] = m_page6->GetSafeOptions()->GetValue() ? L"1" : L"0";
+        m_data[L"DFLT_BIGINT_BIND_STR"] = m_page6->GetBindBigInt()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_LOCALE"] = m_page6->GetNoLocale()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_DATE_OVERFLOW"] = m_page6->GetDateOverflow()->GetValue() ? L"1" : L"0";
+        m_data[L"IGNORE_SPACE"] = m_page6->GetIgnoreSpace()->GetValue() ? L"1" : L"0";
+        m_data[L"USE_MYCNF"] = m_page6->GetConfigFile()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_TRANSACTIONS"] = m_page6->GetNoTransactions()->GetValue() ? L"1" : L"0";
+        m_data[L"MIN_DATE_TO_ZERO"] = m_page6->GetMinDateBind()->GetValue() ? L"1" : L"0";
+        m_data[L"NO_SSPS"] = m_page6->GetClientPrepare()->GetValue() ? L"1" : L"0";
+        m_data[L"ENABLE_LOCAL_INFILE"] = m_page6->GetLoadDataFile()->GetValue() ? L"1" : L"0";
+        m_data[L"LOAD_DATA_LOCAL_DIR"] = m_page6->GetLoadDataDir()->GetPath().ToStdWstring();
+    }
     EndModal( wxID_OK );
 }

@@ -23,6 +23,17 @@ class MySQLODBCSetupMisc: public wxPanel
 {
 public:
     MySQLODBCSetupMisc(wxWindow *parent, const std::map<std::wstring, std::wstring> &values);
+    wxCheckBox *GetSafeOptions() const { return m_safeOptions; }
+    wxCheckBox *GetBindBigInt() const { return m_bindBigInt; }
+    wxCheckBox *GetNoLocale() const { return m_noSetLocale; }
+    wxCheckBox *GetDateOverflow() const { return m_disableDateOverflow; }
+    wxCheckBox *GetIgnoreSpace() const { return m_ignoreSpace; }
+    wxCheckBox *GetConfigFile() const { return m_useConfigFile; }
+    wxCheckBox *GetNoTransactions() const { return m_noTrans; }
+    wxCheckBox *GetMinDateBind() const { return m_bindMinDate; }
+    wxCheckBox *GetClientPrepare() const { return m_prepareOnClient; }
+    wxCheckBox *GetLoadDataFile() const { return m_enableLoadData; }
+    wxDirPickerCtrl *GetLoadDataDir() const { return m_dataLocalDir; }
     bool IsChanged() { return m_changed; }
 protected:
     void DataChanged(wxCommandEvent &event);
