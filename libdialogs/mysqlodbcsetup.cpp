@@ -170,16 +170,6 @@ void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
 void mySQLODBCSetupDialog::OnTest(wxCommandEvent &event)
 {
     dynamic_cast<CODBCConfigure *>( GetParent() )->TestConnection( m_name->GetValue().ToStdWstring(), m_user->GetValue().ToStdWstring(), m_password->GetValue().ToStdWstring() );
-/*    wxString command = "mysql ";
-    auto user = m_user->GetValue();
-    command += "-u " + user;
-    auto password = m_password->GetValue();
-    command += " -p" + password;
-    auto database = m_dbName->GetValue();
-    command += " -D " + database;
-    command += " -e do 1";
-    auto process = new wxProcess();
-    auto res = wxExecute( command, wxEXEC_SYNC, process );*/
 }
 
 void mySQLODBCSetupDialog::OnPipe(wxCommandEvent &event)

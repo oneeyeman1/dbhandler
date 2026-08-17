@@ -10573,18 +10573,47 @@ int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &ui
         ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &m_hdbc );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, ENV_ERROR );
+            GetErrorMessage( errorMsg, CONN_ERROR );
             result = 1;
         }
     }
     if( !result )
     {
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        std::unique_ptr<SQLWCHAR[]> name( new SQLWCHAR[dsn.length() + 2] );
+        std::unique_ptr<SQLWCHAR[]> user( new SQLWCHAR[uid.length() + 2] );
+        std::unique_ptr<SQLWCHAR[]> pwd( new SQLWCHAR[password.length() + 2] );
+        memset( name.get(), '\0', dsn.length() + 2 );
+        memset( user.get(), '\0', uid.length() + 2 );
+        memset( pwd.get(), '\0', password.length() + 2 );
+        uc_to_str_cpy( name.get(), dsn );
+        uc_to_str_cpy( user.get(), uid );
+        uc_to_str_cpy( pwd.get(), password );
+        ret = SQLConnect( m_hdbc, name.get(), dsn.length() + 2, user.get(), uid.length(), pwd.get(), password.length() );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, STMT_ERROR );
+            GetErrorMessage( errorMsg, CONN_ERROR );
             result = 1;
         }
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+        m_hdbc = 0;
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, ENV_ERROR );
+            result = 1;
+        }
+        m_env = 0;
     }
     return result;
 }

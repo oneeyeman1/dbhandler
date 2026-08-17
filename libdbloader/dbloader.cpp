@@ -314,10 +314,12 @@ extern "C" WXEXPORT int SaveDSNData(Database *db, const std::wstring &dsn, const
 
 extern "C" int ConnectionTest(Database *db, const std::wstring &dsn, const std::wstring &uid, const std::wstring &password)
 {
+    int result = 0;
     std::vector<std::wstring> errorMsg;
-    static_cast<ODBCDatabase *>( db )->ConnectionTest( dsn, uid, password, errorMsg );
-    for( auto msg: errorMsg )
-        wxMessageBox( msg );
-    return 0;
+    result = static_cast<ODBCDatabase *>( db )->ConnectionTest( dsn, uid, password, errorMsg );
+    if( result )
+        wxMessageBox( "Connection failed!!" );
+    else
+        wxMessageBox( "Connection successful!!" );
+    return result;
 }
-

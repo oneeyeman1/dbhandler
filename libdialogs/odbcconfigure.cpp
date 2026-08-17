@@ -324,6 +324,4 @@ void CODBCConfigure::TestConnection(const std::wstring &dsn, const std::wstring 
 {
     TESTCONNECTION func = (TESTCONNECTION) m_lib->GetSymbol( "ConnectionTest" );
     func( m_db, dsn, uid, password );
-    wxMessageBox( "On Connection Test!!" );
 }
-
