@@ -10558,6 +10558,34 @@ int ODBCDatabase::SaveDSNData(const std::wstring &dsn, const std::map<std::wstri
 int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    RETCODE ret;
+    if( m_env == 0 )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_ENV, SQL_NULL_HENV, &m_env );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, ENV_ERROR );
+        }
+    }
+    if( !result && m_hdbc == 0 )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &m_hdbc );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, ENV_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
     return result;
 }
 
