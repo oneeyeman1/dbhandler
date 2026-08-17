@@ -29,6 +29,7 @@ class CODBCConfigure : public wxDialog
 public:
     CODBCConfigure(wxWindow* parent, int id, const wxString& title);
     ~CODBCConfigure();
+    void TestConnection(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password);
 
 private:
     void OnCreateDSN(wxCommandEvent &event);

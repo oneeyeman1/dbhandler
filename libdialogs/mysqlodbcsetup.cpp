@@ -21,11 +21,14 @@
 
 #include <map>
 #include "wx/statline.h"
+#include "wx/dynlib.h"
 #include "wx/valnum.h"
 #include "wx/collpane.h"
 #include "wx/notebook.h"
 #include <wx/filepicker.h>
-#include "wx/process.h"
+//#include "wx/process.h"
+#include "database.h"
+#include "odbcconfigure.h"
 #include "mysqlodbcsetupconnection.h"
 #include "mysqlodbcsetupmeta.h"
 #include "mysqlodbcsetupcursor.h"
@@ -166,7 +169,8 @@ void mySQLODBCSetupDialog::OnDetails(wxCommandEvent &event)
 
 void mySQLODBCSetupDialog::OnTest(wxCommandEvent &event)
 {
-    wxString command = "mysql ";
+    dynamic_cast<CODBCConfigure *>( GetParent() )->TestConnection( m_name->GetValue().ToStdWstring(), m_user->GetValue().ToStdWstring(), m_password->GetValue().ToStdWstring() );
+/*    wxString command = "mysql ";
     auto user = m_user->GetValue();
     command += "-u " + user;
     auto password = m_password->GetValue();
@@ -175,7 +179,7 @@ void mySQLODBCSetupDialog::OnTest(wxCommandEvent &event)
     command += " -D " + database;
     command += " -e do 1";
     auto process = new wxProcess();
-    auto res = wxExecute( command, wxEXEC_SYNC, process );
+    auto res = wxExecute( command, wxEXEC_SYNC, process );*/
 }
 
 void mySQLODBCSetupDialog::OnPipe(wxCommandEvent &event)
@@ -255,6 +259,7 @@ void mySQLODBCSetupDialog::OnOK(wxCommandEvent &event)
     if( m_page5->IsChanged() )
     {
         m_data[L"SSLKEY"] = m_page5->GetSSLKey()->GetPath().ToStdWstring();
+        m_data[L"SSLCA"] = m_page5->GetSSLCert()->GetPath().ToStdWstring();
     }
     if( m_page6->IsChanged() )
     {

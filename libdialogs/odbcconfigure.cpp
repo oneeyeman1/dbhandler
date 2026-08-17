@@ -207,7 +207,7 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
     wxString drvName( driverName );
     if( drvName.Contains( "myodbc" ) )
     {
-        mySQLODBCSetupDialog dlg( GetParent(), values );
+        mySQLODBCSetupDialog dlg( this, values );
         if( dlg.ShowModal() == wxID_OK )
         {
             std::wstring dsn = dlg.GetDSNName();
@@ -219,7 +219,7 @@ void CODBCConfigure::OnCreateDSN(wxCommandEvent &WXUNUSED(event))
     }
     if( drvName.Contains( "psql" ) )
     {
-        PostgresODBCSetupDialog dlg( GetParent(), values );
+        PostgresODBCSetupDialog dlg( this, values );
         dlg.ShowModal();
     }
 #endif
@@ -249,7 +249,7 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     values[L"Name"] = dsnStr;
     if( driver.Contains( "myodbc" ) )
     {
-        mySQLODBCSetupDialog dlg( GetParent(), values );
+        mySQLODBCSetupDialog dlg( this, values );
         if( dlg.ShowModal() == wxID_OK )
         {
             SAVEDSNDATA func = (SAVEDSNDATA) m_lib->GetSymbol( "SaveDSNData" );
@@ -258,7 +258,7 @@ void CODBCConfigure::OnEditDSN(wxCommandEvent &WXUNUSED(event))
     }
     if( driver.Contains( "psql" ) )
     {
-        PostgresODBCSetupDialog dlg( GetParent(), values );
+        PostgresODBCSetupDialog dlg( this, values );
         dlg.ShowModal();
     }
 #endif
@@ -318,37 +318,9 @@ void CODBCConfigure::FillDSNComboBox()
         }
     }
 }
-/*
-SQLWCHAR *CODBCConfigure::ConvertFromString(wxString str)
+
+void CODBCConfigure::TestConnection(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password)
 {
-	SQLWCHAR *s = new SQLWCHAR[str.length() * sizeof( SQLWCHAR )];
-    SQLWCHAR *tmp;
-#if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
-    tmp = const_cast<SQLWCHAR *>( str.wc_str() );
-#elif defined(  _IODBCUNIX_H )
-    tmp = str.wc_str();
-#endif
-    wcscpy( s, tmp, sizeof( temp ) );
-    return s;
+    wxMessageBox( "On Connection Test!!" );
 }
 
-void CODBCConfigure::ConvertFromString(const wxString &str, SQLWCHAR *string)
-{
-#if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
-    string = const_cast<SQLWCHAR *>( str.wc_str() );
-#elif defined(  _IODBCUNIX_H )
-    string = str.wc_str();
-#endif
-}
-
-wxString CODBCConfigure::ConvertFromSQLWCHAR(SQLWCHAR *str)
-{
-    wxString string;
-#if defined(__WXMSW__) || defined( SQL_ATTR_UNIXODBC_VERSION )
-    string = str;
-#elif defined(  _IODBCUNIX_H )
-    string = str.wc_str();
-#endif
-    return string;
-}
-*/
