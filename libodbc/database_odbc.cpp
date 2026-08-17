@@ -10554,3 +10554,10 @@ int ODBCDatabase::SaveDSNData(const std::wstring &dsn, const std::map<std::wstri
     }
     return result;
 }
+
+int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}
+

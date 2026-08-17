@@ -69,6 +69,7 @@ public:
     int GetDriverNameFromConfigFile(const std::wstring &desc, std::wstring &driverName);
     int GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std::wstring> &values);
     int SaveDSNData(const std::wstring &dsn, const std::map<std::wstring, std::wstring> &values, std::vector<std::wstring> &errorMsg);
+    int ConnectionTest(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password, std::vector<std::wstring> &errorMsg);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
