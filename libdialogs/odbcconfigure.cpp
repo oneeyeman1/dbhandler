@@ -54,7 +54,7 @@ typedef int (*DELETEDSN)(Database *, const wxString &, const wxString &);
 typedef int (*GETDRIVERNAME)(Database *, const std::wstring &, std::wstring &);
 typedef int (*GETDSNLIST)(Database *, const std::wstring &, std::map<std::wstring, std::wstring> &);
 typedef int (*SAVEDSNDATA)(Database *, const std::wstring &, const std::map<std::wstring, std::wstring> &);
-typedef int (*TESTCONNECTION)(const std::wstring &, const std::wstring &, const std::wstring &);
+typedef int (*TESTCONNECTION)(Database *, const std::wstring &, const std::wstring &, const std::wstring &);
 
 CODBCConfigure::CODBCConfigure(wxWindow* parent, int id, const wxString& title) :
     wxDialog( parent, id, title )
@@ -322,7 +322,8 @@ void CODBCConfigure::FillDSNComboBox()
 
 void CODBCConfigure::TestConnection(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password)
 {
-    TESTCONNECTION func = (TESTCONNECTION) m_lib->GetSymbol( "SaveDSNData" );
+    TESTCONNECTION func = (TESTCONNECTION) m_lib->GetSymbol( "ConnectionTest" );
+    func( m_db, dsn, uid, password );
     wxMessageBox( "On Connection Test!!" );
 }
 
