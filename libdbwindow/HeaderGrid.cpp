@@ -45,7 +45,7 @@ void HeaderGrid::DoChildrenLayout()
     wxRect currRect2, maxRect0 = wxRect( 0, 0, 0, 0 ), maxRect1 = wxRect( 0, 0, 0, 0 );
     int nIndex = 0, nCol = 0, nRow = -1;
     SerializableList::compatibility_iterator node = GetFirstChildNode();
-    if( node )
+    while( node )
     {
         pShape = (wxSFShapeBase*) node->GetData();
         currRect2 = pShape->GetBoundingBox();
