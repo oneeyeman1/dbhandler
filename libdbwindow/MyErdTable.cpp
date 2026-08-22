@@ -596,9 +596,9 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
                         field->SetFieldAsPK( false );
                 }
             }
-            UpdateTable();
+//            UpdateTable();
 //            if( m_displayComments )
-//                Refresh();
+                Refresh();
 //                m_header->Refresh();
         }
     }
