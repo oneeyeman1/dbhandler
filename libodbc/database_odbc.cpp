@@ -3731,8 +3731,17 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
         id = QT;
 #endif
     }
-    std::wstring t = schemaName + L".";
-    t += tableName;
+    std::wstring t = L"";
+    if( pimpl.m_subtype != L"MySQL" )
+    {
+        t = schemaName + L"/";
+        t += tableName;
+    }
+    else
+    {
+        t = schemaName + L"/";
+        t += tableName;
+    }
     query += L"'";
     query += t;
     query += L"'";
