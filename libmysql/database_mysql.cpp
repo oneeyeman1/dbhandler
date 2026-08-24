@@ -981,14 +981,26 @@ bool MySQLDatabase::IsIndexExists(const std::wstring &indexName, const std::wstr
 int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstring> &errorMsg)
 {
     MYSQL_STMT *stmt = NULL;
-    int result = 0;
-    char *str_data1 = NULL, *str_data2 = NULL, tName[129], owner[129], datafontname[18], headingfontname[18], labelfontname[18], comments[254];
+    int result = 0, id;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __DBGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif
+    }
+    char *str_data1 = nullptr, *str_data2 = nullptr, *str_data3 = nullptr, tName[129], owner[129], datafontname[18], headingfontname[18], labelfontname[18], comments[254];
     int tableId;
     short int datafontheight, datafontweight, datafontset, datafontptc, headingfontheight, headingfontweight, headingfontset, headingfontptc, labelfontheight, labelfontweight, labelfontset, labelfontptc;
     short int datafontunderline, headingfontunderline, labelfontunderline, datafontstriken, headingfontstriken, labelfontstriken;
     char datafontitalic = 'N', headingfontitalic = 'N', labelfontitalic = 'N';
-    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_ownr = ? AND abt_tnam = ?;";
-    std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName();
+    std::wstring query = L"SELECT rtrim(abt_tnam), abt_tid, rtrim(abt_ownr), abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_ownr = ? AND abt_tnam = ? AND abt_os = ?;";
+    std::wstring schemaName = table->GetSchemaName(), tableName = table->GetTableName(), ownerName = table->GetTableOwner();
     stmt = mysql_stmt_init( m_db );
     if( !stmt )
     {
@@ -1007,20 +1019,24 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
         }
         else
         {
-            MYSQL_BIND params[2];
+            MYSQL_BIND params[3];
             unsigned long str_length1, str_length2;
-            str_data1 = new char[schemaName.length()], str_data2 = new char[tableName.length()];
+            str_data3 = new char[ownerName.length()];
+            str_data2 = new char[tableName.length() + schemaName.length() + 1];
             memset( params, 0, sizeof( params ) );
             params[0].buffer_type = MYSQL_TYPE_STRING;
-            params[0].buffer = (char *) str_data1;
-            params[0].buffer_length = schemaName.length();
+            params[0].buffer = (char *) str_data3;
+            params[0].buffer_length = ownerName.length();
             params[0].is_null = 0;
             params[0].length = &str_length1;
             params[1].buffer_type = MYSQL_TYPE_STRING;
             params[1].buffer = (char *) str_data2;
-            params[1].buffer_length = tableName.length();
+            params[1].buffer_length = tableName.length() + schemaName.length() + 1;
             params[1].is_null = 0;
             params[1].length = &str_length2;
+            params[3].buffer_type = ;
+            params[3].is_null = 0;
+            params[3]. ;
             res = mysql_stmt_bind_param( stmt, params );
             if( res )
             {
@@ -1270,7 +1286,19 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
 
 int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TableProperties &properties, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, id;
+    if( m_osId & ( 1 << 2 | 1 << 3 | 1 << 4 | 1 << 5 ) ) // Windows
+        id = WINDOWS;
+    else if( m_osId & ( 1 << 0 | 1 << 1 ) ) // Mac
+        id = OSX;
+    else // *nix
+    {
+#ifdef __DBGTK__
+        id = GTK;
+#else
+        id = QT;
+#endif
+    }
     bool exist;
     std::wstring query = L"BEGIN TRANSACTION";
     std::wostringstream istr;
@@ -1298,190 +1326,110 @@ int MySQLDatabase::SetTableProperties(const DatabaseTable *table, const TablePro
                 command = L"UPDATE `abcattbl` SET `abt_tnam` = \'";
                 command += schemaName + L"." + tableName;
                 command += L"\', `abt_tid` = ";
-                istr << tableId;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( tableId );
                 command += L", `abt_ownr` = \'";
                 command += owner;
                 command += L"\',  `abd_fhgt` = ";
-                istr << properties.m_dataFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontSize );
                 command += L", `abd_fwgt` = ";
-                istr << properties.m_dataFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontWeight );
                 command += L", `abd_fitl` = \'";
                 command += properties.m_dataFontItalic ? L"Y" : L"N";
                 command += L"\', `abd_funl` = \'";
                 command += properties.m_dataFontUnderline ? L"Y" : L"N";
                 command += L"\', `abd_fchr` = ";
-                istr << properties.m_dataFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontEncoding );
                 command += L", `abd_fptc` = ";
-                istr << properties.m_dataFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontPixelSize );
                 command += L", `abd_ffce` = \'";
                 command += properties.m_dataFontName;
                 command += L"\', `abh_fhgt` = ";
-                istr << properties.m_headingFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontSize );
                 command += L", `abd_fwgt` = ";
-                istr << properties.m_headingFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontWeight );
                 command += L", `abh_fitl` = \'";
                 command += properties.m_headingFontItalic ? L"Y" : L"N";
                 command += L"\', `abh_funl` = \'";
                 command += properties.m_headingFontUnderline ? L"Y" : L"N";
                 command += L"\', `abh_fchr` = ";
-                istr << properties.m_headingFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontEncoding );
                 command += L", `abh_fptc` = ";
-                istr << properties.m_headingFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontPixelSize );
                 command += L", `abh_ffce` = \'";
                 command += properties.m_headingFontName;
                 command += L"\', `abl_fhgt` = ";
-                istr << properties.m_labelFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontSize );
                 command += L", `abl_fwgt` = ";
-                istr << properties.m_labelFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontWeight );
                 command += L", `abl_fitl` = \'";
                 command += properties.m_labelFontItalic ? L"Y" : L"N";
                 command += L"\', \"abl_funl\" = \'";
                 command += properties.m_labelFontUnderline ? L"Y" : L"N";
                 command += L"\', `abl_fchr` = ";
-                istr << properties.m_labelFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontEncoding );
                 command += L", `abl_fptc` = ";
-                istr << properties.m_labelFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontPixelSize );
                 command += L", `abl_ffce` = \'";
                 command += properties.m_labelFontName;
                 command += L"\', `abt_cmnt` = \'";
                 command += comment;
                 command += L"\' WHERE `abt_tnam` = \'";
-                command += schemaName + L"." + tableName;
+                command += schemaName + L"/" + tableName;
                 command += L"\' AND `abt_tid` = ";
-                istr << tableId;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( tableId );
                 command += L" AND `abt_ownr` = \'";
                 command += owner;
                 command += L"\';";
             }
             else
             {
-                command = L"INSERT INTO `abcattbl` VALUES( \'";
-                command += schemaName + L"." + tableName;
+                command = L"INSERT INTO `abcattbl` VALUES( ";
+                command += std::to_wstring( id );
+                command += L", \'" + schemaName + L"/" + tableName;
                 command += L"\', ";
-                istr << tableId;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( tableId );
                 command += L", \'";
                 command += owner;
                 command += L"\', ";
-                istr << properties.m_dataFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontSize );
                 command += L", ";
-                istr << properties.m_dataFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontWeight );
                 command += L", \'";
                 command += properties.m_dataFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
                 command += properties.m_dataFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
-                istr << properties.m_dataFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontEncoding );
                 command += L", ";
-                istr << properties.m_dataFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_dataFontPixelSize );
                 command += L", \'";
                 command += properties.m_dataFontName;
                 command += L"\', ";
-                istr << properties.m_headingFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontSize );
                 command += L", ";
-                istr << properties.m_headingFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontWeight );
                 command += L", \'";
                 command += properties.m_headingFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
                 command += properties.m_headingFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
-                istr << properties.m_headingFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontEncoding );
                 command += L", ";
-                istr << properties.m_headingFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_headingFontPixelSize );
                 command += L", \'";
                 command += properties.m_headingFontName;
                 command += L"\', ";
-                istr << properties.m_labelFontSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontSize );
                 command += L", ";
-                istr << properties.m_labelFontWeight;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontWeight );
                 command += L", \'";
                 command += properties.m_labelFontItalic ? L"Y" : L"N";
                 command += L"\', \'";
                 command += properties.m_labelFontUnderline ? L"Y" : L"N";
                 command += L"\', ";
-                istr << properties.m_labelFontEncoding;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontEncoding );
                 command += L", ";
-                istr << properties.m_labelFontPixelSize;
-                command += istr.str();
-                istr.clear();
-                istr.str( L"" );
+                command += std::to_wstring( properties.m_labelFontPixelSize );
                 command += L", \'";
                 command += properties.m_labelFontName;
                 command += L"\', \'";
