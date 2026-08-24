@@ -1034,9 +1034,10 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             params[1].buffer_length = tableName.length() + schemaName.length() + 1;
             params[1].is_null = 0;
             params[1].length = &str_length2;
-            params[3].buffer_type = ;
+            params[3].buffer_type = MYSQL_TYPE_LONG;
+            params[3].buffer = (char  *) &id;
             params[3].is_null = 0;
-            params[3]. ;
+            params[3].length = 0;
             res = mysql_stmt_bind_param( stmt, params );
             if( res )
             {
@@ -1046,8 +1047,9 @@ int MySQLDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wst
             }
             else
             {
-                strncpy( str_data1, m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
-                strncpy( str_data2, m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), tableName.length() );
+                strncpy( str_data2, m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
+                strncpy( str_data2, "/", 1 );
+                strncpy( str_data2, m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), schemaName.length() );
                 str_length1 = schemaName.length();
                 str_length2 = tableName.length();
                 res = mysql_stmt_execute( stmt );
