@@ -299,6 +299,7 @@ void MyErdTable::SetTableComment(const wxString &comment)
     auto prop = m_table->GetTableProperties();
     prop.m_comment = comment.ToStdWstring();
     m_comment->SetText( m_table->GetTableProperties().m_comment );
+    m_header->Update();
 }
 
 void MyErdTable::ClearGrid()
@@ -581,7 +582,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         {
             m_table->SetTableProperties( prop );
             m_table->SetPKFields( prop.primaryKey );
-            m_comment->SetText( prop.m_comment );
+            SetTableComment( prop.m_comment );
             auto fields = m_table->GetFields();
             for( auto field: fields )
             {
@@ -596,10 +597,7 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
                         field->SetFieldAsPK( false );
                 }
             }
-//            UpdateTable();
-//            if( m_displayComments )
-                Refresh();
-//                m_header->Refresh();
+            Refresh();
         }
     }
     else
