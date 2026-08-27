@@ -187,6 +187,8 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                         {
                             if( PopulateValdators( errorMsg ) )
                                 result = 1;
+                            if( PopulateFormats( errorMsg ) )
+                                result = 1;
                             else
                                 m_isConnected = true;
                         }
@@ -3246,3 +3248,39 @@ int MySQLDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options,
     return result;
 }
 
+int MySQLDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM abcatfmt;";
+    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( res )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    else
+    {
+        MYSQL_RES *store = mysql_store_result( m_db );
+        if( !store )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        else
+        {
+            MYSQL_ROW row;
+            while( ( row = mysql_fetch_row( store ) ) != NULL )
+            {
+                std::wstring name = m_pimpl->m_myconv.from_bytes( row[0] );
+                std::wstring format = m_pimpl->m_myconv.from_bytes( row[1] );
+                short type = atoi( row[2] );
+                pimpl.m_formats.push_back( std::make_tuple( name, format, type ) );
+
+            }
+        }
+        mysql_free_result( store );
+    }
+    return result;
+}

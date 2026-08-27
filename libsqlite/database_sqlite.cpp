@@ -301,8 +301,17 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
             result = 1;
             GetErrorMessage( res, errorMsg );
         }
-        else
-            GetServerVersion( errorMsg );
+        if( !res )
+        {
+            res = PopulateFormats( errorMsg );
+            if( res )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+            else
+                GetServerVersion( errorMsg );
+        }
     }
     m_isConnected = true;
     if( result && m_db )
@@ -3217,3 +3226,39 @@ int SQLiteDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options
     return result;
 }
 
+int SQLiteDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM abcatfmt;";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, nullptr );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    else
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
+            {
+                auto name = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt, 0 ) );
+                auto format = sqlite_pimpl->m_myconv.from_bytes( (char *) sqlite3_column_text( m_stmt, 1 ) );
+                auto type = sqlite3_column_int( m_stmt, 2 );
+                pimpl.m_formats.push_back( std::make_tuple( name, format, type ) );
+            }
+            else if( res == SQLITE_DONE )
+            {
+                break;
+            }
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
+        }
+    }
+    sqlite3_finalize( m_stmt );
+    return result;
+}

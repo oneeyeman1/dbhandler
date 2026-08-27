@@ -63,6 +63,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &foreignKey, std::vector<std::wstring> &errorMsg) override;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
+    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
 private:
     SQLAnywhereInterface m_api;
