@@ -33,7 +33,9 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     panel_1 = new wxPanel( this, wxID_ANY );
     wxBoxSizer* sizer_2 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_4 = new wxBoxSizer( wxHORIZONTAL );
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_5 = new wxBoxSizer( wxHORIZONTAL );
@@ -96,12 +98,14 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     m_help = new wxButton( panel_1, wxID_HELP, _( "Help" ) );
     sizer_7->Add( m_help, 0, 0, 0 );
-
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     panel_1->SetSizer( sizer_2 );
     sizer_2->Fit( this );
     Layout();
     // end wxGlade
     m_ok->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnOK, this );
+    m_testButton->Bind( wxEVT_UPDATE_UI, &DisplayFormatDefinition::OnTestUpdateUI, this );
 }
 
 void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
@@ -113,4 +117,12 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
         m_db->AddUpdateFormat();
         EndModal( wxID_OK );
     }
+}
+
+void DisplayFormatDefinition::OnTestUpdateUI( wxUpdateUIEvent &event )
+{
+    if( m_name->GetValue().IsEmpty() && m_format->GetValue().IsEmpty() )
+        event.Enable( false );
+    else
+        event.Enable( true );
 }

@@ -32,6 +32,7 @@ private:
     Database *m_db;
 protected:
     void OnOK(wxCommandEvent &event);
+    void OnTestUpdateUI(wxUpdateUIEvent &event);
     // begin wxGlade: DisplayFormatDefinition::attributes
     wxPanel* panel_1;
     wxTextCtrl* m_name;
