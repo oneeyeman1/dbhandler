@@ -113,11 +113,12 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
 
 void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
 {
+    std::vector<std::wstring> errorMsg;
     if( m_name->GetValue().IsEmpty() )
         wxMessageBox( _( "Name field can't be empty" ) );
     else
     {
-        m_db->AddUpdateFormat();
+        m_db->AddUpdateFormat( errorMsg );
         EndModal( wxID_OK );
     }
 }

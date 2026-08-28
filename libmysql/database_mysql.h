@@ -34,7 +34,7 @@ public:
     virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, bool tableAdded, std::vector<std::wstring> &errors) override;
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg) override;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
-    virtual int AddUpdateFormat() override;
+    virtual int AddUpdateFormat(std::vector<std::wstring> &errorMsg) override;
     int GetTableId(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, long &id, std::vector<std::wstring> &errors);
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) override;
