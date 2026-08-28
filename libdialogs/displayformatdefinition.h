@@ -33,16 +33,19 @@ private:
 protected:
     void OnOK(wxCommandEvent &event);
     void OnTestUpdateUI(wxUpdateUIEvent &event);
+    void OnTest(wxCommandEvent &event);
     // begin wxGlade: DisplayFormatDefinition::attributes
     wxPanel* panel_1;
     wxTextCtrl* m_name;
     wxComboBox* m_type;
     wxComboBox* m_format;
     wxTextCtrl* m_test;
+    wxStaticText *m_result;
     wxButton* m_ok;
     wxButton* m_cancel;
     wxButton* m_testButton;
     wxButton* m_help;
+    wxMaskedEditText *m_testMask;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5;
     // end wxGlade
 }; // wxGlade: end class

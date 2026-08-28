@@ -12,6 +12,7 @@
 #include <wx/wx.h>
 
 #include <memory>
+#include "maskededit.h"
 #include "database.h"
 #include "displayformatdefinition.h"
 
@@ -82,7 +83,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     grid_sizer_1->Add( m_test, 0, wxEXPAND, 0 );
     m_label5 = new wxStaticText( panel_1, wxID_ANY, _( "Result" ) );
     grid_sizer_1->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    wxStaticText* m_result = new wxStaticText( panel_1, wxID_ANY, wxEmptyString );
+    m_result = new wxStaticText( panel_1, wxID_ANY, wxEmptyString );
     grid_sizer_1->Add( m_result, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_7 = new wxBoxSizer( wxVERTICAL );
@@ -103,9 +104,11 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     panel_1->SetSizer( sizer_2 );
     sizer_2->Fit( this );
     Layout();
+    m_testMask = new wxMaskedEditText( panel_1, wxID_ANY );
     // end wxGlade
     m_ok->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnOK, this );
     m_testButton->Bind( wxEVT_UPDATE_UI, &DisplayFormatDefinition::OnTestUpdateUI, this );
+    m_testButton->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnTest, this );
 }
 
 void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
@@ -121,8 +124,20 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
 
 void DisplayFormatDefinition::OnTestUpdateUI( wxUpdateUIEvent &event )
 {
-    if( m_name->GetValue().IsEmpty() && m_format->GetValue().IsEmpty() )
+    if( m_test->GetValue().IsEmpty() && m_format->GetValue().IsEmpty() )
         event.Enable( false );
     else
         event.Enable( true );
+}
+
+void DisplayFormatDefinition::OnTest(wxCommandEvent &WXUNUSED(event))
+{
+    m_testMask->Clear();
+    m_testMask->SetMask( m_format->GetValue() );
+    m_testMask->SetValue( m_test->GetValue() );
+    wxString value = m_testMask->GetValue().Trim();
+    if( value.IsEmpty() )
+        m_result->SetLabel( "0" );
+    else
+        m_result->SetLabel( value );
 }
