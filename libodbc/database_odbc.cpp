@@ -8684,7 +8684,7 @@ int ODBCDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }

@@ -2298,7 +2298,7 @@ int PostgresDatabase::GetQueryRow(const std::wstring &query, std::vector<std::ws
     return result;
 }
 
-int PostgresDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }

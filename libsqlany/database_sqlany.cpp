@@ -6806,7 +6806,7 @@ int SQLAnyDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
     return result;
 }
 
-int SQLAnyDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
+int SQLAnyDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }

@@ -2614,7 +2614,7 @@ int SQLiteDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
     return result;
 }
 
-int SQLiteDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }

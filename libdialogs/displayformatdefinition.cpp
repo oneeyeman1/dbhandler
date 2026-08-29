@@ -118,7 +118,11 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
         wxMessageBox( _( "Name field can't be empty" ) );
     else
     {
-        m_db->AddUpdateFormat( errorMsg );
+        ColumnFormatDefinitions format;
+        format.m_name = m_name->GetValue().ToStdWstring();
+        format.m_format = m_format->GetValue().ToStdWstring();
+//        format.m_type = m_fieldType;
+        m_db->AddUpdateFormat( m_isNew, format, errorMsg );
         EndModal( wxID_OK );
     }
 }

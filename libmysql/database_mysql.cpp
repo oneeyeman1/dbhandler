@@ -3049,7 +3049,7 @@ int MySQLDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstri
     return result;
 }
 
-int MySQLDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }
