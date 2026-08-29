@@ -83,11 +83,11 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     sqlite3_stmt *stmt;
     std::vector<std::string> queries;
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254));" );
-    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32));" );
-    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer);" );
-    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcatf_x ON abcatfmt(abf_name ASC);" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatf_x ON abcatfmt(abf_name ASC);" );
     queries.push_back( "INSERT OR IGNORE INTO abcatfmt VALUES( '(General)', '(General)', 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatfmt VALUES( '0', '0', 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatfmt VALUES( '0.00', '0.00', 81, 0 );" );
@@ -114,7 +114,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO abcatfmt VALUES( 'salary', '$###,##0.00', 81, 0 );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatfmt VALUES( 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 );" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcattbl(abt_os integer, abt_tnam char(129) NOT NULL, abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl char(1), abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254));" );
-    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS pbcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
+    queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatt_x ON abcattbl(abt_os ASC, abt_tnam ASC, abt_ownr ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254));" );
     queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatv_f ON abcatvld(abv_name ASC);" );
     queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'Multple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ');" );
@@ -189,6 +189,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'JJJ/YY HH:MM:SS', 'JJJ/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'JJJ/YYYY', 'JJJ/YYYY', 90, 1, 1, 32, '40' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+/*    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
@@ -197,8 +198,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'HH:MM:SS', 'HH:MM:SS', 90, 1, 1, 32, '30' );" );*/
     pimpl.m_type = L"SQLite";
     pimpl.m_subtype = L"";
     pimpl.m_connectedUser = L"";
