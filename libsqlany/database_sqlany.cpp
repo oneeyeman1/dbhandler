@@ -71,7 +71,7 @@ int SQLAnyDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg)
     char buffer[SACAPI_ERROR_SIZE + 20] {};
     char sqlstate[6];
     int  rc;
-    rc = m_api.sqlany_error( m_conn, buffer, sizeof( buffer ) );
+    rc = m_api.sqlany_error( m_conn, buffer, SACAPI_ERROR_SIZE + 20 );
     m_api.sqlany_sqlstate( m_conn, sqlstate, sizeof( sqlstate ) );
     strcat( buffer, ": SQLSTATE: " );
     strcat( buffer, sqlstate );
@@ -434,6 +434,8 @@ int SQLAnyDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                     }
                 }
                 if( !result && PopulateValdators( errorMsg ) )
+                    result = 1;
+                if( !result && PopulateFormats( errorMsg ) )
                     result = 1;
             }
         }
@@ -1333,7 +1335,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     {
         param.value.buffer = (char *) &osid;
         param.value.is_null = nullptr;
-        param.value.type = A_UVAL32;
+//        param.value.type = A_UVAL32;
         if( !m_api.sqlany_bind_param( m_stmt, 0, &param ) )
         {
             GetErrorMessage( errorMsg );
@@ -1357,7 +1359,8 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( !result )
                 {
                     len1 = (*it1).fullName.length();
-                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
+                    param.value.buffer = new char[len1];
+                    strcpy( param.value.buffer, sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
                     param.value.length = &len1;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 1, &param ) )
@@ -1366,6 +1369,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         result = 1;
                         break;
                     }
+                    delete[] param.value.buffer;
                 }
                 if( !m_api.sqlany_describe_bind_param( m_stmt, 2, &param ) )
                 {
@@ -1376,7 +1380,8 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( !result )
                 {
                     len2 = (*it1).schemaName.length();
-                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                    param.value.buffer = new char[len2];
+                    strcpy( param.value.buffer, sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
                     param.value.length = &len2;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 2, &param ) )
@@ -1385,6 +1390,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         result = 1;
                         break;
                     }
+                    delete[] param.value.buffer;
                 }
                 if( !m_api.sqlany_describe_bind_param( m_stmt, 3, &param ) )
                 {
@@ -1395,7 +1401,8 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( !result )
                 {
                     len3 = (*it1).tableName.length();
-                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).tableName.c_str() ).c_str() );
+                    param.value.buffer = new char[len3];
+                    strcpy( param.value.buffer, sqlany_pimpl->m_myconv.to_bytes( (*it1).tableName.c_str() ).c_str() );
                     param.value.length = &len3;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 3, &param ) )
@@ -1404,6 +1411,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         result = 1;
                         break;
                     }
+                    delete[] param.value.buffer;
                 }
                 if( !m_api.sqlany_describe_bind_param( m_stmt, 4, &param ) )
                 {
@@ -1414,7 +1422,8 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 if( !result )
                 {
                     len4 = (*it1).schemaName.length();
-                    param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                    param.value.buffer = new char[len4];
+                    strcpy( param.value.buffer, sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
                     param.value.length = &len4;
                     param.value.is_null = &isNull;
                     if( !m_api.sqlany_bind_param( m_stmt, 4, &param ) )
@@ -1423,6 +1432,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                         result = 1;
                         break;
                     }
+                    delete[] param.value.buffer;
                 }
                 if( pimpl.m_versionMajor < 9 )
                 {
@@ -1438,7 +1448,10 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( !result )
                     {
                         len5 = (*it1).fullName.length();
-                        param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
+                        std::unique_ptr<char[]> value( new char[len5] );
+                        memset( value.get(), '\0', len5 );
+                        strcpy( value.get(), sqlany_pimpl->m_myconv.to_bytes( (*it1).fullName.c_str() ).c_str() );
+                        param.value.buffer = value.get();
                         param.value.length = &len5;
                         param.value.is_null = &isNull;
                         if( !m_api.sqlany_bind_param( m_stmt, 5, &param ) )
@@ -1457,9 +1470,11 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     if( !result )
                     {
                         len6 = (*it1).schemaName.length();
-                        param.value.buffer = const_cast<char *>( sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                        std::unique_ptr<char[]> value( new char[len6] );
+                        memset( value.get(), '\0', len6 );
+                        strcpy( value.get(), sqlany_pimpl->m_myconv.to_bytes( (*it1).schemaName.c_str() ).c_str() );
+                        param.value.buffer = value.get();
                         param.value.length = &len6;
-                        param.value.type = A_STRING;
                         param.value.is_null = &isNull;
                         if( !m_api.sqlany_bind_param( m_stmt, 6, &param ) )
                         {
@@ -1492,6 +1507,7 @@ int SQLAnyDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 }
                 if( !result )
                 {
+                    auto i = m_api.sqlany_execute( m_stmt );
                     if( !m_api.sqlany_execute( m_stmt ) )
                     {
                         GetErrorMessage( errorMsg );
@@ -6790,7 +6806,7 @@ int SQLAnyDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
     return result;
 }
 
-int SQLAnyDatabase::AddUpdateFormat()
+int SQLAnyDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }
@@ -8294,3 +8310,8 @@ int SQLAnyDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options
     return result;
 }
 
+int SQLAnyDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}

@@ -116,16 +116,7 @@ void TableIndex::InitGui()
 #else
     libName = "/libdialogs";
 #endif
-#if wxCHECK_VERSION(3, 3, 0)
     path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
-#else
-#ifdef __WXMSW__
-    wxFileName fn( GetExecutablePath() );
-    path = fn.GetPath();
-#elif defined(__WXGTK__) || defined(__WXQT__)
-    path = wxGetInstallPrefix() + "/lib";
-#endif
-#endif
     m_lib.Load( path + libName );
     if( m_lib.IsLoaded() )
         m_initialized = true;

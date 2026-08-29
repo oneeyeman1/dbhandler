@@ -992,6 +992,8 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 }
                 if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
+                if( !result && PopulateFormats( errorMsg ) )
+                    result = 1;
             }
         }
     }
@@ -8682,7 +8684,7 @@ int ODBCDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstrin
     return result;
 }
 
-int ODBCDatabase::AddUpdateFormat()
+int ODBCDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }
@@ -10443,3 +10445,92 @@ int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &ui
     return result;
 }
 
+int ODBCDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLWCHAR *qry = nullptr;
+    std::wstring query;
+    SQLLEN colDataLen;
+    SQLWCHAR name[32], format[256];
+    short int validType;
+    std::wstring validName, validRule;
+    query = L"SELECT * FROM abcatfmt;";
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        qry = new SQLWCHAR[query.length() + 2];
+        memset( qry, '\0', query.length() + 2 );
+        uc_to_str_cpy( qry, query );
+        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
+        delete[] qry;
+        qry = nullptr;
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, 32, &colDataLen );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &format, 256, &colDataLen );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 3, SQL_C_SSHORT, &validType, 0, &colDataLen );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
+        {
+            str_to_uc_cpy( validName, name );
+            str_to_uc_cpy( validRule, format );
+            pimpl.m_formats.push_back( std::make_tuple( validName, validRule, validType ) );
+            validName = L"";
+            validRule = L"";
+        }
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        if( !result )
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+        else
+            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        if( !result )
+        {
+            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );;
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+            m_hstmt = 0;
+        }
+    }
+    return result;
+}

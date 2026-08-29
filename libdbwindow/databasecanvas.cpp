@@ -1225,16 +1225,7 @@ void DatabaseCanvas::OnLeftDoubleClick(wxMouseEvent& event)
         {
             wxString libName, path;
             wxDynamicLibrary lib;
-#if wxCHECK_VERSION(3, 3, 0)
             path = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
-#else
-#ifdef __WXMSW__
-            wxFileName fn( GetExecutablePath() );
-            path = fn.GetPath();
-#elif defined(__WXGTK__) || defined(__WXQT__)
-            path = GetInstallPrefix() + "/lib";
-#endif
-#endif
 #ifdef __WXMSW__
             libName = "\\dialogs";
 #elif __WXMAC__

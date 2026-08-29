@@ -68,16 +68,27 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_justify = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
     m_justify->SetSelection( 0 );
     grid_sizer_3->Add( m_justify, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_label3 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Case" ) );
-    grid_sizer_3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    const wxString m_case_choices[] = {
-        _( "Any" ),
-        _( "UPPER" ),
-        _( "lower" ),
-    };
-    m_case = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, m_case_choices, wxCB_DROPDOWN );
-    m_case->SetSelection( 0 );
-    grid_sizer_3->Add( m_case, 0, 0, 0 );
+    if( type.Lower() == "char" ||
+        type.Lower() == "character" ||
+        type.Lower() == "character varying" ||
+        type.Lower() == "nchar" ||
+        type.Lower() == "ntext" ||
+        type.Lower() == "nvarchar" ||
+        type.Lower() == "string" ||
+        type.Lower() == "text" ||
+        type.Lower() == "varchar" )
+    {
+        m_label3 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Case" ) );
+        grid_sizer_3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        const wxString m_case_choices[] = {
+            _( "Any" ),
+            _( "UPPER" ),
+            _( "lower" ),
+        };
+        m_case = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 3, m_case_choices, wxCB_DROPDOWN );
+        m_case->SetSelection( 0 );
+        grid_sizer_3->Add( m_case, 0, 0, 0 );
+    }
     wxFlexGridSizer* grid_sizer_4 = new wxFlexGridSizer( 2, 3, 5, 5 );
     grid_sizer_2->Add( grid_sizer_4, 0, 0, 0 );
     m_label4 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Display Height" ) );
@@ -95,8 +106,22 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_label7 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
     grid_sizer_4->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_2->Add( 5, 5, 0, 0, 0 );
-    m_picture = new wxCheckBox( sizer_5->GetStaticBox(), wxID_ANY, _( "Picture" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
-    grid_sizer_2->Add( m_picture, 0, 0, 0 );
+    if( type.Lower() == "binary" ||
+        type.Lower() == "blob" ||
+        type.Lower() == "char" ||
+        type.Lower() == "character" ||
+        type.Lower() == "character varying" ||
+        type.Lower() == "nchar" ||
+        type.Lower() == "ntext" ||
+        type.Lower() == "nvarchar" ||
+        type.Lower() == "string" ||
+        type.Lower() == "text" ||
+        type.Lower() == "varbinary" ||
+        type.Lower() == "varchar" )
+    {
+        m_picture = new wxCheckBox( sizer_5->GetStaticBox(), wxID_ANY, _( "Picture" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+        grid_sizer_2->Add( m_picture, 0, 0, 0 );
+    }
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
@@ -143,16 +168,7 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
         wxMessageBox( format );
     }
     wxString libName = "", stdPath;
-#if wxCHECK_VERSION(3, 3, 0)
     stdPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
-#else
-#ifdef __WXMSW__
-    wxFileName fn( GetExecutablePath() );
-    stdPath = fn.GetPath();
-#elif defined(__WXGTK__) || defined(__WXQT__)
-    stdPath = wxGetInstallPrefix() + "/lib";
-#endif
-#endif
 #ifdef __WXOSX__
     libName = "/liblibdialogs.dylib" ;
 #elif __WXGTK__

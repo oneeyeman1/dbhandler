@@ -35,7 +35,7 @@ public:
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg) override;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) override;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) override;
-    virtual int AddUpdateFormat() override;
+    virtual int AddUpdateFormat(std::vector<std::wstring> &errorMsg) override;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) override;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg)  override;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) override;
@@ -57,6 +57,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
 //    int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
+    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) override;
     int StartAlterTable(std::wstring &command, std::wstring &createCommand, std::vector<std::wstring> &createCommands, bool isLog, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int EndAlterTable(std::wstring &command, std::vector<std::wstring> &createCommands, const std::wstring &tableName, bool isLog, std::vector<std::wstring> &errorMsg);
 private:

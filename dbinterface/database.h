@@ -677,6 +677,7 @@ struct /*Database::*/Impl
 {
     const std::wstring m_desktop;
     std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> > m_validators;
+    std::vector<std::tuple<std::wstring, std::wstring, int> > m_formats;
     static std::mutex my_mutex;
     std::map<std::wstring, std::vector<DatabaseTable *> > m_tables;
     std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
@@ -718,6 +719,7 @@ protected:
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
 //    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
+    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) = 0;
 public:
     Database(const int osId, const std::wstring &desktop) : pimpl{ desktop }, m_osId( osId ) { }
     virtual ~Database() { }
@@ -749,7 +751,7 @@ public:
     virtual int AttachDatabase(const std::wstring &catalog, const std::wstring &schema, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetDatabaseNameList(std::vector<std::wstring> &names, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetQueryRow(const std::wstring &query, std::vector<std::wstring> &values) = 0;
-    virtual int AddUpdateFormat() = 0;
+    virtual int AddUpdateFormat(std::vector<std::wstring> &errorMsg) = 0;
     virtual int CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTablespacesList(std::vector<std::wstring> &list, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) = 0;

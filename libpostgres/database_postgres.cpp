@@ -228,6 +228,8 @@ int PostgresDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::
                 }
                 if( !result && PopulateValdators( errorMsg ) )
                     result = 1;
+                if( !result && PopulateFormats( errorMsg ) )
+                    result = 1;
                 if( !result && GetTablespacesList( m_pimpl->m_tablespaces, errorMsg ) )
                     result = 1;
             }
@@ -2296,7 +2298,7 @@ int PostgresDatabase::GetQueryRow(const std::wstring &query, std::vector<std::ws
     return result;
 }
 
-int PostgresDatabase::AddUpdateFormat()
+int PostgresDatabase::AddUpdateFormat(std::vector<std::wstring> &errorMsg)
 {
     return 0;
 }
@@ -2673,6 +2675,31 @@ int PostgresDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &optio
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
         std::dynamic_pointer_cast<PostgresCreateDBOptions>( options )->m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+    }
+    PQclear( res );
+    return result;
+}
+
+int PostgresDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT * FROM abcatfmt;";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Retrieve database list: " + err );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+            auto format = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            unsigned short type = (unsigned short) strtoul( PQgetvalue( res, i, 2 ), nullptr, 10 );
+            pimpl.m_formats.push_back( std::make_tuple( name, format, type ) );
+        }
     }
     PQclear( res );
     return result;
