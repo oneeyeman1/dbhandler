@@ -168,6 +168,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
             DBPROFILE func = (DBPROFILE) lib.GetSymbol( "DatabaseProfile" );
             result = func( parent, _( "Select Database Profile" ), name, engine, connectedUser, ask, dsn, profiles );
         }
+        dynamic_cast<wxFrame *>( parent )->GetStatusBar()->SetStatusText( "Connecting to Database..." );
         if( result != wxID_CANCEL )
         {
             if( engine == "SQLite" )
@@ -219,6 +220,7 @@ extern "C" WXEXPORT Database *ConnectToDb(wxWindow *parent, wxString &name, wxSt
                 result = 1;
             }
         }
+        dynamic_cast<wxFrame *>( parent )->GetStatusBar()->SetStatusText( "Ready" );
     }
     return pdb;
 }
