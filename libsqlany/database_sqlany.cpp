@@ -6808,7 +6808,13 @@ int SQLAnyDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstr
 
 int SQLAnyDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    std::wstring query;
+    int result = 0;
+    if( isAdd )
+        query = L"INSERT INTO abcatfmt VALUES(?, ?, ?, ?)";
+    else
+        query = L"UPDATE abcatfmt SET abf_name = ?, abf_frmt = ?, abf_type = ?, abf_cntr = ? WHERE abf_name = ?";
+    return result;
 }
 
 int SQLAnyDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)

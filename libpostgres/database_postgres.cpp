@@ -653,6 +653,8 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         query8 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
     query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = $1 AND t.relname = $2;";
     std::wstring query9 = L"SELECT conperiod FROM pg_constraint c WHERE conname = $1";
+    std::wstring query10 = L"INSERT INTO abcatfmt VALUES($1, $2, $3, $4);";
+    std::wstring query11 = L"UPDATE abcatfmt SET abf_name = $1, abf_frmt = $2, abf_type = $3, abf_cntr = $4 WHERE abf_name = $5;";
     res = PQexec( m_db, "BEGIN" );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
@@ -767,6 +769,28 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
     if( pimpl.m_versionMajor >= 18 && !result )
     {
         res1 = PQprepare( m_db, "get_overlap", m_pimpl->m_myconv.to_bytes( query9 ).c_str(), 1, nullptr );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        PQclear( res1 );
+    }
+    if( !result )
+    {
+        res1 = PQprepare( m_db, "add_format", m_pimpl->m_myconv.to_bytes( query10 ).c_str(), 1, nullptr );
+        if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+        PQclear( res1 );
+    }
+    if( !result )
+    {
+        res1 = PQprepare( m_db, "update_format", m_pimpl->m_myconv.to_bytes( query11 ).c_str(), 1, nullptr );
         if( PQresultStatus( res1 ) != PGRES_COMMAND_OK )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -1513,7 +1537,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
             field->GetFieldProperties().m_heading.m_label = fieldName;
             field->GetFieldProperties().m_heading.m_labelAlignment = 0;
             field->GetFieldProperties().m_display.m_justify = 0;
-            fieldFormat = L"";
+            field->GetFieldProperties().m_display.m_format = L"";
         }
         else
         {
@@ -1527,7 +1551,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
                 field->GetFieldProperties().m_heading.m_label = label == L"" ? fieldName : label;
                 field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 7 ) );
                 field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 10 ) );
-                fieldFormat = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
+                field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
             }
         }
     }
@@ -1571,9 +1595,9 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
             auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
             auto temp2 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
             if( temp1 == fieldFormat )
-                field->GetFieldProperties().m_display.m_format[1].push_back( std::make_pair( temp1, temp2 ) );
+                field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( temp1, temp2 ) );
             else
-                field->GetFieldProperties().m_display.m_format[0].push_back( std::make_pair( temp1, temp2 ) );
+                field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( temp1, temp2 ) );
         }
     }
     PQclear( res );
@@ -2300,7 +2324,18 @@ int PostgresDatabase::GetQueryRow(const std::wstring &query, std::vector<std::ws
 
 int PostgresDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    int result, params = 4;
+    std::wstring query;
+    if( isAdd )
+    {
+        query = L"add_format";
+    }
+    else
+    {
+        query = L"update_format";
+    }
+//    auto res = PQexecPrepared( m_db, query, params, );
+    return result;
 }
 
 int PostgresDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)

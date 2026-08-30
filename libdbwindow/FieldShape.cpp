@@ -139,9 +139,9 @@ void FieldShape::SetField(TableField *field)
     prop.m_heading.m_heading = field->GetFieldProperties().m_heading.m_heading;
     prop.m_heading.m_labelAlignment = field->GetFieldProperties().m_heading.m_labelAlignment;
     prop.m_heading.m_headingAlignment = field->GetFieldProperties().m_heading.m_headingAlignment;
-    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::iterator it = field->GetFieldProperties().m_display.m_format.begin(); it != field->GetFieldProperties().m_display.m_format.end(); ++it )
+    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::iterator it = field->GetFieldProperties().m_display.m_formats.begin(); it != field->GetFieldProperties().m_display.m_formats.end(); ++it )
         for( std::vector<std::pair<std::wstring,std::wstring> >::iterator it1 = (*it).second.begin(); it1 != (*it).second.end(); ++it1 )
-            prop.m_display.m_format[(*it).first].push_back( (*it1) );
+            prop.m_display.m_formats[(*it).first].push_back( (*it1) );
     m_any = prop;
 }
 

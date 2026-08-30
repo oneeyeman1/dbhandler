@@ -3051,7 +3051,32 @@ int MySQLDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstri
 
 int MySQLDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
-    return 0;
+    int result = 0;
+    std::wstring query;
+    if( isAdd )
+        query = L"INSERT INTO abcatfmt VALUES(?, ?, ?, ?)";
+    else
+        query = L"UPDATE abcatfmt SET abf_name = ?, abf_frmt = ?, abf_type = ?, abf_cntr = ? WHERE abf_name = ?";
+    m_stmt = mysql_stmt_init( m_db );
+    if( !m_stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_stmt ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( m_stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( m_stmt ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+    }
+    return result;
 }
 
 int MySQLDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)

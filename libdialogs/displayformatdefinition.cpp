@@ -67,7 +67,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     grid_sizer_1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
     const wxString *m_format_choices = NULL;
     m_format = new wxComboBox( panel_1, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, 0, m_format_choices, wxCB_DROPDOWN );
-    for( auto fmt: prop.m_format )
+    for( auto fmt: prop.m_formats )
     {
         for( auto f: fmt.second )
         {

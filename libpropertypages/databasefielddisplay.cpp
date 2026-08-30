@@ -126,7 +126,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
     m_formats = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_format.begin(); it != prop.m_format.end(); ++it )
+    for( std::map<int, std::vector<std::pair<std::wstring,std::wstring> > >::const_iterator it = prop.m_formats.begin(); it != prop.m_formats.end(); ++it )
     {
         for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
