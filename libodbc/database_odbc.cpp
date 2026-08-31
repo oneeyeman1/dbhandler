@@ -8690,12 +8690,22 @@ int ODBCDatabase::GetQueryRow(const std::wstring &query, std::vector<std::wstrin
 int ODBCDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &format, std::vector<std::wstring> &errorMsg)
 {
     std::wstring query;
-    SQLWCHAR *qry;
     int result = 0;
+    SQLLEN cbName = SQL_NTS, cbFormat = SQL_NTS, cbType = 0, cbCheck = 0, cbCond = SQL_NTS;
+    SQLSMALLINT type = format.m_type, checksum = format.checksum;
     if( isAdd )
         query = L"INSERT INTO abcatfmt VALUES(?, ?, ?, ?)";
     else
         query = L"UPDATE abcatfmt SET abf_name = ?, abf_frmt = ?, abf_type = ?, abf_cntr = ? WHERE abf_name = ?";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    std::unique_ptr<SQLWCHAR[]> name( new SQLWCHAR[format.m_name.length() + 2] );
+    memset( name.get(), '\0', format.m_name.length() + 2 );
+    uc_to_str_cpy( name.get(), format.m_name );
+    std::unique_ptr<SQLWCHAR[]> mask( new SQLWCHAR[format.m_format.length() + 2] );
+    memset( mask.get(), '\0', format.m_format.length() + 2 );
+    uc_to_str_cpy( mask.get(), format.m_format );
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -8704,14 +8714,56 @@ int ODBCDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &for
     }
     if( !result )
     {
-        qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR );
             result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, format.m_name.length(), 0, name.get(), 0, &cbName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, format.m_format.length(), 0, mask.get(), 0, &cbFormat );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_INTEGER, 0, 0, &type, 0, &cbType );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_INTEGER, 0, 0, &checksum, 0, &cbCheck );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+    }
+    if( !result && !isAdd )
+    {
+        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, format.m_name.length(), 0, name.get(), 0, &cbCond );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
         }
     }
     return result;

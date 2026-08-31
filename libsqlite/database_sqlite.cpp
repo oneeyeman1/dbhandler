@@ -2628,8 +2628,50 @@ int SQLiteDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &f
         result = 1;
         GetErrorMessage( res, errorMsg );
     }
-    else
+    if( !result )
     {
+        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( format.m_name.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( format.m_format.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_int( m_stmt, 3, format.m_type );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_bind_int( m_stmt, 4, format.checksum );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result && !isAdd )
+    {
+        res = sqlite3_bind_text( m_stmt, 5, sqlite_pimpl->m_myconv.to_bytes( format.m_name.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
     }
     return result;
 }
