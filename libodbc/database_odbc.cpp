@@ -8706,6 +8706,9 @@ int ODBCDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &for
     std::unique_ptr<SQLWCHAR[]> mask( new SQLWCHAR[format.m_format.length() + 2] );
     memset( mask.get(), '\0', format.m_format.length() + 2 );
     uc_to_str_cpy( mask.get(), format.m_format );
+    std::unique_ptr<SQLWCHAR[]> oldName( new SQLWCHAR[format.m_oldName.length() + 2]);
+    memset( oldName.get(), '\0', format.m_oldName.length() + 2 );
+    uc_to_str_cpy( oldName.get(), format.m_oldName );
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -8759,12 +8762,31 @@ int ODBCDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &for
     }
     if( !result && !isAdd )
     {
-        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, format.m_name.length(), 0, name.get(), 0, &cbCond );
+        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, format.m_oldName.length(), 0, oldName.get(), 0, &cbCond );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             result = 1;
             GetErrorMessage( errorMsg, STMT_ERROR );
         }
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            result = 1;
+            GetErrorMessage( errorMsg, STMT_ERROR );
+        }
+        m_hstmt = 0;
     }
     return result;
 }

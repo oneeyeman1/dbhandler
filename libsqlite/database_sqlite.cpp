@@ -2666,7 +2666,25 @@ int SQLiteDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &f
     }
     if( !result && !isAdd )
     {
-        res = sqlite3_bind_text( m_stmt, 5, sqlite_pimpl->m_myconv.to_bytes( format.m_name.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( m_stmt, 5, sqlite_pimpl->m_myconv.to_bytes( format.m_oldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_step( m_stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( m_stmt );
         if( res != SQLITE_OK )
         {
             result = 1;

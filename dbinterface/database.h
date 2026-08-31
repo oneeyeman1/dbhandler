@@ -51,7 +51,7 @@ using SQLServerCharSet = std::tuple<std::wstring, std::wstring>;
 
 struct ColumnFormatDefinitions
 {
-    std::wstring m_name, m_format;
+    std::wstring m_name, m_format, m_oldName;
     int m_type, checksum = 0;
 };
 

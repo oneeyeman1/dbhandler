@@ -2326,35 +2326,48 @@ int PostgresDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions 
 {
     int result, param = 4;
     std::wstring query;
+    std::unique_ptr<char *[]> values;
+    std::unique_ptr<int> length;
+    std::unique_ptr<int> formats;
     if( isAdd )
     {
         query = L"add_format";
+        values.reset( new char*[4] );
+        length.reset( new int[4] );
+        formats.reset( new int[4] );
     }
     else
     {
         query = L"update_format";
         param = 5;
+        values.reset( new char*[5] );
+        length.reset( new int[5] );
+        formats.reset( new int[4] );
     }
-    char *values1[param];
-    const char *name = m_pimpl->m_myconv.to_bytes( format.m_name.c_str() ).c_str();
-    const char *mask = m_pimpl->m_myconv.to_bytes( format.m_format.c_str() ).c_str();
-    const char *type = std::to_string( format.m_type ).c_str();
-    const char *checksum = std::to_string( format.checksum ).c_str();
-    values1[0] = new char[strlen( name ) + 1];
-    values1[1] = new char[strlen( mask ) + 1];
-    values1[2] = new char[strlen( type ) + 1];
-    values1[3] = new char[strlen(checksum ) + 1];
-    strcpy( values1[0], name );
-    strcpy( values1[1], mask );
-    strcpy( values1[2], type );
-    strcpy( values1[3], checksum );
+    auto name = m_pimpl->m_myconv.to_bytes( format.m_name.c_str() ).c_str();
+    auto mask = m_pimpl->m_myconv.to_bytes( format.m_format.c_str() ).c_str();
+    auto type = std::to_string( format.m_type ).c_str();
+    auto checksum = std::to_string( format.checksum ).c_str();
+    auto oldName = m_pimpl->m_myconv.to_bytes( format.m_oldName.c_str() ).c_str();
+    values[0] = const_cast<char *>( name );
+    values[1] = const_cast<char *>( mask );
+    values[2] = const_cast<char *>( type );
+    values[3] = const_cast<char *>( checksum );
+    if( !isAdd )
+        values[4] = const_cast<char *>( oldName );
     int len1 = (int) strlen( name );
     int len2 = (int) strlen( mask );
     int len3 = (int) strlen( type );
     int len4 = (int) strlen( checksum );
-    int length1[param] = { len1, len2, len3, len4 };
-    int formats1[param] = { 1, 1, 1, 1 };
-    auto res = PQexecPrepared( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), param, length1, formats1, 0 );
+/*    length[0] = len1;
+    length[1] = len2;
+    length[2] = len3; 
+    length[3] = len4;
+    formats[0] = 1;
+    formats[1] = 1;
+    formats[2] = 1;
+    formats[3] = 1;*/
+    auto res = PQexecPrepared( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), param, values.get(), nullptr, nullptr, 0 );
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );

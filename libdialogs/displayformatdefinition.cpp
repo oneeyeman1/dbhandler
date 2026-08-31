@@ -122,6 +122,8 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
         format.m_name = m_name->GetValue().ToStdWstring();
         format.m_format = m_format->GetValue().ToStdWstring();
 //        format.m_type = m_fieldType;
+        if( !m_isNew )
+            format.m_oldName = L"";
         m_db->AddUpdateFormat( m_isNew, format, errorMsg );
         EndModal( wxID_OK );
     }
