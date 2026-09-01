@@ -185,12 +185,7 @@ int MySQLDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wst
                         }
                         else
                         {
-                            if( PopulateValdators( errorMsg ) )
-                                result = 1;
-                            if( PopulateFormats( errorMsg ) )
-                                result = 1;
-                            else
-                                m_isConnected = true;
+                            m_isConnected = true;
                         }
                     }
                 }
@@ -3079,45 +3074,6 @@ int MySQLDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &fo
     return result;
 }
 
-int MySQLDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    std::wstring query = L"SELECT * FROM abcatvld;";
-    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-    if( res )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        result = 1;
-    }
-    else
-    {
-        MYSQL_RES *store = mysql_store_result( m_db );
-        if( !store )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
-        }
-        else
-        {
-            MYSQL_ROW row;
-            while( ( row = mysql_fetch_row( store ) ) != NULL )
-            {
-                std::wstring name = m_pimpl->m_myconv.from_bytes( row[0] );
-                std::wstring rule = m_pimpl->m_myconv.from_bytes( row[1] );
-                short type = atoi( row[2] );
-                int control = atoi( row[3] );
-                std::wstring message = m_pimpl->m_myconv.from_bytes( row[4] );
-                pimpl.m_validators.push_back( std::make_tuple( name, rule, type, control, message ) );
-
-            }
-        }
-        mysql_free_result( store );
-    }
-    return result;
-}
-
 int MySQLDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
@@ -3269,43 +3225,6 @@ int MySQLDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options,
             std::dynamic_pointer_cast<MySQLCreateDBOptions>( options )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
         }
         mysql_free_result( res );
-    }
-    return result;
-}
-
-int MySQLDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-    std::wstring query = L"SELECT * FROM abcatfmt;";
-    int res = mysql_query( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
-    if( res )
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-        errorMsg.push_back( err );
-        result = 1;
-    }
-    else
-    {
-        MYSQL_RES *store = mysql_store_result( m_db );
-        if( !store )
-        {
-            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
-            errorMsg.push_back( err );
-            result = 1;
-        }
-        else
-        {
-            MYSQL_ROW row;
-            while( ( row = mysql_fetch_row( store ) ) != NULL )
-            {
-                std::wstring name = m_pimpl->m_myconv.from_bytes( row[0] );
-                std::wstring format = m_pimpl->m_myconv.from_bytes( row[1] );
-                short type = atoi( row[2] );
-                pimpl.m_formats.push_back( std::make_tuple( name, format, type ) );
-
-            }
-        }
-        mysql_free_result( store );
     }
     return result;
 }

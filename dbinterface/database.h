@@ -725,8 +725,6 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) = 0;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) = 0;
 //    virtual int AddDropTable(const std::wstring &catalog, const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, long tableId, bool tableAdded, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) = 0;
-    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) = 0;
 public:
     Database(const int osId, const std::wstring &desktop) : pimpl{ desktop }, m_osId( osId ) { }
     virtual ~Database() { }

@@ -51,8 +51,6 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg) override;
-    virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
-    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) override;
     //    void Convert(char *dest, const std::wstring &source);
 private:
     PGconn *m_db;

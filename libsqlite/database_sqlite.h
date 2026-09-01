@@ -56,8 +56,6 @@ protected:
     virtual int GetServerVersion(std::vector<std::wstring> &errorMsg) override;
     virtual int ServerConnect(std::vector<std::wstring> &dbList, std::vector<std::wstring> &errorMsg) override;
 //    int DropForeignKey(DatabaseTable &tableName, std::vector<FKField *> &newFK, const std::wstring &sql, std::wstring &newSQL, const std::wstring &refTableName);
-    virtual int PopulateValdators(std::vector<std::wstring> &errorMsg) override;
-    virtual int PopulateFormats(std::vector<std::wstring> &errorMsg) override;
     int StartAlterTable(std::wstring &command, std::wstring &createCommand, std::vector<std::wstring> &createCommands, bool isLog, const std::wstring &tableName, std::vector<std::wstring> &errorMsg);
     int EndAlterTable(std::wstring &command, std::vector<std::wstring> &createCommands, const std::wstring &tableName, bool isLog, std::vector<std::wstring> &errorMsg);
 private:

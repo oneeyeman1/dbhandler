@@ -433,10 +433,6 @@ int SQLAnyDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
                         }
                     }
                 }
-                if( !result && PopulateValdators( errorMsg ) )
-                    result = 1;
-                if( !result && PopulateFormats( errorMsg ) )
-                    result = 1;
             }
         }
     }
@@ -6817,117 +6813,6 @@ int SQLAnyDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &f
     return result;
 }
 
-int SQLAnyDatabase::PopulateValdators(std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
-/*    SQLWCHAR *qry = nullptr;
-    std::wstring query;
-    SQLLEN colDataLen;
-    SQLWCHAR name[32], rule[256], message[256];
-    short int validType;
-    int control;
-    std::wstring validName, validRule, validMessage;
-    query = L"SELECT * FROM abcatvld;";
-    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, CONN_ERROR );
-        result = 1;
-    }
-    if( !result )
-    {
-        qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
-        ret = SQLExecDirect( m_hstmt, qry, SQL_NTS );
-        delete[] qry;
-        qry = nullptr;
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, 32, &colDataLen );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &rule, 256, &colDataLen );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( m_hstmt, 3, SQL_C_SSHORT, &validType, 0, &colDataLen );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( m_hstmt, 4, SQL_C_SLONG, &control, 0, &colDataLen );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( m_hstmt, 5, SQL_C_WCHAR, &message, 256, &colDataLen );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt ) )
-        {
-            str_to_uc_cpy( validName, name );
-            str_to_uc_cpy( validRule, rule );
-            str_to_uc_cpy( validMessage, message );
-            pimpl.m_validators.push_back( std::make_tuple( validName, validRule, validType, control, validMessage ) );
-            validName = L"";
-            validRule = L"";
-            validMessage = L"";
-        }
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
-        }
-        if( !result )
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-        else
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        if( !result )
-        {
-            ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );;
-            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                result = 1;
-            }
-            m_hstmt = 0;
-        }
-    }*/
-    return result;
-}
-
 int SQLAnyDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &name, const std::wstring &rule, const int type, const std::wstring &message, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
@@ -8313,11 +8198,5 @@ int SQLAnyDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options
         GetErrorMessage( errorMsg, STMT_ERROR );
         result = 1;
     }*/
-    return result;
-}
-
-int SQLAnyDatabase::PopulateFormats(std::vector<std::wstring> &errorMsg)
-{
-    int result = 0;
     return result;
 }
