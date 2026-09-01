@@ -13,6 +13,7 @@
 #include <string.h>
 #include <string>
 #include <locale>
+#include <cctype>
 #include <regex>
 #include <codecvt>
 #include <sstream>
@@ -1223,11 +1224,13 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     int type;
     if( res == SQLITE_OK )
     {
-        if( field->GetFieldType() == L"date" )
+        auto temp = field->GetFieldType();
+        std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
+        if( temp == L"date" || temp == L"text" )
             type = 82;
-        if( field->GetFieldType() == L"datetime" || field->GetFieldType() == L"time" || field->GetFieldType() == L"timestamp" )
+        if( temp == L"datetime" || temp == L"time" || temp == L"timestamp" || temp == L"text" )
             type = 84;
-        if( field->GetFieldType() == L"real" )
+        if( temp == L"real" || temp == L"integer" )
             type = 81;
         else
             type = 80;
