@@ -21,12 +21,6 @@ struct BandProperties
     wxString m_type;
 };
 
-struct FieldTableValidationProperties
-{
-    wxArrayString m_rules;
-    int m_inirial;
-};
-
 struct FieldTableProperties
 {
     wxString m_comment;

@@ -457,11 +457,19 @@ struct FieldTableDisplayProperties
     int m_justify, m_height, m_width;
 };
 
+struct FieldTableValidationProperties
+{
+    std::map<int, std::vector<std::tuple<std::wstring,std::wstring,std::wstring> > > m_validators;
+    std::wstring m_validator;
+    std::wstring m_initial;
+};
+
 class FieldProperties
 {
 public:
     FieldTableHeadingProperties m_heading;
     FieldTableDisplayProperties m_display;
+    FieldTableValidationProperties m_validations;
     std::wstring m_comment;
 };
 
