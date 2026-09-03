@@ -1141,32 +1141,33 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     sqlite3_stmt *stmt;
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
+    int type;
     int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
-    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, 0 );
+    int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res == SQLITE_OK )
     {
-        res = sqlite3_bind_text( m_stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
         if( res == SQLITE_OK )
         {
-            res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
             if( res == SQLITE_OK )
             {
-                res = sqlite3_bind_text( m_stmt, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
+                res = sqlite3_bind_text( stmt, 3, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
                 if( res == SQLITE_OK )
                 {
-                    res = sqlite3_step( m_stmt );
+                    res = sqlite3_step( stmt );
                     if( res == SQLITE_ROW )
                     {
-                        label = (const char *) sqlite3_column_text( m_stmt, 5 );
-                        labelAlignment = sqlite3_column_int( m_stmt, 6 );
-                        heading = (const char *) sqlite3_column_text( m_stmt, 7 );
-                        int headingAlignment = sqlite3_column_int( m_stmt, 8 );
-                        const char *comment = (const char *) sqlite3_column_text( m_stmt, 17 );
-                        short justify = (short) sqlite3_column_int( m_stmt, 9 );
-                        fieldFormat = (const char *) sqlite3_column_text( m_stmt, 10 );
+                        label = (const char *) sqlite3_column_text( stmt, 5 );
+                        labelAlignment = sqlite3_column_int( stmt, 6 );
+                        heading = (const char *) sqlite3_column_text( stmt, 7 );
+                        int headingAlignment = sqlite3_column_int( stmt, 8 );
+                        const char *comment = (const char *) sqlite3_column_text( stmt, 17 );
+                        short justify = (short) sqlite3_column_int( stmt, 9 );
+                        fieldFormat = (const char *) sqlite3_column_text( stmt, 10 );
                         if( label )
                         {
                             field->GetFieldProperties().m_heading.m_label = sqlite_pimpl->m_myconv.from_bytes( label );
@@ -1220,10 +1221,25 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         result = 1;
         GetErrorMessage( res, errorMsg );
     }
-    sqlite3_finalize( m_stmt );
-    res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &m_stmt, 0 );
-    int type;
-    if( res == SQLITE_OK )
+    if( !result )
+    {
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
     {
         auto temp = field->GetFieldType();
         std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
@@ -1236,16 +1252,16 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         else
             type = 80;
         field->GetFieldProperties().m_display.m_formats[type].clear();
-        res = sqlite3_bind_int( m_stmt, 1, type );
+        res = sqlite3_bind_int( stmt, 1, type );
         if( res == SQLITE_OK )
         {
             for( ; ; )
             {
-                res = sqlite3_step( m_stmt );
+                res = sqlite3_step( stmt );
                 if( res == SQLITE_ROW )
                 {
-                    const char *format = (const char *) sqlite3_column_text( m_stmt, 1 );
-                    const char *formatName = (const char *) sqlite3_column_text( m_stmt, 0 );
+                    const char *format = (const char *) sqlite3_column_text( stmt, 1 );
+                    const char *formatName = (const char *) sqlite3_column_text( stmt, 0 );
                     field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
                 }
                 else if( res == SQLITE_DONE )
@@ -1269,10 +1285,18 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         result = 1;
         GetErrorMessage( res, errorMsg );
     }
-    sqlite3_finalize( m_stmt );
     if( !result )
     {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query1.length(), &m_stmt, 0 );
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -1282,7 +1306,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     if( !result )
     {
         field->GetFieldProperties().m_validations.m_validators[type].clear();
-        res = sqlite3_bind_int( m_stmt, 1, type );
+        res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -1293,13 +1317,13 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     {
         for( ; ; )
         {
-            res = sqlite3_step( m_stmt );
+            res = sqlite3_step( stmt );
             if( res == SQLITE_ROW )
             {
-                const char *condition = (const char *) sqlite3_column_text( m_stmt, 1 );
-                const char *name = (const char *) sqlite3_column_text( m_stmt, 0 );
-                const char *error = (const char *) sqlite3_column_text( m_stmt, 3 );
-                field->GetFieldProperties().m_validations.m_validators[type].push_back( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) );
+                const char *condition = (const char *) sqlite3_column_text( stmt, 1 );
+                const char *name = (const char *) sqlite3_column_text( stmt, 0 );
+                const char *error = (const char *) sqlite3_column_text( stmt, 2 );
+                field->GetFieldProperties().m_validations.m_validators[type].push_back( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), error ? sqlite_pimpl->m_myconv.from_bytes( error ) : L"" ) );
             }
             else if( res == SQLITE_DONE )
                 break;
@@ -1311,7 +1335,15 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             }
         }
     }
-    sqlite3_finalize( m_stmt );
+    if( !result )
+    {
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
     return result;
 }
 
