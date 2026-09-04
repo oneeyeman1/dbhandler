@@ -494,12 +494,12 @@ extern "C" WXEXPORT int SaveNewView(wxWindow *parent, wxString &viewName)
     return res;
 }
 
-extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString &type, const wxString &format, const FieldTableDisplayProperties &prop, Database *db)
+extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString &type, const wxString &name, const wxString &format, const FieldTableDisplayProperties &prop, Database *db)
 {
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, format, prop, db );
+    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, name, format, prop, db );
     dlg.ShowModal();
     return 0;
 }
