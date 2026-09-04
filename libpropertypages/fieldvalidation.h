@@ -25,7 +25,7 @@ public:
     // begin wxGlade: FieldValidation::ids
     // end wxGlade
 
-    FieldValidation(wxWindow* parent, Database *db, const wxString &fieldType);
+    FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType);
 
 private:
     Database *m_db;

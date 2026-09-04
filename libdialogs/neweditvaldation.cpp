@@ -18,14 +18,14 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
     m_db = db;
-    auto ruleName    = std::get<0>( rule );
-    auto ruleRule    = std::get<1>( rule );
-    auto ruleMessage = std::get<4>( rule );
+    auto ruleName    = std::get<0>( *rule );
+    auto ruleRule    = std::get<1>( *rule );
+    auto ruleMessage = std::get<2>( *rule );
     // begin wxGlade: NewEditValidator::NewEditValidator
     SetTitle( _( "Input Valdation" ) );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
@@ -48,7 +48,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     m_label->Enable( 0 );
     grid_sizer_1->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_name = new wxTextCtrl( m_panel, wxID_ANY, ruleName );
-    grid_sizer_1->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
+    grid_sizer_1->Add( m_name, 1, wxALIGN_CENTER_VERTICAL, 0 );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "Type" ) );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_type = new wxComboBox( m_panel, wxID_ANY, type, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );

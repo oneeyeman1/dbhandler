@@ -21,9 +21,9 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &);
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *);
 
-FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
+FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
     m_fieldType = fieldType;
     m_db = db;
@@ -41,11 +41,13 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> >::const_iterator it = db->GetTableVector().m_validators.begin();
-    for( it; it < db->GetTableVector().m_validators.end(); ++it )
+    for( auto vals : validations.m_validators )
     {
-        auto item = m_rules->Append( std::get<(0)>( *it ) );
-        m_rules->SetClientData( item, (wxClientData *) &(*it) );
+        for( auto name : vals.second )
+        {
+            auto item = m_rules->Append( std::get<0>( name ) );
+            m_rules->SetClientObject( item, /**(wxClientObject *) &**/*name );
+        }
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
@@ -67,6 +69,7 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    m_rules->SetSelection( wxNOT_FOUND );
     m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
     m_edit->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
     m_new->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
@@ -89,15 +92,16 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     wxString libName;
     bool isNew;
     auto stdPath = wxStandardPaths::Get();
-    std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> rule;
+    std::tuple<std::wstring, std::wstring, std::wstring> *rule;
     if( event.GetEventObject() == m_new )
     {
-        rule = std::make_tuple( L"", L"", 0, 0, L"" );
+        std::tuple<std::wstring, std::wstring, std::wstring> temp = std::make_tuple( L"", L"", L"" );
+        rule = &temp;
         isNew = true;
     }
     else
     {
-        rule = *( std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> *) m_rules->GetClientObject( m_rules->GetSelection() );
+        rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientObject( m_rules->GetSelection() ) );
         isNew = false;
     }
 #ifdef __WXMSW__
