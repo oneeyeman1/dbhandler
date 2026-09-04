@@ -23,7 +23,7 @@
 
 typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &);
 
-FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
+FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
     m_fieldType = fieldType;
     m_db = db;
@@ -41,6 +41,13 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
+    for( auto vals : validations.m_validators )
+    {
+        for( auto name : vals.second )
+        {
+            m_rules->Append( std::get<0>( name ) );
+        }
+    }
     std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> >::const_iterator it = db->GetTableVector().m_validators.begin();
     for( it; it < db->GetTableVector().m_validators.end(); ++it )
     {
@@ -67,6 +74,7 @@ FieldValidation::FieldValidation(wxWindow* parent, Database *db, const wxString 
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    m_rules->SetSelection( wxNOT_FOUND );
     m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
     m_edit->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
     m_new->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
