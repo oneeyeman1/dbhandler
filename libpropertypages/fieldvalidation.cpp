@@ -21,7 +21,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &);
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *);
 
 FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
@@ -46,7 +46,7 @@ FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationPro
         for( auto name : vals.second )
         {
             auto item = m_rules->Append( std::get<0>( name ) );
-            m_rules->SetClientData( item, (wxClientData *) &name );
+            m_rules->SetClientObject( item, /**(wxClientObject *) &**/*name );
         }
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
@@ -92,15 +92,16 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     wxString libName;
     bool isNew;
     auto stdPath = wxStandardPaths::Get();
-    std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> rule;
+    std::tuple<std::wstring, std::wstring, std::wstring> *rule;
     if( event.GetEventObject() == m_new )
     {
-        rule = std::make_tuple( L"", L"", 0, 0, L"" );
+        std::tuple<std::wstring, std::wstring, std::wstring> temp = std::make_tuple( L"", L"", L"" );
+        rule = &temp;
         isNew = true;
     }
     else
     {
-        rule = *( std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> *) m_rules->GetClientObject( m_rules->GetSelection() );
+        rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientObject( m_rules->GetSelection() ) );
         isNew = false;
     }
 #ifdef __WXMSW__

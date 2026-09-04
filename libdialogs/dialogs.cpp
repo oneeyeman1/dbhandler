@@ -514,7 +514,7 @@ extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
     return 0;
 }
 
-extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring , std::wstring , unsigned int, int, std::wstring> &rule)
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule)
 {
     int result = 0;
 #ifdef __WXMSW__
