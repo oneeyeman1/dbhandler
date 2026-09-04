@@ -1230,7 +1230,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             GetErrorMessage( res, errorMsg );
         }
     }
-    int type;
     if( !result )
     {
         res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), (int) query1.length(), &stmt, 0 );
