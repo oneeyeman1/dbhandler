@@ -45,14 +45,9 @@ FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationPro
     {
         for( auto name : vals.second )
         {
-            m_rules->Append( std::get<0>( name ) );
+            auto item = m_rules->Append( std::get<0>( name ) );
+            m_rules->SetClientData( item, (wxClientData *) &name );
         }
-    }
-    std::vector<std::tuple<std::wstring, std::wstring, unsigned int, int, std::wstring> >::const_iterator it = db->GetTableVector().m_validators.begin();
-    for( it; it < db->GetTableVector().m_validators.end(); ++it )
-    {
-        auto item = m_rules->Append( std::get<(0)>( *it ) );
-        m_rules->SetClientData( item, (wxClientData *) &(*it) );
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
