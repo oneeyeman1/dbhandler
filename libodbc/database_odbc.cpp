@@ -2972,9 +2972,9 @@ int ODBCDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                 std::unique_ptr<SQLWCHAR[]> qry1( new SQLWCHAR[30] );
                 memset( qry1.get(), '\0', 30 );
                 uc_to_str_cpy( qry1.get(), L"BEGIN" );
-                if( pimpl.m_subtype == L"Microsoft SQL Server" || 
-                    pimpl.m_subtype == L"Sybase SQL Anywhere" || 
-                    pimpl.m_subtype == L"SQL Anywhere" || 
+                if( pimpl.m_subtype == L"Microsoft SQL Server" ||
+                    pimpl.m_subtype == L"Sybase SQL Anywhere" ||
+                    pimpl.m_subtype == L"SQL Anywhere" ||
                     pimpl.m_subtype == L"Adaptive Server Enterprise" ||
                     pimpl.m_subtype == L"ASE" )
                     uc_to_str_cpy( qry1.get(), L" TRANSACTION" );
@@ -5093,6 +5093,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0, cbFieldFormat = 0, cbError = 0;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
+    SQLWCHAR formatNameField[40], formatField[260], error[256];
     std::wstring query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
@@ -5152,7 +5153,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLDescribeParam( stmt, 1, &dataType, &paramSize, &decimalDigits, &nullable );
+        ret = SQLDescribeParam( stmt, 3, &dataType, &paramSize, &decimalDigits, &nullable );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5293,15 +5294,17 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         result = 1;
     }
     stmt = 0;
-    qry.reset( new SQLWCHAR[query1.length() + 2] );
-    memset( qry.get(), '\0', query1.length() + 2 );
-    uc_to_str_cpy( qry.get(), query1 );
-    SQLWCHAR formatNameField[40], formatField[260], error[256];
-    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( !result )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR );
-        result = 1;
+        qry.reset( new SQLWCHAR[query1.length() + 2] );
+        memset( qry.get(), '\0', query1.length() + 2 );
+        uc_to_str_cpy( qry.get(), query1 );
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
     }
     if( !result )
     {
@@ -5413,7 +5416,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        field->GetFieldProperties().m_validations.m_validators[type].clear();
+        for( auto &valid : field->GetFieldProperties().m_validations.m_validators[type] )
+            valid.reset();
         ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -5465,7 +5469,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             str_to_uc_cpy( formatName, formatNameField );
             str_to_uc_cpy( format, formatField );
             str_to_uc_cpy( errorMessage, error  );
-            field->GetFieldProperties().m_validations.m_validators[type].push_back( std::make_tuple( formatName, format, errorMessage ) );
+            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( new ValidatorSet( std::make_tuple( formatName, format, errorMessage ) ) );
             formatName = L"";
             format = L"";
             errorMessage = L"";

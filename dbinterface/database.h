@@ -49,6 +49,8 @@ using CharSet = std::tuple<std::wstring, std::wstring, std::wstring>;
 
 using SQLServerCharSet = std::tuple<std::wstring, std::wstring>;
 
+using ValidatorSet = std::tuple<std::wstring, std::wstring, std::wstring>;
+
 struct ColumnFormatDefinitions
 {
     std::wstring m_name, m_format, m_oldName;
@@ -459,7 +461,7 @@ struct FieldTableDisplayProperties
 
 struct FieldTableValidationProperties
 {
-    std::map<int, std::vector<std::tuple<std::wstring,std::wstring,std::wstring> > > m_validators;
+    std::map<int, std::vector<std::unique_ptr<ValidatorSet> > > m_validators;
     std::wstring m_validator;
     std::wstring m_initial;
 };
