@@ -818,7 +818,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
                 if( !result && pimpl.m_subtype == L"Adaptive Server Enterprise" )
                 {
                     std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[200] );
-                    RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+                    ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
                     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
                     {
                         GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2401,7 +2401,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
     {
         if( pimpl.m_subtype == L"Microsoft SQL Server" )
         {
-            RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -2423,7 +2423,7 @@ int ODBCDatabase::Disconnect(std::vector<std::wstring> &errorMsg)
         if( pimpl.m_subtype == L"Adaptive Server Enterprise" )
         {
             std::unique_ptr<SQLWCHAR> qry( new SQLWCHAR[200] );
-            RETCODE ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+            ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
             {
                 GetErrorMessage( errorMsg, STMT_ERROR );
@@ -10386,7 +10386,7 @@ int ODBCDatabase::GetDSNKeys(const std::wstring &dsn, std::map<std::wstring, std
         {
             std::wstring value1, value2;
             str_to_uc_cpy( value1, ptr );
-            int ret = SQLGetPrivateProfileString( dsnValue.get(), ptr, defValue, value, 1024, fileName );
+            ret = SQLGetPrivateProfileString( dsnValue.get(), ptr, defValue, value, 1024, fileName );
             str_to_uc_cpy( value2, value );
             values[value1] = value2;
             ptr += mystrlen( ptr ) + 1;
@@ -10429,7 +10429,6 @@ int ODBCDatabase::SaveDSNData(const std::wstring &dsn, const std::map<std::wstri
     }
     if( !result )
     {
-        std::vector<std::wstring> errorMsg;
         std::unique_ptr<SQLWCHAR[]> fName( new SQLWCHAR[10] );
         std::unique_ptr<SQLWCHAR[]> name( new SQLWCHAR[dsn.length() + 2] );
         memset( fName.get(), '\0', 10 );
