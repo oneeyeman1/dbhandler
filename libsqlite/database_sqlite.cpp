@@ -1304,12 +1304,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
-//        std::vector<std::unique_ptr<ValidatorSet> > &test = field->GetFieldProperties().m_validations.m_validators[type];
-//        for( auto &valid : test )
-//            valid.reset();
         for( auto& valid : field->GetFieldProperties().m_validations.m_validators[type] )
             valid.reset();
-//        field->GetFieldProperties().m_validations.m_validators[type].clear();
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
