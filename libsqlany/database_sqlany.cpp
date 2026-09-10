@@ -79,7 +79,7 @@ int SQLAnyDatabase::GetErrorMessage(std::vector<std::wstring> &errorMsg)
     return true;
 }
 
-int SQLAnyDatabase::CreateDatabase(const std::wstring &name, const std::shared_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
+int SQLAnyDatabase::CreateDatabase(const std::wstring &name, const std::unique_ptr<CreateDBOptions> &opts, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
 /*    auto exists = false;
@@ -7662,7 +7662,7 @@ int SQLAnyDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::w
     return result;
 }
 
-int SQLAnyDatabase::GetCreateDBOptions(std::shared_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
+int SQLAnyDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
 /*    std::wstring query1, query2, query3, query4, query5;

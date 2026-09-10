@@ -461,7 +461,7 @@ struct FieldTableDisplayProperties
 
 struct FieldTableValidationProperties
 {
-//    std::map<int, std::vector<std::unique_ptr<ValidatorSet> > > m_validators;
+    std::map<int, std::vector<std::unique_ptr<ValidatorSet> > > m_validators;
     std::wstring m_validator;
     std::wstring m_initial;
 };
@@ -524,7 +524,7 @@ public:
     const std::wstring &GetFullType() const { return full_type; }
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
-    void SetFieldProperties(const FieldProperties &props) { m_props = props; }
+//    void SetFieldProperties(const FieldProperties &props) { m_props = props; }
 private:
     std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;

@@ -1304,8 +1304,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
-//        for( auto& valid : field->GetFieldProperties().m_validations.m_validators[type] )
-//            valid.reset();
+        for( auto& valid : field->GetFieldProperties().m_validations.m_validators[type] )
+            valid.reset();
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
@@ -1323,7 +1323,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 const char *condition = (const char *) sqlite3_column_text( stmt, 1 );
                 const char *name = (const char *) sqlite3_column_text( stmt, 0 );
                 const char *error = (const char *) sqlite3_column_text( stmt, 2 );
-//                field->GetFieldProperties().m_validations.m_validators[type].emplace_back( new ValidatorSet( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
+                field->GetFieldProperties().m_validations.m_validators[type].emplace_back( new ValidatorSet( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
             }
             else if( res == SQLITE_DONE )
                 break;
