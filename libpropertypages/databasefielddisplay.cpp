@@ -24,7 +24,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, const FieldTableDisplayProperties &, Database *);
+typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, const wxString &, const FieldTableDisplayProperties &, Database *);
 
 DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db):  PropertyPageBase( parent )
 {
@@ -154,17 +154,19 @@ void DatabaseFieldDisplay::OnPageModified( wxCommandEvent &WXUNUSED(event ))
 void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
 {
     wxDynamicLibrary lib;
-    wxString format;
+    wxString format, name;
     bool isNew;
     if( event.GetEventObject() == m_new )
     {
         isNew = true;
         format = "";
+        name = "";
     }
     else
     {
         isNew = false;
         format = reinterpret_cast<wxStringClientData *>( m_formats->GetClientObject( m_formats->GetSelection() ) )->GetData();
+        name = m_formats->GetStringSelection();
     }
     wxString libName = "", stdPath;
     stdPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
@@ -179,15 +181,15 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         ADDEDITMASK func = (ADDEDITMASK) lib.GetSymbol( "AddEditMask" );
-        func( nullptr, isNew, m_type, format, m_prop, m_db );
+        func( nullptr, isNew, m_type, name, format, m_prop, m_db );
     }
 }
 
 void DatabaseFieldDisplay::OnUpdateUIEditButton(wxUpdateUIEvent &event)
 {
-    if( m_formats->GetSelection() )
-        event.Enable( false );
-    else
+    if( m_formats->GetSelection() != wxNOT_FOUND )
         event.Enable( true );
+    else
+        event.Enable( false );
 }
 
