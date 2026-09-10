@@ -499,7 +499,7 @@ extern "C" WXEXPORT int AddEditMask(wxWindow *parent, bool isNew, const wxString
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DisplayFormatDefinition dlg( parent, wxID_ANY, "", isNew, type, name, format, prop, db );
+    DisplayFormatDefinition dlg( parent, wxID_ANY, _( "Display Format Definition" ), isNew, type, name, format, prop, db );
     dlg.ShowModal();
     return 0;
 }

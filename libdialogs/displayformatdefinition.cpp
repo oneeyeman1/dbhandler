@@ -30,7 +30,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     m_fieldFormat = format;
     m_db = db;
     // begin wxGlade: DisplayFormatDefinition::DisplayFormatDefinition
-    SetTitle( _( "Display Format Definition" ) );
+    SetTitle( title );
     panel_1 = new wxPanel( this, wxID_ANY );
     wxBoxSizer* sizer_2 = new wxBoxSizer( wxHORIZONTAL );
     wxBoxSizer* sizer_3 = new wxBoxSizer( wxVERTICAL );
