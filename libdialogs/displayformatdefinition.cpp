@@ -18,10 +18,7 @@
 
 // begin wxGlade: ::extracode
 // end wxGlade
-
-
-
-DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, const FieldTableDisplayProperties &prop, Database *db):
+DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &name, const wxString &format, const FieldTableDisplayProperties &prop, Database *db):
     wxDialog(parent, id, title)
 {
     m_isChanged = false;
