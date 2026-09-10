@@ -24,11 +24,11 @@ public:
     // begin wxGlade: DisplayFormatDefinition::ids
     // end wxGlade
 
-    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &format, const FieldTableDisplayProperties &prop, Database *db);
+    DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &name, const wxString &format, const FieldTableDisplayProperties &prop, Database *db);
 
 private:
     bool m_isNew, m_isChanged;
-    wxString  m_fieldType, m_fieldFormat;
+    wxString  m_fieldType, m_fieldFormat, m_name;
     Database *m_db;
 protected:
     void OnOK(wxCommandEvent &event);
@@ -36,7 +36,7 @@ protected:
     void OnTest(wxCommandEvent &event);
     // begin wxGlade: DisplayFormatDefinition::attributes
     wxPanel* panel_1;
-    wxTextCtrl* m_name;
+    wxTextCtrl* m_maskName;
     wxComboBox* m_type;
     wxComboBox* m_format;
     wxTextCtrl* m_test;
