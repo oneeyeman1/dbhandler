@@ -46,7 +46,7 @@ FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationPro
         for( auto &name : vals.second )
         {
             auto item = m_rules->Append( std::get<0>( *name.get() ) );
-/*            m_rules->SetClientObject( item, (wxClientData *) &name );*/
+            m_rules->SetClientData( item, name.get() );
         }
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
