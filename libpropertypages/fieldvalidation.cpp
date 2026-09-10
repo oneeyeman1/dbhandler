@@ -41,12 +41,12 @@ FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationPro
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    for( auto vals : validations.m_validators )
+    for( auto &vals : validations.m_validators )
     {
-        for( auto name : vals.second )
+        for( auto &name : vals.second )
         {
-            auto item = m_rules->Append( std::get<0>( name ) );
-            m_rules->SetClientObject( item, /**(wxClientObject *) &**/*name );
+            auto item = m_rules->Append( std::get<0>( *name.get() ) );
+/*            m_rules->SetClientObject( item, (wxClientData *) &name );*/
         }
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
