@@ -41,10 +41,10 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     m_label1 = new wxStaticText( panel_1, wxID_ANY, _( "Name" ) );
     sizer_5->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_name = new wxTextCtrl( panel_1, wxID_ANY, format );
+    m_maskName = new wxTextCtrl( panel_1, wxID_ANY, format );
     if( !isNew )
-        m_name->Disable();
-    sizer_5->Add( m_name, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        m_maskName->Disable();
+    sizer_5->Add( m_maskName, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_6 = new wxBoxSizer( wxHORIZONTAL );
     sizer_4->Add( sizer_6, 0, wxEXPAND, 0 );
@@ -111,12 +111,12 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
 void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
 {
     std::vector<std::wstring> errorMsg;
-    if( m_name->GetValue().IsEmpty() )
+    if( m_maskName->GetValue().IsEmpty() )
         wxMessageBox( _( "Name field can't be empty" ) );
     else
     {
         ColumnFormatDefinitions format;
-        format.m_name = m_name->GetValue().ToStdWstring();
+        format.m_name = m_maskName->GetValue().ToStdWstring();
         format.m_format = m_format->GetValue().ToStdWstring();
 //        format.m_type = m_fieldType;
         if( !m_isNew )
