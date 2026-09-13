@@ -66,7 +66,7 @@ struct CreateDBOptions
 
 struct SQLServerCreateDBOptions : public CreateDBOptions
 {
-    struct fileSpec
+    struct FileSpec
     {
         std::wstring m_name, m_fileName, m_measure1, m_measure2, m_measure3, m_filestreamfilename, m_nontransaccess;
         int m_size, m_maxSize, m_growth;
@@ -79,16 +79,26 @@ struct SQLServerCreateDBOptions : public CreateDBOptions
         std::vector<fileSpec> specs;
     };
     std::wstring m_containment, m_collation, m_fullText, m_persistentlog;
-    std::vector<fileSpec> m_fileSpecs, m_logs;
+    std::vector<FileSpec> m_fileSpecs, m_logs;
     std::vector<fileGroup> m_fileGroups;
     std::vector<std::unique_ptr<SQLServerCharSet> > m_collations;
     std::vector<std::tuple<int, std::wstring> > m_fullTextSearch, m_langs;
     bool m_ledger, m_trustworthy, m_dbchainib, n_nestedtriggera, m_noisewords;
     int m_twodigityear;
+    SQLServerCreateDBOptions(const std::wstring &name, bool exist/*, std::vector<FileSpec> &fileSpec*/)
+    {
+        m_name = name;
+        m_exist = exist;
+    }
 };
 
 struct PostgresCreateDBOptions : public CreateDBOptions
 {
+    PostgresCreateDBOptions(const std::wstring &name, bool exist)
+    {
+        m_name = name;
+        m_exist = exist;
+    }
     std::wstring m_role, m_template, m_encoding, m_collation, m_ctype, m_tablespace;
     std::vector<std::wstring> m_roles, m_templates, m_encodings, m_tablespaces;
     std::vector<std::tuple<std::wstring, std::wstring> > m_collations, m_ctypes;
@@ -103,7 +113,7 @@ struct MySQLCreateDBOptions : public CreateDBOptions
     bool m_encrypted;
     std::vector<std::unique_ptr<CharSet> > m_charSets;
     std::map<std::wstring, std::vector<std::tuple<std::wstring, bool, bool> > > m_collations;
-    MySQLCreateDBOptions(const std::wstring &name, const std::wstring &charSet, const std::wstring &collation, bool encrypted, bool exist) : m_charSet( charSet ), m_collation( collation ), m_encrypted( encrypted )
+    MySQLCreateDBOptions(const std::wstring &name, const std::wstring &charSet, const std::wstring &collation, bool encrypted, bool exist = false) : m_charSet( charSet ), m_collation( collation ), m_encrypted( encrypted )
     {
         m_name = name;
         m_exist = exist;

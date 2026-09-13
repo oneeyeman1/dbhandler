@@ -222,9 +222,8 @@ void ScrollPanel::RefreshHeader()
     m_columns->SetLabelPositions( pos );
 }
 
-CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
+CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMajor, int serverVersionMinor, std::unique_ptr<CreateDBOptions> &options) : wxDialog( parent, wxID_ANY, _( "Create Database" ) )
 {
-    m_opts = options;
     m_type = type;
     m_subtype = subtype;
     m_versionMajor = serverVersionMajor;
@@ -676,38 +675,34 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
 
 void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
 {
-    m_opts->m_name = m_name->GetValue();
-    m_opts->m_exist = m_exist->GetValue();
+//    m_opts->m_name = m_name->GetValue();
+//    m_opts->m_exist = m_exist->GetValue();
     if( m_type == L"MySQL" || m_subtype == L"MySQL" )
     {
-        auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
         CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
-        wxString defValue = "";
         std::wstring charset = std::get<0>( *charSet );
-        opts->m_charSet = charset;
-        opts->m_collation = m_collations->GetValue();
-        opts->m_encrypted = m_encrypted->GetValue();
+        m_opts = std::unique_ptr<MySQLCreateDBOptions>( new MySQLCreateDBOptions( m_name->GetValue(), charset, m_collations->GetValue(), m_encrypted->GetValue() ) );
     }
     if( m_type == L"Microsoft SQL Server" || m_subtype == L"Microsoft SQL Server" )
     {
-        auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( m_opts );
+        m_opts = std::unique_ptr<SQLServerCreateDBOptions>( new SQLServerCreateDBOptions( m_name->GetValue(), m_exist->GetValue() ) );
         if( m_versionMajor >= 11 )
             opts->m_containment = m_containment->GetValue();
     }
     if( m_type == L"PostgreSQL" || m_subtype == L"PostgreSQL" )
     {
-        auto opts = std::dynamic_pointer_cast<PostgresCreateDBOptions>( m_opts );
-        opts->m_role = m_owner->GetValue();
-        opts->m_template = m_template->GetValue();
-        opts->m_encoding = m_characterSet->GetValue();
-        opts->m_collation = m_collations->GetValue();
-        opts->m_ctype = m_ctype->GetValue();
-        opts->m_tablespace = m_tablespace->GetValue();
+        m_opts = std::unique_ptr<PostgresCreateDBOptions>( new PostgresCreateDBOptions( m_name->GetValue(), m_exist->GetValue() ) );
+        m_opts->m_role = m_owner->GetValue();
+        m_opts->m_template = m_template->GetValue();
+        m_opts->m_encoding = m_characterSet->GetValue();
+        m_opts->m_collation = m_collations->GetValue();
+        m_opts->m_ctype = m_ctype->GetValue();
+        m_opts->m_tablespace = m_tablespace->GetValue();
         if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
             opts->m_allowConn = m_allowConn->GetValue();
-        opts->m_connlimit = m_connlimit->GetValue();
+        m_opts->m_connlimit = m_connlimit->GetValue();
         if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
-            opts->m_isTemplate = m_istemplate->GetValue();
+            m_opts->m_isTemplate = m_istemplate->GetValue();
     }
     EndModal( wxID_OK );
 }

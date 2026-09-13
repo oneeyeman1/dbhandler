@@ -27,8 +27,8 @@ private:
 class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
-    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMaor, int serverVersionMinor, std::shared_ptr<CreateDBOptions> options);
-    const std::shared_ptr<CreateDBOptions> GetOptions() const { return m_opts; }
+    CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMaor, int serverVersionMinor, std::unique_ptr<CreateDBOptions> &options);
+    const std::unique_ptr<CreateDBOptions> &GetOptions() const { return m_opts; }
     wxCollapsiblePane *GetSQLOptons() { return m_options; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);
@@ -43,7 +43,7 @@ protected:
     void OnMemoryData(wxCommandEvent &evemt);
     void OnCollapsblePaneChanged(wxCollapsiblePaneEvent &event);
 private:
-    std::shared_ptr<CreateDBOptions> m_opts;
+    std::unique_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;
     wxFilePickerCtrl *m_SQLiteName = nullptr;
     wxTextCtrl *m_name = nullptr;
