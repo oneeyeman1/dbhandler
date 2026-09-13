@@ -28,7 +28,10 @@ class WXEXPORT CreateDatabase : public wxDialog
 {
 public:
     CreateDatabase(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int serverVersionMaor, int serverVersionMinor, std::unique_ptr<CreateDBOptions> &options);
-    const std::unique_ptr<CreateDBOptions> &GetOptions() const { return m_opts; }
+    // This function is not "const" since the smart pointer will be passed outside
+    // and used in a different function. However, since the pointer is unique
+    // it cannot be moved from the const function.
+    std::unique_ptr<CreateDBOptions> &GetOptions() { return m_opts; }
     wxCollapsiblePane *GetSQLOptons() { return m_options; }
 protected:
     void OnCharacterSetChanged(wxCommandEvent &event);

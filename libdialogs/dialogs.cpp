@@ -555,7 +555,7 @@ extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, co
     CreateDatabase dlg( parent, type, subtype, versionMajor, versionMinor, options );
     if( ( res = dlg.ShowModal() ) == wxID_OK )
     {
-        options = dlg.GetOptions();
+        options = std::move( dlg.GetOptions() );
     }
     return res;
 }
