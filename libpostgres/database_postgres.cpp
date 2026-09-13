@@ -1589,7 +1589,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     {
         for( int i = 0; i < PQntuples( res ); i++ )
         {
-            auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            auto temp1 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
             auto temp2 = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
             if( temp1 == fieldFormat )
                 field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( temp1, temp2 ) );
@@ -1598,6 +1598,28 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
         }
     }
     PQclear( res );
+    field->GetFieldProperties().m_validations.m_validators[type].clear();
+    res = PQexecParams( m_db, "SELECT * FROM abcatvld WHERE abf_type = $1::int4", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
+    if (PQresultStatus(res) != PGRES_TUPLES_OK)
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+            auto condition = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            auto error = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
+            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( name, condition, error ) ) );
+        }
+    }
+    if( !result )
+    {
+        PQclear( res );
+    }
     return result;
 }
 
@@ -2358,7 +2380,7 @@ int PostgresDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions 
     int len4 = (int) strlen( checksum );
 /*    length[0] = len1;
     length[1] = len2;
-    length[2] = len3; 
+    length[2] = len3;
     length[3] = len4;
     formats[0] = 1;
     formats[1] = 1;

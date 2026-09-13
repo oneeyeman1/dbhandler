@@ -5416,8 +5416,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-//        for( auto &valid : field->GetFieldProperties().m_validations.m_validators[type] )
-//            valid.reset();
+        field->GetFieldProperties().m_validations.m_validators[type].clear();
         ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -5469,7 +5468,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             str_to_uc_cpy( formatName, formatNameField );
             str_to_uc_cpy( format, formatField );
             str_to_uc_cpy( errorMessage, error  );
-  //          field->GetFieldProperties().m_validations.m_validators[type].emplace_back( new ValidatorSet( std::make_tuple( formatName, format, errorMessage ) ) );
+            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( formatName, format, errorMessage ) ) );
             formatName = L"";
             format = L"";
             errorMessage = L"";
