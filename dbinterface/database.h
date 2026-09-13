@@ -71,12 +71,12 @@ struct SQLServerCreateDBOptions : public CreateDBOptions
         std::wstring m_name, m_fileName, m_measure1, m_measure2, m_measure3, m_filestreamfilename, m_nontransaccess;
         int m_size, m_maxSize, m_growth;
         bool m_isPrimary;
-        fileSpec(const std::wstring &name, const std::wstring &fileName, const std::wstring &measure1, const std::wstring &measure2, const std::wstring &measure3, int size, int maxSize, int growth, bool isPrimary) : m_name( name ), m_fileName( fileName ), m_measure1( measure1 ), m_measure2( measure2 ), m_measure3( measure3 ), m_size( size ), m_maxSize( maxSize ), m_growth( growth ), m_isPrimary( isPrimary ) {}
+        FileSpec(const std::wstring &name, const std::wstring &fileName, const std::wstring &measure1, const std::wstring &measure2, const std::wstring &measure3, int size, int maxSize, int growth, bool isPrimary) : m_name( name ), m_fileName( fileName ), m_measure1( measure1 ), m_measure2( measure2 ), m_measure3( measure3 ), m_size( size ), m_maxSize( maxSize ), m_growth( growth ), m_isPrimary( isPrimary ) {}
     };
     struct fileGroup
     {
         std::wstring fgName, contaons;
-        std::vector<fileSpec> specs;
+        std::vector<FileSpec> specs;
     };
     std::wstring m_containment, m_collation, m_fullText, m_persistentlog;
     std::vector<FileSpec> m_fileSpecs, m_logs;
