@@ -5416,8 +5416,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-//        for( auto &valid : field->GetFieldProperties().m_validations.m_validators[type] )
-//            valid.reset();
+        field->GetFieldProperties().m_validations.m_validators[type].clear();
         ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -5469,7 +5468,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             str_to_uc_cpy( formatName, formatNameField );
             str_to_uc_cpy( format, formatField );
             str_to_uc_cpy( errorMessage, error  );
-  //          field->GetFieldProperties().m_validations.m_validators[type].emplace_back( new ValidatorSet( std::make_tuple( formatName, format, errorMessage ) ) );
+            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( formatName, format, errorMessage ) ) );
             formatName = L"";
             format = L"";
             errorMessage = L"";
@@ -9909,7 +9908,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     if( !result && pimpl.m_subtype == L"PostgreSQL" )
     {
         SQLWCHAR column[64], space[64], encoding[64], collation[64], ctype[64];
-        std::unique_ptr<PostgresCreateDBOptions> options( new PostgresCreateDBOptions );
+        std::unique_ptr<PostgresCreateDBOptions> options( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
         dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( L"Default" );
         dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( L"Default" );
         dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( L"Default" );
@@ -10164,7 +10163,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     {
         SQLWCHAR name[128], desc[128];
         int lcid, langid;
-        std::unique_ptr<SQLServerCreateDBOptions> options( new SQLServerCreateDBOptions );
+        std::unique_ptr<SQLServerCreateDBOptions> options( new SQLServerCreateDBOptions( L"", false ) );
         query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
         query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
 //        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
