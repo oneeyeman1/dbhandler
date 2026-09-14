@@ -285,7 +285,7 @@ bool PropertiesDialog::ApplyProperties()
             FieldProperties prop;
             logOnly = m_page6->IsLogOnly();
             prop.m_comment = m_page6->GetCommentCtrl()->GetValue();
-            any = std::move( prop );
+            any = prop;
         }
         break;
         case DatabaseTablePropertiesType:
