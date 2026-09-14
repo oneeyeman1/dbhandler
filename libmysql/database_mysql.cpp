@@ -8,15 +8,18 @@
 #endif
 
 #include <stdio.h>
-#include <memory>
-#include <map>
-#include <vector>
-#include <string.h>
 #include <string>
+#include <tuple>
+#include <vector>
+#include <map>
+#include <memory>
+#include <string.h>
 #include <locale>
+#include <cctype>
 #include <codecvt>
-#include <algorithm>
 #include <sstream>
+#include <algorithm>
+#include <cwctype>
 #include "mysql.h"
 #include "database.h"
 #include "database_mysql.h"
