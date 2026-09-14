@@ -282,7 +282,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         second->Add( sizer2, 0, wxEXPAND, 0 );
         if( type == L"Microsoft SQL Server" || subtype == L"Microsoft SQL Server" )
         {
-            auto opts = std::dynamic_pointer_cast<SQLServerCreateDBOptions>( options );
+            auto opts = dynamic_cast<SQLServerCreateDBOptions *>( options.get() );
             m_label12 = new wxStaticText( this, wxID_ANY, "COLLATE" );
             second->Add( 5, 5, 0, wxEXPAND, 0 );
             auto sizer20 = new wxBoxSizer( wxHORIZONTAL );
@@ -396,7 +396,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"MySQL" || subtype == L"MySQL" )
         {
-            auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( options );
+            auto opts = dynamic_cast<MySQLCreateDBOptions *>( options.get() );
             paneSizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
             m_label2 = new wxStaticText( win, wxID_ANY, _( "Character Set:" ) );
             paneSizer1->Add( m_label2, 0, wxEXPAND, 0 );
@@ -421,7 +421,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
         {
-            auto opts = std::dynamic_pointer_cast<PostgresCreateDBOptions>( options );
+            auto opts = dynamic_cast<PostgresCreateDBOptions *>( options.get() );
             paneSizer1 = new wxFlexGridSizer( 9, 2, 5, 5 );
             m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
             paneSizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -651,7 +651,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
 
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &WXUNUSED(event))
 {
-    auto opts = std::dynamic_pointer_cast<MySQLCreateDBOptions>( m_opts );
+    auto opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() );
     CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
     wxString defValue = "";
     std::wstring charset = std::get<0>( *charSet );
@@ -681,28 +681,22 @@ void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
     {
         CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
         std::wstring charset = std::get<0>( *charSet );
-        m_opts = std::unique_ptr<MySQLCreateDBOptions>( new MySQLCreateDBOptions( m_name->GetValue(), charset, m_collations->GetValue(), m_encrypted->GetValue() ) );
+        m_opts = std::unique_ptr<MySQLCreateDBOptions>( new MySQLCreateDBOptions( m_name->GetValue().ToStdWstring(), charset, m_collations->GetValue().ToStdWstring(), m_encrypted->GetValue() ) );
     }
     if( m_type == L"Microsoft SQL Server" || m_subtype == L"Microsoft SQL Server" )
     {
-        m_opts = std::unique_ptr<SQLServerCreateDBOptions>( new SQLServerCreateDBOptions( m_name->GetValue(), m_exist->GetValue() ) );
+        m_opts = std::unique_ptr<SQLServerCreateDBOptions>( new SQLServerCreateDBOptions( m_name->GetValue().ToStdWstring(), m_exist->GetValue() ) );
         if( m_versionMajor >= 11 )
-            opts->m_containment = m_containment->GetValue();
+            dynamic_cast<SQLServerCreateDBOptions *>( m_opts.get() )->m_containment = m_containment->GetValue();
     }
     if( m_type == L"PostgreSQL" || m_subtype == L"PostgreSQL" )
     {
-        m_opts = std::unique_ptr<PostgresCreateDBOptions>( new PostgresCreateDBOptions( m_name->GetValue(), m_exist->GetValue() ) );
-        m_opts->m_role = m_owner->GetValue();
-        m_opts->m_template = m_template->GetValue();
-        m_opts->m_encoding = m_characterSet->GetValue();
-        m_opts->m_collation = m_collations->GetValue();
-        m_opts->m_ctype = m_ctype->GetValue();
-        m_opts->m_tablespace = m_tablespace->GetValue();
+        m_opts = std::unique_ptr<PostgresCreateDBOptions>( new PostgresCreateDBOptions( m_name->GetValue().ToStdWstring(), m_exist->GetValue(), m_owner->GetValue().ToStdWstring(), m_template->GetValue().ToStdWstring(), m_tablespace->GetValue().ToStdWstring(), m_characterSet->GetValue().ToStdWstring(), m_collations->GetValue().ToStdWstring(), m_ctype->GetValue().ToStdWstring() ) );
         if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
-            opts->m_allowConn = m_allowConn->GetValue();
-        m_opts->m_connlimit = m_connlimit->GetValue();
+            dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_allowConn = m_allowConn->GetValue();
+        dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_connlimit = m_connlimit->GetValue();
         if( ( m_versionMajor > 9 && m_versionMinor >= 5 ) || ( m_versionMajor >= 10 ) )
-            m_opts->m_isTemplate = m_istemplate->GetValue();
+            dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_isTemplate = m_istemplate->GetValue();
     }
     EndModal( wxID_OK );
 }

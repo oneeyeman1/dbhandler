@@ -2676,7 +2676,7 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     std::wstring query3 = L"SELECT pg_encoding_to_char( conforencoding ) AS name FROM pg_conversion";
     std::wstring query4 = L"SELECT collname, collencoding, collprovider collctype FROM pg_collation";
     std::wstring query5 = L"SELECT spcname FROM pg_tablespace";
-    options.reset( new PostgresCreateDBOptions );
+    options.reset( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
     dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( L"Default" );
     dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( L"Default" );
     dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( L"Default" );

@@ -94,7 +94,7 @@ struct SQLServerCreateDBOptions : public CreateDBOptions
 
 struct PostgresCreateDBOptions : public CreateDBOptions
 {
-    PostgresCreateDBOptions(const std::wstring &name, bool exist)
+    PostgresCreateDBOptions(const std::wstring &name, bool exist, const std::wstring &owner, const std::wstring &templt, const std::wstring &tblspace, const std::wstring &encoding, const std::wstring &collation, const std::wstring &ctype) : m_role(owner), m_template(templt), m_tablespace(tblspace), m_encoding(encoding), m_collation(collation), m_ctype(ctype)
     {
         m_name = name;
         m_exist = exist;
