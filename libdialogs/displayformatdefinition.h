@@ -25,6 +25,8 @@ public:
     // end wxGlade
 
     DisplayFormatDefinition(wxWindow* parent, wxWindowID id, const wxString& title, bool isNew, const wxString &type, const wxString &name, const wxString &format, const FieldTableDisplayProperties &prop, Database *db);
+    const wxTextCtrl *GetMaskNameCtrl() const { return m_maskName; }
+    const wxComboBox *GetFormatCtrl() const { return m_format; }
 
 private:
     bool m_isNew, m_isChanged;

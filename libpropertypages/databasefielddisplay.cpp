@@ -24,7 +24,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, const wxString &, const wxString &, const FieldTableDisplayProperties &, Database *);
+typedef int (*ADDEDITMASK)(wxWindow *, bool, const wxString &, wxString &, wxString &, const FieldTableDisplayProperties &, Database *);
 
 DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db):  PropertyPageBase( parent )
 {
@@ -130,7 +130,7 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     {
         for( std::vector<std::pair<std::wstring, std::wstring> >::const_iterator it1 = (*it).second.begin(); it1 < ( *it ).second.end(); ++it1 )
         {
-            auto item = m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
+            m_formats->Append( (*it1).first, new wxStringClientData( (*it1).second ) );
         }
     }
     grid_sizer_1->Insert( 2, m_formats, 0, wxEXPAND, 0 );
@@ -181,7 +181,14 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
     if( lib.IsLoaded() )
     {
         ADDEDITMASK func = (ADDEDITMASK) lib.GetSymbol( "AddEditMask" );
-        func( nullptr, isNew, m_type, name, format, m_prop, m_db );
+        auto res = func( nullptr, isNew, m_type, name, format, m_prop, m_db );
+        if( res == wxID_OK )
+        {
+            if( isNew )
+            {
+                m_formats->Append( name, new wxStringClientData( format ) );
+            }
+        }
     }
 }
 
