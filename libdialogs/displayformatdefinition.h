@@ -47,6 +47,7 @@ protected:
     wxButton* m_help;
     wxMaskedEditText *m_testMask;
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5;
+    int m_intType;
     // end wxGlade
 }; // wxGlade: end class
 

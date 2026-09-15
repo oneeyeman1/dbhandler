@@ -26,6 +26,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     m_fieldType = type;
     m_fieldFormat = format;
     m_db = db;
+    m_intType = (*prop.m_formats.begin()).first;
     // begin wxGlade: DisplayFormatDefinition::DisplayFormatDefinition
     SetTitle( title );
     panel_1 = new wxPanel( this, wxID_ANY );
@@ -119,11 +120,18 @@ void DisplayFormatDefinition::OnOK(wxCommandEvent &WXUNUSED(event))
         ColumnFormatDefinitions format;
         format.m_name = m_maskName->GetValue().ToStdWstring();
         format.m_format = m_format->GetValue().ToStdWstring();
-//        format.m_type = m_fieldType;
+        format.m_type = m_intType;
         if( !m_isNew )
             format.m_oldName = L"";
-        m_db->AddUpdateFormat( m_isNew, format, errorMsg );
-        EndModal( wxID_OK );
+        auto res = m_db->AddUpdateFormat( m_isNew, format, errorMsg );
+        if( res )
+        {
+            for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it <= errorMsg.end(); ++it )
+                wxMessageBox( (*it) );
+            EndModal( wxID_CANCEL );
+        }
+        else
+            EndModal( wxID_OK );
     }
 }
 
