@@ -1148,7 +1148,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         type = 81;
     else
         type = 80;
-    field->GetFieldProperties().m_display.m_format.clear();
+    field->GetFieldProperties().m_display.m_formats.clear();
     field->GetFieldProperties().m_validations.m_validators[type].clear();
     const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
