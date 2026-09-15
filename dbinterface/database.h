@@ -650,7 +650,7 @@ public:
     int GetNumberOfIndexes() const { return m_numIndex; }
     void SetFullName(const std::wstring &fullName) { m_fullName = fullName; }
     const std::vector<std::wstring> &GetPKFelds() const { return m_pkFelds; }
-    void SetPKFields(const std::vector<std::wstring> &fields) { m_pkFelds; }
+    void SetPKFields(const std::vector<std::wstring> &fields) { m_pkFelds = fields; }
     PKOptions &GetPKOptions() const { return *m_props.pkOptions.get(); }
     void SetTableEngine(const std::wstring &engine) { m_engine = engine; }
     const std::wstring &GetTableEngine() const { return m_engine; }
