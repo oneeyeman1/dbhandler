@@ -2729,7 +2729,7 @@ int SQLiteDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &f
     if( !result )
     {
         res = sqlite3_step( m_stmt );
-        if( res != SQLITE_OK )
+        if( res != SQLITE_DONE )
         {
             result = 1;
             GetErrorMessage( res, errorMsg );
