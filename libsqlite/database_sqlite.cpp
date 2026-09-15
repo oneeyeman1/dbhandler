@@ -1137,12 +1137,23 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
 
 int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
+    int type;
+    auto temp = field->GetFieldType();
+    std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
+    if( temp == L"date" || temp == L"text" )
+        type = 82;
+    if( temp == L"datetime" || temp == L"time" || temp == L"timestamp" || temp == L"text" )
+        type = 84;
+    if( temp == L"real" || temp == L"integer" )
+        type = 81;
+    else
+        type = 80;
     field->GetFieldProperties().m_display.m_format.clear();
+    field->GetFieldProperties().m_validations.m_validators[type].clear();
     const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
-    int type;
     int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
@@ -1242,20 +1253,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
-        auto temp = field->GetFieldType();
-        std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
-        if( temp == L"date" || temp == L"text" )
-            type = 82;
-        if( temp == L"datetime" || temp == L"time" || temp == L"timestamp" || temp == L"text" )
-            type = 84;
-        if( temp == L"real" || temp == L"integer" )
-            type = 81;
-        else
-            type = 80;
-        field->GetFieldProperties().m_display.m_formats[type].clear();
-    }
-    if( !result )
-    {
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
@@ -1304,7 +1301,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
-        field->GetFieldProperties().m_validations.m_validators[type].clear();
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
