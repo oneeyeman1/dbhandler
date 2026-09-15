@@ -2804,26 +2804,51 @@ int MySQLDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstr
     MYSQL_BIND bind[2];
     unsigned long str_len1, str_len2;
     MYSQL_STMT *res = mysql_stmt_init( m_db );
-    if( res )
+    if( !res )
     {
-        if( !mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str (), query.length() ) )
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str (), query.length() ) )
         {
-            bind[0].buffer_type = MYSQL_TYPE_STRING;
-            bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
-            bind[0].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
-            bind[0].is_null = 0;
-            bind[0].length = &str_len1;
-            bind[1].buffer_type = MYSQL_TYPE_STRING;
-            bind[1].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
-            bind[1].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
-            bind[1].is_null = 0;
-            bind[1].length = &str_len2;
-            if( !mysql_stmt_bind_param( res, bind ) )
-            {
-                str_len1 = bind[0].buffer_length;
-                str_len2 = bind[1].buffer_length;
-                if( !mysql_stmt_execute( res ) )
-                {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        bind[0].buffer_type = MYSQL_TYPE_STRING;
+        bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+        bind[0].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+        bind[0].is_null = 0;
+        bind[0].length = &str_len1;
+        bind[1].buffer_type = MYSQL_TYPE_STRING;
+        bind[1].buffer = (char *) m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str();
+        bind[1].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
+        bind[1].is_null = 0;
+        bind[1].length = &str_len2;
+        if( mysql_stmt_bind_param( res, bind ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        str_len1 = bind[0].buffer_length;
+        str_len2 = bind[1].buffer_length;
+        if( mysql_stmt_execute( res ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( res ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
                     if( ( mysql_store_result( m_db ) ) )
                     {
                         MYSQL_BIND results;
