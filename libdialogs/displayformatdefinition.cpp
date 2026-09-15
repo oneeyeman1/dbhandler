@@ -102,6 +102,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_2->Fit( this );
     Layout();
     m_testMask = new wxMaskedEditText( panel_1, wxID_ANY );
+    m_testMask->Hide();
     // end wxGlade
     m_ok->Bind( wxEVT_BUTTON, &DisplayFormatDefinition::OnOK, this );
     m_testButton->Bind( wxEVT_UPDATE_UI, &DisplayFormatDefinition::OnTestUpdateUI, this );
