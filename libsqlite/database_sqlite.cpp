@@ -84,7 +84,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     char *err;
     sqlite3_stmt *stmt;
     std::vector<std::string> queries;
-    queries.push_back( "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254));" );
+    queries.push_back( "CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_jtfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254));" );
     queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol(abc_tnam ASC, abc_ownr ASC, abc_cnam ASC);" );
     queries.push_back( "CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32));" );
     queries.push_back( "CREATE UNIQUE INDEX IF NOT EXISTS abcate_x ON abcatedt(abe_name ASC, abe_seqn ASC);" );
@@ -1137,23 +1137,12 @@ bool SQLiteDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vec
 
 int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &UNUSED(schemaName), const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
-    int type;
-    auto temp = field->GetFieldType();
-    std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
-    if( temp == L"date" || temp == L"text" )
-        type = 82;
-    if( temp == L"datetime" || temp == L"time" || temp == L"timestamp" || temp == L"text" )
-        type = 84;
-    if( temp == L"real" || temp == L"integer" )
-        type = 81;
-    else
-        type = 80;
-    field->GetFieldProperties().m_display.m_formats.clear();
-    field->GetFieldProperties().m_validations.m_validators[type].clear();
+    field->GetFieldProperties().m_display.m_format.clear();
     const char *fieldFormat = nullptr;
     sqlite3_stmt *stmt;
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
+    int type;
     int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
@@ -1253,6 +1242,20 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
+        auto temp = field->GetFieldType();
+        std::transform( temp.begin(), temp.end(), temp.begin(), [](wchar_t c) { return std::towlower( c ); } );
+        if( temp == L"date" || temp == L"text" )
+            type = 82;
+        if( temp == L"datetime" || temp == L"time" || temp == L"timestamp" || temp == L"text" )
+            type = 84;
+        if( temp == L"real" || temp == L"integer" )
+            type = 81;
+        else
+            type = 80;
+        field->GetFieldProperties().m_display.m_formats[type].clear();
+    }
+    if( !result )
+    {
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
@@ -1301,6 +1304,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
+        field->GetFieldProperties().m_validations.m_validators[type].clear();
         res = sqlite3_bind_int( stmt, 1, type );
         if( res != SQLITE_OK )
         {
@@ -2682,7 +2686,7 @@ int SQLiteDatabase::AddUpdateFormat(bool isAdd, const ColumnFormatDefinitions &f
     if( !result )
     {
         res = sqlite3_step( m_stmt );
-        if( res != SQLITE_DONE )
+        if( res != SQLITE_OK )
         {
             result = 1;
             GetErrorMessage( res, errorMsg );

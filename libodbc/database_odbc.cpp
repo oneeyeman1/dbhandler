@@ -5272,6 +5272,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_heading.m_labelAlignment = labelAlignment;
             field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
             field->GetFieldProperties().m_display.m_justify = justify;
+            field->GetFieldProperties().m_display.m_format = fieldFormat;
         }
     }
     if( result == 1 )

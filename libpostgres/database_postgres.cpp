@@ -1540,14 +1540,14 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
             for( int i = 0; i < count; i++ )
             {
                 field->GetFieldProperties().m_comment = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 18 ) );
-                auto heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 8 ) );
+                auto heading = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 7 ) );
                 field->GetFieldProperties().m_heading.m_heading = heading == L"" ? fieldName : heading;
-                field->GetFieldProperties().m_heading.m_headingAlignment = atoi( PQgetvalue( res, i, 9 ) );
-                auto label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 6 ) );
+                field->GetFieldProperties().m_heading.m_headingAlignment = atoi( PQgetvalue( res, i, 8 ) );
+                auto label = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 5 ) );
                 field->GetFieldProperties().m_heading.m_label = label == L"" ? fieldName : label;
-                field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 7 ) );
-                field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 10 ) );
-                field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 11 ) );
+                field->GetFieldProperties().m_heading.m_labelAlignment = atoi( PQgetvalue( res, i, 6 ) );
+                field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 9 ) );
+                field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 10 ) );
             }
         }
     }

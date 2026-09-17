@@ -1550,8 +1550,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     MYSQL_STMT *stmt = nullptr;
     int result = 0;
     int type;
-    char *label, *comment, heading;
-    int labelAlignment = 0, headingAlignment = 0;
+    char *label, *comment, *heading, *mask;
+    int labelAlignment = 0, headingAlignment = 0, justify = 0;
     len[0] = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() ) + 1;
     len[1] = strlen( m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() ) + 1;
     len[2] = strlen( m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() ) + 1;
@@ -1693,6 +1693,16 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         results[8].is_null = &is_null[8];
         results[8].length = &length[8];
         results[8].error = &error[8];
+        results[9].buffer_type = MYSQL_TYPE_LONG;
+        results[9].buffer = (char *) &justify;
+        results[9].is_null = &is_null[9];
+        results[9].length = &length[9];
+        results[9].error = &error[9];
+        results[10].buffer_type = MYSQL_TYPE_STRING;
+        results[10].buffer =  &mask;
+        results[10].is_null = &is_null[10];
+        results[10].length = &length[10];
+        results[10].error = &error[10];
         results[17].buffer_type = MYSQL_TYPE_STRING;
         results[17].buffer = &comment;
         results[17].buffer_length = 256;
@@ -1725,6 +1735,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 field->GetFieldProperties().m_heading.m_heading = m_pimpl->m_myconv.from_bytes( heading );
                 field->GetFieldProperties().m_heading.m_labelAlignment = labelAlignment;
                 field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
+                field->GetFieldProperties().m_display.m_justify = justify;
+                field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( mask );
                 break;
             }
             case MYSQL_NO_DATA:
@@ -1734,6 +1746,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 field->GetFieldProperties().m_heading.m_heading = L"";
                 field->GetFieldProperties().m_heading.m_labelAlignment = 0;
                 field->GetFieldProperties().m_heading.m_headingAlignment = 1;
+                field->GetFieldProperties().m_display.m_justify = 0;
+                field->GetFieldProperties().m_display.m_format = L"";
                 break;
             }
         }
