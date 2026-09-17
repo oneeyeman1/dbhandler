@@ -45,7 +45,8 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
     sizer_7->Add( grid_sizer_1, 1, wxEXPAND, 0 );
     m_label = new wxStaticText( m_panel, wxID_ANY, _( "Name" ) );
-    m_label->Enable( 0 );
+    if( !m_isNew )
+        m_label->Enable( 0 );
     grid_sizer_1->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_name = new wxTextCtrl( m_panel, wxID_ANY, ruleName );
     grid_sizer_1->Add( m_name, 1, wxALIGN_CENTER_VERTICAL, 0 );
