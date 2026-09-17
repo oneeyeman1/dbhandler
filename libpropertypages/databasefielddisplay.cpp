@@ -188,6 +188,10 @@ void DatabaseFieldDisplay::OnEditNewFormat(wxCommandEvent &event)
             {
                 m_formats->Append( name, new wxStringClientData( format ) );
             }
+            else
+            {
+                reinterpret_cast<wxStringClientData *>( m_formats->GetClientObject( m_formats->GetSelection() ) )->SetData( format );
+            }
         }
     }
 }
