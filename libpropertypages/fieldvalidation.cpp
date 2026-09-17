@@ -102,7 +102,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     }
     else
     {
-        rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientObject( m_rules->GetSelection() ) );
+        rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientData( m_rules->GetSelection() ) );
         isNew = false;
     }
 #ifdef __WXMSW__
