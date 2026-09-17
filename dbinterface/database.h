@@ -766,7 +766,6 @@ public:
     virtual int DeleteTable(const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int NewTableCreation(std::vector<std::wstring> &errorMsg) = 0;
     virtual int DropForeignKey(std::wstring &command, DatabaseTable *tableName, const std::wstring &keyName, bool logOnly, const std::vector<FKField *> &fkFields, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetFieldHeader(const std::wstring &tabeName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg) = 0;
     virtual int PrepareStatement(const std::wstring &schemaName, const std::wstring &tableName, std::vector<std::wstring> &errorMsg) = 0;
     virtual int EditTableData(std::vector<DataEditFiield> &row, std::vector<std::wstring> &errorMsg) = 0;
     virtual int FinalizeStatement(std::vector<std::wstring> &errorMsg) = 0;

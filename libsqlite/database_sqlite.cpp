@@ -2428,53 +2428,6 @@ bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const
     return exist;
 }
 
-int SQLiteDatabase::GetFieldHeader(const std::wstring &tableName, const std::wstring &fieldName, std::wstring &headerStr, std::vector<std::wstring> &errorMsg)
-{
-    int result = 0, res;
-    sqlite3_stmt *stmt;
-    headerStr = fieldName;
-    std::wstring error;
-    std::wstring query = L"SEECT pbc_hdr FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_cnam\" = ?";
-    if( ( res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &stmt, NULL ) ) == SQLITE_OK )
-    {
-        res = sqlite3_bind_text( stmt, 1, sqlite_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-        if( res == SQLITE_OK )
-        {
-            res = sqlite3_bind_text( stmt, 2, sqlite_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str(), -1, SQLITE_TRANSIENT );
-            if( res == SQLITE_OK )
-            {
-                for( ; ; )
-                {
-                    res = sqlite3_step( stmt );
-                    if( res == SQLITE_ROW )
-                    {
-                        headerStr = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
-                        break;
-                    }
-                    else
-                    {
-                        GetErrorMessage( res, errorMsg );
-                        result = 1;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            GetErrorMessage( res, errorMsg );
-            result = 1;
-        }
-    }
-    else
-    {
-        GetErrorMessage( res, errorMsg );
-        result = 1;
-    }
-    sqlite3_finalize( stmt );
-    return result;
-}
-
 int SQLiteDatabase::GetAttachedDBList(std::vector<std::wstring> &dbNames, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, res;

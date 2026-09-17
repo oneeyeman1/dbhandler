@@ -459,9 +459,8 @@ void DesignCanvas::PopulateQueryCanvas(const std::vector<TableField *> &queryFie
                 }
                 if( dbTableName == tableName )
                 {
-                    std::wstring headerStr;
                     found = true;
-                    ((DrawingDocument *) m_view->GetDocument() )->GetDatabase()->GetFieldHeader( tableName, (*it)->GetFieldName(), headerStr, errorMsg );
+                    auto headerStr = (*it)->GetFieldProperties().m_heading.m_heading;
                     wxString headerString( headerStr );
                     headerString += "_t";
                     wxString dataString( (*it)->GetFieldName() );
