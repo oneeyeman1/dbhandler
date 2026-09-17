@@ -43,6 +43,7 @@ DisplayFormatDefinition::DisplayFormatDefinition(wxWindow* parent, wxWindowID id
     sizer_5->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     m_maskName = new wxTextCtrl( panel_1, wxID_ANY, format );
+    m_maskName->SetMaxLength( 31 );
     if( !isNew )
         m_maskName->Disable();
     sizer_5->Add( m_maskName, 0, wxALIGN_CENTER_VERTICAL, 0 );
