@@ -21,12 +21,13 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *);
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *, const int);
 
 FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
     m_fieldType = fieldType;
     m_db = db;
+    m_validations = validations;
     // begin wxGlade: FieldValidation::FieldValidation
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -87,7 +88,7 @@ void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
 
 void FieldValidation::OnButtonPress(wxCommandEvent &event)
 {
-    auto fieldType = m_fieldType;
+    int type = m_validations.m_validators.begin()->first;
     wxDynamicLibrary lib;
     wxString libName;
     bool isNew;
@@ -117,7 +118,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     if( lib.Load( libName ) )
     {
         NEWEDITVALDATION func = (NEWEDITVALDATION) lib.GetSymbol( "NewEditValidation" );
-        int res = func( nullptr, isNew, fieldType, m_db, rule );
+        int res = func( nullptr, isNew, m_fieldType, m_db, rule, type );
     }
 }
 

@@ -30,6 +30,7 @@ public:
 private:
     Database *m_db;
     wxString m_fieldType;
+    FieldTableValidationProperties m_validations;
 protected:
     // begin wxGlade: FieldValidation::attributes
     wxListBox* m_rules;
