@@ -68,15 +68,15 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_justify = new wxComboBox( sizer_5->GetStaticBox(), wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 2, m_justify_choices, wxCB_DROPDOWN );
     m_justify->SetSelection( 0 );
     grid_sizer_3->Add( m_justify, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    if( type.Lower() == "char" ||
-        type.Lower() == "character" ||
-        type.Lower() == "character varying" ||
-        type.Lower() == "nchar" ||
-        type.Lower() == "ntext" ||
-        type.Lower() == "nvarchar" ||
-        type.Lower() == "string" ||
-        type.Lower() == "text" ||
-        type.Lower() == "varchar" )
+    if( type.Lower().StartsWith( "char" ) ||
+        type.Lower().StartsWith( "character" ) ||
+        type.Lower().StartsWith( "character varying" ) ||
+        type.Lower().StartsWith( "nchar" ) ||
+        type.Lower().StartsWith( "ntext" ) ||
+        type.Lower().StartsWith(  "nvarchar" ) ||
+        type.Lower().StartsWith( "string" ) ||
+        type.Lower().StartsWith( "text" ) ||
+        type.Lower().StartsWith( "varchar" ) )
     {
         m_label3 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "Case" ) );
         grid_sizer_3->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -106,18 +106,18 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_label7 = new wxStaticText( sizer_5->GetStaticBox(), wxID_ANY, _( "in" ) );
     grid_sizer_4->Add( m_label7, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_2->Add( 5, 5, 0, 0, 0 );
-    if( type.Lower() == "binary" ||
-        type.Lower() == "blob" ||
-        type.Lower() == "char" ||
-        type.Lower() == "character" ||
-        type.Lower() == "character varying" ||
-        type.Lower() == "nchar" ||
-        type.Lower() == "ntext" ||
-        type.Lower() == "nvarchar" ||
-        type.Lower() == "string" ||
-        type.Lower() == "text" ||
-        type.Lower() == "varbinary" ||
-        type.Lower() == "varchar" )
+    if( type.Lower().StartsWith( "binary" ) ||
+        type.Lower().StartsWith( "blob" ) ||
+        type.Lower().StartsWith( "char" ) ||
+        type.Lower().StartsWith( "character" ) ||
+        type.Lower().StartsWith( "character varying" ) ||
+        type.Lower().StartsWith( "nchar" ) ||
+        type.Lower().StartsWith( "ntext" ) ||
+        type.Lower().StartsWith( "nvarchar" ) ||
+        type.Lower().StartsWith( "string" ) ||
+        type.Lower().StartsWith( "text" ) ||
+        type.Lower().StartsWith( "varbinary" ) ||
+        type.Lower().StartsWith( "varchar" ) )
     {
         m_picture = new wxCheckBox( sizer_5->GetStaticBox(), wxID_ANY, _( "Picture" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
         grid_sizer_2->Add( m_picture, 0, 0, 0 );
