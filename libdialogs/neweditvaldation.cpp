@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <memory>
 #include "database.h"
+#include "functionlistbox.h"
 #include "neweditvaldation.h"
 
 // begin wxGlade: ::extracode
@@ -93,7 +94,8 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     grid_sizer_2->Add( m_label5, 0, wxALIGN_BOTTOM, 0 );
     m_callNotes = new wxButton( sizer_11->GetStaticBox(), wxID_ANY, _( "@call_notes" ) );
     grid_sizer_2->Add( m_callNotes, 0, wxEXPAND, 0 );
-    list_box_1 = new wxListBox( sizer_11->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
+    list_box_1 = new FunctionListBox( sizer_11->GetStaticBox(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, 2 );
+//    list_box_1 = new wxListBox( sizer_11->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
     grid_sizer_2->Add( list_box_1, 0, 0, 0 );
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );

@@ -45,6 +45,9 @@
     <ClInclude Include="scrolledcolumnlabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="functionlistbox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Fles</Filter>
     </ClCompile>
     <ClCompile Include="scrolledcolumnlabel.cpp">
+      <Filter>Source Fles</Filter>
+    </ClCompile>
+    <ClCompile Include="functionlistbox.cpp">
       <Filter>Source Fles</Filter>
     </ClCompile>
   </ItemGroup>

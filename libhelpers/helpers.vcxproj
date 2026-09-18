@@ -38,6 +38,7 @@
     <ClInclude Include="ablbaseview.h" />
     <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="configuration.h" />
+    <ClInclude Include="functionlistbox.h" />
     <ClInclude Include="guiobjectsproperties.h" />
     <ClInclude Include="maskededit.h" />
     <ClInclude Include="mycombocelleditor.h" />
@@ -51,6 +52,7 @@
   <ItemGroup>
     <ClCompile Include="ablbaseview.cpp" />
     <ClCompile Include="colorcombobox.cpp" />
+    <ClCompile Include="functionlistbox.cpp" />
     <ClCompile Include="maskededit.cpp" />
     <ClCompile Include="mycombocelleditor.cpp" />
     <ClCompile Include="mycombocellrenderer.cpp" />
