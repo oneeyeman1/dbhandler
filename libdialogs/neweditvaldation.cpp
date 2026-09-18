@@ -23,9 +23,19 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
 {
     m_isNew = isNew;
     m_db = db;
-    auto ruleName    = std::get<0>( *rule );
-    auto ruleRule    = std::get<1>( *rule );
-    auto ruleMessage = std::get<2>( *rule );
+    wxString ruleName, ruleRule, ruleMessage;
+    if( !isNew )
+    {
+        ruleName    = std::get<0>( *rule );
+        ruleRule    = std::get<1>( *rule );
+        ruleMessage = std::get<2>( *rule );
+    }
+    else
+    {
+        ruleName    = "";
+        ruleRule    = "";
+        ruleMessage = "";
+    }
     // begin wxGlade: NewEditValidator::NewEditValidator
     SetTitle( _( "Input Valdation" ) );
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
