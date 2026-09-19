@@ -418,11 +418,11 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'salary' ) THEN INSERT INTO abcatfmt VALUES( 'salary', '$###,##0.00', 81, 0 ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"DO $$ BEGIN IF NOT EXISTS( SELECT 1 FROM abcatfmt WHERE abf_name = 'mm-dd-yyyy' ) THEN INSERT INTO abcatfmt VALUES( 'mm-dd-yyyy', 'mm-dd-yyyy', 82, 0 ) ON CONFLICT DO NOTHING;" );
 
-        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \') ON CONFLICT DO NOTHING;" );
-        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\') ON CONFLICT DO NOTHING;");
-        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\') ON CONFLICT DO NOTHING;");
-        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\') ON CONFLICT DO NOTHING;");
-        queries.push_back( L"INSERT INTO \"abcatvld\" VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\') ON CONFLICT DO NOTHING;");
+        queries.push_back( L"INSERT INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ') ON CONFLICT DO NOTHING;" );
+        queries.push_back( L"INSERT INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0') ON CONFLICT DO NOTHING;");
+        queries.push_back( L"INSERT INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( 'Y', 'y', 'N', 'n' )\', 81, 6, '') ON CONFLICT DO NOTHING;");
+        queries.push_back( L"INSERT INTO abcatvld VALUES( 'must_be_numer, 'CHECK( isNumer( @column )', 80, 0, '') ON CONFLICT DO NOTHING;");
+        queries.push_back( L"INSERT INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '') ON CONFLICT DO NOTHING;");
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'###-##-####\', \'###-##-####\', 90, 1, 1, 32, \'00\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'###,###.00\', \'###,###.00\', 90, 1, 1, 32, \'10\' ) ON CONFLICT DO NOTHING;" );
         queries.push_back( L"INSERT INTO \"abcatedt\" VALUES( \'#####\', \'#####\', 90, 1, 1, 32, \'10\' ) ON CONFLICT DO NOTHING;" );
