@@ -21,7 +21,9 @@ libhelpers_a_SOURCES =  \
 	mytabletypeeditor.cpp \
 	mytabletypeeditor.h \
 	scrolledcolumnlabel.cpp \
-	scrolledcolumnlabel.h
+	scrolledcolumnlabel.h \
+	functionlistbox.cpp \
+	functionlistbox.h
 
 libhelpers_a_CXXFLAGS = -DwxUSE_MASKED_EDIT -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
