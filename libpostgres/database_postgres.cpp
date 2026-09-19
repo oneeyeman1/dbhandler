@@ -1599,7 +1599,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
     }
     PQclear( res );
     field->GetFieldProperties().m_validations.m_validators[type].clear();
-    res = PQexecParams( m_db, "SELECT * FROM abcatvld WHERE abf_type = $1::int4", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
+    res = PQexecParams( m_db, "SELECT * FROM abcatvld WHERE abv_type = $1::int4", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
     if (PQresultStatus(res) != PGRES_TUPLES_OK)
     {
         std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
