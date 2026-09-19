@@ -5074,7 +5074,8 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 
 int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, stringCase;
+    double height = 0.0, width = 0.0;
     short justify = 0;
     SQLHSTMT stmt = 0;
     std::wstring fieldFormat = L"";
@@ -5090,7 +5091,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( owner.get(), ownerName );
     uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
-    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0, cbFieldFormat = 0, cbError = 0;
+    SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = 0, cbFormat = 0, cbFieldFormat = 0, cbError = 0, cbFieldHeight = 0, cbFieldWidth = 0;
+    SQLLEN cbFieldCase;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
     SQLWCHAR formatNameField[40], formatField[260], error[256];
@@ -5243,6 +5245,33 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
+        ret = SQLBindCol( stmt, 12, SQL_C_USHORT, &stringCase, 0, &cbFieldCase );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 13, SQL_C_DOUBLE, &height, 0, &cbFieldHeight );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 14, SQL_C_DOUBLE, &width, 0, &cbFieldWidth );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
         ret = SQLFetch( stmt );
         if( ret == SQL_NO_DATA )
         {
@@ -5253,6 +5282,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_heading.m_headingAlignment = 1;
             field->GetFieldProperties().m_display.m_justify = 0;
             field->GetFieldProperties().m_display.m_format = L"";
+            field->GetFieldProperties().m_display.m_stringCase = 0;
         }
         else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
         {
@@ -5273,6 +5303,9 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
             field->GetFieldProperties().m_display.m_justify = justify;
             field->GetFieldProperties().m_display.m_format = fieldFormat;
+            field->GetFieldProperties().m_display.m_stringCase = stringCase;
+            field->GetFieldProperties().m_display.m_width = width;
+            field->GetFieldProperties().m_display.m_height = height;
         }
     }
     if( result == 1 )

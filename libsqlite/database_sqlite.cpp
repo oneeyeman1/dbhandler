@@ -1205,6 +1205,9 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             if( comment )
                 field->GetFieldProperties().m_comment = sqlite_pimpl->m_myconv.from_bytes( comment );
             field->GetFieldProperties().m_display.m_justify = justify;
+            field->GetFieldProperties().m_display.m_stringCase = (short) sqlite3_column_int( stmt, 11 );
+            field->GetFieldProperties().m_display.m_height = (short) sqlite3_column_int( stmt, 12 );
+            field->GetFieldProperties().m_display.m_width = (short) sqlite3_column_int( stmt, 13 );
         }
         else if( res != SQLITE_DONE )
         {
@@ -1220,6 +1223,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             field->GetFieldProperties().m_comment = L"";
             field->GetFieldProperties().m_display.m_justify = 0;
             field->GetFieldProperties().m_display.m_format = L"";
+            field->GetFieldProperties().m_display.m_stringCase = 0;
         }
     }
     if( !result )
