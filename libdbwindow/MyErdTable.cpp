@@ -27,6 +27,11 @@
 #include "res/gui/key-p.xpm"
 #include "res/gui/key-f.xpm"
 
+#ifdef __WXGTK__
+#include "pk.h"
+#include "fk.h"
+#endif
+
 using namespace wxSFCommonFcn;
 
 XS_IMPLEMENT_CLONABLE_CLASS(MyErdTable, wxSFRoundRectShape);
