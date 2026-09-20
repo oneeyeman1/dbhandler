@@ -16,7 +16,7 @@
 #endif
 
 #if defined( __WXGTK__ ) || defined( __WXQT__ )
-#include "logomysql.h"
+#include "logomysql1.h"
 #endif
 
 #include <map>
@@ -49,12 +49,13 @@ mySQLODBCSetupDialog::mySQLODBCSetupDialog(wxWindow *parent, std::map<std::wstri
     auto sizer3 = new wxBoxSizer( wxVERTICAL );
     sizer_2->Add( sizer3, 0, wxEXPAND, 0 );
 #if defined( __WXGTK__ ) || defined( __WXQT__ )
-    m_logo = new wxStaticBitmap( this, wxID_ANY, wxBitmapBundle::FromSVG( logomysql, wxSize( 16, 16 ) ) );
+    m_logo = new wxStaticBitmap( this, wxID_ANY, wxBitmapBundle::FromSVG( logomysql, wxSize( 64, 64 ) ) );
 #else
     m_logo = new wxStaticBitmap( this, wxID_ANY, wxBitmapBundle::FromSVGResource( "logomysql", wxSize( 16, 16 ) ) );
 #endif
     sizer3->Add( m_logo, 1, wxEXPAND, 0 );
-    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+//    sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer3->AddStretchSpacer();
     m_line = new wxStaticLine( this, wxID_ANY );
     m_line->SetForegroundColour( wxColour( 0, 255, 255 ) );
     sizer3->Add( m_line, 0, wxEXPAND, 0 );
