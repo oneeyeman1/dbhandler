@@ -1,4 +1,4 @@
-static const char fk[] =
+static const char pk[] =
 R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    id="SVGRoot"
