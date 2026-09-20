@@ -11,7 +11,7 @@ public:
     MyErdTable();
     MyErdTable(DatabaseTable *table, ViewType type);
     virtual ~MyErdTable();
-    void UpdateTable();
+    void UpdateTable(wxWindow *parent);
     void SetTableComment(const wxString &comment);
     WXEXPORT DatabaseTable *GetTable();
     wxSFTextShape *GetLabel();
@@ -57,6 +57,7 @@ private:
     int m_columns;
     Database *m_db;
     wxString m_catalogName, m_schemaName, m_tableName;
+    wxWindow *m_parent;
 };
 
 #endif

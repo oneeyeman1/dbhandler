@@ -166,7 +166,7 @@ void DatabaseCanvas::DisplayTables(std::map<wxString,std::vector<TableDefinition
             m_pManager.AddShape( (*it), NULL, startPoint, sfINITIALIZE, sfDONT_SAVE_STATE );
             if( (*it) == tables.back() && dynamic_cast<DrawingView *>( m_view )->GetViewType() == DatabaseView )
                 (*it)->Select( true );
-            (*it)->UpdateTable();
+            (*it)->UpdateTable( this );
             if( dynamic_cast<DrawingView *>( m_view )->GetViewType() == QueryView || dynamic_cast<DrawingView *>( m_view )->GetViewType() == NewViewView )
             {
                 for( std::vector<TableField *>::iterator it1 = fields.begin(); it1 < fields.end(); it1++ )
@@ -1313,7 +1313,7 @@ void DatabaseCanvas::ShowHideTablePart(int part, bool show)
                 dynamic_cast<DrawingView *>( m_view )->ChangeTableCommentsMenu();
                 break;
         }
-        shape->UpdateTable();
+        shape->UpdateTable( this );
     }
     Refresh();
 }
@@ -1387,7 +1387,7 @@ bool DatabaseCanvas::UpdateCanvasWithQuery()
             GetDiagramManager().GetShapes( CLASSINFO( MyErdTable ), lstShapes );
             for( ShapeList::iterator it = lstShapes.begin(); it != lstShapes.end(); ++it )
             {
-                (( MyErdTable*) *it )->UpdateTable();
+                (( MyErdTable*) *it )->UpdateTable( this );
             }
             Refresh( false );
         }

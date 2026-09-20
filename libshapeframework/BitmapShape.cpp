@@ -27,7 +27,6 @@ wxSFBitmapShape::wxSFBitmapShape(void)
 : wxSFRectShape()
 {
     m_sBitmapPath = wxT("");
-
 	m_fRescaleInProgress = false;
 	m_fCanScale = sfdvBITMAPSHAPE_SCALEIMAGE;
 	CreateFromXPM(NoSource_xpm);
@@ -145,6 +144,13 @@ bool wxSFBitmapShape::CreateFromXPM(const char* const* bits)
 	return fSuccess;
 }
 
+bool wxSFBitmapShape::CreateFromBundle(const wxBitmapBundle &bundle, wxWindow *parent)
+{
+    m_bundle = bundle;
+    m_parent = parent;
+    return m_bundle.IsOk();
+}
+
 //----------------------------------------------------------------------------------//
 // public virtual functions
 //----------------------------------------------------------------------------------//
@@ -228,7 +234,10 @@ void wxSFBitmapShape::DrawNormal(wxDC& dc)
 
 	if(m_fRescaleInProgress)
 	{
-		dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+        if( m_Bitmap.IsOk() )
+            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+        else
+            dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
 
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen(wxPen(wxColour(100, 100, 100), 1, wxPENSTYLE_DOT));
@@ -237,7 +246,12 @@ void wxSFBitmapShape::DrawNormal(wxDC& dc)
 		dc.SetBrush(wxNullBrush);
 	}
 	else
-		dc.DrawBitmap(m_Bitmap, Conv2Point(GetAbsolutePosition()));
+    {
+        if( m_Bitmap.IsOk() )
+            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+        else
+            dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
+    }
 }
 
 void wxSFBitmapShape::DrawHover(wxDC& dc)
@@ -245,7 +259,10 @@ void wxSFBitmapShape::DrawHover(wxDC& dc)
 	// HINT: overload it for custom actions...
 
 	wxRealPoint pos = GetAbsolutePosition();
-	dc.DrawBitmap(m_Bitmap, Conv2Point(pos));
+    if( m_Bitmap.IsOk() )
+        dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+   else
+        dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
 
 	dc.SetPen(wxPen(m_nHoverColor, 1));
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -259,7 +276,10 @@ void wxSFBitmapShape::DrawHighlighted(wxDC& dc)
 	// HINT: overload it for custom actions...
 
 	wxRealPoint pos = GetAbsolutePosition();
-	dc.DrawBitmap(m_Bitmap, Conv2Point(pos));
+    if( m_Bitmap.IsOk() )
+        dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+    else
+        dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
 
 	dc.SetPen(wxPen(m_nHoverColor, 2));
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);

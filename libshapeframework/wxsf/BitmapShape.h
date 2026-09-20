@@ -76,6 +76,8 @@ public:
      */
 	bool CreateFromXPM(const char* const* bits);
 
+        bool CreateFromBundle(const wxBitmapBundle &bundle, wxWindow *parent);
+
 	// public virtual function
 	/*!
 	 * \brief Scale the bitmap shape in both directions. The function can be overrided if neccessary.
@@ -109,6 +111,7 @@ protected:
 
 	/*! \brief Currently processed (modified) bitmap. */
 	wxBitmap m_Bitmap;
+        wxBitmapBundle m_bundle;
 	/*! \brief Original archived bitmap. */
 	wxBitmap m_OriginalBitmap;
 	bool m_fCanScale;
@@ -158,6 +161,7 @@ private:
 
 	 /*! \brief Initialize serializable properties. */
 	void MarkSerializableDataMembers();
+        wxWindow *m_parent;
 };
 
 #endif //_WXSFBITMAPSHAPE_H

@@ -224,8 +224,9 @@ void MyErdTable::MarkSerializableDataMembers()
     XS_SERIALIZE( m_displayComments, "display_comments" );
 }
 
-void MyErdTable::UpdateTable()
+void MyErdTable::UpdateTable(wxWindow *parent)
 {
+    m_parent = parent;
     if( !m_displayTypes && !m_displayComments )
         m_columns = 1;
     else if( ( !m_displayComments && m_displayTypes  ) || ( !m_displayTypes && m_displayComments ) )
@@ -377,6 +378,11 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
             if( pBitmap )
             {
+                wxBitmapBundle bundlePK, bundleFK;
+#ifdef __WXGTK__
+                bundlePK = wxBitmapBundle::FromSVG( pk, wxSize( 16, 16 ) );
+                bundleFK = wxBitmapBundle::FromSVG( fk, wxSize( 16, 16 ) );
+#endif
                 pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
                 pBitmap->SetId( id + 10000 );
                 pBitmap->Activate( true );
@@ -385,10 +391,12 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 {
                     if( type == Constraint::primaryKey )
                     {
-                        pBitmap->CreateFromXPM( key_p_xpm );
+                        pBitmap->CreateFromBundle( bundlePK, m_parent );
+//                        pBitmap->CreateFromXPM( key_p_xpm );
                     }
                     else
-                        pBitmap->CreateFromXPM( key_f_xpm );
+                        pBitmap->CreateFromBundle( bundleFK, m_parent );
+//                        pBitmap->CreateFromXPM( key_f_xpm );
                     SetCommonProps( pBitmap );
                 }
                 else
