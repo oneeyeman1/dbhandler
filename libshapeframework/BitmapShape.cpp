@@ -176,7 +176,7 @@ void wxSFBitmapShape::OnBeginHandle(wxSFShapeHandle& handle)
 		m_fRescaleInProgress = true;
 		m_nPrevPos = GetAbsolutePosition();
 	}
-	
+
 	wxSFShapeBase::OnBeginHandle(handle);
 }
 
@@ -197,7 +197,7 @@ void wxSFBitmapShape::OnEndHandle(wxSFShapeHandle& handle)
 		m_fRescaleInProgress = false;
 		RescaleImage(m_nRectSize);
 	}
-	
+
 	wxSFShapeBase::OnEndHandle(handle);
 }
 
@@ -234,9 +234,9 @@ void wxSFBitmapShape::DrawNormal(wxDC& dc)
 
 	if(m_fRescaleInProgress)
 	{
-        if( m_Bitmap.IsOk() )
-            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
-        else
+//        if( m_Bitmap.IsOk() )
+//            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+//        else
             dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
 
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
@@ -247,9 +247,9 @@ void wxSFBitmapShape::DrawNormal(wxDC& dc)
 	}
 	else
     {
-        if( m_Bitmap.IsOk() )
-            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
-        else
+//        if( m_Bitmap.IsOk() )
+//            dc.DrawBitmap(m_Bitmap, Conv2Point(m_nPrevPos));
+//        else
             dc.DrawBitmap( m_bundle.GetBitmapFor( m_parent ), Conv2Point( m_nPrevPos ) );
     }
 }
