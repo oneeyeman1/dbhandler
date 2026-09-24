@@ -458,7 +458,6 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 pCol->GetFont().SetPointSize( 8 );
                 pCol->SetText( field->GetFieldName() );
                 pCol->SetField( field );
-                pCol->SetDatabase( m_db );
             }
             else
                 delete pCol;
@@ -585,7 +584,7 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int MyErdTable::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
     std::vector<std::wstring> errorMsg;
     TableProperties prop = any.As<TableProperties>();
@@ -610,9 +609,9 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         prop.m_labelFontStrikethrough != table->GetTableProperties().m_labelFontStrikethrough ||
         prop.m_labelFontUnderline != table->GetTableProperties().m_labelFontUnderline ||
         prop.m_labelFontSize != table->GetTableProperties().m_labelFontSize )
-        result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+        result = db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
     if( !result && ( prop.primaryKey != table->GetPKFelds() || ( prop.pkOptions && prop.pkOptions.get()->notequal( table->GetPKOptions() ) ) ) )
-        result = m_db->EditPrimaryKey( GetCatalogName().ToStdWstring(), GetSchemaName().ToStdWstring(), GetTableName().ToStdWstring(), prop.primaryKey, prop.pkOptions, logOnly, command, errorMsg );
+        result = db->EditPrimaryKey( GetCatalogName().ToStdWstring(), GetSchemaName().ToStdWstring(), GetTableName().ToStdWstring(), prop.primaryKey, prop.pkOptions, logOnly, command, errorMsg );
     if( !result )
     {
         if( !logOnly )

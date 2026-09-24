@@ -133,7 +133,7 @@ const wxEventTypeTag<wxCommandEvent> wxEVT_FIELD_SHUFFLED( wxEVT_USER_FIRST + 4 
 
 typedef int (*TABLESELECTION)(wxDocMDIChildFrame *, Database *, std::map<wxString, std::vector<TableDefinition> > &, std::vector<std::wstring> &, bool, const int, bool, std::vector<std::wstring> &);
 typedef int (*CREATEINDEX)(wxWindow *, DatabaseTable *, Database *, wxString &, wxString &);
-typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &);
+typedef int (*CREATEPROPERTIESDIALOG)(wxWindow *parent, PropertiesHandler *, const wxString &, wxString &, DatabaseTable *, bool &, Database *);
 typedef int (*CREATEPROPERTIESDIALOGFRPRJECT)(wxWindow *parent, std::unique_ptr<PropertiesHandler> &, const wxString &);
 typedef int (*CREATEFOREIGNKEY)(wxWindow *parent, DatabaseTable *, std::vector<FKField *> &, Database *, bool &, bool, std::vector<FKField *> &, int &);
 typedef void (*TABLE)(wxWindow *, wxDocManager *, Database *, DatabaseTable *, const wxString &);
@@ -1527,6 +1527,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     int res = 0;
     PropertiesHandler *propertiesPtr = nullptr;
     wxString title;
+    auto db = GetDocument()->GetDatabase();
     if( type == DatabaseTablePropertiesType )
     {
         auto db = GetDocument()->GetDatabase();
@@ -1535,16 +1536,13 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
             res = db->GetTableProperties( dbTable, errors );
         }
         erdTable->SetProperties( erdTable->GetTable()->GetTableProperties() );
-        erdTable->SetDatabase( db );
         propertiesPtr = erdTable;
-        propertiesPtr->SetDatabase( db );
         erdTable->SetType( DatabaseTablePropertiesType );
         title = _( "Table " );
         title += schemaName + L"." + tableName;
     }
     if( type == DatabaseFieldPropertiesType )
     {
-        auto db = GetDocument()->GetDatabase();
         {
             //#if _MSC_VER >= 1900
             std::lock_guard<std::mutex> lock( GetDocument()->GetDatabase()->GetTableVector().my_mutex );
@@ -1570,7 +1568,6 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
         dbField->SetType( DatabaseFieldPropertiesType );
         propertiesPtr = dbField;
-        propertiesPtr->SetDatabase( db );
         propertiesPtr->SetFieldType( dbField->GetField()->GetFieldType() );
         title = _( "Column " );
         title += dbField->GetField()->GetFullName();
@@ -1603,7 +1600,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
     {
         CREATEPROPERTIESDIALOG func = (CREATEPROPERTIESDIALOG) lib.GetSymbol( "CreatePropertiesDialog" );
 //        TableProperties *props = *static_cast<TableProperties *>( properties );
-        res = func( m_frame, propertiesPtr, title, command, erdTable->GetTable(), logOnly );
+        res = func( m_frame, propertiesPtr, title, command, erdTable->GetTable(), logOnly, db );
         if( logOnly )
         {
             m_text->SetValue( command );

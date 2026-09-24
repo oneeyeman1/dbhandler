@@ -205,13 +205,13 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, DatabaseTable *table, bool &logOnly)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, DatabaseTable *table, bool &logOnly, Database *db)
 {
     int res = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    PropertiesDialog dlg( parent, wxID_ANY, title, handler, table );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler, table, db );
     dlg.Center();
     res = dlg.ShowModal();
     if( res == wxID_OK )

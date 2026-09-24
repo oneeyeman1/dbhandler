@@ -1595,7 +1595,7 @@ void DatabaseCanvas::UnselectAllTables()
     }
 }
 
-int DatabaseCanvas::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int DatabaseCanvas::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

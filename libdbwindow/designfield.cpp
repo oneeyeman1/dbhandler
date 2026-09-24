@@ -112,7 +112,7 @@ wxAny &DesignField::GetProperties()
     return m_any;
 }
 
-int DesignField::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int DesignField::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

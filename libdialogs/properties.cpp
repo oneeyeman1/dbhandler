@@ -79,9 +79,10 @@ std::mutex Impl::my_mutex;
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_TABLE_PROPERTY( wxEVT_USER_FIRST + 1 );
 const wxEventTypeTag<wxCommandEvent> wxEVT_SET_FIELD_PROPERTY( wxEVT_USER_FIRST + 2 );
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table):
+PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table, Database *db):
     wxDialog(parent, id, title)
 {
+    m_db = db;
     m_page1 = nullptr;
     m_page6 = nullptr;
     std::vector<std::wstring> errors;
@@ -98,7 +99,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
         case TablePrpertiesType:
         {
             TableProperties prop;
-            m_osId = handler->GetDatabase()->GetOSId();
+            m_osId = db->GetOSId();
             prop.Init( m_osId );
             if( handler->GetType() == DatabaseTablePropertiesType ) 
                 prop = ( handler )->GetProperties().As<TableProperties>();
@@ -130,21 +131,21 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_page2 = new CFontPropertyPage( m_properties, dataFont, false );
             m_page3 = new CFontPropertyPage( m_properties, headingFont, false );
             m_page4 = new CFontPropertyPage( m_properties, labelFont, false );
-            m_page5 = new TablePrimaryKey( m_properties, handler->GetDatabase(), table );
+            m_page5 = new TablePrimaryKey( m_properties, db, table );
             m_properties->AddPage( m_page2, _( "Data Font" ) );
             m_properties->AddPage( m_page3, _( "Heading Font" ) );
             m_properties->AddPage( m_page4, _( "Label Font" ) );
             m_properties->AddPage( m_page5, _( "Primary Key" ) );
             if( handler->GetType() == TablePrpertiesType )
             {
-                m_page19 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetForeignKeyVector(), false );
+                m_page19 = new TableIndex( m_properties, wxID_ANY, db, table, table->GetForeignKeyVector(), false );
                 if( !m_page19->IsInitialized() )
                 {
                     wxMessageBox( _( "There is a serious issue with you install. Please reinstall the application" ) );
                     EndModal( wxID_CANCEL );
                 }
                 m_properties->InsertPage( 4, m_page19, _( "Foregn Key" ) );
-                m_page20 = new TableIndex( m_properties, wxID_ANY, handler->GetDatabase(), table, table->GetIndexNames(), true );
+                m_page20 = new TableIndex( m_properties, wxID_ANY, db, table, table->GetIndexNames(), true );
                 m_properties->AddPage( m_page20, _( "Indexes" ) );
             }
         }
@@ -156,9 +157,9 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page6, _( "General" ) );
             m_page7 = new FieldHeader( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_heading );
             m_properties->AddPage( m_page7, _( "Headers" ) );
-            m_page8 = new DatabaseFieldDisplay( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_display, handler->GetFieldType(), handler->GetDatabase() );
+            m_page8 = new DatabaseFieldDisplay( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_display, handler->GetFieldType(), db );
             m_properties->AddPage( m_page8, _( "Display" ) );
-            m_page18 = new FieldValidation( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_validations, ( handler )->GetDatabase(), type );
+            m_page18 = new FieldValidation( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_validations, db, type );
             m_properties->AddPage( m_page18, _( "Validation" ) );
             m_page17 = new FieldStyles( m_properties );
             m_properties->AddPage( m_page17, _( "Edit Style" ) );
@@ -323,7 +324,7 @@ bool PropertiesDialog::ApplyProperties()
     }
     std::vector<std::wstring> errors;
     bool result = true;
-    m_handler->ApplyProperties( any, logOnly, m_command );
+    m_handler->ApplyProperties( m_db, any, logOnly, m_command );
 /*    int res = m_handler->GetProperties( errors );
     if( !res )
     {
