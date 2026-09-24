@@ -110,7 +110,7 @@ protected:
 	wxString m_sBitmapPath;
 
 	/*! \brief Currently processed (modified) bitmap. */
-	wxBitmap m_Bitmap;
+	wxBitmap m_Bitmap = wxNullBitmap;
         wxBitmapBundle m_bundle;
 	/*! \brief Original archived bitmap. */
 	wxBitmap m_OriginalBitmap;

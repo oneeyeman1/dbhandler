@@ -58,6 +58,7 @@ private:
     Database *m_db;
     wxString m_catalogName, m_schemaName, m_tableName;
     wxWindow *m_parent;
+    wxBitmapBundle m_bundlePK, m_bundleFK;
 };
 
 #endif
