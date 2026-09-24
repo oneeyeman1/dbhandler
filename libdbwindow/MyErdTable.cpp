@@ -378,7 +378,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
             if( pBitmap )
             {
-#ifdef __WXGTK__
+#if defined( __WXGTK__) || defined( __WXQT__)
                 bundlePK = wxBitmapBundle::FromSVG( pk, wxSize( 16, 16 ) );
                 bundleFK = wxBitmapBundle::FromSVG( fk, wxSize( 16, 16 ) );
 #elif defined __WXMSW__
@@ -458,6 +458,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 pCol->GetFont().SetPointSize( 8 );
                 pCol->SetText( field->GetFieldName() );
                 pCol->SetField( field );
+                pCol->SetDatabase( m_db );
             }
             else
                 delete pCol;

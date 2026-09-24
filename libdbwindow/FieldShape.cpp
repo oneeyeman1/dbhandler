@@ -164,7 +164,14 @@ void FieldShape::Select(bool state)
 
 int FieldShape::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
 {
-    return 0;
+    std::vector<std::wstring> errorMsg;
+    FieldProperties prop = any.As<FieldProperties>();
+    auto result = 0;
+    if( prop.m_comment != m_field->GetFieldProperties().m_comment )
+    {
+
+    }
+    return result;
 }
 
 wxAny &FieldShape::GetProperties()
