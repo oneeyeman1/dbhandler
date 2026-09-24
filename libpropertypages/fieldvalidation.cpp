@@ -21,7 +21,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *, const int);
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *, const int, const wxString &);
 
 FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
 {
@@ -105,6 +105,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
         rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientData( m_rules->GetSelection() ) );
         isNew = false;
     }
+    wxString name( m_validations.m_fieldName );
 #ifdef __WXMSW__
     wxFileName fn( stdPath.GetExecutablePath() );
     libName = fn.GetPathWithSep() + "dialogs";
@@ -118,7 +119,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     if( lib.Load( libName ) )
     {
         NEWEDITVALDATION func = (NEWEDITVALDATION) lib.GetSymbol( "NewEditValidation" );
-        int res = func( nullptr, isNew, m_fieldType, m_db, rule, type );
+        int res = func( nullptr, isNew, m_fieldType, m_db, rule, type, name );
     }
 }
 

@@ -1534,6 +1534,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
             field->GetFieldProperties().m_heading.m_labelAlignment = 0;
             field->GetFieldProperties().m_display.m_justify = 0;
             field->GetFieldProperties().m_display.m_format = L"";
+            field->GetFieldProperties().m_validations.m_fieldName = fieldName;
         }
         else
         {
@@ -1549,6 +1550,7 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
                 field->GetFieldProperties().m_display.m_justify = atoi( PQgetvalue( res, i, 9 ) );
                 field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 10 ) );
             }
+            field->GetFieldProperties().m_validations.m_fieldName = fieldName;
         }
     }
     delete[] values[0];

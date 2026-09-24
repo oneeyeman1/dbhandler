@@ -519,13 +519,14 @@ extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
     return 0;
 }
 
-extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, const int intType)
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name)
 {
     int result = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule, intType );
+    NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule, intType, name );
+    dlg.Center();
     dlg.ShowModal();
     return result;
 }

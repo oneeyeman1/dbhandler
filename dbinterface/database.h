@@ -473,7 +473,7 @@ struct FieldTableDisplayProperties
 struct FieldTableValidationProperties
 {
     std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > m_validators;
-    std::wstring m_validator;
+    std::wstring m_validator, m_fieldName;
     std::wstring m_initial;
 };
 

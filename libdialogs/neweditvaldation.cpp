@@ -19,7 +19,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name ):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
@@ -102,7 +102,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     grid_sizer_2->Add( m_match, 0, 0, 0 );
     m_label5 = new wxStaticText( sizer_11->GetStaticBox(), wxID_ANY, _( "Functons" ) );
     grid_sizer_2->Add( m_label5, 0, wxALIGN_BOTTOM, 0 );
-    m_callNotes = new wxButton( sizer_11->GetStaticBox(), wxID_ANY, _( "@call_notes" ) );
+    m_callNotes = new wxButton( sizer_11->GetStaticBox(), wxID_ANY, "@" + name );
     grid_sizer_2->Add( m_callNotes, 0, wxEXPAND, 0 );
     list_box_1 = new FunctionListBox( sizer_11->GetStaticBox(), m_db->GetTableVector().m_type, m_db->GetTableVector().m_subtype, 2 );
 //    list_box_1 = new wxListBox( sizer_11->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
