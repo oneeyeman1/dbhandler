@@ -4,7 +4,6 @@
 #include "database.h"
 #include "guiobjectsproperties.h"
 #include "configuration.h"
-#include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "GridTableShape.h"
 #include "commentfieldshape.h"
@@ -169,7 +168,7 @@ int FieldShape::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
     auto result = 0;
     if( prop.m_comment != m_field->GetFieldProperties().m_comment )
     {
-
+//        result = m_db->SetFieldProperties();
     }
     return result;
 }
