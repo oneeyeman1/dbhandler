@@ -31,6 +31,7 @@ private:
     bool m_isNew;
 protected:
     void OnOK(wxCommandEvent &event);
+    void OnFieldName(wxCommandEvent &event);
     // begin wxGlade: NewEditValidator::attributes
     wxPanel* m_panel;
     wxStaticText* m_label;

@@ -123,6 +123,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
         m_label->Enable();
     }
     m_ok->Bind( wxEVT_BUTTON, &NewEditValidator::OnOK, this );
+    m_callNotes->Bind( wxEVT_BUTTON, &NewEditValidator::OnFieldName, this );
 }
 
 void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
@@ -143,4 +144,9 @@ void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); ++it )
             wxMessageBox( (*it) );
     }
+}
+
+void NewEditValidator::OnFieldName(wxCommandEvent &WXUNUSED(event))
+{
+    m_definition->AppendText( m_callNotes->GetLabel() );
 }
