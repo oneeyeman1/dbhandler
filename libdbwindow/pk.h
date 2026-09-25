@@ -2,10 +2,10 @@ static const char pk[] =
 R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    id="SVGRoot"
-   width="16px"
-   height="16px"
+   width="4.03125"
+   height="9.1063824"
    version="1.1"
-   viewBox="0 0 16 16"
+   viewBox="0 0 4.03125 9.1063824"
    sodipodi:docname="pk.svg"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,8 +28,8 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
      inkscape:zoom="50.3125"
-     inkscape:cx="4.7403727"
-     inkscape:cy="7.9801242"
+     inkscape:cx="-1.4012422"
+     inkscape:cy="4.8"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
@@ -39,8 +39,8 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <inkscape:grid
        id="grid24"
        units="px"
-       originx="0"
-       originy="0"
+       originx="-6.1626334"
+       originy="-3.164613"
        spacingx="1"
        spacingy="1"
        empcolor="#0099e5"
@@ -66,7 +66,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </metadata>
   <g
      id="path1"
-     transform="translate(-0.0471807,2.086488)">
+     transform="translate(-6.2098141,-1.078125)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 9.0339735,1.4989315 6.9875279,1.4648007"
@@ -78,7 +78,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path2"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 6.7057271,3.9289536 6.6860176,1.9764175"
@@ -90,7 +90,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path3"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 9.8081461,3.7713229 9.7716944,1.8470202"
@@ -102,7 +102,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path4"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 9.2179991,4.2090914 7.1715535,4.1749606"
@@ -114,7 +114,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path5"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 8.2810399,6.4310131 8.2111914,4.5626564"
@@ -126,7 +126,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path6"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 8.3091226,8.268181 8.2611489,6.3655105"
@@ -138,7 +138,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
   <g
      id="path7"
-     transform="translate(-0.13619468,2.0756824)">
+     transform="translate(-6.2988281,-1.0889306)">
     <path
        style="color:#000000;fill:#f2a946;stroke-linejoin:bevel;stroke-miterlimit:0;stroke-dashoffset:117.16;-inkscape-stroke:none"
        d="M 8.3177403,10.184147 8.2772665,8.2677682"
