@@ -244,7 +244,7 @@ void MyErdTable::UpdateTable(wxWindow *parent)
     wxSFDiagramManager *manager = GetShapeManager();
     if( manager )
         manager->GetShapes( CLASSINFO( MyErdTable ), list );
-    m_header = new HeaderGrid; 
+    m_header = new HeaderGrid;
     m_header->SetCellSpace( 3 );
     m_pLabel = new NameTableShape();
     m_pLabel->SetId( 1000 );
@@ -379,8 +379,8 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             if( pBitmap )
             {
 #if defined( __WXGTK__) || defined( __WXQT__)
-                bundlePK = wxBitmapBundle::FromSVG( pk, wxSize( 16, 16 ) );
-                bundleFK = wxBitmapBundle::FromSVG( fk, wxSize( 16, 16 ) );
+                m_bundlePK = wxBitmapBundle::FromSVG( pk, wxSize( 16, 16 ) );
+                m_bundleFK = wxBitmapBundle::FromSVG( fk, wxSize( 16, 16 ) );
 #elif defined __WXMSW__
                 HANDLE gs_wxMainThread = nullptr;
                 const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
@@ -590,8 +590,8 @@ int MyErdTable::ApplyProperties(Database *db, const wxAny &any, bool logOnly, st
     TableProperties prop = any.As<TableProperties>();
     auto result = 0;
     auto table = GetDatabaseTable();
-    if( prop.m_comment != m_comment->GetText() || 
-        prop.m_dataFontName != table->GetTableProperties().m_dataFontName || 
+    if( prop.m_comment != m_comment->GetText() ||
+        prop.m_dataFontName != table->GetTableProperties().m_dataFontName ||
         prop.m_dataFontItalic != table->GetTableProperties().m_dataFontItalic ||
         prop.m_dataFontWeight != table->GetTableProperties().m_dataFontWeight ||
         prop.m_dataFontStrikethrough != table->GetTableProperties().m_dataFontStrikethrough ||
