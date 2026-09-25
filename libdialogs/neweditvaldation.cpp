@@ -124,6 +124,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     }
     m_ok->Bind( wxEVT_BUTTON, &NewEditValidator::OnOK, this );
     m_callNotes->Bind( wxEVT_BUTTON, &NewEditValidator::OnFieldName, this );
+    list_box_1->Bind( wxEVT_LISTBOX, &NewEditValidator::OnFieldName, this );
 }
 
 void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
@@ -146,7 +147,14 @@ void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-void NewEditValidator::OnFieldName(wxCommandEvent &WXUNUSED(event))
+void NewEditValidator::OnFieldName(wxCommandEvent &event)
 {
-    m_definition->AppendText( m_callNotes->GetLabel() );
+    if( event.GetEventObject() == list_box_1 )
+    {
+        auto sel = list_box_1->GetString( list_box_1->GetSelection() );
+        sel.Replace( "()", "(x)" );
+        m_definition->AppendText( sel );
+    }
+    else
+        m_definition->AppendText( m_callNotes->GetLabel() );
 }
