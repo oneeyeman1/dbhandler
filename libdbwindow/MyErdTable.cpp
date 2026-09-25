@@ -1,7 +1,7 @@
 #include <string>
 #include <memory>
 #include <algorithm>
-#include "database.h"
+#include "wx/dynlib.h"
 #include "wxsf/RoundRectShape.h"
 #include "wxsf/BitmapShape.h"
 #include "wxsf/CommonFcn.h"
@@ -378,10 +378,35 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             wxSFBitmapShape* pBitmap = new wxSFBitmapShape();
             if( pBitmap )
             {
-                wxBitmapBundle bundlePK, bundleFK;
-#ifdef __WXGTK__
+#if defined( __WXGTK__) || defined( __WXQT__)
                 bundlePK = wxBitmapBundle::FromSVG( pk, wxSize( 16, 16 ) );
                 bundleFK = wxBitmapBundle::FromSVG( fk, wxSize( 16, 16 ) );
+#elif defined __WXMSW__
+                HANDLE gs_wxMainThread = nullptr;
+                const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dbwindow", &gs_wxMainThread );
+                const void* dataTable = nullptr, *createview = nullptr;
+                size_t sizeTable = 0, createView = 0;
+                if( !wxLoadUserResource( &dataTable, &sizeTable, "pk", RT_RCDATA, inst ) )
+                {
+                    auto err = ::GetLastError();
+                    wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+                }
+                else
+                {
+                    m_bundlePK = wxBitmapBundle::FromSVG( (const char *) dataTable, wxSize( 32, 32 ) );
+                }
+                if( !wxLoadUserResource( &createview, &createView, "fk", RT_RCDATA, inst ) )
+                {
+                    auto err = ::GetLastError();
+                    wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+                }
+                else
+                {
+                    m_bundleFK = wxBitmapBundle::FromSVG( (const char *) createview, wxSize( 32, 32 ) );
+                }
+#else
+                m_bundlePK = wxBitmapBundle::FromSVGResource( "pk", wxSize( 16, 16 ) );
+                m_bundleFK = wxBitmapBundle::FromSVGResource( "fk", wxSize( 16, 16 ) );
 #endif
                 pBitmap->SetStyle( sfsHOVERING | sfsALWAYS_INSIDE | sfsPROCESS_DEL | sfsEMIT_EVENTS |sfsPROPAGATE_DRAGGING | sfsPROPAGATE_SELECTION );
                 pBitmap->SetId( id + 10000 );
@@ -391,12 +416,10 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
                 {
                     if( type == Constraint::primaryKey )
                     {
-                        pBitmap->CreateFromBundle( bundlePK, m_parent );
-//                        pBitmap->CreateFromXPM( key_p_xpm );
+                        pBitmap->CreateFromBundle( m_bundlePK, m_parent );
                     }
                     else
-                        pBitmap->CreateFromBundle( bundleFK, m_parent );
-//                        pBitmap->CreateFromXPM( key_f_xpm );
+                        pBitmap->CreateFromBundle( m_bundleFK, m_parent );
                     SetCommonProps( pBitmap );
                 }
                 else
@@ -561,7 +584,7 @@ void MyErdTable::DrawSelected(wxDC& dc)
         wxSFRoundRectShape::DrawSelected( dc );
 }
 
-int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int MyErdTable::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
     std::vector<std::wstring> errorMsg;
     TableProperties prop = any.As<TableProperties>();
@@ -586,9 +609,9 @@ int MyErdTable::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &co
         prop.m_labelFontStrikethrough != table->GetTableProperties().m_labelFontStrikethrough ||
         prop.m_labelFontUnderline != table->GetTableProperties().m_labelFontUnderline ||
         prop.m_labelFontSize != table->GetTableProperties().m_labelFontSize )
-        result = m_db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
+        result = db->SetTableProperties( GetTable(), prop, logOnly, command, errorMsg );
     if( !result && ( prop.primaryKey != table->GetPKFelds() || ( prop.pkOptions && prop.pkOptions.get()->notequal( table->GetPKOptions() ) ) ) )
-        result = m_db->EditPrimaryKey( GetCatalogName().ToStdWstring(), GetSchemaName().ToStdWstring(), GetTableName().ToStdWstring(), prop.primaryKey, prop.pkOptions, logOnly, command, errorMsg );
+        result = db->EditPrimaryKey( GetCatalogName().ToStdWstring(), GetSchemaName().ToStdWstring(), GetTableName().ToStdWstring(), prop.primaryKey, prop.pkOptions, logOnly, command, errorMsg );
     if( !result )
     {
         if( !logOnly )

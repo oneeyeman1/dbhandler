@@ -686,7 +686,6 @@ void TableEditView::OnTableProperties(wxCommandEvent &WXUNUSED(event))
     PropertiesHandler *handler = this;
     handler->SetType( TablePrpertiesType );
     handler->SetTable( m_table );
-    handler->SetDatabase( m_db );
     wxString title = _( "Table Propertes" );;
     if( lib.IsLoaded() )
     {
@@ -703,7 +702,7 @@ void TableEditView::OnTableProperties(wxCommandEvent &WXUNUSED(event))
     }
 }
 
-int TableEditView::ApplyProperties(const wxAny &, bool, std::wstring &)
+int TableEditView::ApplyProperties(Database *db, const wxAny &, bool, std::wstring &)
 {
     return 0;
 }

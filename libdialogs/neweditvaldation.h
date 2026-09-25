@@ -24,13 +24,14 @@ public:
     // begin wxGlade: NewEditValidator::ids
     // end wxGlade
 
-    NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType);
+    NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name);
 
 private:
     Database *m_db;
     bool m_isNew;
 protected:
     void OnOK(wxCommandEvent &event);
+    void OnFieldName(wxCommandEvent &event);
     // begin wxGlade: NewEditValidator::attributes
     wxPanel* m_panel;
     wxStaticText* m_label;

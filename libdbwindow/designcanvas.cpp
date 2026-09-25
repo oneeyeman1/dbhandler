@@ -597,7 +597,7 @@ void DesignCanvas::OnLeftDoubleClick( wxMouseEvent &WXUNUSED(event))
 
 }
 
-int DesignCanvas::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int DesignCanvas::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
     return 0;
 }

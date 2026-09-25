@@ -21,7 +21,7 @@ public:
     void SetTypeShape(FieldTypeShape *shape) { m_typeShape = shape; }
     void SetCommentShape(CommentFieldShape *shape) { m_comment = shape; }
     void SetProperties(const FieldProperties &prop);
-    virtual int ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
+    virtual int ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command) wxOVERRIDE;
     virtual wxAny &GetProperties() wxOVERRIDE;
 protected:    
     virtual void DrawNormal(wxDC &dc) wxOVERRIDE;

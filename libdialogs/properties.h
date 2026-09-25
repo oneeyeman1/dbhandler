@@ -15,7 +15,7 @@
 class PropertiesDialog: public wxDialog
 {
 public:
-    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table);
+    PropertiesDialog(wxWindow* parent, wxWindowID id, const wxString& title, PropertiesHandler *handler, DatabaseTable *table, Database *db = nullptr);
     const std::wstring &GetCommand();
     void GetTableProperties();
     bool IsLogOnly() const;
@@ -57,6 +57,8 @@ protected:
     // begin wxGlade: PropertiesDialog::attributes
     wxNotebook* m_properties;
     // end wxGlade
+private:
+    Database *m_db;
 }; // wxGlade: end class
 
 wxDECLARE_EVENT(wxEVT_SET_TABLE_PROPERTY, wxCommandEvent);

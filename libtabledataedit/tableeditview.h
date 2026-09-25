@@ -61,7 +61,7 @@ public:
     void GetTablesForView(Database *db, bool init);
     void SetToolbarOption(Configuration *conf);
     void SetViewType(ViewType type) { m_type = type; }
-    virtual int ApplyProperties(const wxAny &, bool, std::wstring &) override;
+    virtual int ApplyProperties(Database *db, const wxAny &, bool, std::wstring &) override;
     virtual wxAny &GetProperties() override;
 protected:
     void AppendOrInsertField(TableField *it);

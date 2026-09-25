@@ -4,7 +4,6 @@
 #include "database.h"
 #include "guiobjectsproperties.h"
 #include "configuration.h"
-#include "guiobjectsproperties.h"
 #include "propertieshandlerbase.h"
 #include "GridTableShape.h"
 #include "commentfieldshape.h"
@@ -162,9 +161,16 @@ void FieldShape::Select(bool state)
     m_fSelected = state;
 }
 
-int FieldShape::ApplyProperties(const wxAny &any, bool logOnly, std::wstring &command)
+int FieldShape::ApplyProperties(Database *db, const wxAny &any, bool logOnly, std::wstring &command)
 {
-    return 0;
+    std::vector<std::wstring> errorMsg;
+    FieldProperties prop = any.As<FieldProperties>();
+    auto result = 0;
+    if( prop.m_comment != m_field->GetFieldProperties().m_comment )
+    {
+//        result = m_db->SetFieldProperties();
+    }
+    return result;
 }
 
 wxAny &FieldShape::GetProperties()

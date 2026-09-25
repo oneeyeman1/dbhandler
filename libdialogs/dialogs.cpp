@@ -205,13 +205,13 @@ extern "C" WXEXPORT int CreateIndexForDatabase(wxWindow *parent, DatabaseTable *
     return res;
 }
 
-extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, DatabaseTable *table, bool &logOnly)
+extern "C" WXEXPORT int CreatePropertiesDialog(wxWindow *parent, PropertiesHandler *handler, const wxString &title, wxString &command, DatabaseTable *table, bool &logOnly, Database *db)
 {
     int res = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    PropertiesDialog dlg( parent, wxID_ANY, title, handler, table );
+    PropertiesDialog dlg( parent, wxID_ANY, title, handler, table, db );
     dlg.Center();
     res = dlg.ShowModal();
     if( res == wxID_OK )
@@ -519,13 +519,14 @@ extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
     return 0;
 }
 
-extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, const int intType)
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name)
 {
     int result = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule, intType );
+    NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule, intType, name );
+    dlg.Center();
     dlg.ShowModal();
     return result;
 }

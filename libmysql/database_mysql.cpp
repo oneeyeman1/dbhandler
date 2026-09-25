@@ -1738,6 +1738,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
                 field->GetFieldProperties().m_display.m_justify = justify;
                 field->GetFieldProperties().m_display.m_format = m_pimpl->m_myconv.from_bytes( mask );
+                field->GetFieldProperties().m_validations.m_fieldName = fieldName;
                 break;
             }
             case MYSQL_NO_DATA:
@@ -1749,6 +1750,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
                 field->GetFieldProperties().m_heading.m_headingAlignment = 1;
                 field->GetFieldProperties().m_display.m_justify = 0;
                 field->GetFieldProperties().m_display.m_format = L"";
+                field->GetFieldProperties().m_validations.m_fieldName = fieldName;
                 break;
             }
         }
