@@ -1570,6 +1570,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     snprintf( schema.get(), len[1], "%s", m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
     snprintf( fieldNameReq.get(), len[3], "%s", m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );
     snprintf( tname.get(), len[4], "%s.%s", m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str(), m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
+    owner[0] = ' ';
     len[0]--; len[1]--; len[3]--; len[4]--;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
@@ -1601,7 +1602,7 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         params[0].length = &str_length1;
         params[1].buffer_type = MYSQL_TYPE_STRING;
         params[1].buffer = (char *) owner.get();
-        params[1].buffer_length = 0;
+        params[1].buffer_length = 1;
         params[1].is_null = 0;
         params[1].length = &str_length2;
         params[2].buffer_type = MYSQL_TYPE_STRING;
@@ -2548,9 +2549,9 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             results2[7].buffer_type = MYSQL_TYPE_STRING;
             results2[7].buffer = &extra;
             results2[7].buffer_length = 63;
-            results2[7].is_null = &isNull2[5];
-            results2[7].length = &len[5];
-            results2[7].error = &err2[5];
+            results2[7].is_null = &isNull2[7];
+            results2[7].length = &len[7];
+            results2[7].error = &err2[7];
             results2[8].buffer_type = MYSQL_TYPE_LONG;
             results2[8].buffer = (char *) &pk_flag;
             results2[8].is_null = &isNull2[8];
@@ -2577,9 +2578,13 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
             while( !mysql_stmt_fetch( res2 ) )
             {
                 int fieldSize, fieldPrecision;
+                std::wstring def;
                 std::wstring name = m_pimpl->m_myconv.from_bytes( fieldName );
                 std::wstring type = m_pimpl->m_myconv.from_bytes( fieldType );
-                std::wstring def = m_pimpl->m_myconv.from_bytes( fieldDefault );
+                if( !results2[5].is_null )
+                    def = m_pimpl->m_myconv.from_bytes( fieldDefault );
+                else
+                    def = L"";
                 auto isnull = m_pimpl->m_myconv.from_bytes( nullable ) == L"YES" ? true : false;
                 if( isNull2[2] )
                 {
