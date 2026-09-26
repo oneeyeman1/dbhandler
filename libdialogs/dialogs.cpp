@@ -527,7 +527,13 @@ extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wx
 #endif
     NewEditValidator dlg( nullptr, wxID_ANY, isNew, type, db, rule, intType, name );
     dlg.Center();
-    dlg.ShowModal();
+    auto res = dlg.ShowModal();
+    if( res == wxID_OK )
+    {
+        std::get<0>( *rule ) = dlg.GetNameCtrl()->GetValue();
+        std::get<1>( *rule ) = dlg.GetRuleCtrl()->GetValue();
+        std::get<2>( *rule ) = dlg.GetErrorCtrl()->GetValue();
+    }
     return result;
 }
 

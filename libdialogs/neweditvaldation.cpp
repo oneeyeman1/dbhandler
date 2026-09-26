@@ -19,11 +19,12 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name ):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
     m_db = db;
+    m_intType = intType;
     wxString ruleName, ruleRule, ruleMessage;
     if( !isNew )
     {
@@ -60,6 +61,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
         m_label->Enable( 0 );
     grid_sizer_1->Add( m_label, 0, wxALIGN_CENTER_VERTICAL, 0 );
     m_name = new wxTextCtrl( m_panel, wxID_ANY, ruleName );
+    m_name->SetMaxLength( 30 );
     grid_sizer_1->Add( m_name, 1, wxALIGN_CENTER_VERTICAL, 0 );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "Type" ) );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -73,6 +75,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     sizer_8->Add( m_label3, 0, 0, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     m_definition = new wxTextCtrl( m_panel, wxID_ANY, ruleRule, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
+    m_definition->SetMaxLength( 254 );
     sizer_8->Add( m_definition, 0, wxEXPAND, 0 );
     sizer_5->Add( 5, 5, 0, wxEXPAND, 0 );
     wxBoxSizer* sizer_9 = new wxBoxSizer( wxVERTICAL );
@@ -92,6 +95,7 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     sizer_10->Add( m_label4, 0, 0, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     m_errorMsg = new wxTextCtrl( m_panel, wxID_ANY, ruleMessage );
+    m_errorMsg->SetMaxLength( 254 );
     sizer_10->Add( m_errorMsg, 0, wxEXPAND, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_11 = new wxStaticBoxSizer( new wxStaticBox( m_panel, wxID_ANY, _( "Paste" ) ), wxVERTICAL );
@@ -145,6 +149,8 @@ void NewEditValidator::OnOK(wxCommandEvent &WXUNUSED(event))
         for( std::vector<std::wstring>::iterator it = errorMsg.begin(); it < errorMsg.end(); ++it )
             wxMessageBox( (*it) );
     }
+    else
+        EndModal( wxID_OK );
 }
 
 void NewEditValidator::OnFieldName(wxCommandEvent &event)

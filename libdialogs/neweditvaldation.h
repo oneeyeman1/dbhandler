@@ -25,10 +25,14 @@ public:
     // end wxGlade
 
     NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name);
+    wxTextCtrl *GetNameCtrl() const { return m_name; }
+    wxTextCtrl *GetRuleCtrl() const { return m_definition; }
+    wxTextCtrl *GetErrorCtrl() const { return m_errorMsg; }
 
 private:
     Database *m_db;
     bool m_isNew;
+    int m_intType;
 protected:
     void OnOK(wxCommandEvent &event);
     void OnFieldName(wxCommandEvent &event);

@@ -120,6 +120,18 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     {
         NEWEDITVALDATION func = (NEWEDITVALDATION) lib.GetSymbol( "NewEditValidation" );
         int res = func( nullptr, isNew, m_fieldType, m_db, rule, type, name );
+        if( res == wxID_OK )
+        {
+            if( isNew )
+            {
+                auto item = m_rules->Append( std::get<0>( *rule ) );
+                m_rules->SetClientData( item, rule );
+            }
+            else
+            {
+
+            }
+        }
     }
 }
 
