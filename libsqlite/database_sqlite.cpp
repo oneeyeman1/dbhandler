@@ -2734,7 +2734,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
         }
         if( !result )
         {
-            res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str(), (int) name.length(), SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( m_stmt, 2, sqlite_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str(), (int) rule.length(), SQLITE_TRANSIENT );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -2743,7 +2743,7 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
         }
         if( !result )
         {
-            res = sqlite3_bind_text( m_stmt, 5, sqlite_pimpl->m_myconv.to_bytes( message.c_str() ).c_str(), (int) name.length(), SQLITE_TRANSIENT );
+            res = sqlite3_bind_text( m_stmt, 4, sqlite_pimpl->m_myconv.to_bytes( message.c_str() ).c_str(), (int) message.length(), SQLITE_TRANSIENT );
             if( res != SQLITE_OK )
             {
                 result = 1;
@@ -2768,11 +2768,14 @@ int SQLiteDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &n
                 GetErrorMessage( res, errorMsg );
             }
         }
-        sqlite3_finalize( m_stmt );
-        if( res != SQLITE_OK )
+        if( !result )
         {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
+            res = sqlite3_finalize( m_stmt );
+            if( res != SQLITE_OK )
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+            }
         }
     }
     return result;
