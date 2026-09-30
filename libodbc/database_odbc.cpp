@@ -5126,7 +5126,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
     SQLWCHAR formatNameField[40], formatField[260], error[256];
-    std::wstring query = L"SELECT * FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
