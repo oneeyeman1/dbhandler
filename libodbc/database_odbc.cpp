@@ -6443,6 +6443,7 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
 {
     SQLHDBC dbc;
     SQLWCHAR outConnect[1024];
+    auto isConnected = false;
     std::unique_ptr<SQLWCHAR[]> command( new SQLWCHAR[1024] );
     int result = 0, ret;
     if( !m_isConnected )
@@ -6488,6 +6489,8 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
             GetErrorMessage( errorMsg, CONN_ERROR, dbc );
             result = 1;
         }
+        else
+            isConnected = true;
     }
     if( !result )
     {
@@ -6743,11 +6746,14 @@ int ODBCDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
         }
         stmt = 0;
     }
-    ret = SQLDisconnect( dbc );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    if( isConnected )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR, dbc );
-        result = 1;
+        ret = SQLDisconnect( dbc );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
+            result = 1;
+        }
     }
     ret = SQLFreeHandle( SQL_HANDLE_DBC, dbc );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
