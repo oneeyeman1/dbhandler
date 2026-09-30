@@ -1215,7 +1215,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ');" );
             queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0');");
             queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '');");
-            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'must_be_numer', 'CHECK( isNumer( @column )', 80, 0, '');");
+            queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '');");
             queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '');");
             queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
             queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
@@ -1333,7 +1333,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ') ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '') ON CONFLICT DO NOTHING;");
-                queries.push_back( L"INSERT INTO abcatvld VALUES( 'must_be_numer', 'CHECK( isNumer( @column )', 80, 0, '') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO abcatvld VALUES( 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
@@ -1448,7 +1448,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Multiple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ') ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '') ON CONFLICT DO NOTHING;");
-                queries.push_back( L"INSERT INTO abcatvld VALUES( 'must_be_numer', 'CHECK( isNumer( @column )', 80, 0, '') ON CONFLICT DO NOTHING;");
+                queries.push_back( L"INSERT INTO abcatvld VALUES( 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT\" )', 80, 3, '') ON CONFLICT DO NOTHING;");
                 queries.push_back( L"INSERT INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' ) ON CONFLICT DO NOTHING;" );
                 queries.push_back( L"INSERT INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' ) ON CONFLICT DO NOTHING;" );
@@ -1996,7 +1996,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Multple_of_100'             AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Multple_of_100',  'CHECK( mod( @column, 100 ) = 0 )',                 81, 3, 'The department number must be ' );" );
             queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Positive_number'            AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Positive_number', 'CHECK( @column > 0 )',                             81, 6, 'Sorry! The value must be greater than 0' );" );
             queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Y_or_N'                     AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Y_or_N',          'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );" );
-            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_numer'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
+            queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_number'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
             queries.push_back( L"MERGE INTO abcatvld t USING (SELECT 'valid status'               AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'valid status',    'CHECK( @status == \"ALT*\" )',                     80, 3, '' );" );
         }
         else
@@ -2109,7 +2109,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
             queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Multple_of_100'             AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Multple_of_100',  'CHECK( mod( @column, 100 ) = 0 )',                 81, 3, 'The department number must be ' );" );
             queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Positive_number'            AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Positive_number', 'CHECK( @column > 0 )',                             81, 6, 'Sorry! The value must be greater than 0' );" );
             queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'Y_or_N'                     AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'Y_or_N',          'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );" );
-            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_numer'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
+            queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'must_be_number'              AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'must_be_numer',   'CHECK( isNumer( @column )',                        80, 0, '' );" );
             queries2.push_back( L"MERGE INTO abcatvld t USING (SELECT 'valid status'               AS abv_name FROM DUAL) s ON(t.abv_name = s.abv_name) WHEN NOT MATCHED THEN INSERT VALUES( 'valid status',    'CHECK( @status == \"ALT*\" )',                     80, 3, '' );" );
         }
     }
@@ -8849,9 +8849,9 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     std::wstring query = L"";
     SQLLEN val1, val2, val3, val4, val5;
     if( isNew )
-        query = L"INSERT INTO abcatvld(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_msg\") VALUES( ?, ?, ?, ?)";
+        query = L"INSERT INTO abcatvld( abv_name, abv_vald, abv_type, abv_msg ) VALUES( ?, ?, ?, ?)";
     else
-        query = L"UPDATE abcatvld SET \"abv_name\" = ?, \"abv_vald\" = ?, \"abv_type\" = ?, \"abv_msg\" = ? WHERE \"abv_name\" = ?";
+        query = L"UPDATE abcatvld SET abv_name = ?, abv_vald = ?, abv_type = ?, abv_msg = ? WHERE abv_name = ?";
     auto qry = new SQLWCHAR[query.length() + 2];
     memset( qry, '\0', query.length() + 2 );
     uc_to_str_cpy( qry, query );

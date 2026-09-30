@@ -246,7 +246,7 @@ int MySQLDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstrin
     queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Multiple_of_100\', \'CHECK( mod( @column, 100 ) = 0 )\', 81, 3, \'The department number must be \');" );
     queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Positive_number\', \'CHECK( @column > 0 )\', 81, 6, \'Sorry! The value must be greater than 0\');");
     queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'Y_or_N\', \'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )\', 81, 6, \'\');");
-    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'must_be_numer\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
+    queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'must_be_number\', \'CHECK( isNumer( @column )\', 80, 0, \'\');");
     queries3.push_back( L"INSERT IGNORE INTO abcatvld VALUES( \'valid status\', \'CHECK( @status == \"ALT\" )\', 80, 3, \'\');");
     queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'###-##-####\', \'###-##-####\', 90, 1, 1, 32, \'00\' );" );
     queries3.push_back( L"INSERT IGNORE INTO abcatedt VALUES( \'###,###.00\', \'###,###.00\', 90, 1, 1, 32, \'10\' );" );
