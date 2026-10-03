@@ -94,9 +94,10 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     bool isNew;
     auto stdPath = wxStandardPaths::Get();
     std::tuple<std::wstring, std::wstring, std::wstring> *rule;
+    std::tuple<std::wstring, std::wstring, std::wstring> temp;
     if( event.GetEventObject() == m_new )
     {
-        std::tuple<std::wstring, std::wstring, std::wstring> temp = std::make_tuple( L"", L"", L"" );
+        temp = std::make_tuple( L"", L"", L"" );
         rule = &temp;
         isNew = true;
     }
