@@ -533,6 +533,7 @@ extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wx
         std::get<0>( *rule ) = dlg.GetNameCtrl()->GetValue().ToStdWstring();
         std::get<1>( *rule ) = dlg.GetRuleCtrl()->GetValue().ToStdWstring();
         std::get<2>( *rule ) = dlg.GetErrorCtrl()->GetValue().ToStdWstring();
+        result = res;
     }
     return result;
 }
