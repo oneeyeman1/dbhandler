@@ -2383,17 +2383,20 @@ int PostgresDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring 
     int result = 0;
     std::wstring errorMessage;
     std::wstring query = L"";
-    const char *paramValues[4];
+    char *paramValues[4];
+    paramValues[0] = new char[name.length() * sizeof( wchar_t ) + 1];
+    paramValues[1] = new char[rule.length() * sizeof( wchar_t ) + 1];
+    paramValues[2] = new char[3];
+    paramValues[3] = new char[message.length() * sizeof( wchar_t ) + 1];
     if( isNew )
-        query = L"INSERT INTO \"abcatvld\"(\"abv_name\", \"abv_vald\", \"abv_type\", \"abv_cntr\", \"abv_msg\") VALUES( $1, $2, $3, 0, $4)";
+        query = L"INSERT INTO abcatvld(abv_name, abv_vald, abv_type, abv_cntr, abv_msg) VALUES( $1, $2, $3, 0, $4)";
     else
-        query = L"UPDATE \"abcatvld\" SET \"abv_name\" = $1, \"abv_vald\" = $2, \"abv_type\" = $3, \"abv_cntr\" = 0, \"abv_msg\" = $4 WHERE \"abv_name\" = $1";
-    paramValues[0] = m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str();
-    paramValues[1] = m_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str();
-    paramValues[2] = std::to_string( type ).c_str();
-    paramValues[3] = m_pimpl->m_myconv.to_bytes( message.c_str() ).c_str();
-    auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 4, nullptr,
-        paramValues, nullptr, nullptr, 1 );      /* ask for binary results */
+        query = L"UPDATE abcatvld SET abv_name = $1, abv_vald = $2, abv_type = $3, abv_cntr = 0, abv_msg = $4 WHERE abv_name = $1";
+    strcpy( paramValues[0], m_pimpl->m_myconv.to_bytes( name.c_str() ).c_str() );
+    strcpy( paramValues[1], m_pimpl->m_myconv.to_bytes( rule.c_str() ).c_str() );
+    strcpy( paramValues[2], std::to_string( type ).c_str() );
+    strcpy( paramValues[3], m_pimpl->m_myconv.to_bytes( message.c_str() ).c_str() );
+    auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), 4, nullptr, paramValues, nullptr, nullptr, 1 );      /* ask for binary results */
     if( PQresultStatus( res ) != PGRES_COMMAND_OK )
     {
         auto err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
@@ -2401,6 +2404,11 @@ int PostgresDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring 
         result = 1;
     }
     PQclear( res );
+    for( auto i = 0; i < 4; ++i )
+    {
+        delete[] paramValues[i];
+        paramValues[i] = nullptr;
+    }
     return result;
 }
 
