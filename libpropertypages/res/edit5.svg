@@ -5,7 +5,7 @@
    height="16px"
    version="1.1"
    viewBox="0 0 16 16"
-   sodipodi:docname="edit1.svg"
+   sodipodi:docname="edit5.svg"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -27,7 +27,7 @@
      showgrid="true"
      inkscape:zoom="30.25"
      inkscape:cx="7.9834711"
-     inkscape:cy="7.7024793"
+     inkscape:cy="7.3719008"
      inkscape:window-width="1366"
      inkscape:window-height="699"
      inkscape:window-x="0"
@@ -109,47 +109,44 @@
      fill-rule="evenodd"
      stroke="#000"
      id="circle224" />
-  <rect
-     x="1.7961"
-     y="2.5242"
-     width="11.8"
-     height="10.974"
-     fill-opacity="0"
-     opacity=".994"
-     stroke="#000"
-     stroke-dashoffset=".1"
-     stroke-linejoin="bevel"
-     id="rect246" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 4,5 c 0,6 0,6 0,6 v 0"
+     d="m 2,5 c 0,6 0,6 0,6 v 0"
      id="path1730" />
   <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 6,5 c 0,6 0,6 0,6 v 0"
-     id="path1812" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 3,6 C 7,6 7,6 7,6"
+     style="fill:none;stroke:#000000;stroke-width:1.32287px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 4,2 c 7,0 7,0 7,0"
      id="path1847" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 3,10 c 4,0 4,0 4,0"
-     id="path1929" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 9,5 c 0,6 0,6 0,6 v 0"
-     id="path1931" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 11,5 c 0,6 0,6 0,6 v 0"
+     d="m 14,5 c 0,6 0,6 0,6 v 0"
      id="path1933" />
   <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 8,6 c 4,0 4,0 4,0"
-     id="path1935" />
+     style="fill:none;stroke:#000000;stroke-width:1.32288px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 4,14 c 7,0 7,0 7,0"
+     id="path1937" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1.9;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 8,6 c 0,4 0,4 0,4"
+     id="path466" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1.9;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 6,8 c 4,0 4,0 4,0"
+     id="path581" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="m 8,10 c 4,0 4,0 4,0"
-     id="path1937" />
+     d="m 2,11 c 2,3 2,3 2,3"
+     id="path698" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 14,11 c -3,3 -3,3 -3,3"
+     id="path700" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 11,2 c 3,3 3,3 3,3"
+     id="path702" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 4,2 C 2,5 2,5 2,5"
+     id="path897" />
 </svg>
