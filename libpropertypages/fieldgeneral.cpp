@@ -37,9 +37,9 @@ void FieldGeneral::do_layout()
     sizer3->Add( m_comment, 1, wxEXPAND, 0 );
     sizer3->Add( 5, 5, 0, wxEXPAND, 0 );
     sizer3->Add( m_log, 0, wxEXPAND, 0 );
-    sizer2->Add( sizer3, 0, wxEXPAND, 0 );
+    sizer2->Add( sizer3, 1, wxEXPAND, 0 );
     sizer2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer1->Add( sizer2, 0, wxEXPAND, 0 );
+    sizer1->Add( sizer2, 1, wxEXPAND, 0 );
     sizer1->Add( 5, 5, 0, wxEXPAND, 0 );
     SetSizer( sizer1 );
 }
