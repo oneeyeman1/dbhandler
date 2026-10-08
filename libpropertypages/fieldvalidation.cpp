@@ -92,7 +92,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     wxDynamicLibrary lib;
     wxString libName;
     bool isNew;
-    auto stdPath = wxStandardPaths::Get();
+    auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
     std::tuple<std::wstring, std::wstring, std::wstring> *rule;
     std::tuple<std::wstring, std::wstring, std::wstring> temp;
     if( event.GetEventObject() == m_new )
@@ -107,15 +107,13 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
         isNew = false;
     }
     wxString name( m_validations.m_fieldName );
+    wxFileName fn( stdPath );
 #ifdef __WXMSW__
-    wxFileName fn( stdPath.GetExecutablePath() );
     libName = fn.GetPathWithSep() + "dialogs";
 #elif __WXMAC__
-    wxFileName fn( stdPath.GetExecutablePath() );
-    fn.RemoveLastDir();
-    libName = fn.GetPathWithSep() + "Frameworks/" + "liblibdialogs.dylib";
+    libName = fn.GetPathWithSep() + "liblibdialogs.dylib";
 #else
-    libName = stdPath.GetInstallPrefix() +  "/lib/" + "libdialogs";
+    libName = fn.GetPathWithSep() + "libdialogs";
 #endif
     if( lib.Load( libName ) )
     {
@@ -125,8 +123,16 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
         {
             if( isNew )
             {
-                auto item = m_rules->Append( std::get<0>( *rule ) );
-                m_rules->SetClientData( item, rule );
+                m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( std::get<0>( *rule ), std::get<1>( *rule ), std::get<2>( *rule ) ) ) );
+                m_rules->Clear();
+                for( auto &vals : m_validations.m_validators )
+                {
+                    for( auto &rulename : vals.second )
+                    {
+                        auto item = m_rules->Append( std::get<0>( *rulename.get() ) );
+                        m_rules->SetClientData( item, rulename.get() );
+                    }
+                }
             }
             else
             {
