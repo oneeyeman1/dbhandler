@@ -5104,7 +5104,7 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 
 int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, stringCase;
+    int result = 0, stringCase = 0;
     double height = 0.0, width = 0.0;
     short justify = 0;
     SQLHSTMT stmt = 0;
@@ -5158,7 +5158,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &table, 0, &cbTableName );
+        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, table.get(), 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5176,7 +5176,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &owner, 0, &cbSchemaName );
+        ret = SQLBindParameter( stmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, owner.get(), 0, &cbSchemaName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5194,7 +5194,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindParameter( stmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, &fieldNameReq, 0, &cbFieldName );
+        ret = SQLBindParameter( stmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, paramSize, decimalDigits, fieldNameReq.get(), 0, &cbFieldName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -8847,24 +8847,24 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     int result = 0;
     std::wstring errorMessage;
     std::wstring query = L"";
-    SQLLEN val1 = SQL_NTS, val2 = SQL_NTS, val3 = 0, val4 = SQL_NTS, val5;
+    SQLLEN val1 = SQL_NTS, val2 = SQL_NTS, val3 = 0, val4 = SQL_NTS, val5 = SQL_NTS;
     if( isNew )
-        query = L"INSERT INTO abcatvld( abv_name, abv_vald, abv_type, abv_msg ) VALUES( ?, ?, ?, ? )";
+        query = L"INSERT INTO abcatvld( abv_name, abv_vald, abv_type, abv_msg ) VALUES( ?, ?, ?, ?)";
     else
         query = L"UPDATE abcatvld SET abv_name = ?, abv_vald = ?, abv_type = ?, abv_msg = ? WHERE abv_name = ?";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
     memset( qry.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry.get(), query );
-    std::unique_ptr<SQLWCHAR[]> qryName( new SQLWCHAR[32] );
-    memset( qryName.get(), '\0', 32 );
+    std::unique_ptr<SQLWCHAR[]> qryName( new SQLWCHAR[34] );
+    memset( qryName.get(), '\0', 34 );
     uc_to_str_cpy( qryName.get(), name );
-    std::unique_ptr<SQLWCHAR[]> qryRule( new SQLWCHAR[258] );
-    memset( qryRule.get(), '\0', 258 );
-    uc_to_str_cpy( qryRule.get(), rule );
-    SQLSMALLINT qryType = const_cast<int &>( type );
-    std::unique_ptr<SQLWCHAR[]> qryMessage( new SQLWCHAR[256] );
-    memset( qryMessage.get(), '\0', 256 );
-    uc_to_str_cpy( qryMessage.get(), message );
+    auto qryRule = new SQLWCHAR[258];
+    memset( qryRule, '\0', 258 );
+    uc_to_str_cpy( qryRule, rule );
+    auto qryType = (int) type;
+    auto qryMessage = new SQLWCHAR[256];
+    memset( qryMessage, '\0', 256 );
+    uc_to_str_cpy( qryMessage, message );
     auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -8891,7 +8891,7 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     }
     if( !result )
     {
-        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 258, 0, qryRule.get(), 0, &val2 );
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 258, 0, qryRule, 0, &val2 );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -8909,24 +8909,25 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
     }
     if( !result )
     {
-        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 254, 0, qryMessage.get(), 0, &val4 );
+        ret = SQLBindParameter( m_hstmt, 4, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 254, 0, &qryMessage, 0, &val4 );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
     }
-/*    if( !isNew && !result )
+    if( !isNew && !result )
     {
-        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 32, 0, qryName, 0, &val5 );
+        ret = SQLBindParameter( m_hstmt, 5, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, 32, 0, qryName.get(), 0, &val5 );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-    }*/
+    }
     if( !result )
     {
+        PTR value;
         ret = SQLExecute( m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
@@ -8938,11 +8939,6 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
     else
         ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
@@ -8950,6 +8946,10 @@ int ODBCDatabase::CreateUpdateValidationRule(bool isNew, const std::wstring &nam
         result = 1;
     }
     m_hstmt = 0;
+    delete[] qryRule;
+    qryRule = nullptr;
+    delete[] qryMessage;
+    qryMessage = nullptr;
     return result;
 }
 
