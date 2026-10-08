@@ -92,7 +92,6 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     wxDynamicLibrary lib;
     wxString libName;
     bool isNew;
-    auto stdPath = wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH;
     std::tuple<std::wstring, std::wstring, std::wstring> *rule;
     std::tuple<std::wstring, std::wstring, std::wstring> temp;
     if( event.GetEventObject() == m_new )
@@ -107,7 +106,7 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
         isNew = false;
     }
     wxString name( m_validations.m_fieldName );
-    wxFileName fn( stdPath );
+    wxFileName fn( wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH );
 #ifdef __WXMSW__
     libName = fn.GetPathWithSep() + "dialogs";
 #elif __WXMAC__
