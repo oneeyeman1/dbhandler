@@ -92,6 +92,7 @@
     <ClCompile Include="wherehavingpage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="libpropertypages.rc" />
     <ResourceCompile Include="propertypages.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

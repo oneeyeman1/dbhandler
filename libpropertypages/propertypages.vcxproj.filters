@@ -59,5 +59,13 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />
+    <ResourceCompile Include="libpropertypages.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{7f15f3c6-1ced-4d85-b848-5bd434058b61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

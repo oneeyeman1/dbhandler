@@ -29,7 +29,7 @@ private:
     void OnNew(wxCommandEvent &event);
 protected:
     // begin wxGlade: MyDialog::attributes
-    wxListBox* m_styles;
+    wxListCtrl* m_styles;
     wxButton* m_edit;
     wxButton* m_new;
     // end wxGlade

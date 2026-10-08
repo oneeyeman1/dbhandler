@@ -1,0 +1,5 @@
+image1                RCDATA  "res/edit1.svg"
+image2                RCDATA  "res/edit2.svg"
+image3                RCDATA  "res/edit3.svg"
+image4                RCDATA  "res/edit4.svg"
+image5                RCDATA  "res/edit5.svg"

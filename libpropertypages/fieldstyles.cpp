@@ -9,10 +9,11 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 #include <wx/wx.h>
-#include <wx/image.h>
+#include "wx/image.h"
 #include "wx/dynlib.h"
 #include "wx/filename.h"
 #include "wx/stdpaths.h"
+#include "wx/listctrl.h"
 #include "propertypagebase.h"
 #include "fieldstyles.h"
 
@@ -23,6 +24,60 @@ typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 
 FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
 {
+    wxVector<wxBitmapBundle> images;
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "propertypages", &gs_wxMainThread );
+    const void *imagesData[5] = { nullptr };
+    size_t sizeData[5] = { 0 };
+    if( !wxLoadUserResource( &imagesData[0], &sizeData[0], "image1", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        images[0] = wxBitmapBundle::FromSVG( (const char *) imagesData[0], wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &imagesData[1], &sizeData[1], "image2", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        images[1] = wxBitmapBundle::FromSVG( (const char *) imagesData[1], wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &imagesData[2], &sizeData[2], "image3", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        images[2] = wxBitmapBundle::FromSVG( (const char *) imagesData[2], wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &imagesData[3], &sizeData[3], "image4", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        images[3] = wxBitmapBundle::FromSVG( (const char *) imagesData[3], wxSize( 16, 16 ) );
+    }
+    if( !wxLoadUserResource( &imagesData[4], &sizeData[4], "image5", RT_RCDATA, inst ) )
+    {
+        auto err = ::GetLastError();
+        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+    }
+    else
+    {
+        images[4] = wxBitmapBundle::FromSVG( (const char *) imagesData[4], wxSize( 16, 16 ) );
+    }
+#elif __WXOSX__
+#else
+#endif
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -34,7 +89,8 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     m_label1 = new wxStaticText(this, wxID_ANY, _( "Style Name:" ) );
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
-    m_styles = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
+    m_styles = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+    m_styles->SetSmallImages( images );
     grid_sizer_1->Add( m_styles, 0, 0, 0 );
     auto sizer_3 = new wxBoxSizer(wxVERTICAL);
     grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
