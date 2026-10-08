@@ -37,7 +37,7 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     }
     else
     {
-        images[0] = wxBitmapBundle::FromSVG( (const char *) imagesData[0], wxSize( 16, 16 ) );
+        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[0], wxSize( 16, 16 ) ) );
     }
     if( !wxLoadUserResource( &imagesData[1], &sizeData[1], "image2", RT_RCDATA, inst ) )
     {
@@ -46,7 +46,7 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     }
     else
     {
-        images[1] = wxBitmapBundle::FromSVG( (const char *) imagesData[1], wxSize( 16, 16 ) );
+        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[1], wxSize( 16, 16 ) ) );
     }
     if( !wxLoadUserResource( &imagesData[2], &sizeData[2], "image3", RT_RCDATA, inst ) )
     {
@@ -55,7 +55,7 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     }
     else
     {
-        images[2] = wxBitmapBundle::FromSVG( (const char *) imagesData[2], wxSize( 16, 16 ) );
+        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[2], wxSize( 16, 16 ) ) );
     }
     if( !wxLoadUserResource( &imagesData[3], &sizeData[3], "image4", RT_RCDATA, inst ) )
     {
@@ -64,7 +64,7 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     }
     else
     {
-        images[3] = wxBitmapBundle::FromSVG( (const char *) imagesData[3], wxSize( 16, 16 ) );
+        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[3], wxSize( 16, 16 ) ) );
     }
     if( !wxLoadUserResource( &imagesData[4], &sizeData[4], "image5", RT_RCDATA, inst ) )
     {
@@ -73,10 +73,20 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     }
     else
     {
-        images[4] = wxBitmapBundle::FromSVG( (const char *) imagesData[4], wxSize( 16, 16 ) );
+        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[4], wxSize( 16, 16 ) ) );
     }
 #elif __WXOSX__
+    images.push_back(  wxBitmapBundle::FromSVGResource( "image1", wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVGResource( "image2", wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVGResource( "image3", wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVGResource( "image4", wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVGResource( "image5", wxSize( 16, 16 ) ) );
 #else
+    images.push_back(  wxBitmapBundle::FromSVG( image1, wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVG( image2, wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVG( image3, wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVG( image4, wxSize( 16, 16 ) ) );
+    images.push_back(  wxBitmapBundle::FromSVG( image5, wxSize( 16, 16 ) ) );
 #endif
     // begin wxGlade: MyDialog::MyDialog
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
