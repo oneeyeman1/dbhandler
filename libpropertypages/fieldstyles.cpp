@@ -56,18 +56,13 @@ void FieldStyles::OnNew(wxCommandEvent &WXUNUSED(event))
 {
     wxString libName, path;
     wxDynamicLibrary lib;
+    wxFileName fn( wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH );
 #ifdef __WXMSW__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    path = fn.GetPathWithSep();
-    libName = path + "dialogs";
+    libName = fn.GetPathWithSep() + "dialogs";
 #elif __WXMAC__
-    wxFileName fn( wxStandardPaths::Get().GetExecutablePath() );
-    fn.RemoveLastDir();
-    path = fn.GetPathWithSep() + "Frameworks/";
-    libName = path + "liblibdialogs.dylib";
+    libName = fn.GetPathWithSep() + "liblibdialogs.dylib";
 #else
-    path = wxStandardPaths::Get().GetInstallPrefix() + "/lib/";
-    libName = path + "libdialogs";
+    libName = fn.GetPathWithSep() + "libdialogs";
 #endif
     lib.Load( libName );
     if( lib.IsLoaded() )
