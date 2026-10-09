@@ -477,12 +477,19 @@ struct FieldTableValidationProperties
     std::wstring m_initial;
 };
 
+struct FieldEditStyle
+{
+    std::map<std::tuple<std::wstring, int>, std::tuple<std::wstring, int, int> > m_styles;
+    std::wstring m_style;
+};
+
 class FieldProperties
 {
 public:
     FieldTableHeadingProperties m_heading;
     FieldTableDisplayProperties m_display;
     FieldTableValidationProperties m_validations;
+    FieldEditStyle m_styles;
     std::wstring m_comment;
 };
 
