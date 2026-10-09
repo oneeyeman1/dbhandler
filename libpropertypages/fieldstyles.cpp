@@ -17,6 +17,13 @@
 #include "propertypagebase.h"
 #include "fieldstyles.h"
 
+#ifdef __WXGTK__
+#include "edit1.h"
+#include "edit2.h"
+#include "edit3.h"
+#include "edit4.h"
+#include "edit5.h"
+#endif
 typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 
 // begin wxGlade: ::extracode

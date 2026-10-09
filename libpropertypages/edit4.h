@@ -1,4 +1,4 @@
-static const char image2[] = 
+static const char image4[] = 
 R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    id="SVGRoot"
@@ -6,7 +6,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
    height="16px"
    version="1.1"
    viewBox="0 0 16 16"
-   sodipodi:docname="edit2.svg"
+   sodipodi:docname="edit4.svg"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -28,7 +28,7 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      showgrid="true"
      inkscape:zoom="30.25"
      inkscape:cx="7.9834711"
-     inkscape:cy="7.7024793"
+     inkscape:cy="8"
      inkscape:window-width="1366"
      inkscape:window-height="699"
      inkscape:window-x="0"
@@ -122,11 +122,39 @@ R"xxx(<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      stroke-linejoin="bevel"
      id="rect246" />
   <path
-     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 2,3 C 13,13 13,13 13,13"
-     id="path1565" />
+     style="fill:none;stroke:#000000;stroke-width:1.04447px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 2,4 C 14,4 14,4 14,4 V 4 4 4 4"
+     id="path528" />
   <path
      style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     d="M 13,3 C 2,13 2,13 2,13"
-     id="path1567" />
+     d="m 12,3 c 0,10 0,10 0,10"
+     id="path643" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 3,8 C 6,8 6,8 6,8"
+     id="path760" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="M 3,6 C 6,6 6,6 6,6"
+     id="path1392" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 3,10 c 3,0 3,0 3,0"
+     id="path1474" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:0.948683px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 7,4 c 0,9 0,9 0,9"
+     id="path1476" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 8,6 c 3,0 3,0 3,0"
+     id="path1478" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 8,8 c 3,0 3,0 3,0"
+     id="path1480" />
+  <path
+     style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     d="m 8,10 c 3,0 3,0 3,0"
+     id="path1482" />
 </svg>)xxx";
