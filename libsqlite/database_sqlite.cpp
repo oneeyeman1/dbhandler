@@ -1147,6 +1147,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
+    std::wstring query3 = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res != SQLITE_OK )
     {
@@ -1338,6 +1339,45 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 break;
                 GetErrorMessage( res, errorMsg );
             }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    if( !result )
+    {
+        int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), (int) query3.length(), &stmt, 0 );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    for( ; ; )
+    {
+        res = sqlite3_step( stmt );
+        if( res == SQLITE_ROW )
+        {
+            std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
+            int type = sqlite3_column_int( stmt, 1 );
+            int seqn = sqlite3_column_int( stmt, 2 );
+            std::wstring style = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 3 ) );
+            int flag = sqlite3_column_int( stmt, 4 );
+            std::wstring work = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 5 ) );
+        }
+        else if( res == SQLITE_DONE )
+            break;
+        else
+        {
+            result = 1;
+            break;
+            GetErrorMessage( res, errorMsg );
         }
     }
     if( !result )
