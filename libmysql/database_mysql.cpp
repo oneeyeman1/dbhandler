@@ -1562,6 +1562,8 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
     std::unique_ptr<char[]> owner( new char[len[2]] );
     std::unique_ptr<char[]> fieldNameReq( new char[len[3]]);
     std::unique_ptr<char[]> tname( new char[len[4]] );
+    std::unique_ptr<char[]> formatName( new char[30] );
+    std::unique_ptr<char[]> format( new char[254] );
     memset( table.get(), '\0', len[0] );
     memset( schema.get(), '\0', len[1] );
     memset( fieldNameReq.get(), '\0', len[3] );
@@ -1813,6 +1815,59 @@ int MySQLDatabase::GetFieldProperties(const std::wstring &tableName, const std::
         if( mysql_stmt_execute( stmt ) )
         {
             std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( !( mysql_store_result( m_db ) ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        MYSQL_BIND results[2];
+#if MYSQL_VERSION_ID > 80001
+        bool is_null[17], error[17];
+#else
+        char is_null[17], error[17];
+#endif
+        unsigned long length[17];
+        results[0].buffer_type = MYSQL_TYPE_STRING;
+        results[0].buffer = &formatName;
+        results[0].buffer_length = 30;
+        results[0].is_null = &is_null[0];
+        results[0].length = &length[0];
+        results[0].error = &error[0];
+        results[1].buffer_type = MYSQL_TYPE_STRING;
+        results[1].buffer = &format;
+        results[1].buffer_length = 254;
+        results[1].is_null = &is_null[1];
+        results[1].length = &length[1];
+        results[1].error = &error[1];
+        if( mysql_stmt_bind_result( stmt, results) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( !mysql_stmt_fetch( stmt ) )
+        {
+            field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( m_pimpl->m_myconv.from_bytes( formatName.get() ), m_pimpl->m_myconv.from_bytes( format.get() ) ) );
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
             errorMsg.push_back( err );
             result = 1;
         }
