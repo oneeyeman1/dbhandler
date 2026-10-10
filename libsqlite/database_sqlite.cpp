@@ -1352,7 +1352,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     }
     if( !result )
     {
-        int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), (int) query3.length(), &stmt, 0 );
+        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), (int) query3.length(), &stmt, 0 );
         if( res != SQLITE_OK )
         {
             result = 1;
@@ -1365,11 +1365,12 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         if( res == SQLITE_ROW )
         {
             std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
-            int type = sqlite3_column_int( stmt, 1 );
+            int styleType = sqlite3_column_int( stmt, 1 );
             int seqn = sqlite3_column_int( stmt, 2 );
             std::wstring style = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 3 ) );
             int flag = sqlite3_column_int( stmt, 4 );
             std::wstring work = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 5 ) );
+            field->GetFieldProperties().m_styles.m_styles[std::make_tuple( name, styleType )].emplace_back( std::make_shared<EditStyleSet>( style, flag, work ) );
         }
         else if( res == SQLITE_DONE )
             break;
