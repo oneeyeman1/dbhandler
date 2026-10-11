@@ -1380,7 +1380,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 work = sqlite_pimpl->m_myconv.from_bytes( temp );
             else
                 work = L"";
-            field->GetFieldProperties().m_styles.m_styles[std::make_tuple( name, styleType )].emplace_back( std::make_shared<EditStyleSet>( style, flag, work ) );
+            field->GetFieldProperties().m_styles.m_styles[std::make_tuple( name, styleType, seqn )].emplace_back( std::make_shared<EditStyleSet>( style, flag, work ) );
         }
         else if( res == SQLITE_DONE )
             break;

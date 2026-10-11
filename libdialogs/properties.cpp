@@ -161,7 +161,7 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page8, _( "Display" ) );
             m_page18 = new FieldValidation( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_validations, db, type );
             m_properties->AddPage( m_page18, _( "Validation" ) );
-            m_page17 = new FieldStyles( m_properties );
+            m_page17 = new FieldStyles( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_styles );
             m_properties->AddPage( m_page17, _( "Edit Style" ) );
         }
         break;

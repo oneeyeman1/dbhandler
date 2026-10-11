@@ -24,7 +24,7 @@ class WXEXPORT FieldStyles: public PropertyPageBase
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
-    FieldStyles(wxWindow* parent);
+    FieldStyles(wxWindow* parent, const FieldEditStyle &styles);
 private:
     void OnNew(wxCommandEvent &event);
 protected:
