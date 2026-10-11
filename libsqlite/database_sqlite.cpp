@@ -1367,9 +1367,19 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
             int styleType = sqlite3_column_int( stmt, 1 );
             int seqn = sqlite3_column_int( stmt, 2 );
-            std::wstring style = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 3 ) );
+            const char *temp = (const char *) sqlite3_column_text( stmt, 3 );
+            std::wstring style;
+            if( temp )
+                style = sqlite_pimpl->m_myconv.from_bytes( temp );
+            else
+                style = L"";
             int flag = sqlite3_column_int( stmt, 4 );
-            std::wstring work = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 5 ) );
+            temp = (const char *) sqlite3_column_text( stmt, 5 );
+            std::wstring work;
+            if( temp )
+                work = sqlite_pimpl->m_myconv.from_bytes( temp );
+            else
+                work = L"";
             field->GetFieldProperties().m_styles.m_styles[std::make_tuple( name, styleType )].emplace_back( std::make_shared<EditStyleSet>( style, flag, work ) );
         }
         else if( res == SQLITE_DONE )
