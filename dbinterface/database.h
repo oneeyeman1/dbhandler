@@ -481,7 +481,7 @@ struct FieldTableValidationProperties
 
 struct FieldEditStyle
 {
-    std::map<std::tuple<std::wstring, int>, std::vector<std::shared_ptr<EditStyleSet> > > m_styles;
+    std::map<std::tuple<std::wstring, int, int>, std::vector<std::shared_ptr<EditStyleSet> > > m_styles;
     std::wstring m_style;
 };
 
