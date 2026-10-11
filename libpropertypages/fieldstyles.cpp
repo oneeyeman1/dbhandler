@@ -107,6 +107,7 @@ FieldStyles::FieldStyles(wxWindow* parent) : PropertyPageBase( parent )
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_styles = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+    m_styles->AppendColumn( "Name" );
     m_styles->SetSmallImages( images );
     grid_sizer_1->Add( m_styles, 0, 0, 0 );
     auto sizer_3 = new wxBoxSizer(wxVERTICAL);
