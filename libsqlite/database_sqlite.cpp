@@ -164,20 +164,19 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'DDD/YY HH:MM:SS', 'DDD/YY HH:MM:SS', 90, 1, 1, 32, '40' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'DDD/YYYY', 'DDD/YYYY', 90, 1, 1, 32, '20' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'DDD/YYYY HH:MM:SS', 'DDD/YYYY HH:MM:SS', 90, 1, 1, 32, '40' );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Department Lst', 'd_dddw_dept', 88, 10, 1, 536870928, '0' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Department List', 'dept_id', 88, 10, 2, 0, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Department List', 'dept_d', 88, 10, 3, 0, '300' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Dollars with cents', '$###,###,###.00', 90, 2, 1, 32, '00' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', '1', 86, 3, 1, 1073741832, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'Active', 86, 3, 2, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'A', 86, 3, 3, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'T', 86, 3, 5, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Empplyee Status', 'L', 86, 3, 7, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'empplyees', 'd_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'empplyees', 'emp_id', 88, 3, 2, 0, NULL );" );
-    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'empplyees', 'emp_id', 88, 3, 3, 0, '400' );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'Active', 86, 3, 2, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'A', 86, 3, 3, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'Terminated', 86, 3, 4, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'T', 86, 3, 5, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'On Leave', 86, 3, 6, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Employee Status', 'L', 86, 3, 7, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'employees', 'd_dddw_sales_reps\', 88, 3, 1, 536870928, \'0\' );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 2, 0, NULL );" );
+    queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'employees', 'emp_id', 88, 3, 3, 0, '400' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Financial Codes', 'd_dddw_fin_code', 88, 3, 1, 536870928, '0' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 2, 0, NULL );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( 'Financial Codes', 'code', 88, 3, 3, 0, '700' );" );
@@ -1380,7 +1379,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 work = sqlite_pimpl->m_myconv.from_bytes( temp );
             else
                 work = L"";
-            field->GetFieldProperties().m_styles.m_styles[std::make_tuple( name, styleType, seqn )].emplace_back( std::make_shared<EditStyleSet>( style, flag, work ) );
+            field->GetFieldProperties().m_styles.m_styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, work ) );
         }
         else if( res == SQLITE_DONE )
             break;
