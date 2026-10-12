@@ -51,7 +51,7 @@ using SQLServerCharSet = std::tuple<std::wstring, std::wstring>;
 
 using ValidatorSet = std::tuple<std::wstring, std::wstring, std::wstring>;
 
-using EditStyleSet = std::tuple<std::wstring, int, std::wstring>;
+using EditStyleSet = std::tuple<int, int, std::wstring, int, std::wstring>;
 
 struct ColumnFormatDefinitions
 {
@@ -481,7 +481,7 @@ struct FieldTableValidationProperties
 
 struct FieldEditStyle
 {
-    std::map<std::tuple<std::wstring, int, int>, std::vector<std::shared_ptr<EditStyleSet> > > m_styles;
+    std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > m_styles;
     std::wstring m_style;
 };
 
