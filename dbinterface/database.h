@@ -468,7 +468,8 @@ struct FieldTableDisplayProperties
 {
     std::map<int, std::vector<std::pair<std::wstring,std::wstring> > > m_formats;
     std::wstring m_format;
-    int m_justify, m_height, m_width, m_stringCase;
+    int m_justify, m_stringCase;
+    double m_height, m_width;
     bool m_picture;
 };
 
