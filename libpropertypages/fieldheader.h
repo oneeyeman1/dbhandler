@@ -4,10 +4,10 @@ class WXEXPORT FieldHeader :	public PropertyPageBase
 public:
     FieldHeader(wxWindow *parent, const FieldTableHeadingProperties &prop);
     ~FieldHeader(void);
-    wxTextCtrl *GetLabelCtrl();
-    wxTextCtrl *GetHeadingCtrl();
-    wxComboBox *GetLabeAlignmentCtrl();
-    wxComboBox *GetHeaderAlignmentCtrl();
+    wxTextCtrl *GetLabelCtrl() const;
+    wxTextCtrl *GetHeadingCtrl() const;
+    wxComboBox *GetLabeAlignmentCtrl() const;
+    wxComboBox *GetHeaderAlignmentCtrl() const;
 protected:
     void do_layout();
     void set_properties();

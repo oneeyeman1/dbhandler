@@ -97,22 +97,22 @@ void FieldHeader::set_properties()
     m_label4->Hide();
 }
 
-wxTextCtrl *FieldHeader::GetLabelCtrl()
+wxTextCtrl *FieldHeader::GetLabelCtrl() const
 {
     return m_label;
 }
 
-wxTextCtrl *FieldHeader::GetHeadingCtrl()
+wxTextCtrl *FieldHeader::GetHeadingCtrl() const
 {
     return m_heading;
 }
 
-wxComboBox *FieldHeader::GetLabeAlignmentCtrl ()
+wxComboBox *FieldHeader::GetLabeAlignmentCtrl() const
 {
     return m_labelPos;
 }
 
-wxComboBox *FieldHeader::GetHeaderAlignmentCtrl ()
+wxComboBox *FieldHeader::GetHeaderAlignmentCtrl() const
 {
     return m_headingPos;
 }
