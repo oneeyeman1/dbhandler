@@ -26,6 +26,8 @@ public:
     // end wxGlade
 
     FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType);
+    wxListBox *GetValidationCtrl() const { return m_rules; }
+    wxComboBox *GetInitialCtrl() const { return m_initValue; }
 
 private:
     Database *m_db;

@@ -49,7 +49,7 @@ void FieldGeneral::set_properties ()
     m_comment->SetValue( m_commentText );
 }
 
-bool FieldGeneral::IsLogOnly ()
+bool FieldGeneral::IsLogOnly()
 {
     return m_log->GetValue();
 }
@@ -59,7 +59,7 @@ void FieldGeneral::OnCommentChanged (wxCommandEvent &WXUNUSED(event))
     m_isModified = true;
 }
 
-wxTextCtrl *FieldGeneral::GetCommentCtrl ()
+wxTextCtrl *FieldGeneral::GetCommentCtrl() const
 {
     return m_comment;
 }

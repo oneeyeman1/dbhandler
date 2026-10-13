@@ -24,6 +24,11 @@ public:
 
     DatabaseFieldDisplay(wxWindow* parent, const FieldTableDisplayProperties &prop, const wxString &type, Database *db);
     wxComboBox *GetJustifyControl() const { return m_justify; }
+    wxListBox *GetFormatCtrl() const { return m_formats; }
+    wxComboBox *GetCaseCtrl() const { return m_case; }
+    wxTextCtrl *GetHeightCtrl() const { return m_displayHeight; }
+    wxTextCtrl *GetWidthCtrl() const { return m_displayWidth; }
+    wxCheckBox *GetPiictureCtrl() const { return m_picture; }
 
 private:
     wxString m_type;

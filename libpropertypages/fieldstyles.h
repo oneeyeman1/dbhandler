@@ -25,6 +25,7 @@ public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
     FieldStyles(wxWindow* parent, const FieldEditStyle &styles);
+    wxListCtrl *GetStylesCtrl() const { return m_styles; }
 private:
     void OnNew(wxCommandEvent &event);
 protected:
