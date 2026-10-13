@@ -284,6 +284,10 @@ bool PropertiesDialog::ApplyProperties()
         case DatabaseFieldPropertiesType:
         {
             FieldProperties prop;
+            prop.m_heading.m_label = m_page7->GetLabelCtrl()->GetValue();
+            prop.m_heading.m_heading = m_page7->GetHeadingCtrl()->GetValue();
+            prop.m_heading.m_labelAlignment = m_page7->GetLabeAlignmentCtrl()->GetSelection();
+            prop.m_heading.m_headingAlignment = m_page7->GetHeaderAlignmentCtrl()->GetSelection();
             logOnly = m_page6->IsLogOnly();
             prop.m_comment = m_page6->GetCommentCtrl()->GetValue();
             any = prop;
