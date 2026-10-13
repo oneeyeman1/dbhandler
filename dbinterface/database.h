@@ -545,11 +545,21 @@ public:
     const std::wstring &GetFullType() const { return full_type; }
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
+    void SetOwnerTable(const std::wstring &schema, const std::wstring &owner, const std::wstring &name)
+    {
+        schemaName = schema;
+        ownerName = owner;
+        tableName = name;
+    }
+    const std::wstring &GetSchemaName() const { return schemaName; }
+    const std::wstring &GetOwnerName() const { return ownerName; }
+    const std::wstring &GetTableName() const { return tableName; }
 private:
     std::wstring column_name, column_type, column_defaultValue, full_type, full_name;
     bool autoIncrement, column_isNull, column_pk, column_fk;
     int field_size, decimal_size;
     FieldProperties m_props;
+    std::wstring tableName, schemaName, ownerName;
 };
 
 class FKField

@@ -7541,6 +7541,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
                         std::wstring tempTableName;
                         str_to_uc_cpy( tempTableName, table_name.get() );
                         TableField *field = new TableField( fieldName, fieldType, ColumnSize, DecimalDigits, catalog + L"." + schemaName + L"" + tempTableName + L"." + fieldName, defaultValue, Nullable == 1, std::find( autoinc_fields.begin(), autoinc_fields.end(), fieldName ) != autoinc_fields.end() ? true : false, std::find( pk_fields.begin(), pk_fields.end(), fieldName ) != pk_fields.end(), std::find( fk_fieldNames.begin(), fk_fieldNames.end(), fieldName ) != fk_fieldNames.end() );
+                        field->SetOwnerTable( schemaName, odbc_pimpl->m_currentTableOwner, tableName );
                         if( GetFieldProperties( tableName, schemaName, odbc_pimpl->m_currentTableOwner, fieldName, field, errors ) )
                         {
                             GetErrorMessage( errors, 2 );

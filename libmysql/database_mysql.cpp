@@ -2655,6 +2655,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
                 }
                 auto autoincrement = strcmp( extra, "auto_increment" ) ? false : true;
                 TableField *field = new TableField( name, type, fieldSize, fieldPrecision, schemaName + L"." + tableName + L"." + name, def, isnull, autoincrement, pk_flag, std::find( fk_names.begin(), fk_names.end(), name ) != fk_names.end() );
+                field->SetOwnerTable( schemaName, L"", tableName );
                 if( GetFieldProperties( tableName, schemaName, L"", name, field, errorMsg ) )
                 {
                     fields.erase( fields.begin(), fields.end() );
