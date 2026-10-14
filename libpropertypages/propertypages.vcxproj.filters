@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="bandgeneral.cpp" />
-    <ClCompile Include="databasefielddisplay.cpp" />
     <ClCompile Include="databaseoptiongeneral.cpp" />
     <ClCompile Include="designfieldgeneral.cpp" />
     <ClCompile Include="designgeneral.cpp" />
@@ -27,10 +26,10 @@
     <ClCompile Include="fieldstyles.cpp" />
     <ClCompile Include="fieldvalidation.cpp" />
     <ClCompile Include="indexproperties.cpp" />
+    <ClCompile Include="fielddisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bandgeneral.h" />
-    <ClInclude Include="databasefielddisplay.h" />
     <ClInclude Include="databaseoptioncolours.h" />
     <ClInclude Include="databaseoptionsgeneral.h" />
     <ClInclude Include="designfieldgeneral.h" />
@@ -56,6 +55,7 @@
     <ClInclude Include="fieldstyles.h" />
     <ClInclude Include="fieldvalidation.h" />
     <ClInclude Include="indexproperties.h" />
+    <ClInclude Include="fielddisplay.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="propertypages.rc" />

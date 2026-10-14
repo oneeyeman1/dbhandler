@@ -19,7 +19,7 @@
 #include <wx/intl.h>
 #include "database.h"
 #include "propertypagebase.h"
-#include "databasefielddisplay.h"
+#include "fielddisplay.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
@@ -137,9 +137,12 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    m_formats->Bind( wxEVT_LISTBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_justify->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
-    m_displayHeight->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
-    m_displayWidth->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_displayHeight->Bind( wxEVT_TEXT, &DatabaseFieldDisplay::OnPageModified, this );
+    m_displayWidth->Bind( wxEVT_TEXT, &DatabaseFieldDisplay::OnPageModified, this );
+    m_case->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    m_picture->Bind( wxEVT_CHECKBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_UPDATE_UI, &DatabaseFieldDisplay::OnUpdateUIEditButton, this );

@@ -86,7 +86,7 @@
 #include "librarypainteroptionsinclude.h"
 #include "librarypainteroptionsmgmt.h"
 #include "designlabelgeneral.h"
-#include "databasefielddisplay.h"
+#include "fielddisplay.h"
 #include "properties.h"
 #include "addcolumnsdialog.h"
 #include "bitmappanel.h"

@@ -63,7 +63,7 @@
 #include "fieldheader.h"
 #include "fieldvalidation.h"
 #include "bandgeneral.h"
-#include "databasefielddisplay.h"
+#include "fielddisplay.h"
 #include "painterobjects.h"
 #include "libraryobjectpropertypage.h"
 #include "librarypainteroptionsgeneral.h"
