@@ -29,6 +29,7 @@ public:
 private:
     void OnNew(wxCommandEvent &event);
 protected:
+    void OnChanged(wxCommandEvent &event);
     // begin wxGlade: MyDialog::attributes
     wxListCtrl* m_styles;
     wxButton* m_edit;

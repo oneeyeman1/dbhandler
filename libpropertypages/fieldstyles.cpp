@@ -134,6 +134,7 @@ FieldStyles::FieldStyles(wxWindow* parent, const FieldEditStyle &styles) : Prope
     sizer_1->Fit( this );
     // end wxGlade
     m_new->Bind( wxEVT_BUTTON, &FieldStyles::OnNew, this );
+    m_styles->Bind( wxEVT_LIST_ITEM_SELECTED, &FieldStyles::OnChanged, this );
 }
 
 void FieldStyles::OnNew(wxCommandEvent &WXUNUSED(event))
@@ -154,4 +155,9 @@ void FieldStyles::OnNew(wxCommandEvent &WXUNUSED(event))
         NEWEDITSTYLE func = (NEWEDITSTYLE) lib.GetSymbol( "NewEditStyle" );
         func( nullptr, true );
     }
+}
+
+void FieldStyles::OnChanged(wxCommandEvent &WXUNUSED(event))
+{
+    m_isModified = true;
 }
