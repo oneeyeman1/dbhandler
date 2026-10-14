@@ -166,9 +166,22 @@ int FieldShape::ApplyProperties(Database *db, const wxAny &any, bool logOnly, st
     std::vector<std::wstring> errorMsg;
     FieldProperties prop = any.As<FieldProperties>();
     auto result = 0;
-    if( prop.m_comment != m_field->GetFieldProperties().m_comment )
+    if( prop.m_comment != m_field->GetFieldProperties().m_comment ||
+        prop.m_styles.m_style != m_field->GetFieldProperties().m_styles.m_style ||
+        prop.m_validations.m_validator != m_field->GetFieldProperties().m_validations.m_validator ||
+        prop.m_validations.m_initial != m_field->GetFieldProperties().m_validations.m_initial ||
+        prop.m_display.m_format != m_field->GetFieldProperties().m_display.m_format ||
+        prop.m_display.m_justify != m_field->GetFieldProperties().m_display.m_justify ||
+        prop.m_display.m_stringCase != m_field->GetFieldProperties().m_display.m_stringCase ||
+        prop.m_display.m_height != m_field->GetFieldProperties().m_display.m_height ||
+        prop.m_display.m_width != m_field->GetFieldProperties().m_display.m_width ||
+        prop.m_display.m_picture != m_field->GetFieldProperties().m_display.m_picture ||
+        prop.m_heading.m_heading != m_field->GetFieldProperties().m_heading.m_heading ||
+        prop.m_heading.m_label != m_field->GetFieldProperties().m_heading.m_label ||
+        prop.m_heading.m_headingAlignment != m_field->GetFieldProperties().m_heading.m_headingAlignment ||
+        prop.m_heading.m_labelAlignment != m_field->GetFieldProperties().m_heading.m_labelAlignment )
     {
-//        result = m_db->SetFieldProperties();
+        result = db->SetFieldProperties( m_field->GetTableName(), m_field->GetOwnerName(), m_field->GetFieldName(), prop, logOnly, command, errorMsg );
     }
     return result;
 }
