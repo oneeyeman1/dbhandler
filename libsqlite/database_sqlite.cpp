@@ -122,7 +122,7 @@ int SQLiteDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::ws
     queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'Multple_of_100', 'CHECK( mod( @column, 100 ) = 0 )', 81, 3, 'The department number must be ');" );
     queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'Positive_number', 'CHECK( @column > 0 )', 81, 6, 'Sorry! The value must be greater than 0' );");
     queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'Y_or_N', 'CHECK( @column IN ( \"Y\", \"y\", \"N\", \"n\" )', 81, 6, '' );");
-    queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'must_be_number', 'CHECK( isNumer( @column )', 80, 0, '' );");
+    queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'must_be_number', 'CHECK( isNumber( @column )', 80, 0, '' );");
     queries.push_back( "INSERT OR IGNORE INTO abcatvld VALUES( 'valid status', 'CHECK( @status == \"ALT*\" )', 80, 3, '' );");
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( '###-##-####', '###-##-####', 90, 1, 1, 32, '00' );" );
     queries.push_back( "INSERT OR IGNORE INTO abcatedt VALUES( '###,###.00', '###,###.00', 90, 1, 1, 32, '10' );" );
@@ -1953,15 +1953,26 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
         if( !exist )
         {
-            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
-            command += tableName;
-            command += L", " + ownerName;
-            command += L", " + fieldName;
-            command += L", " + props.m_heading.m_label;
+            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+            command += L"'" + tableName + L"'";
+            command += L", '" + ownerName + L"'";
+            command += L", '" + fieldName + L"'";
+            command += L", '" + props.m_heading.m_label + L"'";
             command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
-            command += L", " + props.m_heading.m_heading;
+            command += L", '" + props.m_heading.m_heading  + L"'";
             command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
-            command += L", " + props.m_comment + L");";
+            command += L", " + std::to_wstring( props.m_display.m_justify );
+            command += L", '" + props.m_display.m_format + L"'";
+            command += L", " + std::to_wstring( props.m_display.m_stringCase );
+            command += L", " + std::to_wstring( props.m_display.m_height );
+            command += L", " + std::to_wstring( props.m_display.m_width );
+            command += L", '" + props.m_display.m_format + L"'";
+            std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
+            command += L", " + temp;
+            command += L", '" + props.m_validations.m_initial + L"'";
+            command += L", '" + props.m_comment + L"'";
+            command += L", '" + props.m_styles.m_style + L"'";
+            command += L", '" + fieldName + L"')";
         }
         else
         {
