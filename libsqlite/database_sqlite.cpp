@@ -1967,10 +1967,10 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     }
     else
     {
-        command = L"UPDATE abcatcol SET abc_labl = ";
-        command += props.m_heading.m_label + L", abc_lpos = ";
-        command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = ";
-        command += props.m_heading.m_heading + L", abc_hpos = ";
+        command = L"UPDATE abcatcol SET abc_labl = '";
+        command += props.m_heading.m_label + L"', abc_lpos = ";
+        command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = '";
+        command += props.m_heading.m_heading + L"', abc_hpos = ";
         command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_jtfy = ";
         command += std::to_wstring( props.m_display.m_justify ) + L", abc_mask = '";
         command += props.m_display.m_format + L"', abc_case = ";
