@@ -1951,9 +1951,9 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     else
     {
         bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
-        if( exist )
+        if( !exist )
         {
-            command = L"INSERT INTO abcatcol(\"abc_tnam\", \"abc_ownr\", \"abc_cnam\", \"abc_labl\", \"abc_lpos\", \"abc_hdr\", \"abc_hpos\", \"abc_cmnt\") VALUES(";
+            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
             command += tableName;
             command += L", " + ownerName;
             command += L", " + fieldName;
@@ -1965,14 +1965,14 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
         }
         else
         {
-            command = L"UPDATE abcatcol SET \"abc_labl\" = ";
-            command += props.m_heading.m_label + L", \"abc_lpos\" = ";
-            command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", \"abc_hdr\" = ";
-            command += props.m_heading.m_heading + L", \"abc_hpos\" = ";
-            command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", \"abc_cmnt\" = ";
-            command += props.m_comment + L"WHERE \"abc_tnam\" = ";
-            command += tableName + L" AND \"abc_ownr\" = ";
-            command += ownerName + L" AND \"abc_cnam\" = ";
+            command = L"UPDATE abcatcol SET abc_labl = ";
+            command += props.m_heading.m_label + L", abc_lpos = ";
+            command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = ";
+            command += props.m_heading.m_heading + L", abc_hpos = ";
+            command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_cmnt = ";
+            command += props.m_comment + L"WHERE abc_tnam = ";
+            command += tableName + L" AND abc_ownr = ";
+            command += ownerName + L" AND abc_cnam = ";
             command += fieldName + L";";
         }
         if( !isLogOnly )
@@ -2449,7 +2449,7 @@ int SQLiteDatabase::GetFieldProperties (const std::wstring &table, TableField *f
 bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
-    std::wstring query = L"SELECT 1 FROM abcatcol WHERE \"abc_tnam\" = ? AND \"abc_ownr\" = ? AND \"abc_cnam\" = ?;";
+    std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), -1, &m_stmt1, NULL );
     if( res == SQLITE_OK )
     {
