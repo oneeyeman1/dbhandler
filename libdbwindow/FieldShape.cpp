@@ -182,9 +182,16 @@ int FieldShape::ApplyProperties(Database *db, const wxAny &any, bool logOnly, st
         prop.m_heading.m_labelAlignment != m_field->GetFieldProperties().m_heading.m_labelAlignment )
     {
         result = db->SetFieldProperties( m_field->GetTableName(), m_field->GetOwnerName(), m_field->GetFieldName(), prop, logOnly, command, errorMsg );
-        if( !result )
+        if( !result && !logOnly )
         {
             m_field->SetFieldProperties( prop );
+            m_comment->SetText( prop.m_comment );
+            Refresh();
+        }
+        else
+        {
+            for( auto message : errorMsg )
+                wxMessageBox( message );
         }
     }
     return result;
