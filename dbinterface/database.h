@@ -545,6 +545,7 @@ public:
     const std::wstring &GetFullType() const { return full_type; }
     const std::wstring &GetFullName() const { return full_name; }
     FieldProperties &GetFieldProperties() { return m_props; }
+    void SetFieldProperties(const FieldProperties &props) { m_props = props; }
     void SetOwnerTable(const std::wstring &schema, const std::wstring &owner, const std::wstring &name)
     {
         schemaName = schema;
