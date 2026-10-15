@@ -478,6 +478,7 @@ void MyErdTable::AddColumn(TableField *field, int id, Constraint::constraintType
             else
                 delete comment_shape;
         }
+        pCol->SetCommentShape( comment_shape );
     }
     else
     {
