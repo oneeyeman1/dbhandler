@@ -1141,7 +1141,7 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     sqlite3_stmt *stmt;
     int result = 0;
     const char *label = nullptr, *heading = nullptr;
-    int type;
+    int type = 0;
     int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
@@ -1285,8 +1285,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             else if( res != SQLITE_DONE )
             {
                 result = 1;
-                break;
                 GetErrorMessage( res, errorMsg );
+                break;
             }
         }
     }
@@ -1335,8 +1335,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             else if( res != SQLITE_DONE )
             {
                 result = 1;
-                break;
                 GetErrorMessage( res, errorMsg );
+                break;
             }
         }
     }
@@ -1386,8 +1386,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
         else
         {
             result = 1;
-            break;
             GetErrorMessage( res, errorMsg );
+            break;
         }
     }
     if( !result )
@@ -1941,61 +1941,76 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std:
     int res = 0;
     char *error;
     int result = 0;
-    result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
-    if( result != SQLITE_OK )
+    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    if( !exist )
     {
-        GetErrorMessage( result, errorMsg );
-        res = 1;
-        sqlite3_free( error );
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+        command += L"'" + tableName + L"'";
+        command += L", '" + ownerName + L"'";
+        command += L", '" + fieldName + L"'";
+        command += L", '" + props.m_heading.m_label + L"'";
+        command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
+        command += L", '" + props.m_heading.m_heading  + L"'";
+        command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
+        command += L", " + std::to_wstring( props.m_display.m_justify );
+        command += L", '" + props.m_display.m_format + L"'";
+        command += L", " + std::to_wstring( props.m_display.m_stringCase );
+        command += L", " + std::to_wstring( props.m_display.m_height );
+        command += L", " + std::to_wstring( props.m_display.m_width );
+        command += L", '" + props.m_display.m_format + L"'";
+        std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
+        command += L", " + temp;
+        command += L", '" + props.m_validations.m_initial + L"'";
+        command += L", '" + props.m_comment + L"'";
+        command += L", '" + props.m_styles.m_style + L"'";
+        command += L", '" + fieldName + L"')";
     }
     else
     {
-        bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
-        if( !exist )
+        command = L"UPDATE abcatcol SET abc_labl = ";
+        command += props.m_heading.m_label + L", abc_lpos = ";
+        command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = ";
+        command += props.m_heading.m_heading + L", abc_hpos = ";
+        command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_jtfy = ";
+        command += std::to_wstring( props.m_display.m_justify ) + L", abc_mask = '";
+        command += props.m_display.m_format + L"', abc_case = ";
+        command += std::to_wstring( props.m_display.m_stringCase ) + L", abc_hght = ";
+        command += std::to_wstring( props.m_display.m_height ) + L", abc_wdth = ";
+        command += std::to_wstring( props.m_display.m_width ) + L", abc_ptrn = '";
+        command += props.m_display.m_format + L"', abc_bmap = ";
+        std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
+        command += temp + L", abc_init = '";
+        command += props.m_validations.m_initial + L"', abc_cmnt = '";
+        command += props.m_comment + L"', abc_edit = '";
+        command += props.m_styles.m_style + L"', abc_tag = '";
+        command += fieldName + L"' ";
+        command += L"WHERE abc_tnam = '";
+        command += tableName + L"' AND abc_ownr = '";
+        command += ownerName + L"' AND abc_cnam = '";
+        command += fieldName + L"'";
+    }
+    if( !isLogOnly )
+    {
+        result = sqlite3_exec( m_db, "BEGIN", NULL, NULL, &error );
+        if( result != SQLITE_OK )
         {
-            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
-            command += L"'" + tableName + L"'";
-            command += L", '" + ownerName + L"'";
-            command += L", '" + fieldName + L"'";
-            command += L", '" + props.m_heading.m_label + L"'";
-            command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
-            command += L", '" + props.m_heading.m_heading  + L"'";
-            command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
-            command += L", " + std::to_wstring( props.m_display.m_justify );
-            command += L", '" + props.m_display.m_format + L"'";
-            command += L", " + std::to_wstring( props.m_display.m_stringCase );
-            command += L", " + std::to_wstring( props.m_display.m_height );
-            command += L", " + std::to_wstring( props.m_display.m_width );
-            command += L", '" + props.m_display.m_format + L"'";
-            std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
-            command += L", " + temp;
-            command += L", '" + props.m_validations.m_initial + L"'";
-            command += L", '" + props.m_comment + L"'";
-            command += L", '" + props.m_styles.m_style + L"'";
-            command += L", '" + fieldName + L"')";
+            GetErrorMessage( result, errorMsg );
+            res = 1;
+            sqlite3_free( error );
         }
-        else
+    }
+    if( !isLogOnly && !res)
+    {
+        result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), NULL, NULL, &error );
+        if( result != SQLITE_OK )
         {
-            command = L"UPDATE abcatcol SET abc_labl = ";
-            command += props.m_heading.m_label + L", abc_lpos = ";
-            command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = ";
-            command += props.m_heading.m_heading + L", abc_hpos = ";
-            command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_cmnt = ";
-            command += props.m_comment + L"WHERE abc_tnam = ";
-            command += tableName + L" AND abc_ownr = ";
-            command += ownerName + L" AND abc_cnam = ";
-            command += fieldName + L";";
+            GetErrorMessage( result, errorMsg );
+            res = 1;
+            sqlite3_free( error );
         }
-        if( !isLogOnly )
-        {
-            result = sqlite3_exec( m_db, sqlite_pimpl->m_myconv.to_bytes( command.c_str() ).c_str(), NULL, NULL, &error );
-            if( result != SQLITE_OK )
-            {
-                GetErrorMessage( result, errorMsg );
-                res = 1;
-                sqlite3_free( error );
-            }
-        }
+    }
+    if( !isLogOnly )
+    {
         if( res )
             result = sqlite3_exec( m_db, "ROLLBACK", NULL, NULL, &error );
         else
