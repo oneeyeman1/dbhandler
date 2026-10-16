@@ -5861,73 +5861,101 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     return result;
 }
 
-int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
-    int res = 0;
-    SQLRETURN result = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+    int result = 0;
+    SQLRETURN res = SQL_SUCCESS;
+    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    if( exist )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR );
-        res = 1;
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+        command += L"'" + tableName + L"'";
+        command += L", '" + ownerName + L"'";
+        command += L", '" + fieldName + L"'";
+        command += L", '" + props.m_heading.m_label + L"'";
+        command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
+        command += L", '" + props.m_heading.m_heading  + L"'";
+        command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
+        command += L", " + std::to_wstring( props.m_display.m_justify );
+        command += L", '" + props.m_display.m_format + L"'";
+        command += L", " + std::to_wstring( props.m_display.m_stringCase );
+        command += L", " + std::to_wstring( props.m_display.m_height );
+        command += L", " + std::to_wstring( props.m_display.m_width );
+        command += L", '" + props.m_display.m_format + L"'";
+        std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
+        command += L", " + temp;
+        command += L", '" + props.m_validations.m_initial + L"'";
+        command += L", '" + props.m_comment + L"'";
+        command += L", '" + props.m_styles.m_style + L"'";
+        command += L", '" + fieldName + L"')";
     }
     else
     {
-        bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
-        if( exist )
-        {
-            command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
-            command += tableName;
-            command += L", " + ownerName;
-            command += L", " + fieldName;
-            command += L", " + prop.m_heading.m_label;
-            command += L", " + std::to_wstring( prop.m_heading.m_labelAlignment );
-            command += L", " + prop.m_heading.m_heading;
-            command += L", " + std::to_wstring( prop.m_heading.m_headingAlignment );
-            command += L", " + prop.m_comment + L");";
-        }
-        else
-        {
-            command = L"UPDATE abcatcol SET abc_labl = ";
-            command += prop.m_heading.m_label + L", abc_hdr = ";
-            command += prop.m_heading.m_heading + L", abc_cmnt = ";
-            command += prop.m_comment + L", abc_labl = ";
-            command += prop.m_heading.m_label + L", abc_lpos = ";
-            command += std::to_wstring( prop.m_heading.m_labelAlignment ) + L", abc_hdr = ";
-            command += prop.m_heading.m_heading + L", abc_hpos = ";
-            command += std::to_wstring( prop.m_heading.m_headingAlignment ) + L"WHERE abc_tnam = ";
-            command += tableName + L" AND abc_ownr = ";
-            command += ownerName + L" AND abc_cnam = ";
-            command += fieldName + L";";
-        }
-        if( !isLogOnly )
-        {
-            SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
-            memset( query, '\0', command.length() + 2 );
-            uc_to_str_cpy( query, command );
-            result = SQLExecDirect( m_hstmt, query, /*command.length() + 2*/SQL_NTS );
-            if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
-            {
-                GetErrorMessage( errorMsg, STMT_ERROR );
-                res = 1;
-            }
-            delete[] query;
-            query = nullptr;
-        }
-        if( result == 1 )
-        {
-            result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        }
-        else
-        {
-            result = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        }
+        command = L"UPDATE abcatcol SET abc_labl = '";
+        command += props.m_heading.m_label + L"', abc_lpos = ";
+        command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = '";
+        command += props.m_heading.m_heading + L"', abc_hpos = ";
+        command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_jtfy = ";
+        command += std::to_wstring( props.m_display.m_justify ) + L", abc_mask = '";
+        command += props.m_display.m_format + L"', abc_case = ";
+        command += std::to_wstring( props.m_display.m_stringCase ) + L", abc_hght = ";
+        command += std::to_wstring( props.m_display.m_height ) + L", abc_wdth = ";
+        command += std::to_wstring( props.m_display.m_width ) + L", abc_ptrn = '";
+        command += props.m_display.m_format + L"', abc_bmap = ";
+        std::wstring temp = props.m_display.m_picture ? L"'1'" : L"'0'";
+        command += temp + L", abc_init = '";
+        command += props.m_validations.m_initial + L"', abc_cmnt = '";
+        command += props.m_comment + L"', abc_edit = '";
+        command += props.m_styles.m_style + L"', abc_tag = '";
+        command += fieldName + L"' ";
+        command += L"WHERE abc_tnam = '";
+        command += tableName + L"' AND abc_ownr = '";
+        command += ownerName + L"' AND abc_cnam = '";
+        command += fieldName + L"'";
+    }
+    if( !isLogOnly )
+    {
+        res = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
         if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR );
             result = 1;
         }
-        result = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    }
+    if( !isLogOnly && !result )
+    {
+        SQLWCHAR *query = new SQLWCHAR[command.length() + 2];
+        memset( query, '\0', command.length() + 2 );
+        uc_to_str_cpy( query, command );
+        res = SQLExecDirect( m_hstmt, query, SQL_NTS );
         if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        delete[] query;
+        query = nullptr;
+    }
+    if( !isLogOnly )
+    {
+        if( result == 1 )
+        {
+            res = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        }
+        else
+        {
+            res = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        }
+        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+    }
+    if( !isLogOnly && !result )
+    {
+        res = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             res = 1;
