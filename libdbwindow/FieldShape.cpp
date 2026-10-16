@@ -8,6 +8,12 @@
 #include "GridTableShape.h"
 #include "commentfieldshape.h"
 #include "fieldtypeshape.h"
+#include "wxsf/RoundRectShape.h"
+#include "constraint.h"
+#include "HeaderGrid.h"
+#include "nametableshape.h"
+#include "commenttableshape.h"
+#include "MyErdTable.h"
 #include "FieldShape.h"
 
 XS_IMPLEMENT_CLONABLE_CLASS(FieldShape,wxSFTextShape);
@@ -184,9 +190,10 @@ int FieldShape::ApplyProperties(Database *db, const wxAny &any, bool logOnly, st
         result = db->SetFieldProperties( m_field->GetTableName(), m_field->GetOwnerName(), m_field->GetFieldName(), prop, logOnly, command, errorMsg );
         if( !result && !logOnly )
         {
+            auto parent = GetParent()->GetParent();
             m_field->SetFieldProperties( prop );
             m_comment->SetText( prop.m_comment );
-            Refresh();
+            dynamic_cast<MyErdTable *>( parent )->Refresh();
         }
         else
         {
