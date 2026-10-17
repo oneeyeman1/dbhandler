@@ -5885,10 +5885,10 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
-        command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_cid, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
         command += L"'" + tableName + L"'";
         command += L", '" + subquery1 + ownerName + L"'";
-        command += L", '" + fieldName + L"'";
+        command += L", '" + fieldName + L"', " + subquery2;
         command += L", '" + props.m_heading.m_label + L"'";
         command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
         command += L", '" + props.m_heading.m_heading  + L"'";
