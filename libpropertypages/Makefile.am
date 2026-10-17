@@ -36,8 +36,8 @@ libpropertypages_la_SOURCES =  \
 	qt/fontpropertypageQt.h \
 	gtk/fontpropertypageGTK.cpp \
 	gtk/fontpropertypageGTK.h \
-	databasefielddisplay.cpp \
-	databasefielddisplay.h \
+	fielddisplay.cpp \
+	fielddisplay.h \
 	databaseoptioncolours.cpp \
 	databaseoptioncolours.h \
 	databaseoptiongeneral.cpp \
