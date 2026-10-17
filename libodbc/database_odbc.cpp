@@ -5865,12 +5865,29 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
 {
     int result = 0;
     SQLRETURN res = SQL_SUCCESS;
+    std::wstring subquery1 = L"", subquery2 = L"";
+    if( pimpl.m_subtype == L"Microsoft SQL Server" )
+    {
+        subquery1 = L"OBJECT_ID( '" + tableName + L"' ";
+        subquery2 = L"SELECT column_id FROM sys.columns WHERE object_id = OBJECT_ID( '";
+        subquery2 += tableName + L"' ) AND name = '";
+        subquery2 += fieldName + L"'";
+    }
+    if( pimpl.m_subtype == L"PostgreSQL" )
+    {
+        subquery2 = L"SELECT attnum FROM pg_attribute WHERE attrelid = '";
+        subquery2 += tableName + L"'::regclass";
+    }
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+//        subquery = L"";
+    }
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
-        command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
         command += L"'" + tableName + L"'";
-        command += L", '" + ownerName + L"'";
+        command += L", '" + subquery1 + ownerName + L"'";
         command += L", '" + fieldName + L"'";
         command += L", '" + props.m_heading.m_label + L"'";
         command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
