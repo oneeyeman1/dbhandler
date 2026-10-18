@@ -5107,7 +5107,9 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     int result = 0, stringCase = 0, styleType = 0;
     double height = 0.0, width = 0.0;
     short justify = 0;
+    SQLRETURN ret = SQL_SUCCESS;
     SQLHSTMT stmt = 0;
+    SQLHDBC dbc = 0;
     std::wstring fieldFormat = L"";
     SQLWCHAR *commentField = nullptr, *label = nullptr, *heading = nullptr, *fF = nullptr, *styleName = nullptr, *styleStyle = nullptr;
     unsigned short labelAlignment = 0, headingAlignment = 0;
@@ -5134,11 +5136,30 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
     memset( qry.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry.get(), query );
-    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+    ret = SQLAllocHandle( SQL_HANDLE_DBC, m_env, &dbc );
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, CONN_ERROR );
+        GetErrorMessage( errorMsg, ENV_ERROR, m_env );
         result = 1;
+    }
+    if( !result )
+    {
+        SQLSMALLINT OutConnStrLen;
+        ret = SQLDriverConnect( dbc, nullptr, m_connectString, SQL_NTS, nullptr, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, ENV_ERROR, m_env );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
+            result = 1;
+        }
     }
     if( !result )
     {
@@ -5344,15 +5365,15 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( result == 1 )
     {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_ROLLBACK );
     }
     else
     {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_COMMIT );
     }
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+        GetErrorMessage( errorMsg, CONN_ERROR, dbc );
         result = 1;
     }
     ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
@@ -5367,7 +5388,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         qry.reset( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR );
@@ -5450,6 +5471,11 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             formatName = L"";
             format = L"";
         }
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
     }
     if( !result )
     {
@@ -5466,10 +5492,10 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         qry.reset( new SQLWCHAR[query2.length() + 2] );
         memset( qry.get(), '\0', query2.length() + 2 );
         uc_to_str_cpy( qry.get(), query2 );
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, CONN_ERROR );
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
             result = 1;
         }
     }
@@ -5547,15 +5573,25 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             result = 1;
         }
     }
-    qry.reset( new SQLWCHAR[query3.length()] );
-    memset( qry.get(), '\0', query3.length() );
-    uc_to_str_cpy( qry.get(), query3 );
     if( !result )
     {
-        auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &stmt );
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, CONN_ERROR );
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+        stmt = 0;
+    }
+    if( !result )
+    {
+        qry.reset( new SQLWCHAR[query3.length()] );
+        memset( qry.get(), '\0', query3.length() );
+        uc_to_str_cpy( qry.get(), query3 );
+        auto ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
             result = 1;
         }
     }
@@ -5612,16 +5648,45 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( result == 1 )
     {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_ROLLBACK );
     }
     else
     {
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_COMMIT );
     }
     if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+        GetErrorMessage( errorMsg, CONN_ERROR, dbc );
         result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+        stmt = 0;
+    }
+    if( !result )
+    {
+        ret = SQLDisconnect( dbc );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_DBC, dbc );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
+            result = 1;
+        }
+        stmt = 0;
     }
     return result;
 }
@@ -5880,7 +5945,8 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
-//        subquery = L"";
+        subquery1 = L"SELECT table_id FROM information_schema.innodb_tables WHERE name = '" + pimpl.m_dbName + L"/" + tableName;
+        subquery2 = L"SELECT 0";
     }
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
     if( exist )
