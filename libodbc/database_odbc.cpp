@@ -3762,7 +3762,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     std::wstring t = L"";
     if( pimpl.m_subtype != L"MySQL" )
     {
-        t = schemaName + L"/";
+        t = schemaName + L".";
         t += tableName;
     }
     else
@@ -4168,7 +4168,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
     uc_to_str_cpy( desc.get(), L"NONE" );
     unsigned char padIndex = 'N';
     short int fill = 0, ignoreDup = 0, noRecomp = 0, incremental = 0, rowLocks = 1, pageLocks = 1, sequential = 0, xml = 0;
-    int delay = 0, partition;
+    int delay = 0, partition = 1;
     SQLUINTEGER clusteredId = 0;
     if( !result && pimpl.m_subtype != L"MySQL" )
     {
