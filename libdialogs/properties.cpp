@@ -301,7 +301,11 @@ bool PropertiesDialog::ApplyProperties()
             prop.m_display.m_picture = m_page8->GetPiictureCtrl()->GetValue();
             prop.m_validations.m_validator = m_page18->GetValidationCtrl()->GetStringSelection();
             prop.m_validations.m_initial = m_page18->GetInitialCtrl()->GetStringSelection();
-            prop.m_styles.m_style = m_page17->GetStylesCtrl()->GetItemText( m_page17->GetStylesCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED ) );
+            auto item = m_page17->GetStylesCtrl()->GetNextItem( -1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED );
+            if( item == wxNOT_FOUND )
+                prop.m_styles.m_style = L"";
+            else
+                prop.m_styles.m_style = m_page17->GetStylesCtrl()->GetItemText( item );
             logOnly = m_page6->IsLogOnly();
             prop.m_comment = m_page6->GetCommentCtrl()->GetValue();
             any = prop;
