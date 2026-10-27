@@ -187,7 +187,7 @@ int FieldShape::ApplyProperties(Database *db, const wxAny &any, bool logOnly, st
         prop.m_heading.m_headingAlignment != m_field->GetFieldProperties().m_heading.m_headingAlignment ||
         prop.m_heading.m_labelAlignment != m_field->GetFieldProperties().m_heading.m_labelAlignment )
     {
-        result = db->SetFieldProperties( m_field->GetTableName(), m_field->GetOwnerName(), m_field->GetFieldName(), prop, logOnly, command, errorMsg );
+        result = db->SetFieldProperties( m_field->GetSchemaName(), m_field->GetTableName(), m_field->GetOwnerName(), m_field->GetFieldName(), prop, logOnly, command, errorMsg );
         if( !result && !logOnly )
         {
             auto parent = GetParent()->GetParent();

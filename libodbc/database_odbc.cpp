@@ -5117,9 +5117,18 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
     memset( owner.get(), '\0', ownerName.length() + 2 );
     memset( fieldNameReq.get(), '\0', fieldName.length() + 2);
-    uc_to_str_cpy( table.get(), schemaName );
-    uc_to_str_cpy( table.get(), L"." );
-    uc_to_str_cpy( table.get(), tableName );
+    if( pimpl.m_subtype == L"MySQL" )
+    {
+        uc_to_str_cpy( table.get(), schemaName );
+        uc_to_str_cpy( table.get(), L"/" );
+        uc_to_str_cpy( table.get(), tableName );
+    }
+    else
+    {
+        uc_to_str_cpy( table.get(), schemaName );
+        uc_to_str_cpy( table.get(), L"." );
+        uc_to_str_cpy( table.get(), tableName );
+    }
     uc_to_str_cpy( owner.get(), ownerName );
     uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
@@ -5926,7 +5935,7 @@ int ODBCDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::ws
     return result;
 }
 
-int ODBCDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     SQLRETURN res = SQL_SUCCESS;

@@ -1777,7 +1777,7 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
     return result;
 }
 
-int PostgresDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::SetFieldProperties(const std::wstring &schenaBane, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );

@@ -1936,7 +1936,7 @@ int SQLiteDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::
     return res;
 }
 
-int SQLiteDatabase::SetFieldProperties(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::SetFieldProperties(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &props, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
     char *error;
