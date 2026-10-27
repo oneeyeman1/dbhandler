@@ -1941,7 +1941,7 @@ int SQLiteDatabase::SetFieldProperties(const std::wstring &schemaName, const std
     int res = 0;
     char *error;
     int result = 0;
-    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    bool exist = IsFieldPropertiesExist( schemaName, tableName, ownerName, fieldName, errorMsg );
     if( !exist )
     {
         command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
@@ -2472,7 +2472,7 @@ int SQLiteDatabase::GetFieldProperties (const std::wstring &table, TableField *f
     return GetFieldProperties( table, L"", L"", field->GetFieldName(), field, errorMsg );
 }
 
-bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool SQLiteDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";

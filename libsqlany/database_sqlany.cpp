@@ -5921,7 +5921,7 @@ void SQLAnyDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring
         str_to_uc_cpy( connectionPassword, retBuffer );*/
 }
 
-bool SQLAnyDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool SQLAnyDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
 /*    SQLWCHAR *qry = nullptr;

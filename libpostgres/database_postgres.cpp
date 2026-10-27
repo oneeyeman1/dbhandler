@@ -1780,7 +1780,7 @@ int PostgresDatabase::DeleteTable(const std::wstring &tableName, std::vector<std
 int PostgresDatabase::SetFieldProperties(const std::wstring &schenaBane, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
-    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    bool exist = IsFieldPropertiesExist( schenaBane, tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
         command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
@@ -2181,14 +2181,16 @@ int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::w
     return result;
 }
 
-bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool PostgresDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = $1 AND abc_ownr = $2 AND abc_cnam = $3;";
     char *values[3];
-    values[0] = new char[tableName.length() * sizeof( wchar_t ) + 1];
+    values[0] = new char[tableName.length() * sizeof( wchar_t ) + schemaName.length() * sizeof( wchar_t ) + 1];
     values[1] = new char[ownerName.length() * sizeof( wchar_t ) + 1];
     values[2] = new char[fieldName.length() * sizeof( wchar_t ) + 1];
+    strcpy( values[0], m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str() );
+    strcpy( values[0], "." );
     strcpy( values[0], m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
     strcpy( values[1], m_pimpl->m_myconv.to_bytes( ownerName.c_str() ).c_str() );
     strcpy( values[2], m_pimpl->m_myconv.to_bytes( fieldName.c_str() ).c_str() );

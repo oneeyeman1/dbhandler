@@ -5957,11 +5957,17 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         subquery1 = L"SELECT table_id FROM information_schema.innodb_tables WHERE name = '" + pimpl.m_dbName + L"/" + tableName;
         subquery2 = L"SELECT 0";
     }
-    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    bool exist = IsFieldPropertiesExist( schemaName, tableName, ownerName, fieldName, errorMsg );
+    std::wstring tempTableName = schemaName;
+    if( pimpl.m_subtype == L"MySQL" )
+        tempTableName += L"/";
+    else
+        tempTableName += L".";
+    tempTableName += tableName;
     if( exist )
     {
         command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_cid, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
-        command += L"'" + tableName + L"'";
+        command += L"'" + tempTableName + L"'";
         command += L", '" + subquery1 + ownerName + L"'";
         command += L", '" + fieldName + L"', " + subquery2;
         command += L", '" + props.m_heading.m_label + L"'";
@@ -6001,7 +6007,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         command += props.m_styles.m_style + L"', abc_tag = '";
         command += fieldName + L"' ";
         command += L"WHERE abc_tnam = '";
-        command += tableName + L"' AND abc_ownr = '";
+        command += tempTableName + L"' AND abc_ownr = '";
         command += ownerName + L"' AND abc_cnam = '";
         command += fieldName + L"'";
     }
@@ -8139,16 +8145,21 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
         str_to_uc_cpy( connectionPassword, retBuffer );
 }
 
-bool ODBCDatabase::IsFieldPropertiesExist (const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool ODBCDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     SQLWCHAR *qry = nullptr;
     SQLLEN cbTableName = SQL_NTS, cbOwnerName = SQL_NTS, cbFieldName = SQL_NTS;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2], *field_name = new SQLWCHAR[fieldName.length() + 2];
-    memset( table_name, '\0', tableName.length() + 2 );
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + schemaName.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2], *field_name = new SQLWCHAR[fieldName.length() + 2];
+    memset( table_name, '\0', tableName.length() + schemaName.length() + 2 );
     memset( owner_name, '\0', ownerName.length() + 2 );
     memset( field_name, '\0', fieldName.length() + 2 );
+    uc_to_str_cpy( table_name, schemaName );
+    if( pimpl.m_subtype == L"MySQL" )
+        uc_to_str_cpy( table_name, L"/" );
+    else
+        uc_to_str_cpy( table_name, L"." );
     uc_to_str_cpy( table_name, tableName );
     uc_to_str_cpy( owner_name, ownerName );
     uc_to_str_cpy( field_name, fieldName );

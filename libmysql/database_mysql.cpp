@@ -2057,7 +2057,7 @@ int MySQLDatabase::DeleteTable(const std::wstring &tableName, std::vector<std::w
 int MySQLDatabase::SetFieldProperties(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, const FieldProperties &prop, bool isLogOnly, std::wstring &command, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
-    bool exist = IsFieldPropertiesExist( tableName, ownerName, fieldName, errorMsg );
+    bool exist = IsFieldPropertiesExist( schemaName, tableName, ownerName, fieldName, errorMsg );
     if( exist )
     {
         command = L"INSERT INTO abcatcol(abc_tnam, abc_ownr, abc_cnam, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_cmnt) VALUES(";
@@ -2815,7 +2815,7 @@ int MySQLDatabase::AddDropTable(const std::wstring &catalog, const std::wstring 
     return result;
 }
 
-bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
+bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
@@ -2827,7 +2827,7 @@ bool MySQLDatabase::IsFieldPropertiesExist(const std::wstring &tableName, const 
         if( !mysql_stmt_prepare( res, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str (), query.length () ) )
         {
             bind[0].buffer_type = MYSQL_TYPE_STRING;
-            bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str();
+            bind[0].buffer = (char *) m_pimpl->m_myconv.to_bytes( schemaName.c_str() ).c_str();
             bind[0].buffer_length = strlen( m_pimpl->m_myconv.to_bytes( tableName.c_str() ).c_str() );
             bind[0].is_null = 0;
             bind[0].length = &str_len1;
