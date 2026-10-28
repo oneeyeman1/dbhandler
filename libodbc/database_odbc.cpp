@@ -5157,7 +5157,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         ret = SQLDriverConnect( dbc, nullptr, m_connectString, SQL_NTS, nullptr, 0, &OutConnStrLen, SQL_DRIVER_NOPROMPT );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
-            GetErrorMessage( errorMsg, ENV_ERROR, m_env );
+            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
             result = 1;
         }
     }
@@ -6345,9 +6345,9 @@ int ODBCDatabase::GetTableOwner(const std::wstring &UNUSED(catalog), const std::
             result = 1;
         }
         if( retcode == SQL_SUCCESS || retcode == SQL_SUCCESS_WITH_INFO )
-            str_to_uc_cpy( tableOwner, owner );
+            str_to_uc_cpy( odbc_pimpl->m_currentTableOwner, owner );
         if( retcode == SQL_NO_DATA )
-            tableOwner = schemaName;
+            odbc_pimpl->m_currentTableOwner = schemaName;
     }
     if( result == 1 )
     {
