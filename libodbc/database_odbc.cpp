@@ -6027,7 +6027,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         memset( query, '\0', command.length() + 2 );
         uc_to_str_cpy( query, command );
         res = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
+        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO && res != SQL_NO_DATA )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
@@ -6043,7 +6043,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         }
         else
         {
-            res = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+            res = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
         }
         if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
