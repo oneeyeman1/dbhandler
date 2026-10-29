@@ -5112,7 +5112,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHSTMT stmt = 0;
     SQLHDBC dbc = 0;
     std::wstring fieldFormat = L"";
-    SQLWCHAR *commentField = nullptr, *label = nullptr, *heading = nullptr, *fF = nullptr, styleName[32], *styleStyle = nullptr;
+    SQLWCHAR commentField[254], label[254], heading[254], fF[31], styleName[32], *styleStyle = nullptr;
     unsigned short labelAlignment = 0, headingAlignment = 0;
     std::unique_ptr<SQLWCHAR[]> table( new SQLWCHAR[schemaName.length() + tableName.length() + 3] ), owner( new SQLWCHAR[ownerName.length() + 2] ), fieldNameReq( new SQLWCHAR[fieldName.length() + 2] );
     memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
@@ -5245,7 +5245,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 18, SQL_C_WCHAR, &commentField, 3, &cbCommentField );
+        ret = SQLBindCol( stmt, 18, SQL_C_WCHAR, &commentField, 254, &cbCommentField );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
