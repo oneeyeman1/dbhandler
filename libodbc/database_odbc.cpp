@@ -5945,7 +5945,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     {
         subquery1 = L"OBJECT_ID( '" + schemaName + L"." + tableName + L"' )";
         subquery2 = L"SELECT column_id FROM sys.columns WHERE object_id = OBJECT_ID( '";
-        subquery2 += tableName + L"' ) AND name = '";
+        subquery2 += schemaName + L"." + tableName + L"' ) AND name = '";
         subquery2 += fieldName + L"'";
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
@@ -5965,13 +5965,13 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     else
         tempTableName += L".";
     tempTableName += tableName;
-    if( exist )
+    if( !exist )
     {
-        command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_cid, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_jtfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
+        command = L"INSERT INTO abcatcol(abc_tnam, abc_tid, abc_ownr, abc_cnam, abc_cid, abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag) VALUES(";
         command += L"'" + tempTableName + L"'";
-        command += L", '" + subquery1 + ownerName + L"'";
-        command += L", '" + fieldName + L"', " + subquery2;
-        command += L", '" + props.m_heading.m_label + L"'";
+        command += L", (" + subquery1 + L"), '" + ownerName + L"'";
+        command += L", '" + fieldName + L"', (" + subquery2;
+        command += L"), '" + props.m_heading.m_label + L"'";
         command += L", " + std::to_wstring( props.m_heading.m_labelAlignment );
         command += L", '" + props.m_heading.m_heading  + L"'";
         command += L", " + std::to_wstring( props.m_heading.m_headingAlignment );
@@ -5994,7 +5994,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         command += props.m_heading.m_label + L"', abc_lpos = ";
         command += std::to_wstring( props.m_heading.m_labelAlignment ) + L", abc_hdr = '";
         command += props.m_heading.m_heading + L"', abc_hpos = ";
-        command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_jtfy = ";
+        command += std::to_wstring( props.m_heading.m_headingAlignment ) + L", abc_itfy = ";
         command += std::to_wstring( props.m_display.m_justify ) + L", abc_mask = '";
         command += props.m_display.m_format + L"', abc_case = ";
         command += std::to_wstring( props.m_display.m_stringCase ) + L", abc_hght = ";
@@ -6015,7 +6015,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     if( !isLogOnly )
     {
         res = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-        if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR );
             result = 1;
@@ -6027,7 +6027,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         memset( query, '\0', command.length() + 2 );
         uc_to_str_cpy( query, command );
         res = SQLExecDirect( m_hstmt, query, SQL_NTS );
-        if( result != SQL_SUCCESS && result != SQL_SUCCESS_WITH_INFO )
+        if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
@@ -8149,90 +8149,77 @@ void ODBCDatabase::GetConnectionPassword(const std::wstring &dsn, std::wstring &
 bool ODBCDatabase::IsFieldPropertiesExist(const std::wstring &schemaName, const std::wstring &tableName, const std::wstring &ownerName, const std::wstring &fieldName, std::vector<std::wstring> &errorMsg)
 {
     bool exist = false;
-    SQLWCHAR *qry = nullptr;
+    int result = 0;
     SQLLEN cbTableName = SQL_NTS, cbOwnerName = SQL_NTS, cbFieldName = SQL_NTS;
     std::wstring query = L"SELECT 1 FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
-    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + schemaName.length() + 2], *owner_name = new SQLWCHAR[ownerName.length() + 2], *field_name = new SQLWCHAR[fieldName.length() + 2];
-    memset( table_name, '\0', tableName.length() + schemaName.length() + 2 );
-    memset( owner_name, '\0', ownerName.length() + 2 );
-    memset( field_name, '\0', fieldName.length() + 2 );
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    SQLWCHAR *table_name = new SQLWCHAR[tableName.length() + schemaName.length() + 4];
+    std::unique_ptr<SQLWCHAR[]> owner_name( new SQLWCHAR[ownerName.length() + 2] ), field_name( new SQLWCHAR[fieldName.length() + 2] );
+    memset( table_name, '\0', tableName.length() + schemaName.length() + 4 );
+    memset( owner_name.get(), '\0', ownerName.length() + 2 );
+    memset( field_name.get(), '\0', fieldName.length() + 2 );
     uc_to_str_cpy( table_name, schemaName );
     if( pimpl.m_subtype == L"MySQL" )
         uc_to_str_cpy( table_name, L"/" );
     else
         uc_to_str_cpy( table_name, L"." );
     uc_to_str_cpy( table_name, tableName );
-    uc_to_str_cpy( owner_name, ownerName );
-    uc_to_str_cpy( field_name, fieldName );
+    uc_to_str_cpy( owner_name.get(), ownerName );
+    uc_to_str_cpy( field_name.get(), fieldName );
     SQLRETURN ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        return exist;
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        result = 1;
+    if( !result )
     {
-        qry = new SQLWCHAR[query.length() + 2];
-        memset( qry, '\0', query.length() + 2 );
-        uc_to_str_cpy( qry, query );
-        ret = SQLPrepare( m_hstmt, qry, SQL_NTS );
-        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-        {
-            ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
-            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-            {
-                ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name, 0, &cbOwnerName );
-                if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                {
-                    ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name, 0, &cbFieldName );
-                    if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                    {
-                        ret = SQLExecute( m_hstmt );
-                        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                        {
-                            ret = SQLFetch( m_hstmt );
-                            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
-                                exist = true;
-                            else if( ret != SQL_NO_DATA )
-                                GetErrorMessage( errorMsg, 1, m_hstmt );
-                        }
-                        else
-                        {
-                        }
-                    }
-                    else
-                    {
-                    }
-                }
-                else
-                {
-                }
-            }
-            else
-            {
-            }
-        }
-        else
-        {
-        }
-        if( ret == 1 )
-        {
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        }
-        else
-        {
-            ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-        }
+        ret = SQLBindParameter( m_hstmt, 1, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, tableName.length(), 0, table_name, 0, &cbTableName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, CONN_ERROR );
-        }
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
-        m_hstmt = 0;
+            result = 1;
     }
-    delete[] qry;
-    qry = nullptr;
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 2, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, ownerName.length(), 0, owner_name.get(), 0, &cbOwnerName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLBindParameter( m_hstmt, 3, SQL_PARAM_INPUT, SQL_C_WCHAR, SQL_WCHAR, fieldName.length(), 0, field_name.get(), 0, &cbFieldName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+             result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFetch( m_hstmt );
+        if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+            exist = true;
+    }
+    if( result  )
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    }
+    else
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    }
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        result = 1;
+    }
+    ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+    m_hstmt = 0;
     delete[] table_name;
     table_name = nullptr;
-    delete[] owner_name;
-    owner_name = nullptr;
-    delete[] field_name;
-    field_name = nullptr;
     return exist;
 }
 
