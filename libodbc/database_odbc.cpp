@@ -703,6 +703,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
             result = 1;
             SQLFreeHandle( SQL_HANDLE_ENV, m_env );
             m_env = 0;
+            return 1;
         }
     }
     if( !result )
@@ -711,9 +712,9 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, ENV_ERROR );
-            return 1;
             SQLFreeHandle( SQL_HANDLE_ENV, m_env );
             m_env = 0;
+            return 1;
         }
     }
     if( !result )
@@ -9927,9 +9928,9 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     }
     if( !result && pimpl.m_subtype == L"MySQL" )
     {
-        std::unique_ptr<MySQLCreateDBOptions> options( new MySQLCreateDBOptions( L"", L"", L"", false , false ) );
-        dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
-        dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
+        std::unique_ptr<MySQLCreateDBOptions> opts( new MySQLCreateDBOptions( L"", L"", L"", false , false ) );
+        dynamic_cast<MySQLCreateDBOptions *>( opts.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
+        dynamic_cast<MySQLCreateDBOptions *>( opts.get() )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
         SQLWCHAR setName[64], colName[64], setDesc[128], isDefault[5], isCompiled[5];
         query1 = L"SELECT character_set_name, default_collate_name, description FROM information_schema.character_sets";
         query2 = L"SELECT collation_name, character_set_name, is_default, is_compiled FROM information_schema.collations";
@@ -9980,7 +9981,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                 str_to_uc_cpy( param1, setName );
                 str_to_uc_cpy( param2, colName );
                 str_to_uc_cpy( param3, setDesc );
-                dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( param1, param2, param3 ) ) );
+                dynamic_cast<MySQLCreateDBOptions *>( opts.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( param1, param2, param3 ) ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10051,7 +10052,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                 str_to_uc_cpy( param2, colName );
                 str_to_uc_cpy( param3, isDefault );
                 str_to_uc_cpy( param4, isCompiled );
-                dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_collations[param1].push_back( std::make_tuple( param2, param3 == L"Y", param4 == L"Y" ) );
+                dynamic_cast<MySQLCreateDBOptions *>( opts.get() )->m_collations[param1].push_back( std::make_tuple( param2, param3 == L"Y", param4 == L"Y" ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10063,13 +10064,13 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     if( !result && pimpl.m_subtype == L"PostgreSQL" )
     {
         SQLWCHAR column[64], space[64], encoding[64], collation[64], ctype[64];
-        std::unique_ptr<PostgresCreateDBOptions> options( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( L"Default" );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( L"Default" );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( L"Default" );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_tablespaces.push_back( L"Default" );
+        std::unique_ptr<PostgresCreateDBOptions> opts( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_roles.push_back( L"Default" );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_templates.push_back( L"Default" );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_encodings.push_back( L"Default" );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
+        dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_tablespaces.push_back( L"Default" );
         query1 = L"SELECT rolname FROM pg_roles";
         query2 = L"SELECT datname FROM pg_database WHERE datistemplate = true;";
         query3 = L"SELECT pg_encoding_to_char( conforencoding ) AS name FROM pg_conversion";
@@ -10099,7 +10100,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
             {
                 std::wstring param1;
                 str_to_uc_cpy( param1, column );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( param1 );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_roles.push_back( param1 );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10143,7 +10144,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
             {
                 std::wstring param1;
                 str_to_uc_cpy( param1, column );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( param1 );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_templates.push_back( param1 );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10187,7 +10188,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
             {
                 std::wstring param1;
                 str_to_uc_cpy( param1, encoding );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( param1 );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_encodings.push_back( param1 );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10251,8 +10252,8 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                 str_to_uc_cpy( param1, collation );
                 str_to_uc_cpy( param2, ctype );
                 str_to_uc_cpy( param3, encoding );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_collations.push_back( std::make_tuple( param1, param3 ) );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_ctypes.push_back( std::make_tuple( param2, param3 ) );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_collations.push_back( std::make_tuple( param1, param3 ) );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_ctypes.push_back( std::make_tuple( param2, param3 ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10296,7 +10297,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
             {
                 std::wstring param1;
                 str_to_uc_cpy( param1, space );
-                dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_tablespaces.push_back( param1 );
+                dynamic_cast<PostgresCreateDBOptions *>( opts.get() )->m_tablespaces.push_back( param1 );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10318,12 +10319,12 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     {
         SQLWCHAR name[128], desc[128];
         int lcid, langid;
-        std::unique_ptr<SQLServerCreateDBOptions> options( new SQLServerCreateDBOptions( L"", false ) );
+        std::unique_ptr<SQLServerCreateDBOptions> opts( new SQLServerCreateDBOptions( L"", false ) );
         query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
         query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
 //        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
         query3 = L"SELECT lcid, name FROM sys.syslanguages";
-        dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
+        dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
         std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
         memset( qry.get(), '\0', query1.length() + 2 );
         uc_to_str_cpy( qry.get(), query1 );
@@ -10358,7 +10359,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                 std::wstring param1, param2;
                 str_to_uc_cpy( param1, name );
                 str_to_uc_cpy( param2, desc );
-                dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( param1, param2 ) ) );
+                dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( param1, param2 ) ) );
             }
             if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
             {
@@ -10375,7 +10376,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
         }
         if( pimpl.m_versionMajor > 11 )
         {
-            dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_fullTextSearch.push_back( std::make_tuple( 0, L"Default" ) );
+            dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_fullTextSearch.push_back( std::make_tuple( 0, L"Default" ) );
             if( !result )
             {
                 qry.reset( new SQLWCHAR[query2.length() + 2] );
@@ -10412,7 +10413,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                 {
                     std::wstring param2;
                     str_to_uc_cpy( param2, desc );
-                    dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_fullTextSearch.push_back( std::make_tuple( lcid, param2 ) );
+                    dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_fullTextSearch.push_back( std::make_tuple( lcid, param2 ) );
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
@@ -10457,14 +10458,14 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                     result = 1;
                 }
             }
-            dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_langs.push_back( std::make_tuple( 0, L"Default" ) );
+            dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_langs.push_back( std::make_tuple( 0, L"Default" ) );
             if( !result )
             {
                 for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ); ret = SQLFetch( m_hstmt) )
                 {
                     std::wstring param2;
                     str_to_uc_cpy( param2, desc );
-                    dynamic_cast<SQLServerCreateDBOptions *>( options.get() )->m_langs.push_back( std::make_tuple( langid, param2 ) );
+                    dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_langs.push_back( std::make_tuple( langid, param2 ) );
                 }
                 if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
                 {
