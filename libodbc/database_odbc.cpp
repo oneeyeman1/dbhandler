@@ -4433,7 +4433,7 @@ int ODBCDatabase::GetTableProperties(DatabaseTable *table, std::vector<std::wstr
                 includedCol.erase( 0, 1 );
                 includedCol.pop_back();
             }
-            int pos = 0;
+            SQLUSMALLINT pos = 0;
             if( pimpl.m_versionMajor >= 11 )
                 pos = 5;
             else
@@ -5942,7 +5942,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     std::wstring subquery1 = L"", subquery2 = L"";
     if( pimpl.m_subtype == L"Microsoft SQL Server" )
     {
-        subquery1 = L"OBJECT_ID( '" + tableName + L"' ";
+        subquery1 = L"OBJECT_ID( '" + schemaName + L"." + tableName + L"' )";
         subquery2 = L"SELECT column_id FROM sys.columns WHERE object_id = OBJECT_ID( '";
         subquery2 += tableName + L"' ) AND name = '";
         subquery2 += fieldName + L"'";
