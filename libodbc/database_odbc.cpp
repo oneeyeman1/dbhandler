@@ -5597,7 +5597,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         qry.reset( new SQLWCHAR[query3.length() + 2] );
         memset( qry.get(), '\0', query3.length() + 2 );
         uc_to_str_cpy( qry.get(), query3 );
-        auto ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
+        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR, dbc );
