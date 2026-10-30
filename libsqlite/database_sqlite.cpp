@@ -1225,6 +1225,8 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
             field->GetFieldProperties().m_display.m_justify = 0;
             field->GetFieldProperties().m_display.m_format = L"";
             field->GetFieldProperties().m_display.m_stringCase = 0;
+            field->GetFieldProperties().m_display.m_height = 0;
+            field->GetFieldProperties().m_display.m_width = 0;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
         }
     }

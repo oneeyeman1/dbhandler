@@ -1549,6 +1549,7 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
             res = db->GetFieldProperties( tableName.ToStdWstring(), dbField->GetField(), errors );
         }
         auto prop = erdTable->GetDatabaseTable()->GetTableProperties();
+        auto fieldProp = dbField->GetField()->GetFieldProperties();
         wxCoord w = 0, h = 0;
         wxFontWeight weigt = wxFONTWEIGHT_NORMAL;
         wxFontStyle style = wxFONTSTYLE_NORMAL;
@@ -1563,9 +1564,11 @@ void DrawingView::SetProperties(const wxSFShapeBase *shape)
         wxFont font( prop.m_dataFontSize, wxFONTFAMILY_DEFAULT, style, weigt, prop.m_dataFontUnderline, prop.m_dataFontName, (wxFontEncoding) prop.m_dataFontEncoding );
         wxMemoryDC dc;
         dc.GetTextExtent( dbField->GetField()->GetFieldName(), &w, &h, nullptr, nullptr, &font );
-        dbField->GetField()->GetFieldProperties().m_display.m_width = w;
-        dbField->GetField()->GetFieldProperties().m_display.m_height = h;
-        dbField->SetProperties( dbField->GetField()->GetFieldProperties() );
+        if( fieldProp.m_display.m_width == 0 )
+            fieldProp.m_display.m_width = w;
+        if( fieldProp.m_display.m_height == 0 )
+            fieldProp.m_display.m_height = h;
+        dbField->SetProperties( fieldProp );
         dbField->SetType( DatabaseFieldPropertiesType );
         propertiesPtr = dbField;
         propertiesPtr->SetFieldType( dbField->GetField()->GetFieldType() );
