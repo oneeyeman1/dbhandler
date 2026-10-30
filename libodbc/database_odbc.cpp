@@ -5704,24 +5704,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
 int ODBCDatabase::GetFieldProperties (const std::wstring &table, TableField *field, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    bool found = false;
-    std::wstring schemaName, ownerName;
-    for( std::map<std::wstring, std::vector<DatabaseTable *> >::iterator it = pimpl.m_tables.begin(); it != pimpl.m_tables.end(); ++it )
-    {
-        if( ( *it ).first == pimpl.m_dbName )
-        {
-            for( std::vector<DatabaseTable *>::iterator it1 = (*it).second.begin(); it1 < (*it).second.end() || !found; ++it1 )
-            {
-                if( ( *it1 )->GetTableName () == table )
-                {
-                    found = true;
-                    schemaName = (*it1)->GetSchemaName();
-                    ownerName = (*it1)->GetTableOwner();
-                }
-            }
-        }
-    }
-    result = GetFieldProperties( table, schemaName, ownerName, field->GetFieldName(), field, errorMsg );
+    result = GetFieldProperties( table, field->GetSchemaName(), field->GetOwnerName(), field->GetFieldName(), field, errorMsg );
     return result;
 }
 
