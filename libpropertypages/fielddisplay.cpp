@@ -141,8 +141,10 @@ DatabaseFieldDisplay::DatabaseFieldDisplay(wxWindow* parent, const FieldTableDis
     m_justify->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_displayHeight->Bind( wxEVT_TEXT, &DatabaseFieldDisplay::OnPageModified, this );
     m_displayWidth->Bind( wxEVT_TEXT, &DatabaseFieldDisplay::OnPageModified, this );
-    m_case->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
-    m_picture->Bind( wxEVT_CHECKBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    if( m_case )
+        m_case->Bind( wxEVT_COMBOBOX, &DatabaseFieldDisplay::OnPageModified, this );
+    if( m_picture )
+        m_picture->Bind( wxEVT_CHECKBOX, &DatabaseFieldDisplay::OnPageModified, this );
     m_new->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_BUTTON, &DatabaseFieldDisplay::OnEditNewFormat, this );
     m_edit->Bind( wxEVT_UPDATE_UI, &DatabaseFieldDisplay::OnUpdateUIEditButton, this );
