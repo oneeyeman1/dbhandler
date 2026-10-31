@@ -5935,6 +5935,7 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
+        subquery1 = L"SELECT r.oid FROM pg_class r, pg_namespace n WHERE n.oid = r.relnamespace AND n.nspname = '" + schemaName + L"' AND r.relname = '" + tableName + L"'";
         subquery2 = L"SELECT attnum FROM pg_attribute WHERE attrelid = '";
         subquery2 += tableName + L"'::regclass";
     }
