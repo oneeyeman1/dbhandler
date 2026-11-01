@@ -5936,8 +5936,10 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
         subquery1 = L"SELECT r.oid FROM pg_class r, pg_namespace n WHERE n.oid = r.relnamespace AND n.nspname = '" + schemaName + L"' AND r.relname = '" + tableName + L"'";
-        subquery2 = L"SELECT attnum FROM pg_attribute WHERE attrelid = '";
-        subquery2 += tableName + L"'::regclass";
+        subquery2 = L"SELECT a.attnum FROM pg_attribute a, pg_class c WHERE a.attrelid = c.oid AND c.relnamespace = '";
+        subquery2 += schemaName + L"'::regnamespace AND a.attrelid = '";
+        subquery2 += tableName + L"'::regclass AND a.attname = '";
+        subquery2 += fieldName + L"'";
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -6043,11 +6045,11 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
-            res = 1;
+            result = 1;
         }
         m_hstmt = 0;
     }
-    return res;
+    return result;
 }
 
 int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg)
