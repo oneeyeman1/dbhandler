@@ -1171,7 +1171,7 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     }
     if( pimpl.m_subtype == L"MySQL" || pimpl.m_subtype == L"PostgreSQL" )
     {
-        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
+        queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
         queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
@@ -5112,7 +5112,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHSTMT stmt = 0;
     SQLHDBC dbc = 0;
     std::wstring fieldFormat = L"";
-    SQLWCHAR commentField[254], label[254], heading[254], fF[31], styleName[32], *styleStyle = nullptr;
+    SQLWCHAR commentField[254], label[254], heading[254], initial[254], mask[31], styleName[32], *styleStyle = nullptr, pattern[32], bitmap[1];
     unsigned short labelAlignment = 0, headingAlignment = 0;
     std::unique_ptr<SQLWCHAR[]> table( new SQLWCHAR[schemaName.length() + tableName.length() + 3] ), owner( new SQLWCHAR[ownerName.length() + 2] ), fieldNameReq( new SQLWCHAR[fieldName.length() + 2] );
     memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
@@ -5134,12 +5134,12 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
     SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = SQL_NTS, cbFormat = SQL_NTS, cbFieldFormat = 0, cbError = SQL_NTS, cbFieldHeight = 0, cbFieldWidth = 0;
-    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbStyleStyle = SQL_NTS, cbSeqn = 0;
+    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbStyleStyle = SQL_NTS, cbSeqn = 0, cbPattern = SQL_NTS, cbBitmap = SQL_NTS, cbInitial = SQL_NTS;
     SQLLEN cbFieldCase;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
     SQLWCHAR formatNameField[40], formatField[260], error[256];
-    std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    std::wstring query = L"SELECT abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, trim( abc_cmnt ), abc_edit, abc_tag FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
     std::wstring query3 = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
@@ -5245,7 +5245,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 18, SQL_C_WCHAR, &commentField, 254, &cbCommentField );
+        ret = SQLBindCol( stmt, 1, SQL_C_WCHAR, &label, 254, &cbLabelField );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5254,7 +5254,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 6, SQL_C_WCHAR, &label, 254, &cbLabelField );
+        ret = SQLBindCol( stmt, 2, SQL_C_SSHORT, &labelAlignment, 0, &cbLabelAlignment );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5263,16 +5263,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 7, SQL_C_SSHORT, &labelAlignment, 0, &cbLabelAlignment );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 8, SQL_C_WCHAR, &heading, 254, &cbHeadingField );
+        ret = SQLBindCol( stmt, 3, SQL_C_WCHAR, &heading, 254, &cbHeadingField );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt);
@@ -5281,7 +5272,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 9, SQL_C_SSHORT, &headingAlignment, 0, &cbHeadingAlignment );
+        ret = SQLBindCol( stmt, 4, SQL_C_SSHORT, &headingAlignment, 0, &cbHeadingAlignment );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5290,7 +5281,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 10, SQL_C_SHORT, &justify, 0, &cbJustify );
+        ret = SQLBindCol( stmt, 5, SQL_C_SHORT, &justify, 0, &cbJustify );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5299,7 +5290,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 11, SQL_C_WCHAR, &fF, 31, &cbFieldFormat );
+        ret = SQLBindCol( stmt, 6, SQL_C_WCHAR, &mask, 31, &cbFieldFormat );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5308,7 +5299,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 12, SQL_C_USHORT, &stringCase, 0, &cbFieldCase );
+        ret = SQLBindCol( stmt, 7, SQL_C_USHORT, &stringCase, 0, &cbFieldCase );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5317,7 +5308,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 13, SQL_C_DOUBLE, &height, 0, &cbFieldHeight );
+        ret = SQLBindCol( stmt, 8, SQL_C_DOUBLE, &height, 0, &cbFieldHeight );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5326,7 +5317,43 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 14, SQL_C_DOUBLE, &width, 0, &cbFieldWidth );
+        ret = SQLBindCol( stmt, 9, SQL_C_DOUBLE, &width, 0, &cbFieldWidth );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 10, SQL_C_WCHAR, &pattern, 31, &cbPattern );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 11, SQL_C_WCHAR, &bitmap, 1, &cbBitmap );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 12, SQL_C_WCHAR, &initial, 254, &cbInitial );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 14, SQL_C_WCHAR, &commentField, 254, &cbCommentField );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5348,6 +5375,9 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_display.m_stringCase = 0;
             field->GetFieldProperties().m_display.m_width = 0;
             field->GetFieldProperties().m_display.m_height = 0;
+            field->GetFieldProperties().m_validations.m_initial = L"";
+            field->GetFieldProperties().m_validations.m_validator = L"";
+            field->GetFieldProperties().m_display.m_picture = false;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
         }
         else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
@@ -5357,11 +5387,14 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         }
         else if( ret != SQL_NO_DATA )
         {
-            std::wstring comment, lbl, head;
+            std::wstring comment, lbl, head, pat, bmp, initialValue;
             str_to_uc_cpy( comment, commentField );
             str_to_uc_cpy( lbl, label );
             str_to_uc_cpy( head, heading );
-            str_to_uc_cpy( fieldFormat, fF );
+            str_to_uc_cpy( fieldFormat, mask );
+            str_to_uc_cpy( pat, pattern );
+            str_to_uc_cpy( bmp, bitmap );
+            str_to_uc_cpy( initialValue, initial );
             field->GetFieldProperties().m_comment = comment;
             field->GetFieldProperties().m_heading.m_label = lbl;
             field->GetFieldProperties().m_heading.m_heading = head;
@@ -5369,10 +5402,13 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_heading.m_headingAlignment = headingAlignment;
             field->GetFieldProperties().m_display.m_justify = justify;
             field->GetFieldProperties().m_display.m_format = fieldFormat;
+            field->GetFieldProperties().m_display.m_picture = bmp[0] == 'Y' ? true : false;
             field->GetFieldProperties().m_display.m_stringCase = stringCase;
             field->GetFieldProperties().m_display.m_width = width;
             field->GetFieldProperties().m_display.m_height = height;
+            field->GetFieldProperties().m_validations.m_validator = pattern;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
+            field->GetFieldProperties().m_validations.m_initial = initialValue;
         }
     }
     if( result == 1 )
@@ -5935,11 +5971,9 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
     }
     if( pimpl.m_subtype == L"PostgreSQL" )
     {
-        subquery1 = L"SELECT r.oid FROM pg_class r, pg_namespace n WHERE n.oid = r.relnamespace AND n.nspname = '" + schemaName + L"' AND r.relname = '" + tableName + L"'";
-        subquery2 = L"SELECT a.attnum FROM pg_attribute a, pg_class c WHERE a.attrelid = c.oid AND c.relnamespace = '";
-        subquery2 += schemaName + L"'::regnamespace AND a.attrelid = '";
-        subquery2 += tableName + L"'::regclass AND a.attname = '";
-        subquery2 += fieldName + L"'";
+        subquery1 = L"SELECT '" + schemaName + L"." + tableName + L"'::regclass::oid AS table_id";
+        subquery2 = L"SELECT attnum FROM pg_attribute WHERE attrelid = '";
+        subquery2 += schemaName + L"." + tableName + L"'::regclass AND attname = '" + fieldName + L"'";
     }
     if( pimpl.m_subtype == L"MySQL" )
     {
@@ -6045,11 +6079,11 @@ int ODBCDatabase::SetFieldProperties(const std::wstring &schemaName, const std::
         if( res != SQL_SUCCESS && res != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
-            result = 1;
+            res = 1;
         }
         m_hstmt = 0;
     }
-    return result;
+    return res;
 }
 
 int ODBCDatabase::GetTableId(const std::wstring &UNUSED(catalog), const std::wstring &schemaName, const std::wstring &tableName, long &tableId, std::vector<std::wstring> &errorMsg)
@@ -6965,7 +6999,7 @@ int ODBCDatabase::AddDropTable(const std::wstring &catalog, const std::wstring &
     SQLSMALLINT DataType, DecimalDigits = 0, NumPrecRadix, Nullable = 0, SQLDataType, DatetimeSubtypeCode, numCols = 0;
     SQLINTEGER ColumnSize = 0, BufferLength, CharOctetLength, OrdinalPosition;
     if( pimpl.m_subtype == L"PostgreSQL" )
-        query4 = L"SELECT indexname FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
+        query4 = L"SELECT trim( indexname ) FROM " + catalog + L".pg_catalog.pg_indexes WHERE tablename = ? AND schemaname = ?";
     if( pimpl.m_subtype == L"MySQL" )
     {
         query4 = L"SELECT index_name FROM information_schema.statistics WHERE table_name = ? AND table_schema = ?;";
