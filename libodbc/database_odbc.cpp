@@ -5406,7 +5406,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_display.m_stringCase = stringCase;
             field->GetFieldProperties().m_display.m_width = width;
             field->GetFieldProperties().m_display.m_height = height;
-            field->GetFieldProperties().m_validations.m_validator = pattern;
+            field->GetFieldProperties().m_validations.m_validator = pat;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
             field->GetFieldProperties().m_validations.m_initial = initialValue;
         }
