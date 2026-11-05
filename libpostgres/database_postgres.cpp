@@ -239,7 +239,7 @@ int PostgresDatabase::ServerConnect(std::vector<std::wstring> &dbList, std::vect
     PGresult *res;
     std::wstring err;
     int result = 0;
-    std::wstring query = L"SELECT datname FROM pg_database";
+    std::wstring query = L"SELECT datname::varchar FROM pg_database";
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_TUPLES_OK && status != PGRES_COMMAND_OK )
@@ -265,11 +265,11 @@ int PostgresDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wst
     PGresult *res;
     std::vector<std::wstring> queries;
     queries.push_back( L"SET client_min_messages = WARNING;" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam char(129) NOT NULL, abc_tid integer, abc_ownr char(129) NOT NULL, abc_cnam char(129) NOT NULL, abc_cid smallint, abc_labl char(254), abc_lpos smallint, abc_hdr char(254), abc_hpos smallint, abc_itfy smallint, abc_mask char(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn char(31), abc_bmap char(1), abc_init char(254), abc_cmnt char(254), abc_edit char(31), abc_tag char(254), PRIMARY KEY( abc_tnam, abc_ownr, abc_cnam ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name char(30) NOT NULL, abe_edit char(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work char(32), PRIMARY KEY( abe_name, abe_seqn ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name char(30) NOT NULL, abf_frmt char(254), abf_type smallint, abf_cntr integer, PRIMARY KEY( abf_name ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os smallint, abt_tnam char(129), abt_tid integer, abt_ownr char(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce char(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce char(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce char(18), abt_cmnt char(254), PRIMARY KEY( abt_os, abt_tnam, abt_ownr ));" );
-    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name char(30) NOT NULL, abv_vald char(254), abv_type smallint, abv_cntr integer, abv_msg char(254), PRIMARY KEY( abv_name ));" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatcol(abc_tnam varchar(129) NOT NULL, abc_tid integer, abc_ownr varchar(129) NOT NULL, abc_cnam varchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt varchar(254), abc_edit varchar(31), abc_tag varchar(254));" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatedt(abe_name varchar(30) NOT NULL, abe_edit varchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32));" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatfmt(abf_name varchar(30) NOT NULL, abf_frmt varchar(254), abf_type smallint, abf_cntr integer);" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcattbl(abt_os smallint, abt_tnam varchar(129), abt_tid integer, abt_ownr varchar(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl char(1), abd_funl integer, abd_fstr integer, abd_fchr smallint, abd_fptc smallint, abd_ffce varchar(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl char(1), abh_funl integer, abh_fstr integer, abh_fchr smallint, abh_fptc smallint, abh_ffce varchar(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl char(1), abl_funl integer, abl_fstr integer, abl_fchr smallint, abl_fptc smallint, abl_ffce varchar(18), abt_cmnt varchar(254));" );
+    queries.push_back( L"CREATE TABLE IF NOT EXISTS abcatvld(abv_name varchar(30) NOT NULL, abv_vald varchar(254), abv_type smallint, abv_cntr integer, abv_msg varchar(254));" );
     if( pimpl.m_versionMajor >= 10 )
     {
         queries.push_back( L"CREATE UNIQUE INDEX IF NOT EXISTS abcatc_x ON abcatcol( abc_tnam, abc_ownr, abc_cnam );" );
@@ -615,12 +615,12 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         osid = QT;
 #endif // __DBGTK__
     }
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table, u.usename AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
-    std::wstring query2 = L"SELECT DISTINCT column_name, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
-    std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name AS name, x.table_schema as schema, x.table_name AS table, x.column_name AS column, y.table_schema as ref_schema, y.table_name as ref_table, y.column_name as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
-    std::wstring query4 = L"SELECT indexname FROM pg_indexes pi, information_schema.table_constraints tc WHERE pi.tablename = tc.table_name AND pi.indexname = tc.constraint_name AND tc.constraint_type NOT IN ('PRIMARY KEY') AND pi.schemaname = $1 AND pi.tablename = $2;";
+    std::wstring query1 = L"SELECT t.table_catalog::varchar AS catalog, t.table_schema::varchar AS schema, t.table_name::varchar AS table, u.usename::varchar AS owner, c.oid AS table_id FROM information_schema.tables t, pg_catalog.pg_class c, pg_catalog.pg_user u WHERE t.table_name = c.relname AND c.relowner = usesysid AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
+    std::wstring query2 = L"SELECT DISTINCT column_name::varchar, data_type::varchar, character_maximum_length, character_octet_length, numeric_precision, numeric_precision_radix, numeric_scale, is_nullable, column_default, CASE WHEN column_name IN (SELECT ccu.column_name FROM information_schema.constraint_column_usage ccu, information_schema.table_constraints tc WHERE ccu.constraint_name = tc.constraint_name AND tc.constraint_type = 'PRIMARY KEY' AND ccu.table_name = $2) THEN 'YES' ELSE 'NO' END AS is_pk, ordinal_position FROM information_schema.columns col, information_schema.table_constraints tc WHERE tc.table_schema = col.table_schema AND tc.table_name = col.table_name AND col.table_schema = $1 AND col.table_name = $2 ORDER BY ordinal_position;";
+    std::wstring query3 = L"SELECT (SELECT con.oid FROM pg_constraint con WHERE con.conname = c.constraint_name) AS id, x.ordinal_position AS pos, c.constraint_name::varchar AS name, x.table_schema::varchar as schema, x.table_name::varchar AS table, x.column_name::varchar AS column, y.table_schema::varchar as ref_schema, y.table_name::varchar as ref_table, y.column_name::varchar as ref_column, c.update_rule, c.delete_rule, c.match_option FROM information_schema.referential_constraints c, information_schema.key_column_usage x, information_schema.key_column_usage y WHERE x.constraint_name = c.constraint_name AND y.ordinal_position = x.position_in_unique_constraint AND y.constraint_name = c.unique_constraint_name AND x.table_schema = $1 AND x.table_name = $2 ORDER BY c.constraint_name, x.ordinal_position;";
+    std::wstring query4 = L"SELECT indexname::varchar FROM pg_indexes pi, information_schema.table_constraints tc WHERE pi.tablename = tc.table_name AND pi.indexname = tc.constraint_name AND tc.constraint_type NOT IN ('PRIMARY KEY') AND pi.schemaname = $1 AND pi.tablename = $2;";
     std::wstring query5 = L"SELECT abd_fhgt, abd_fwgt, abd_fitl, abd_funl, abd_fstr, abd_fchr, abd_fptc, rtrim(abd_ffce), abh_fhgt, abh_fwgt, abh_fitl, abh_funl, abh_fstr, abh_fchr, abh_fptc, rtrim(abh_ffce), abl_fhgt, abl_fwgt, abl_fitl, abl_funl, abl_fstr, abl_fchr, abl_fptc, rtrim(abl_ffce), rtrim(abt_cmnt) FROM abcattbl WHERE abt_tnam = $1 AND abt_ownr = $2 AND abt_os = $3;";
-    std::wstring query6 = L"SELECT * FROM \"abcatcol\" WHERE \"abc_tnam\" = $1 AND \"abc_ownr\" = $2 AND \"abc_cnam\" = $3;";
+    std::wstring query6 = L"SELECT * FROM abcatcol WHERE abc_tnam = $1 AND abc_ownr = $2 AND abc_cnam = $3;";
     std::wstring query7;
     if( pimpl.m_versionMajor <= 9 && pimpl.m_versionMinor < 5 )
     {
@@ -644,9 +644,9 @@ int PostgresDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
         else if( osid == QT )
             query7 = L"INSERT INTO abcattbl VALUES( 2, $1, (SELECT c.oid FROM pg_class c, pg_namespace nc WHERE nc.oid = c.relnamespace AND c.relname = $2 AND nc.nspname = $3), $4, 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', 8, 400, 'N', 'N', 0, 1, 0, 'Cantrell', '' ) ON CONFLICT DO NOTHING;";
     }
-    std::wstring query8 = L"SELECT c.relname AS name, ixs.tablespace AS tbspace, am.amname AS type";
+    std::wstring query8 = L"SELECT c.relname::varchar AS name, ixs.tablespace::varchar AS tbspace, am.amname AS type";
     if( pimpl.m_versionMajor >= 11 )
-        query8 += L", ARRAY(SELECT a.attname FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
+        query8 += L", ARRAY(SELECT a.attname::varchar FROM pg_attribute a WHERE a.attrelid = idx.indrelid AND a.attnum = ANY(idx.indkey) AND a.attnum > 0 ORDER BY array_position(idx.indkey, a.attnum) OFFSET idx.indnkeyatts) AS included";
     query8 += L", c.reloptions AS storage FROM pg_am am, pg_index idx, pg_class c, pg_namespace n, pg_class t, pg_indexes ixs WHERE am.oid = c.relam AND ixs.indexname = c.relname AND c.oid = idx.indexrelid AND t.oid = idx.indrelid AND n.oid = c.relnamespace AND idx.indisprimary AND n.nspname = $1 AND t.relname = $2;";
     std::wstring query9 = L"SELECT conperiod FROM pg_constraint c WHERE conname = $1";
     std::wstring query10 = L"INSERT INTO abcatfmt VALUES($1, $2, $3, $4);";
@@ -1910,7 +1910,7 @@ int PostgresDatabase::NewTableCreation(std::vector<std::wstring> &errorMsg)
                 if( count > m_numOfTables || count < m_numOfTables )
                 {
                     std::vector<TableDefinition> temp;
-                    query = L"SELECT table_catalog, table_schema, table_name FROM information_schema.tables WHERE table_catalog = \'" + pimpl.m_dbName + L"\';";
+                    query = L"SELECT table_catalog::varchar, table_schema::varchar, table_name::varchar FROM information_schema.tables WHERE table_catalog = \'" + pimpl.m_dbName + L"\';";
                     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
                     status = PQresultStatus( res );
                     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
@@ -2152,7 +2152,7 @@ int PostgresDatabase::AddDropTable(const std::wstring &catalog, const std::wstri
 int PostgresDatabase::GetTableOwner(const std::wstring &schemaName, const std::wstring &tableName, std::wstring &owner, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    std::wstring query = L"SELECT u.usename FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = $1 AND relname = $2";
+    std::wstring query = L"SELECT u.usename::varchar FROM pg_class c, pg_user u, pg_namespace n WHERE n.oid = c.relnamespace AND u.usesysid = c.relowner AND n.nspname = $1 AND relname = $2";
     char *values[2];
     values[0] = NULL, values[1] = NULL;
     values[0] = new char[schemaName.length() * sizeof( wchar_t ) + 1];
@@ -2273,7 +2273,7 @@ int PostgresDatabase::AttachDatabase(const std::wstring &catalog, const std::wst
     param[0] = new char[catalog.length() * sizeof( wchar_t ) + 1];
     memset( param[0], '\0', catalog.length() * sizeof( wchar_t ) + 1 );
     strcpy( param[0], m_pimpl->m_myconv.to_bytes( catalog.c_str() ).c_str() );
-    std::wstring query1 = L"SELECT t.table_catalog AS catalog, t.table_schema AS schema, t.table_name AS table FROM information_schema.tables t WHERE t.table_catalog = $1 AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
+    std::wstring query1 = L"SELECT t.table_catalog::varchar AS catalog, t.table_schema::varchar AS schema, t.table_name AS table FROM information_schema.tables t WHERE t.table_catalog = $1 AND (t.table_type = 'BASE TABLE' OR t.table_type = 'VIEW' OR t.table_type = 'LOCAL TEMPORARY') ORDER BY table_name;";
     auto res = PQexecParams( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str(), 1, NULL, param, NULL, NULL, 0 );
     ExecStatusType status = PQresultStatus( res );
     if( status != PGRES_COMMAND_OK && status != PGRES_TUPLES_OK )
