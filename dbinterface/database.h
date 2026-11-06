@@ -493,7 +493,7 @@ public:
     FieldTableDisplayProperties m_display;
     FieldTableValidationProperties m_validations;
     FieldEditStyle m_styles;
-    std::wstring m_comment;
+    std::wstring m_comment, m_tag;
 };
 
 class TableField

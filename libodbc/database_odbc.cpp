@@ -5112,7 +5112,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLHSTMT stmt = 0;
     SQLHDBC dbc = 0;
     std::wstring fieldFormat = L"";
-    SQLWCHAR commentField[254], label[254], heading[254], initial[254], mask[31], styleName[32], *styleStyle = nullptr, pattern[32], bitmap[1];
+    SQLWCHAR commentField[254], label[254], heading[254], initial[254], mask[32], styleName[32], *styleStyle = nullptr, pattern[32], bitmap[1], edit[32];
     unsigned short labelAlignment = 0, headingAlignment = 0;
     std::unique_ptr<SQLWCHAR[]> table( new SQLWCHAR[schemaName.length() + tableName.length() + 3] ), owner( new SQLWCHAR[ownerName.length() + 2] ), fieldNameReq( new SQLWCHAR[fieldName.length() + 2] );
     memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
@@ -5134,12 +5134,12 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
     SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = SQL_NTS, cbFormat = SQL_NTS, cbFieldFormat = 0, cbError = SQL_NTS, cbFieldHeight = 0, cbFieldWidth = 0;
-    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbStyleStyle = SQL_NTS, cbSeqn = 0, cbPattern = SQL_NTS, cbBitmap = SQL_NTS, cbInitial = SQL_NTS;
+    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbStyleStyle = SQL_NTS, cbSeqn = 0, cbPattern = SQL_NTS, cbBitmap = SQL_NTS, cbInitial = SQL_NTS, cbEdit = SQL_NTS;
     SQLLEN cbFieldCase;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
     SQLWCHAR formatNameField[40], formatField[260], error[256];
-    std::wstring query = L"SELECT abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit, abc_tag FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
+    std::wstring query = L"SELECT abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
     std::wstring query3 = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
@@ -5353,7 +5353,16 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     }
     if( !result )
     {
-        ret = SQLBindCol( stmt, 14, SQL_C_WCHAR, &commentField, 254, &cbCommentField );
+        ret = SQLBindCol( stmt, 13, SQL_C_WCHAR, &commentField, 254, &cbCommentField );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( stmt, 14, SQL_C_WCHAR, &edit, 31, &cbEdit );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
@@ -5379,6 +5388,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_validations.m_validator = L"";
             field->GetFieldProperties().m_display.m_picture = false;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
+            field->GetFieldProperties().m_styles.m_style = L"";
+            field->GetFieldProperties().m_tag = fieldName;
         }
         else if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
         {
@@ -5387,7 +5398,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
         }
         else if( ret != SQL_NO_DATA )
         {
-            std::wstring comment, lbl, head, pat, bmp, initialValue;
+            std::wstring comment, lbl, head, pat, bmp, initialValue, editProp;
             str_to_uc_cpy( comment, commentField );
             str_to_uc_cpy( lbl, label );
             str_to_uc_cpy( head, heading );
@@ -5395,6 +5406,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             str_to_uc_cpy( pat, pattern );
             str_to_uc_cpy( bmp, bitmap );
             str_to_uc_cpy( initialValue, initial );
+            str_to_uc_cpy( editProp, edit );
             field->GetFieldProperties().m_comment = comment;
             field->GetFieldProperties().m_heading.m_label = lbl;
             field->GetFieldProperties().m_heading.m_heading = head;
@@ -5409,6 +5421,8 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             field->GetFieldProperties().m_validations.m_validator = pat;
             field->GetFieldProperties().m_validations.m_fieldName = fieldName;
             field->GetFieldProperties().m_validations.m_initial = initialValue;
+            field->GetFieldProperties().m_styles.m_style = editProp;
+            field->GetFieldProperties().m_tag = fieldName;
         }
     }
     if( result == 1 )
