@@ -217,6 +217,9 @@ wxBEGIN_EVENT_TABLE(DrawingView, wxView)
     EVT_MENU(wxID_DATABASEOPTIONS, DrawingView::OnDatabasePreferences)
     EVT_MENU(wxID_CREATETABLESPACE, DrawingView::OnCreateTableSpace)
     EVT_MENU(wxID_EDITTABLEOBJECT, DrawingView::OnEditTableObject)
+    EVT_MENU(wxID_EDITSTYLEMAINT, DrawingView::OnEditStyleMaintenance)
+    EVT_MENU(wxID_DISPLAYFORMATMAINT, DrawingView::OnDisplayFormatMaintenance)
+    EVT_MENU(wxID_VALIDATIONMAINT, DrawingView::OnValiidationMaintenance)
 wxEND_EVENT_TABLE()
 
 // What to do when a view is created. Creates actual
@@ -2821,6 +2824,10 @@ void DrawingView::CreateDBMenu()
     menuDesign->Append( wxID_SAVELOG, _( "Save Log As..." ), _( "Save log to disk file" ) );
     menuDesign->Append( wxID_CLEARLOG, _( "Clear Log" ), _( "Discard content of the log" ) );
     menuDesign->AppendSeparator();
+    menuDesign->Append( wxID_EDITSTYLEMAINT, _( "Edit Style Maintenance..." ), _( "Edit Style Maintenance" ) );
+    menuDesign->Append( wxID_DISPLAYFORMATMAINT, _( "Display Format Maintenance..." ), _( "Display Format Maintencance" ) );
+    menuDesign->Append( wxID_VALIDATIONMAINT, _( "Validation Maintenance..." ), _( "Validation Maintenance" ) );
+    menuDesign->AppendSeparator();
     menuDesign->Append( wxID_CUSTOMCOLORS, _( "Custom Colors.." ) );
     menuDesign->Append( wxID_DATABASEOPTIONS, _( "Options..." ), _( "Database preferences" ) );
     mbar->Insert( 2, menuDesign, _( "&Design" ) );
@@ -3371,3 +3378,17 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     }
 }
 
+void DrawingView::OnEditStyleMaintenance(wxCommandEvent &WXUNUSED(event))
+{
+
+}
+
+void DrawingView::OnDisplayFormatMaintenance(wxCommandEvent &WXUNUSED(event))
+{
+
+}
+
+void DrawingView::OnValiidationMaintenance(wxCommandEvent &WXUNUSED(event))
+{
+
+}

@@ -206,4 +206,7 @@ private:
 #define wxID_FONTNAME             1004
 #define wxID_FONTSIZE             1005
 #define wxID_JOINS                1006
+#define wxID_EDITSTYLEMAINT       1007
+#define wxID_DISPLAYFORMATMAINT   1008
+#define wxID_VALIDATIONMAINT      1009
 #endif

@@ -145,6 +145,9 @@ protected:
     void OnDatabasePreferences(wxCommandEvent &event);
     void OnCreateTableSpace(wxCommandEvent &event);
     void OnEditTableObject(wxCommandEvent &event);
+    void OnEditStyleMaintenance(wxCommandEvent &event);
+    void OnDisplayFormatMaintenance(wxCommandEvent &event);
+    void OnValiidationMaintenance(wxCommandEvent &event);
 private:
     bool m_isActive, m_initialized = false;
     wxTextCtrl *m_fieldText;

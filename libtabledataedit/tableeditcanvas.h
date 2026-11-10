@@ -100,3 +100,6 @@
 #define wxID_COMMENTFIELD         1003
 #define wxID_FONTNAME             1004
 #define wxID_FONTSIZE             1005
+#define wxID_EDITSTYLEMAINT       1007
+#define wxID_DISPLAYFORMATMAINT   1008
+#define wxID_VALIDATIONMAINT      1009
