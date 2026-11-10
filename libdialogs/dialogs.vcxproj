@@ -513,6 +513,7 @@
     <ClCompile Include="createviewoptions.cpp" />
     <ClCompile Include="databasetype.cpp" />
     <ClCompile Include="datasource.cpp" />
+    <ClCompile Include="dbfieldmaint.cpp" />
     <ClCompile Include="detachdb.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="displayformatdefinition.cpp" />
@@ -546,6 +547,7 @@
     <ClInclude Include="createviewoptions.h" />
     <ClInclude Include="databasetype.h" />
     <ClInclude Include="datasource.h" />
+    <ClInclude Include="dbfieldmaint.h" />
     <ClInclude Include="detachdb.h" />
     <ClInclude Include="dialogs.h" />
     <ClInclude Include="displayformatdefinition.h" />

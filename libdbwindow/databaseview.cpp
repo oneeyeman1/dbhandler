@@ -149,7 +149,7 @@ typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &)
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
 typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, int, int, std::unique_ptr<CreateDBOptions> &);
-
+typedef int (*DBFIELDPROPMAINT)(wxWindow *, const wxString &);
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
 #endif
@@ -3380,15 +3380,54 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
 
 void DrawingView::OnEditStyleMaintenance(wxCommandEvent &WXUNUSED(event))
 {
-
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXOSX__
+    libName = m_libPath + "liblibdialogs.dylib" ;
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    if( lib.Load( libName ) )
+    {
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
+        int res = func( m_parent, _( "Edit Styles" ) );
+    }
 }
 
 void DrawingView::OnDisplayFormatMaintenance(wxCommandEvent &WXUNUSED(event))
 {
-
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXOSX__
+    libName = m_libPath + "liblibdialogs.dylib" ;
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    if( lib.Load( libName ) )
+    {
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
+        int res = func( m_parent, _( "Display Formats" ) );
+    }
 }
 
 void DrawingView::OnValiidationMaintenance(wxCommandEvent &WXUNUSED(event))
 {
-
+    wxString libName;
+    wxDynamicLibrary lib;
+#ifdef __WXMSW__
+    libName = m_libPath + "dialogs";
+#elif __WXOSX__
+    libName = m_libPath + "liblibdialogs.dylib" ;
+#else
+    libName = m_libPath + "libdialogs";
+#endif
+    if( lib.Load( libName ) )
+    {
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
+        int res = func( m_parent, _( "Validation Rules" ) );
+    }
 }
