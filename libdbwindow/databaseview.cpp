@@ -149,7 +149,7 @@ typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &)
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
 typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, int, int, std::unique_ptr<CreateDBOptions> &);
-typedef int (*DBFIELDPROPMAINT)(wxWindow *, const wxString &);
+typedef int (*DBFIELDPROPMAINT)(wxWindow *, const wxString &, int);
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
 #endif
@@ -3391,8 +3391,8 @@ void DrawingView::OnEditStyleMaintenance(wxCommandEvent &WXUNUSED(event))
 #endif
     if( lib.Load( libName ) )
     {
-        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
-        int res = func( m_parent, _( "Edit Styles" ) );
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaintFunc" );
+        int res = func( m_parent, _( "Edit Styles" ), EDITSTYLES );
     }
 }
 
@@ -3409,8 +3409,8 @@ void DrawingView::OnDisplayFormatMaintenance(wxCommandEvent &WXUNUSED(event))
 #endif
     if( lib.Load( libName ) )
     {
-        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
-        int res = func( m_parent, _( "Display Formats" ) );
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaintFunc" );
+        int res = func( m_parent, _( "Display Formats" ), FIELDDSPLAY );
     }
 }
 
@@ -3427,7 +3427,7 @@ void DrawingView::OnValiidationMaintenance(wxCommandEvent &WXUNUSED(event))
 #endif
     if( lib.Load( libName ) )
     {
-        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaint" );
-        int res = func( m_parent, _( "Validation Rules" ) );
+        DBFIELDPROPMAINT func = (DBFIELDPROPMAINT) lib.GetSymbol( "DBFieldMaintFunc" );
+        int res = func( m_parent, _( "Validation Rules" ), VALIDRULES );
     }
 }

@@ -25,6 +25,10 @@ struct NewViewOptions
     int options;
 };
 
+#define EDITSTYLES  1
+#define FIELDDSPLAY 2
+#define VALIDRULES  3
+
 // The view using MyCanvas to show its contents
 class DrawingView : public ABLBaseView
 {
