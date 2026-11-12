@@ -13,6 +13,7 @@
 #include <vector>
 #include <tuple>
 #include <wx/wx.h>
+#include "wx/listctrl.h"
 #include <wx/image.h>
 #include "database.h"
 #include "propertypagebase.h"
