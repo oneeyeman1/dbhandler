@@ -107,6 +107,7 @@
 #include "sqlserveraddfilespec.h"
 #include "scrolledcolumnlabel.h"
 #include "createdatabase.h"
+#include "dbfieldmaint.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
@@ -573,11 +574,13 @@ extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, co
     return res;
 }
 
-extern "C" WXEXPORT int DBFieldMaint(wxWindow *parent, const wxString &title)
+extern "C" WXEXPORT int DBFieldMaintFunc(wxWindow *parent, const wxString &title, int type)
 {
     int res = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
+    DBFieldMant dlg( parent, wxID_ANY, title, type );
+    dlg.ShowModal();
     return res;
 }
