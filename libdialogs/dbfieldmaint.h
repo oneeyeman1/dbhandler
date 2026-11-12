@@ -12,22 +12,23 @@
 #ifndef DBFIELDMAINT_H
 #define DBFIELDMAINT_H
 
-#include <wx/wx.h>
-#include <wx/image.h>
-
 // begin wxGlade: ::dependencies
 // end wxGlade
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
+#define EDITSTYLES  1
+#define FIELDDSPLAY 2
+#define VALIDRULES  3
 
-class DBFieldMant: public wxDialog {
+class DBFieldMant: public wxDialog
+{
 public:
     // begin wxGlade: DBFieldMant::ids
     // end wxGlade
 
-    DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type);
 
 private:
 

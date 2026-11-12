@@ -9,6 +9,16 @@
 //  g++ main.cpp $(wx-config --libs) $(wx-config --cxxflags) -o MyApp Dialog1.cpp Frame1.cpp
 //
 
+#include <map>
+#include <vector>
+#include <tuple>
+#include <wx/wx.h>
+#include <wx/image.h>
+#include "database.h"
+#include "propertypagebase.h"
+#include "fieldstyles.h"
+#include "fielddisplay.h"
+#include "fieldvalidation.h"
 #include "dbfieldmaint.h"
 
 // begin wxGlade: ::extracode
@@ -16,42 +26,54 @@
 
 
 
-DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type):
+    wxDialog(parent, id, title)
 {
     // begin wxGlade: DBFieldMant::DBFieldMant
-    SetTitle(wxT("dialog"));
-    wxBoxSizer* sizer_1 = new wxBoxSizer(wxHORIZONTAL);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
-    wxBoxSizer* sizer_2 = new wxBoxSizer(wxVERTICAL);
-    sizer_1->Add(sizer_2, 0, wxEXPAND, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_3 = new wxBoxSizer(wxHORIZONTAL);
-    sizer_2->Add(sizer_3, 0, wxEXPAND, 0);
-    sizer_3->Add(0, 0, 0, 0, 0);
-    sizer_3->Add(5, 5, 0, wxEXPAND, 0);
-    wxBoxSizer* sizer_4 = new wxBoxSizer(wxVERTICAL);
-    sizer_3->Add(sizer_4, 1, wxEXPAND, 0);
-    m_close = new wxButton(this, wxID_ANY, wxT("Close"));
+    SetTitle(  title );
+    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_3 = new wxBoxSizer( wxHORIZONTAL );
+    switch( type )
+    {
+    case EDITSTYLES:
+//        sizer_3->Add( new FieldStyles( this, ) )
+        break;
+    case FIELDDSPLAY:
+//        sizer_3->Add( new DatabaseFieldDisplay( this, ) );
+        break;
+    case VALIDRULES:
+//        sizer_3->Add( FieldValidation( this, )
+        break;
+    }
+    sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
+    sizer_3->Add( 0, 0, 0, 0, 0 );
+    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+    auto sizer_4 = new wxBoxSizer( wxVERTICAL );
+    sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
+    m_close = new wxButton( this, wxID_ANY, _( "Close" ) );
     m_close->SetDefault();
-    sizer_4->Add(m_close, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    m_help = new wxButton(this, wxID_HELP, wxT("Help"));
-    sizer_4->Add(m_help, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    m_edit = new wxButton(this, wxID_ANY, wxT("Edit"));
-    sizer_4->Add(m_edit, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    m_new = new wxButton(this, wxID_ANY, wxT("New.."));
-    sizer_4->Add(m_new, 0, 0, 0);
-    sizer_4->Add(5, 5, 0, wxEXPAND, 0);
-    m_delete = new wxButton(this, wxID_ANY, wxT("Delete"));
-    sizer_4->Add(m_delete, 0, 0, 0);
-    sizer_2->Add(5, 5, 0, wxEXPAND, 0);
-    sizer_1->Add(5, 5, 0, wxEXPAND, 0);
+    sizer_4->Add( m_close, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_help = new wxButton( this, wxID_HELP, _( "Help" ) );
+    sizer_4->Add( m_help, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
+    sizer_4->Add( m_edit, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
+    sizer_4->Add( m_new, 0, 0, 0 );
+    sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_delete = new wxButton( this, wxID_ANY, _( "Delete" ) );
+    sizer_4->Add( m_delete, 0, 0, 0 );
+    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
     
-    SetSizer(sizer_1);
-    sizer_1->Fit(this);
+    SetSizer( sizer_1 );
+    sizer_1->Fit( this );
     Layout();
     // end wxGlade
 }
