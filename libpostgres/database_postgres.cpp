@@ -2738,3 +2738,44 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     PQclear( res );
     return result;
 }
+
+int PostgresDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
+    auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str() );
+    if( PQresultStatus( res ) != PGRES_TUPLES_OK )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    if( !result )
+    {
+        for( auto i = 0; i < PQntuples( res ); ++i )
+        {
+            std::wstring name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+            int styleType = atoi( PQgetvalue( res, i, 1 ) );
+            int seqn = atoi( PQgetvalue( res, i, 2 ) );
+            const char *temp = PQgetvalue( res, i, 3 );
+            std::wstring style;
+            if( temp )
+                style = m_pimpl->m_myconv.from_bytes( temp );
+            else
+                style = L"";
+            int flag = atoi( PQgetvalue( res, i, 4 ) );
+            temp = PQgetvalue( res, i, 5 );
+            std::wstring work;
+            if( temp )
+                work = m_pimpl->m_myconv.from_bytes( temp );
+            else
+                work = L"";
+            styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, work ) );
+        }
+    }
+    if( !result )
+    {
+        PQclear( res );
+    }
+    return result;
+}

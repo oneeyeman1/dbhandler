@@ -8089,3 +8089,9 @@ int SQLAnyDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options
     }*/
     return result;
 }
+
+int SQLAnyDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    return result;
+}

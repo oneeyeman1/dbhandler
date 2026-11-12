@@ -3270,3 +3270,10 @@ int MySQLDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options,
     }
     return result;
 }
+
+int MySQLDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
+    return result;
+}

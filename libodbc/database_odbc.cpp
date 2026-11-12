@@ -5105,14 +5105,14 @@ bool ODBCDatabase::IsTablePropertiesExist(const DatabaseTable *table, std::vecto
 
 int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::wstring &schemaName, const std::wstring &ownerName, const std::wstring &fieldName, TableField *field, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0, stringCase = 0, styleType = 0, seqn = 0;
+    int result = 0, stringCase = 0;
     double height = 0.0, width = 0.0;
     short justify = 0;
     SQLRETURN ret = SQL_SUCCESS;
     SQLHSTMT stmt = 0;
     SQLHDBC dbc = 0;
     std::wstring fieldFormat = L"";
-    SQLWCHAR commentField[254], label[254], heading[254], initial[254], mask[32], styleName[32], *styleStyle = nullptr, pattern[32], bitmap[1], edit[32];
+    SQLWCHAR commentField[254], label[254], heading[254], initial[254], mask[32], *styleStyle = nullptr, pattern[32], bitmap[1], edit[32];
     unsigned short labelAlignment = 0, headingAlignment = 0;
     std::unique_ptr<SQLWCHAR[]> table( new SQLWCHAR[schemaName.length() + tableName.length() + 3] ), owner( new SQLWCHAR[ownerName.length() + 2] ), fieldNameReq( new SQLWCHAR[fieldName.length() + 2] );
     memset( table.get(), '\0', schemaName.length() + tableName.length() + 3 );
@@ -5134,7 +5134,7 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     uc_to_str_cpy( fieldNameReq.get(), fieldName );
     SQLLEN cbSchemaName = SQL_NTS, cbTableName = SQL_NTS, cbFieldName = SQL_NTS, cbCommentField = SQL_NTS, cbLabelField = SQL_NTS, cbHeadingField = SQL_NTS;
     SQLLEN cbLabelAlignment = 0, cbHeadingAlignment = 0, cbJustify = 0, cbFormatName = SQL_NTS, cbFormat = SQL_NTS, cbFieldFormat = 0, cbError = SQL_NTS, cbFieldHeight = 0, cbFieldWidth = 0;
-    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbStyleStyle = SQL_NTS, cbSeqn = 0, cbPattern = SQL_NTS, cbBitmap = SQL_NTS, cbInitial = SQL_NTS, cbEdit = SQL_NTS;
+    SQLLEN cbStyleStyle = SQL_NTS, cbPattern = SQL_NTS, cbBitmap = SQL_NTS, cbInitial = SQL_NTS, cbEdit = SQL_NTS;
     SQLLEN cbFieldCase;
     SQLSMALLINT dataType, decimalDigits = 0, nullable;
     SQLULEN paramSize = 0;
@@ -5142,7 +5142,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     std::wstring query = L"SELECT abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
-    std::wstring query3 = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
     memset( qry.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry.get(), query );
@@ -5634,92 +5633,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
             GetErrorMessage( errorMsg, STMT_ERROR, stmt );
             result = 1;
         }
-    }
-    if( !result )
-    {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-        stmt = 0;
-    }
-    if( !result )
-    {
-        qry.reset( new SQLWCHAR[query3.length() + 2] );
-        memset( qry.get(), '\0', query3.length() + 2 );
-        uc_to_str_cpy( qry.get(), query3 );
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLPrepare( stmt, qry.get(), SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLExecute( stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 1, SQL_C_WCHAR, &styleName, 32, &cbStyleName );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 2, SQL_C_USHORT, &styleType, 0, &cbStyleType );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 3, SQL_C_USHORT, &seqn, 0, &cbSeqn );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    for( ret = SQLFetch( stmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt ) )
-    {
-        std::wstring name, style;
-        str_to_uc_cpy( name, styleName );
-        str_to_uc_cpy( style, styleStyle );
-    }
-    if( result == 1 )
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_ROLLBACK );
-    }
-    else
-    {
-        ret = SQLEndTran( SQL_HANDLE_DBC, dbc, SQL_COMMIT );
-    }
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, CONN_ERROR, dbc );
-        result = 1;
     }
     if( !result )
     {
@@ -10700,6 +10613,99 @@ int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &ui
             result = 1;
         }
         m_env = 0;
+    }
+    return result;
+}
+
+int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
+{
+    SQLWCHAR styleName[32];
+    int styleType = 0, seqn = 0;
+    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbSeqn = 0;
+    int result = 0;
+    std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &styleName, 32, &cbStyleName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 2, SQL_C_USHORT, &styleType, 0, &cbStyleType );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 3, SQL_C_USHORT, &seqn, 0, &cbSeqn );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+    {
+        std::wstring name, style;
+        str_to_uc_cpy( name, styleName );
+//        str_to_uc_cpy( style, styleStyle );
+    }
+    if( result == 1 )
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    }
+    else
+    {
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+    }
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        m_hstmt = 0;
     }
     return result;
 }

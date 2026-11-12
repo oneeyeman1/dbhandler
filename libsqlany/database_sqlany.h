@@ -43,6 +43,7 @@ public:
     virtual int GetTableFields(const std::wstring &catalog, const std::wstring &schema, const std::wstring &table, std::vector<std::wstring> &fields, std::vector<std::wstring> &errors) override;
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct SQLAnyImpl;
     SQLAnyImpl *sqlany_pimpl;

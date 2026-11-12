@@ -1146,7 +1146,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
     std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
-    std::wstring query3 = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res != SQLITE_OK )
     {
@@ -1340,56 +1339,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 GetErrorMessage( res, errorMsg );
                 break;
             }
-        }
-    }
-    if( !result )
-    {
-        res = sqlite3_finalize( stmt );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    if( !result )
-    {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str(), (int) query3.length(), &stmt, 0 );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    for( ; ; )
-    {
-        res = sqlite3_step( stmt );
-        if( res == SQLITE_ROW )
-        {
-            std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( stmt, 0 ) );
-            int styleType = sqlite3_column_int( stmt, 1 );
-            int seqn = sqlite3_column_int( stmt, 2 );
-            const char *temp = (const char *) sqlite3_column_text( stmt, 3 );
-            std::wstring style;
-            if( temp )
-                style = sqlite_pimpl->m_myconv.from_bytes( temp );
-            else
-                style = L"";
-            int flag = sqlite3_column_int( stmt, 4 );
-            temp = (const char *) sqlite3_column_text( stmt, 5 );
-            std::wstring work;
-            if( temp )
-                work = sqlite_pimpl->m_myconv.from_bytes( temp );
-            else
-                work = L"";
-            field->GetFieldProperties().m_styles.m_styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, work ) );
-        }
-        else if( res == SQLITE_DONE )
-            break;
-        else
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-            break;
         }
     }
     if( !result )
@@ -3357,5 +3306,62 @@ bool SQLiteDatabase::CreatePKOptions(const std::wstring &command, const std::wre
 int SQLiteDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
+    return result;
+}
+
+int SQLiteDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, 0 );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    if( !result )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
+            {
+                std::wstring name = sqlite_pimpl->m_myconv.from_bytes( (const char *) sqlite3_column_text( m_stmt, 0 ) );
+                int styleType = sqlite3_column_int( m_stmt, 1 );
+                int seqn = sqlite3_column_int( m_stmt, 2 );
+                const char *temp = (const char *) sqlite3_column_text( m_stmt, 3 );
+                std::wstring style;
+                if( temp )
+                    style = sqlite_pimpl->m_myconv.from_bytes( temp );
+                else
+                    style = L"";
+                int flag = sqlite3_column_int( m_stmt, 4 );
+                temp = (const char *) sqlite3_column_text( m_stmt, 5 );
+                std::wstring work;
+                if( temp )
+                    work = sqlite_pimpl->m_myconv.from_bytes( temp );
+                else
+                    work = L"";
+                styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, work ) );
+            }
+            else if( res == SQLITE_DONE )
+                break;
+            else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+                break;
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( m_stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
     return result;
 }
