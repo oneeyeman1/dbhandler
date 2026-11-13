@@ -10619,9 +10619,9 @@ int ODBCDatabase::ConnectionTest(const std::wstring &dsn, const std::wstring &ui
 
 int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
 {
-    SQLWCHAR styleName[32];
-    int styleType = 0, seqn = 0;
-    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbSeqn = 0;
+    SQLWCHAR styleName[32], work[33], styleStyle[255];
+    int styleType = 0, seqn = 0, flag = 0;
+    SQLLEN cbStyleName = SQL_NTS, cbStyleType = 0, cbSeqn = 0, cbFlag = 0, cbWork = SQL_NTS, cbStyleStyle = SQL_NTS;
     int result = 0;
     std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
@@ -10678,11 +10678,40 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
             result = 1;
         }
     }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, &styleStyle, 32, &cbStyleStyle );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 5, SQL_C_USHORT, &flag, 0, &cbFlag );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &work, 32, &cbWork );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
     for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
     {
-        std::wstring name, style;
+        std::wstring name, style, styleWork;
         str_to_uc_cpy( name, styleName );
-//        str_to_uc_cpy( style, styleStyle );
+        str_to_uc_cpy( styleWork, work );
+        str_to_uc_cpy( style, styleStyle );
+        styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, styleWork ) );
     }
     if( result == 1 )
     {
