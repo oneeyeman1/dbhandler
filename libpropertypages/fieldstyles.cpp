@@ -30,7 +30,7 @@ typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 // begin wxGlade: ::extracode
 // end wxGlade
 
-FieldStyles::FieldStyles(wxWindow* parent, const FieldEditStyle &styles) : PropertyPageBase( parent )
+FieldStyles::FieldStyles(wxWindow* parent, const FieldEditStyle &styles, Database *db) : PropertyPageBase( parent )
 {
     wxVector<wxBitmapBundle> images;
 #ifdef __WXMSW__
