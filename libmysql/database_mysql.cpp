@@ -698,7 +698,7 @@ int MySQLDatabase::GetTableListFromDb(std::vector<std::wstring> &errorMsg)
                     break;
                 }
 #else
-                if( mysql_stmt_bind_named_params( stmt, params, 6, names ) )
+                if( mysql_stmt_bind_named_param( stmt, params, 6, names ) )
                 {
                     std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_stmt_error( stmt ) );
                     errorMsg.push_back( err );
