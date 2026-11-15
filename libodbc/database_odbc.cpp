@@ -10698,7 +10698,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &work, 33, &cbWork );
+        ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &work, sizeof( 33 ), &cbWork );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
