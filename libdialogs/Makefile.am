@@ -66,7 +66,9 @@ libdialogs_la_SOURCES =  \
 	mysqlodbcsetup.cpp \
 	mysqlodbcsetup.h \
 	postgresodbcsetup.cpp \
-	postgresodbcsetup.h
+	postgresodbcsetup.h \
+	dbfieldmaint.cpp \
+	dbfieldmaint.h
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \
