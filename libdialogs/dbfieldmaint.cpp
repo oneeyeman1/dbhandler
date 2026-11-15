@@ -27,7 +27,7 @@
 
 
 
-DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type):
+DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type, Database *db, std::vector<std::wstring> &errorMsg):
     wxDialog(parent, id, title)
 {
     // begin wxGlade: DBFieldMant::DBFieldMant
@@ -41,7 +41,7 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     switch( type )
     {
     case EDITSTYLES:
-//        sizer_3->Add( new FieldStyles( this, ) )
+        sizer_3->Add( new FieldStyles( this, db, errorMsg ) );
         break;
     case FIELDDSPLAY:
 //        sizer_3->Add( new DatabaseFieldDisplay( this, ) );
@@ -55,7 +55,7 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_4 = new wxBoxSizer( wxVERTICAL );
     sizer_3->Add( sizer_4, 0, wxEXPAND, 0 );
-    m_close = new wxButton( this, wxID_ANY, _( "Close" ) );
+    m_close = new wxButton( this, wxID_CANCEL, _( "Close" ) );
     m_close->SetDefault();
     sizer_4->Add( m_close, 0, 0, 0 );
     sizer_4->Add( 5, 5, 0, wxEXPAND, 0 );

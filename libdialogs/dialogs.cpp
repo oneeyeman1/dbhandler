@@ -574,13 +574,14 @@ extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, co
     return res;
 }
 
-extern "C" WXEXPORT int DBFieldMaintFunc(wxWindow *parent, const wxString &title, int type)
+extern "C" WXEXPORT int DBFieldMaintFunc(wxWindow *parent, const wxString &title, int type, Database *db, std::vector<std::wstring> &errorMsg)
 {
     int res = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    DBFieldMant dlg( parent, wxID_ANY, title, type );
+    DBFieldMant dlg( parent, wxID_ANY, title, type, db, errorMsg );
     dlg.ShowModal();
     return res;
 }
+

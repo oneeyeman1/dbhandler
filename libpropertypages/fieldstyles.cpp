@@ -30,111 +30,117 @@ typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 // begin wxGlade: ::extracode
 // end wxGlade
 
-FieldStyles::FieldStyles(wxWindow* parent, const FieldEditStyle &styles, Database *db) : PropertyPageBase( parent )
+FieldStyles::FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstring> &errorMsg) : PropertyPageBase( parent )
 {
-    wxVector<wxBitmapBundle> images;
+    std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > styles;
+    int res = db->GetFieldStyles( styles, errorMsg );
+    if( !res )
+    {
+        wxVector<wxBitmapBundle> images;
 #ifdef __WXMSW__
-    HANDLE gs_wxMainThread = NULL;
-    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "propertypages", &gs_wxMainThread );
-    const void *imagesData[5] = { nullptr };
-    size_t sizeData[5] = { 0 };
-    if( !wxLoadUserResource( &imagesData[0], &sizeData[0], "image1", RT_RCDATA, inst ) )
-    {
-        auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-    }
-    else
-    {
-        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[0], wxSize( 16, 16 ) ) );
-    }
-    if( !wxLoadUserResource( &imagesData[1], &sizeData[1], "image2", RT_RCDATA, inst ) )
-    {
-        auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-    }
-    else
-    {
-        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[1], wxSize( 16, 16 ) ) );
-    }
-    if( !wxLoadUserResource( &imagesData[2], &sizeData[2], "image3", RT_RCDATA, inst ) )
-    {
-        auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-    }
-    else
-    {
-        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[2], wxSize( 16, 16 ) ) );
-    }
-    if( !wxLoadUserResource( &imagesData[3], &sizeData[3], "image4", RT_RCDATA, inst ) )
-    {
-        auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-    }
-    else
-    {
-        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[3], wxSize( 16, 16 ) ) );
-    }
-    if( !wxLoadUserResource( &imagesData[4], &sizeData[4], "image5", RT_RCDATA, inst ) )
-    {
-        auto err = ::GetLastError();
-        wxMessageBox( wxString::Format( "Error: %d!!", err ) );
-    }
-    else
-    {
-        images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[4], wxSize( 16, 16 ) ) );
-    }
+        HANDLE gs_wxMainThread = NULL;
+        const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "propertypages", &gs_wxMainThread );
+        const void *imagesData[5] = { nullptr };
+        size_t sizeData[5] = { 0 };
+        if( !wxLoadUserResource( &imagesData[0], &sizeData[0], "image1", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[0], wxSize( 16, 16 ) ) );
+        }
+        if( !wxLoadUserResource( &imagesData[1], &sizeData[1], "image2", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[1], wxSize( 16, 16 ) ) );
+        }
+        if( !wxLoadUserResource( &imagesData[2], &sizeData[2], "image3", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[2], wxSize( 16, 16 ) ) );
+        }
+        if( !wxLoadUserResource( &imagesData[3], &sizeData[3], "image4", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[3], wxSize( 16, 16 ) ) );
+        }
+        if( !wxLoadUserResource( &imagesData[4], &sizeData[4], "image5", RT_RCDATA, inst ) )
+        {
+            auto err = ::GetLastError();
+            wxMessageBox( wxString::Format( "Error: %d!!", err ) );
+        }
+        else
+        {
+            images.push_back( wxBitmapBundle::FromSVG( (const char *) imagesData[4], wxSize( 16, 16 ) ) );
+        }
 #elif __WXOSX__
-    images.push_back(  wxBitmapBundle::FromSVGResource( "image1", wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVGResource( "image2", wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVGResource( "image3", wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVGResource( "image4", wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVGResource( "image5", wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVGResource( "image1", wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVGResource( "image2", wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVGResource( "image3", wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVGResource( "image4", wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVGResource( "image5", wxSize( 16, 16 ) ) );
 #else
-    images.push_back(  wxBitmapBundle::FromSVG( image1, wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVG( image2, wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVG( image3, wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVG( image4, wxSize( 16, 16 ) ) );
-    images.push_back(  wxBitmapBundle::FromSVG( image5, wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVG( image1, wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVG( image2, wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVG( image3, wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVG( image4, wxSize( 16, 16 ) ) );
+        images.push_back(  wxBitmapBundle::FromSVG( image5, wxSize( 16, 16 ) ) );
 #endif
     // begin wxGlade: MyDialog::MyDialog
-    auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
-    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto sizer_2 = new wxBoxSizer( wxVERTICAL );
-    sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
-    sizer_2->Add( grid_sizer_1, 1, wxEXPAND, 0 );
-    m_label1 = new wxStaticText(this, wxID_ANY, _( "Style Name:" ) );
-    grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    grid_sizer_1->Add( 5, 5, 0, 0, 0 );
-    m_styles = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
-    m_styles->InsertColumn( 0, "Name" );
-    auto i = 0;
-    for( auto &style : styles.m_styles )
-    {
-        long item = m_styles->InsertItem( i, style.first );
-        if( item != wxNOT_FOUND )
-            m_styles->SetItemPtrData( item, (wxUIntPtr) &style.second );
-        ++i;
-    }
-    m_styles->SetSmallImages( images );
-    m_styles->SetColumnWidth( 0, wxLIST_AUTOSIZE );
-    grid_sizer_1->Add( m_styles, 0, 0, 0 );
-    auto sizer_3 = new wxBoxSizer(wxVERTICAL);
-    grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
-    m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
-    sizer_3->Add( m_edit, 0, 0, 0 );
-    sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
-    m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
-    sizer_3->Add( m_new, 0, 0, 0 );
-    sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
-    sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
+        sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto sizer_2 = new wxBoxSizer( wxVERTICAL );
+        sizer_1->Add( sizer_2, 0, wxEXPAND, 0 );
+        sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+        auto grid_sizer_1 = new wxFlexGridSizer( 2, 2, 5, 5 );
+        sizer_2->Add( grid_sizer_1, 1, wxEXPAND, 0 );
+        m_label1 = new wxStaticText(this, wxID_ANY, _( "Style Name:" ) );
+        grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
+        grid_sizer_1->Add( 5, 5, 0, 0, 0 );
+        m_styles = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT | wxLC_SINGLE_SEL | wxLC_NO_HEADER );
+        m_styles->InsertColumn( 0, "Name" );
+        auto i = 0;
+        for( auto &style : styles )
+        {
+            long item = m_styles->InsertItem( i, style.first );
+            if( item != wxNOT_FOUND )
+                m_styles->SetItemPtrData( item, (wxUIntPtr) &style.second );
+            ++i;
+        }
+        m_styles->SetSmallImages( images );
+        m_styles->SetColumnWidth( 0, wxLIST_AUTOSIZE );
+        grid_sizer_1->Add( m_styles, 0, 0, 0 );
+        auto sizer_3 = new wxBoxSizer(wxVERTICAL);
+        grid_sizer_1->Add( sizer_3, 0, wxEXPAND, 0 );
+        m_edit = new wxButton( this, wxID_ANY, _( "Edit" ) );
+        sizer_3->Add( m_edit, 0, 0, 0 );
+        sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
+        m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
+        sizer_3->Add( m_new, 0, 0, 0 );
+        sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
+        sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 
-    SetSizer( sizer_1 );
-    sizer_1->Fit( this );
+        SetSizer( sizer_1 );
+        sizer_1->Fit( this );
     // end wxGlade
-    m_new->Bind( wxEVT_BUTTON, &FieldStyles::OnNew, this );
-    m_styles->Bind( wxEVT_LIST_ITEM_SELECTED, &FieldStyles::OnChanged, this );
+        m_new->Bind( wxEVT_BUTTON, &FieldStyles::OnNew, this );
+        m_styles->Bind( wxEVT_LIST_ITEM_SELECTED, &FieldStyles::OnChanged, this );
+        m_initialized = true;
+    }
 }
 
 void FieldStyles::OnNew(wxCommandEvent &WXUNUSED(event))

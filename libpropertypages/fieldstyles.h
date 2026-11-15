@@ -24,10 +24,12 @@ class WXEXPORT FieldStyles: public PropertyPageBase
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
-    FieldStyles(wxWindow* parent, const FieldEditStyle &styles, Database *db);
+    FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstring> &errorMsg);
     wxListCtrl *GetStylesCtrl() const { return m_styles; }
+    bool IsInitialized() const { return m_initialized; }
 private:
     void OnNew(wxCommandEvent &event);
+    bool m_initialized = false;
 protected:
     void OnChanged(wxCommandEvent &event);
     // begin wxGlade: MyDialog::attributes

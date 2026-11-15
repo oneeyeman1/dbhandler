@@ -28,7 +28,7 @@ public:
     // begin wxGlade: DBFieldMant::ids
     // end wxGlade
 
-    DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type);
+    DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type, Database *db, std::vector<std::wstring> &errorMsg);
 
 private:
 
