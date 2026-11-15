@@ -10653,7 +10653,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &styleName, 32, &cbStyleName );
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &styleName, sizeof( styleName ), &cbStyleName );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -10680,7 +10680,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, &styleStyle, 32, &cbStyleStyle );
+        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, &styleStyle, sizeof( styleStyle ), &cbStyleStyle );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -10698,7 +10698,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &work, 32, &cbWork );
+        ret = SQLBindCol( m_hstmt, 6, SQL_C_WCHAR, &work, 33, &cbWork );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
