@@ -24,6 +24,7 @@ ODBCCredentials::ODBCCredentials(wxWindow *parent, wxWindowID id, const wxString
     set_properties();
     do_layout();
     // end wxGlade
+    dynamic_cast<wxButton *>( FindWindowById( wxID_OK, this ) )->SetDefault();
 }
 
 void ODBCCredentials::set_properties()
