@@ -3365,3 +3365,4 @@ int SQLiteDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::share
     }
     return result;
 }
+
