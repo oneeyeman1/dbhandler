@@ -119,6 +119,8 @@ FieldStyles::FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstrin
             long item = m_styles->InsertItem( i, style.first );
             if( item != wxNOT_FOUND )
                 m_styles->SetItemPtrData( item, (wxUIntPtr) &style.second );
+//            if( std::get<0>( style.second.at( 0 ).get() ) == 90 )
+//                m_styles->SetItemImage( item, 0 );
             ++i;
         }
         m_styles->SetSmallImages( images );
