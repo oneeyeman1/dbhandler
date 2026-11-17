@@ -30,7 +30,7 @@ typedef int (*NEWEDITSTYLE)(wxWindow *, bool );
 // begin wxGlade: ::extracode
 // end wxGlade
 
-FieldStyles::FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstring> &errorMsg) : PropertyPageBase( parent )
+FieldStyles::FieldStyles(wxWindow* parent, bool isInDialog, Database *db, std::vector<std::wstring> &errorMsg) : PropertyPageBase( parent )
 {
     std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > styles;
     int res = db->GetFieldStyles( styles, errorMsg );
@@ -133,6 +133,11 @@ FieldStyles::FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstrin
         sizer_3->Add( 5, 5, 0, wxEXPAND, 0 );
         m_new = new wxButton( this, wxID_ANY, _( "New..." ) );
         sizer_3->Add( m_new, 0, 0, 0 );
+        if( isInDialog )
+        {
+            m_edit->Hide();
+            m_new->Hide();
+        }
         sizer_2->Add( 5, 5, 0, wxEXPAND, 0 );
         sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
 

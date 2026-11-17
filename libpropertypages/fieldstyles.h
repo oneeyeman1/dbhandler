@@ -24,7 +24,7 @@ class WXEXPORT FieldStyles: public PropertyPageBase
 public:
     // begin wxGlade: MyDialog::ids
     // end wxGlade
-    FieldStyles(wxWindow* parent, Database *db, std::vector<std::wstring> &errorMsg);
+    FieldStyles(wxWindow* parent, bool isInDialog, Database *db, std::vector<std::wstring> &errorMsg);
     wxListCtrl *GetStylesCtrl() const { return m_styles; }
     bool IsInitialized() const { return m_initialized; }
 private:

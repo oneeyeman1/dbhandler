@@ -41,7 +41,7 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     switch( type )
     {
     case EDITSTYLES:
-        sizer_3->Add( new FieldStyles( this, db, errorMsg ) );
+        sizer_3->Add( new FieldStyles( this, true, db, errorMsg ) );
         break;
     case FIELDDSPLAY:
 //        sizer_3->Add( new DatabaseFieldDisplay( this, ) );
