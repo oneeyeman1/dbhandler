@@ -1044,13 +1044,13 @@ int ODBCDatabase::CreateSystemObjectsAndGetDatabaseInfo(std::vector<std::wstring
     std::vector<std::wstring> queries, queries2, queries3;
     if( pimpl.m_subtype == L"Microsoft SQL Server" ) // MS SQL SERVER
     {
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE abcatcol(abc_tnam nvarchar(129) NOT NULL, abc_tid integer, abc_ownr nvarchar(129) NOT NULL, abc_cnam nvarchar(129) NOT NULL, abc_cid smallint, abc_labl varchar(254), abc_lpos smallint, abc_hdr varchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask varchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn varchar(31), abc_bmap char(1), abc_init varchar(254), abc_cmnt nvarchar(254), abc_edit varchar(31), abc_tag varchar(254) );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatcol' AND xtype='U') CREATE TABLE abcatcol(abc_tnam nvarchar(129) NOT NULL, abc_tid integer, abc_ownr nvarchar(129) NOT NULL, abc_cnam nvarchar(129) NOT NULL, abc_cid smallint, abc_labl nvarchar(254), abc_lpos smallint, abc_hdr nvarchar(254), abc_hpos smallint, abc_itfy smallint, abc_mask nvarchar(31), abc_case smallint, abc_hght smallint, abc_wdth smallint, abc_ptrn nvarchar(31), abc_bmap char(1), abc_init nvarchar(254), abc_cmnt nvarchar(254), abc_edit nvarchar(31), abc_tag nvarchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcatc_x' AND object_id = OBJECT_ID('abcatcol') ) CREATE UNIQUE INDEX abcatc_x ON abcatcol( abc_tnam ASC, abc_ownr ASC, abc_cnam ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE abcatedt(abe_name nvarchar(30) NOT NULL, abe_edit nvarchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work varchar(32) );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatedt' AND xtype='U') CREATE TABLE abcatedt(abe_name nvarchar(30) NOT NULL, abe_edit nvarchar(254), abe_type smallint, abe_cntr integer, abe_seqn smallint NOT NULL, abe_flag integer, abe_work nvarchar(32) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcate_x' AND object_id = OBJECT_ID('abcatedt') ) CREATE UNIQUE INDEX abcate_x ON abcatedt( abe_name ASC, abe_seqn ASC ) WITH (IGNORE_DUP_KEY = ON);" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatfmt' AND xtype='U') CREATE TABLE abcatfmt(abf_name nvarchar(30) NOT NULL, abf_frmt nvarchar(254), abf_type smallint, abf_cntr integer );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcatf_x' AND object_id = OBJECT_ID('abcatfmt') ) CREATE UNIQUE INDEX abcatf_x ON abcatfmt( abf_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
-        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE abcattbl(abt_os tinyint, abt_tnam nchar(129) NOT NULL, abt_tid integer, abt_ownr nchar(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl nchar(1), abd_funl nchar(1), abd_fstr smallint, abd_fchr smallint, abd_fptc smallint, abd_ffce nchar(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl nchar(1), abh_funl nchar(1), abh_fstr smallint, abh_fchr smallint, abh_fptc smallint, abh_ffce nchar(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl nchar(1), abl_funl nchar(1), abl_fstr smallint, abl_fchr smallint, abl_fptc smallint, abl_ffce nchar(18), abt_cmnt nchar(254) );" );
+        queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcattbl' AND xtype='U') CREATE TABLE abcattbl(abt_os tinyint, abt_tnam nvarchar(129) NOT NULL, abt_tid integer, abt_ownr nvarchar(129) NOT NULL, abd_fhgt smallint, abd_fwgt smallint, abd_fitl nchar(1), abd_funl nchar(1), abd_fstr smallint, abd_fchr smallint, abd_fptc smallint, abd_ffce nchar(18), abh_fhgt smallint, abh_fwgt smallint, abh_fitl nchar(1), abh_funl nchar(1), abh_fstr smallint, abh_fchr smallint, abh_fptc smallint, abh_ffce nchar(18), abl_fhgt smallint, abl_fwgt smallint, abl_fitl nchar(1), abl_funl nchar(1), abl_fstr smallint, abl_fchr smallint, abl_fptc smallint, abl_ffce nchar(18), abt_cmnt nvarchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcatt_x' AND object_id = OBJECT_ID('abcattbl')) CREATE UNIQUE INDEX abcatt_x ON abcattbl( abt_os ASC, abt_tnam ASC, abt_ownr ASC );");
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='abcatvld' AND xtype='U') CREATE TABLE abcatvld(abv_name nvarchar(30) NOT NULL, abv_vald nvarchar(254), abv_type smallint, abv_cntr integer, abv_msg nvarchar(254) );" );
         queries.push_back( L"IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'abcatv_x' AND object_id = OBJECT_ID('abcatvld') ) CREATE UNIQUE INDEX abcatv_x ON abcatvld( abv_name ASC ) WITH (IGNORE_DUP_KEY = ON);" );
@@ -10689,7 +10689,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 5, SQL_C_USHORT, &flag, 0, &cbFlag );
+        ret = SQLBindCol( m_hstmt, 5, SQL_C_SLONG, &flag, 0, &cbFlag );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -10712,6 +10712,11 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
         str_to_uc_cpy( styleWork, work );
         str_to_uc_cpy( style, styleStyle );
         styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, styleWork ) );
+    }
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
     }
     if( result == 1 )
     {
