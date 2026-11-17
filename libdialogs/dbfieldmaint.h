@@ -29,9 +29,10 @@ public:
     // end wxGlade
 
     DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title, int type, Database *db, std::vector<std::wstring> &errorMsg);
-
+    bool IsInitialized() const { return m_initialized; }
 private:
-
+    bool m_initialized = false;
+    FieldStyles *m_styles = nullptr;
 protected:
     // begin wxGlade: DBFieldMant::attributes
     wxBoxSizer* sizer_3;

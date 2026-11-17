@@ -581,7 +581,13 @@ extern "C" WXEXPORT int DBFieldMaintFunc(wxWindow *parent, const wxString &title
     wxTheApp->SetTopWindow( parent );
 #endif
     DBFieldMant dlg( parent, wxID_ANY, title, type, db, errorMsg );
-    dlg.ShowModal();
+    if( dlg.IsInitialized() )
+        dlg.ShowModal();
+    else
+    {
+        for( auto error : errorMsg )
+            wxMessageBox( error );
+    }
     return res;
 }
 
