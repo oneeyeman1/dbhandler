@@ -119,8 +119,18 @@ FieldStyles::FieldStyles(wxWindow* parent, bool isInDialog, Database *db, std::v
             long item = m_styles->InsertItem( i, style.first );
             if( item != wxNOT_FOUND )
                 m_styles->SetItemPtrData( item, (wxUIntPtr) &style.second );
-//            if( std::get<0>( style.second.at( 0 ).get() ) == 90 )
-//                m_styles->SetItemImage( item, 0 );
+            switch( std::get<0>( *style.second.at( 0 ).get() ) )
+            {
+            case 90:
+                m_styles->SetItemImage( item, 0 );
+                break;
+            case 85:
+                m_styles->SetItemImage( item, 1 );
+                break;
+            case 87:
+                m_styles->SetItemImage( item, 2 );
+                break;
+            }
             ++i;
         }
         m_styles->SetSmallImages( images );
