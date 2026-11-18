@@ -5141,7 +5141,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
     SQLWCHAR formatNameField[40], formatField[260], error[256];
     std::wstring query = L"SELECT abc_labl, abc_lpos, abc_hdr, abc_hpos, abc_itfy, abc_mask, abc_case, abc_hght, abc_wdth, abc_ptrn, abc_bmap, abc_init, abc_cmnt, abc_edit FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
-    std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
     memset( qry.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry.get(), query );
@@ -5531,102 +5530,6 @@ int ODBCDatabase::GetFieldProperties(const std::wstring &tableName, const std::w
                 field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( formatName, format ) );
             formatName = L"";
             format = L"";
-        }
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-        stmt = 0;
-    }
-    if( !result )
-    {
-        qry.reset( new SQLWCHAR[query2.length() + 2] );
-        memset( qry.get(), '\0', query2.length() + 2 );
-        uc_to_str_cpy( qry.get(), query2 );
-        ret = SQLAllocHandle( SQL_HANDLE_STMT, dbc, &stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, CONN_ERROR, dbc );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLPrepare( stmt, qry.get(), SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        field->GetFieldProperties().m_validations.m_validators[type].clear();
-        ret = SQLBindParameter( stmt, 1, SQL_PARAM_INPUT, SQL_C_SSHORT, SQL_TINYINT, 0, 0, &type, 0, &cbTableName );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLExecute( stmt );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 1, SQL_C_WCHAR, &formatNameField, 30, &cbFormatName );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 2, SQL_C_WCHAR, &formatField, 254, &cbFormat );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        ret = SQLBindCol( stmt, 3, SQL_C_WCHAR, &error, 254, &cbError );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-        {
-            GetErrorMessage( errorMsg, STMT_ERROR, stmt );
-            result = 1;
-        }
-    }
-    if( !result )
-    {
-        for( ret = SQLFetch( stmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( stmt ) )
-        {
-            std::wstring formatName, format, errorMessage;
-            str_to_uc_cpy( formatName, formatNameField );
-            str_to_uc_cpy( format, formatField );
-            str_to_uc_cpy( errorMessage, error  );
-            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( formatName, format, errorMessage ) ) );
-            formatName = L"";
-            format = L"";
-            errorMessage = L"";
         }
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
         {
@@ -10730,6 +10633,107 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     {
         GetErrorMessage( errorMsg, CONN_ERROR );
         result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        m_hstmt = 0;
+    }
+    return result;
+}
+
+int ODBCDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, type = 0;
+    SQLLEN cbType = 0, cbValidatorName = SQL_NTS, cbValidatorCondition = SQL_NTS, cbError = SQL_NTS;
+    SQLWCHAR validatorName[30], validatorCondition[254], error[254];
+    std::wstring query = L"SELECT abv_type, abv_name, abv_vald, abv_msg FROM abcatvld";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLPrepare( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLExecute( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_SSHORT, &type, 0, &cbType );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &validatorName, sizeof( validatorName ), &cbValidatorName );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &validatorCondition, sizeof( validatorCondition ), &cbValidatorCondition );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, &error, 254, &cbError );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        for( ret = SQLFetch( m_hstmt ); ( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO ) && ret != SQL_NO_DATA; ret = SQLFetch( m_hstmt ) )
+        {
+            std::wstring validName, condition, errorMessage;
+            str_to_uc_cpy( validName, validatorName );
+            str_to_uc_cpy( condition, validatorCondition );
+            str_to_uc_cpy( errorMessage, error  );
+            validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( validName, condition, errorMessage ) ) );
+            validName = L"";
+            condition = L"";
+            errorMessage = L"";
+        }
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
     }
     if( !result )
     {

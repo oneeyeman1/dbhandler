@@ -1600,28 +1600,6 @@ int PostgresDatabase::GetFieldProperties(const std::wstring &tableName, const st
         }
     }
     PQclear( res );
-    field->GetFieldProperties().m_validations.m_validators[type].clear();
-    res = PQexecParams( m_db, "SELECT * FROM abcatvld WHERE abv_type = $1::int4", 1, nullptr, paramValues, paramLengths, paramFormats, 1 );
-    if (PQresultStatus(res) != PGRES_TUPLES_OK)
-    {
-        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
-        errorMsg.push_back( L"Error executing query: " + err );
-        result = 1;
-    }
-    else
-    {
-        for( int i = 0; i < PQntuples( res ); i++ )
-        {
-            auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
-            auto condition = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
-            auto error = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) );
-            field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( name, condition, error ) ) );
-        }
-    }
-    if( !result )
-    {
-        PQclear( res );
-    }
     return result;
 }
 
@@ -2771,6 +2749,34 @@ int PostgresDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::sha
             else
                 work = L"";
             styles[name].emplace_back( std::make_shared<EditStyleSet>( styleType, seqn, style, flag, work ) );
+        }
+    }
+    if( !result )
+    {
+        PQclear( res );
+    }
+    return result;
+}
+
+int PostgresDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    auto res = PQexec( m_db, "SELECT abv_name, abv_vald, abv_type, abv_msg FROM abcatvld" );
+    if (PQresultStatus(res) != PGRES_TUPLES_OK)
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( PQerrorMessage( m_db ) );
+        errorMsg.push_back( L"Error executing query: " + err );
+        result = 1;
+    }
+    else
+    {
+        for( int i = 0; i < PQntuples( res ); i++ )
+        {
+            auto name = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) );
+            auto condition = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
+            auto type = atoi( PQgetvalue( res, i, 2) );
+            auto error = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 3) );
+            validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( name, condition, error ) ) );
         }
     }
     if( !result )

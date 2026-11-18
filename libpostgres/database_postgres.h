@@ -41,6 +41,7 @@ public:
     virtual int EditPrimaryKey(const std::wstring &catalogName, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg);
     virtual int GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errors) override;
     virtual int GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct PostgresImpl;
     PostgresImpl *m_pimpl;

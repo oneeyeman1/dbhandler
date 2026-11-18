@@ -3273,7 +3273,233 @@ int MySQLDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options,
 
 int MySQLDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg)
 {
-    int result = 0;
+    int result = 0, type, seqn, flag;
+    char styleName[30], editValue[254], work[32];
+    unsigned long len[6];
+    MYSQL_STMT *stmt;
+    MYSQL_BIND results[6];
+#if MYSQL_VERSION_ID > 80001
+    bool is_null[6] = {false, false, false, false, false, false}, errors[6] = { false, false, false, false, false, false };
+#else
+    char is_null[6], errors[6];
+#endif
+    MYSQL_RES *meta;
     std::wstring query = L"SELECT abe_name, abe_type, abe_seqn, abe_edit, abe_flag, abe_work FROM abcatedt";
+    stmt = mysql_stmt_init( m_db );
+    if( !stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_execute( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        meta = mysql_stmt_result_metadata( stmt );
+        if( !meta )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        memset( results, 0, sizeof( results ) );
+        results[0].buffer_type = MYSQL_TYPE_STRING;
+        results[0].buffer = (char *)styleName;
+        results[0].buffer_length = 30;
+        results[0].is_null = &is_null[0];
+        results[0].length = &len[0];
+        results[0].error = &errors[0];
+        results[1].buffer_type = MYSQL_TYPE_LONG;
+        results[1].buffer = (char *)&type;
+        results[1].is_null = &is_null[1];
+        results[1].length = &len[1];
+        results[1].error = &errors[1];
+        results[2].buffer_type = MYSQL_TYPE_LONG;
+        results[2].buffer = (char *)&seqn;
+        results[2].is_null = &is_null[2];
+        results[2].length = &len[2];
+        results[2].error = &errors[2];
+        results[3].buffer_type = MYSQL_TYPE_STRING;
+        results[3].buffer = (char *)editValue;
+        results[3].buffer_length = 254;
+        results[3].is_null = &is_null[3];
+        results[3].length = &len[3];
+        results[3].error = &errors[3];
+        results[4].buffer_type = MYSQL_TYPE_LONG;
+        results[4].buffer = (char *)&flag;
+        results[4].buffer_length = 0;
+        results[4].is_null = &is_null[4];
+        results[4].length = &len[4];
+        results[4].error = &errors[4];
+        results[5].buffer_type = MYSQL_TYPE_STRING;
+        results[5].buffer = (char *)work;
+        results[5].buffer_length = 32;
+        results[5].is_null = &is_null[5];
+        results[5].length = &len[5];
+        results[5].error = &errors[5];
+        if( mysql_stmt_bind_result( stmt, results ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_store_result( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( !mysql_stmt_fetch( stmt ) )
+        {
+
+        }
+    }
+    if( !result )
+    {
+        mysql_free_result( meta );
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    return result;
+}
+
+int MySQLDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0, type = 0;
+    char validationName[30], validationRule[254], validationError[254];
+    unsigned long len[3];
+    MYSQL_STMT *stmt;
+    MYSQL_BIND results[4];
+#if MYSQL_VERSION_ID > 80001
+    bool is_null[4] = {false, false, false, false}, errors[4] = { false, false, false, false };
+#else
+    char is_null[4], errors[4];
+#endif
+    MYSQL_RES *meta;
+    std::wstring query = L"SELECT abv_type, abv_name, abv_vald, abv_msg FROM abcatvld";
+    stmt = mysql_stmt_init( m_db );
+    if( !stmt )
+    {
+        std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+        errorMsg.push_back( err );
+        result = 1;
+    }
+    if( !result )
+    {
+        if( mysql_stmt_prepare( stmt, m_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), query.length() ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_execute( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        meta = mysql_stmt_result_metadata( stmt );
+        if( !meta )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        memset( results, 0, sizeof( results ) );
+        results[0].buffer_type = MYSQL_TYPE_LONG;
+        results[0].buffer = (char *)&type;
+        results[0].is_null = &is_null[0];
+        results[0].length = 0;
+        results[0].error = &errors[0];
+        results[1].buffer_type = MYSQL_TYPE_STRING;
+        results[1].buffer = (char *)validationName;
+        results[1].buffer_length = 30;
+        results[1].is_null = &is_null[1];
+        results[1].length = &len[0];
+        results[1].error = &errors[1];
+        results[2].buffer_type = MYSQL_TYPE_STRING;
+        results[2].buffer = (char *)validationRule;
+        results[2].buffer_length = 254;
+        results[2].is_null = &is_null[2];
+        results[2].length = &len[1];
+        results[2].error = &errors[2];
+        results[3].buffer_type = MYSQL_TYPE_STRING;
+        results[3].buffer = (char *)validationError;
+        results[3].buffer_length = 254;
+        results[3].is_null = &is_null[3];
+        results[3].length = &len[2];
+        results[3].error = &errors[3];
+        if( mysql_stmt_bind_result( stmt, results ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        if( mysql_stmt_store_result( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        while( !mysql_stmt_fetch( stmt ) )
+        {
+
+        }
+    }
+    if( !result )
+    {
+        mysql_free_result( meta );
+        if( mysql_stmt_close( stmt ) )
+        {
+            std::wstring err = m_pimpl->m_myconv.from_bytes( mysql_error( m_db ) );
+            errorMsg.push_back( err );
+            result = 1;
+        }
+    }
     return result;
 }

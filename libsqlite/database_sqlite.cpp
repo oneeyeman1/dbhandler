@@ -1145,7 +1145,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
     int labelAlignment = 0;
     std::wstring query = L"SELECT * FROM abcatcol WHERE abc_tnam = ? AND abc_ownr = ? AND abc_cnam = ?;";
     std::wstring query1 = L"SELECT * FROM abcatfmt WHERE abf_type = ?";
-    std::wstring query2 = L"SELECT abv_name, abv_vald, abv_msg FROM abcatvld WHERE abv_type = ?";
     int res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &stmt, 0 );
     if( res != SQLITE_OK )
     {
@@ -1280,56 +1279,6 @@ int SQLiteDatabase::GetFieldProperties(const std::wstring &tableName, const std:
                 const char *format = (const char *) sqlite3_column_text( stmt, 1 );
                 const char *formatName = (const char *) sqlite3_column_text( stmt, 0 );
                 field->GetFieldProperties().m_display.m_formats[type].push_back( std::make_pair( sqlite_pimpl->m_myconv.from_bytes( formatName ), sqlite_pimpl->m_myconv.from_bytes( format ) ) );
-            }
-            else if( res == SQLITE_DONE )
-                break;
-            else if( res != SQLITE_DONE )
-            {
-                result = 1;
-                GetErrorMessage( res, errorMsg );
-                break;
-            }
-        }
-    }
-    if( !result )
-    {
-        res = sqlite3_finalize( stmt );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    if( !result )
-    {
-        res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str(), (int) query2.length(), &stmt, 0 );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    if( !result )
-    {
-        field->GetFieldProperties().m_validations.m_validators[type].clear();
-        res = sqlite3_bind_int( stmt, 1, type );
-        if( res != SQLITE_OK )
-        {
-            result = 1;
-            GetErrorMessage( res, errorMsg );
-        }
-    }
-    if( !result )
-    {
-        for( ; ; )
-        {
-            res = sqlite3_step( stmt );
-            if( res == SQLITE_ROW )
-            {
-                const char *condition = (const char *) sqlite3_column_text( stmt, 1 );
-                const char *name = (const char *) sqlite3_column_text( stmt, 0 );
-                const char *error = (const char *) sqlite3_column_text( stmt, 2 );
-                field->GetFieldProperties().m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
             }
             else if( res == SQLITE_DONE )
                 break;
@@ -3347,6 +3296,51 @@ int SQLiteDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::share
             else if( res == SQLITE_DONE )
                 break;
             else
+            {
+                result = 1;
+                GetErrorMessage( res, errorMsg );
+                break;
+            }
+        }
+    }
+    if( !result )
+    {
+        res = sqlite3_finalize( m_stmt );
+        if( res != SQLITE_OK )
+        {
+            result = 1;
+            GetErrorMessage( res, errorMsg );
+        }
+    }
+    return result;
+}
+
+int SQLiteDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    std::wstring query = L"SELECT abv_type, abv_name, abv_vald, abv_msg FROM abcatvld";
+    auto res = sqlite3_prepare_v2( m_db, sqlite_pimpl->m_myconv.to_bytes( query.c_str() ).c_str(), (int) query.length(), &m_stmt, 0 );
+    if( res != SQLITE_OK )
+    {
+        result = 1;
+        GetErrorMessage( res, errorMsg );
+    }
+    if( !result )
+    {
+        for( ; ; )
+        {
+            res = sqlite3_step( m_stmt );
+            if( res == SQLITE_ROW )
+            {
+                int type = sqlite3_column_int( m_stmt, 0 );
+                const char *name = (const char *) sqlite3_column_text( m_stmt, 1 );
+                const char *condition = (const char *) sqlite3_column_text( m_stmt, 2 );
+                const char *error = (const char *) sqlite3_column_text( m_stmt, 3 );
+                validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
+            }
+            else if( res == SQLITE_DONE )
+                break;
+            else if( res != SQLITE_DONE )
             {
                 result = 1;
                 GetErrorMessage( res, errorMsg );
