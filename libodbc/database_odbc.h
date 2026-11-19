@@ -70,7 +70,7 @@ public:
     int SaveDSNData(const std::wstring &dsn, const std::map<std::wstring, std::wstring> &values, std::vector<std::wstring> &errorMsg);
     int ConnectionTest(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password, std::vector<std::wstring> &errorMsg);
     virtual int GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &m_styles, std::vector<std::wstring> &errors) override;
-    virtual int GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg) override;
+    virtual int GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg) override;
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;

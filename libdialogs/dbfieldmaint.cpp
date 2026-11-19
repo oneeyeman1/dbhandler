@@ -49,7 +49,9 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
 //        sizer_3->Add( new DatabaseFieldDisplay( this, ) );
         break;
     case VALIDRULES:
-//        sizer_3->Add( FieldValidation( this, )
+        m_validation = new FieldValidation( this, true, db, "", errorMsg );
+        if( m_validation->IsInitialized() )
+            sizer_3->Add( m_validation );
         break;
     }
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );

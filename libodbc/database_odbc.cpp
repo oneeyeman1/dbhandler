@@ -10647,7 +10647,7 @@ int ODBCDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared_
     return result;
 }
 
-int ODBCDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, type = 0;
     SQLLEN cbType = 0, cbValidatorName = SQL_NTS, cbValidatorCondition = SQL_NTS, cbError = SQL_NTS;
@@ -10724,7 +10724,7 @@ int ODBCDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<Va
             str_to_uc_cpy( validName, validatorName );
             str_to_uc_cpy( condition, validatorCondition );
             str_to_uc_cpy( errorMessage, error  );
-            validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( validName, condition, errorMessage ) ) );
+            validators.emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( type, validName, condition, errorMessage ) ) );
             validName = L"";
             condition = L"";
             errorMessage = L"";

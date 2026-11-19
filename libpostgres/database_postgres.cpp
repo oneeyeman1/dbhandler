@@ -2758,7 +2758,7 @@ int PostgresDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::sha
     return result;
 }
 
-int PostgresDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+int PostgresDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     auto res = PQexec( m_db, "SELECT abv_name, abv_vald, abv_type, abv_msg FROM abcatvld" );
@@ -2776,7 +2776,7 @@ int PostgresDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_pt
             auto condition = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) );
             auto type = atoi( PQgetvalue( res, i, 2) );
             auto error = m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 3) );
-            validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( name, condition, error ) ) );
+            validators.emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( type, name, condition, error ) ) );
         }
     }
     if( !result )

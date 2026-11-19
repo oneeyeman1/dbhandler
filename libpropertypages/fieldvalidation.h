@@ -25,14 +25,17 @@ public:
     // begin wxGlade: FieldValidation::ids
     // end wxGlade
 
-    FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType);
+    FieldValidation(wxWindow* parent, bool isDialog, Database *db, const wxString &fieldType, std::vector<std::wstring> &errorMsg);
     wxListBox *GetValidationCtrl() const { return m_rules; }
     wxComboBox *GetInitialCtrl() const { return m_initValue; }
+    bool IsInitialized() const { return m_initialized; }
 
 private:
     Database *m_db;
     wxString m_fieldType;
-    FieldTableValidationProperties m_validations;
+    std::vector<std::shared_ptr<ValidatorSet> > m_validations;
+    bool m_initialized = false;
+    int m_type = 0;
 protected:
     // begin wxGlade: FieldValidation::attributes
     wxListBox* m_rules;

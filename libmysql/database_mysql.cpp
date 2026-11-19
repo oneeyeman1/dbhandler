@@ -3393,7 +3393,7 @@ int MySQLDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::shared
     return result;
 }
 
-int MySQLDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg)
 {
     int result = 0, type = 0;
     char validationName[30], validationRule[254], validationError[254];

@@ -10,6 +10,8 @@
 //
 
 #include <wx/wx.h>
+#include <map>
+#include <vector>
 #include <memory>
 #include "wx/dynlib.h"
 #include "wx/stdpaths.h"
@@ -21,13 +23,15 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<std::wstring, std::wstring, std::wstring> *, const int, const wxString &);
+typedef int (*NEWEDITVALDATION)(wxWindow *, bool isNew, const wxString &, Database *, std::tuple<int, std::wstring, std::wstring, std::wstring> *, const int, const wxString &);
 
-FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationProperties &validations, Database *db, const wxString &fieldType) : PropertyPageBase( parent )
+FieldValidation::FieldValidation(wxWindow* parent, bool isDialog, Database *db, const wxString &fieldType, std::vector<std::wstring> &errorMsg) : PropertyPageBase( parent )
 {
+    int type;
     m_fieldType = fieldType;
     m_db = db;
-    m_validations = validations;
+    if( !db->GetValidatorStyle( m_validations, errorMsg ) )
+        m_initialized = true;
     // begin wxGlade: FieldValidation::FieldValidation
     auto sizer_1 = new wxBoxSizer( wxHORIZONTAL );
     sizer_1->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -42,12 +46,27 @@ FieldValidation::FieldValidation(wxWindow* parent, const FieldTableValidationPro
     grid_sizer_1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
     grid_sizer_1->Add( 5, 5, 0, 0, 0 );
     m_rules = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxLB_SINGLE );
-    for( auto &vals : validations.m_validators )
+    if( fieldType == L"date" )
+        m_type = 82;
+    if( fieldType == L"datetime" ||
+        fieldType == L"datetime2" ||
+        fieldType == L"smalldatetime" ||
+        fieldType == L"timestamp" )
+        m_type = 84;
+    if( fieldType == L"real" ||
+        fieldType == L"float" ||
+        fieldType == L"numeric" )
+        m_type = 81;
+    if( fieldType == L"money" )
+        m_type = 81;
+    else
+        m_type = 80;
+    for( auto &vals : m_validations )
     {
-        for( auto &name : vals.second )
+        if( ( !isDialog && std::get<0>( *vals.get() ) == type ) || isDialog )
         {
-            auto item = m_rules->Append( std::get<0>( *name.get() ) );
-            m_rules->SetClientData( item, name.get() );
+            auto item = m_rules->Append( std::get<1>( *vals.get() ) );
+            m_rules->SetClientData( item, vals.get() );
         }
     }
     grid_sizer_1->Add( m_rules, 0, 0, 0 );
@@ -88,24 +107,24 @@ void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
 
 void FieldValidation::OnButtonPress(wxCommandEvent &event)
 {
-    int type = m_validations.m_validators.begin()->first;
+    m_rules->GetSelection();
     wxDynamicLibrary lib;
     wxString libName;
     bool isNew;
-    std::tuple<std::wstring, std::wstring, std::wstring> *rule;
-    std::tuple<std::wstring, std::wstring, std::wstring> temp;
+    std::tuple<int, std::wstring, std::wstring, std::wstring> *rule;
+    std::tuple<int, std::wstring, std::wstring, std::wstring> temp;
     if( event.GetEventObject() == m_new )
     {
-        temp = std::make_tuple( L"", L"", L"" );
+        temp = std::make_tuple( 0, L"", L"", L"" );
         rule = &temp;
         isNew = true;
     }
     else
     {
-        rule = reinterpret_cast<std::tuple<std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientData( m_rules->GetSelection() ) );
+        rule = reinterpret_cast<std::tuple<int, std::wstring, std::wstring, std::wstring> *>( m_rules->GetClientData( m_rules->GetSelection() ) );
         isNew = false;
     }
-    wxString name( m_validations.m_fieldName );
+//    wxString name( m_validations.m_fieldName );
     wxFileName fn( wxStandardPaths::Get().GetSharedLibrariesDir() + wxFILE_SEP_PATH );
 #ifdef __WXMSW__
     libName = fn.GetPathWithSep() + "dialogs";
@@ -117,20 +136,17 @@ void FieldValidation::OnButtonPress(wxCommandEvent &event)
     if( lib.Load( libName ) )
     {
         NEWEDITVALDATION func = (NEWEDITVALDATION) lib.GetSymbol( "NewEditValidation" );
-        int res = func( nullptr, isNew, m_fieldType, m_db, rule, type, name );
+        int res = func( nullptr, isNew, m_fieldType, m_db, rule, m_type, /*name*/"" );
         if( res == wxID_OK )
         {
             if( isNew )
             {
-                m_validations.m_validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( std::get<0>( *rule ), std::get<1>( *rule ), std::get<2>( *rule ) ) ) );
+                m_validations.emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( m_type, std::get<1>( *rule ), std::get<2>( *rule ), std::get<3>( *rule ) ) ) );
                 m_rules->Clear();
-                for( auto &vals : m_validations.m_validators )
+                for( auto &vals : m_validations )
                 {
-                    for( auto &rulename : vals.second )
-                    {
-                        auto item = m_rules->Append( std::get<0>( *rulename.get() ) );
-                        m_rules->SetClientData( item, rulename.get() );
-                    }
+                    auto item = m_rules->Append( std::get<1>( *vals.get() ) );
+                    m_rules->SetClientData( item, vals.get() );
                 }
             }
             else

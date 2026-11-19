@@ -8096,7 +8096,7 @@ int SQLAnyDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::share
     return result;
 }
 
-int SQLAnyDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+int SQLAnyDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     return result;

@@ -33,6 +33,7 @@ public:
 private:
     bool m_initialized = false;
     FieldStyles *m_styles = nullptr;
+    FieldValidation *m_validation = nullptr;
 protected:
     // begin wxGlade: DBFieldMant::attributes
     wxBoxSizer* sizer_3;

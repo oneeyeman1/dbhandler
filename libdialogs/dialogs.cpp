@@ -520,7 +520,7 @@ extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
     return 0;
 }
 
-extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name)
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name)
 {
     int result = 0;
 #ifdef __WXMSW__
@@ -531,9 +531,9 @@ extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wx
     auto res = dlg.ShowModal();
     if( res == wxID_OK )
     {
-        std::get<0>( *rule ) = dlg.GetNameCtrl()->GetValue().ToStdWstring();
-        std::get<1>( *rule ) = dlg.GetRuleCtrl()->GetValue().ToStdWstring();
-        std::get<2>( *rule ) = dlg.GetErrorCtrl()->GetValue().ToStdWstring();
+        std::get<1>( *rule ) = dlg.GetNameCtrl()->GetValue().ToStdWstring();
+        std::get<2>( *rule ) = dlg.GetRuleCtrl()->GetValue().ToStdWstring();
+        std::get<3>( *rule ) = dlg.GetErrorCtrl()->GetValue().ToStdWstring();
         result = res;
     }
     return result;

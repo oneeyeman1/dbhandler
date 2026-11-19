@@ -159,10 +159,13 @@ PropertiesDialog::PropertiesDialog(wxWindow* parent, wxWindowID id, const wxStri
             m_properties->AddPage( m_page7, _( "Headers" ) );
             m_page8 = new DatabaseFieldDisplay( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_display, handler->GetFieldType(), db );
             m_properties->AddPage( m_page8, _( "Display" ) );
-            m_page18 = new FieldValidation( m_properties, ( handler )->GetProperties().As<FieldProperties>().m_validations, db, type );
-            m_properties->AddPage( m_page18, _( "Validation" ) );
+            m_page18 = new FieldValidation( m_properties, false, db, type, errors );
             m_page17 = new FieldStyles( m_properties, false, db, errors );
-            m_properties->AddPage( m_page17, _( "Edit Style" ) );
+            if( m_page18->IsInitialized() && m_page17->IsInitialized() )
+            {
+                m_properties->AddPage( m_page18, _( "Validation" ) );
+                m_properties->AddPage( m_page17, _( "Edit Style" ) );
+            }
         }
         break;
         case DividerPropertiesType:

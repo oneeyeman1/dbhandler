@@ -19,7 +19,7 @@
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
@@ -28,9 +28,9 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     wxString ruleName, ruleRule, ruleMessage;
     if( !isNew )
     {
-        ruleName    = std::get<0>( *rule );
-        ruleRule    = std::get<1>( *rule );
-        ruleMessage = std::get<2>( *rule );
+        ruleName    = std::get<1>( *rule );
+        ruleRule    = std::get<2>( *rule );
+        ruleMessage = std::get<3>( *rule );
     }
     else
     {

@@ -49,7 +49,7 @@ using CharSet = std::tuple<std::wstring, std::wstring, std::wstring>;
 
 using SQLServerCharSet = std::tuple<std::wstring, std::wstring>;
 
-using ValidatorSet = std::tuple<std::wstring, std::wstring, std::wstring>;
+using ValidatorSet = std::tuple<int, std::wstring, std::wstring, std::wstring>;
 
 using EditStyleSet = std::tuple<int, int, std::wstring, int, std::wstring>;
 
@@ -801,7 +801,7 @@ public:
     virtual int EditPrimaryKey(const std::wstring &catalogNamme, const std::wstring &schemaName, const std::wstring &tableName, const std::vector<std::wstring> &newKey, std::shared_ptr<PKOptions> &opts, bool isLog, std::wstring &command, std::vector<std::wstring> &errorMsg) = 0;
     virtual int GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errors) = 0;
     virtual int GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &styles, std::vector<std::wstring> &errorMsg) = 0;
-    virtual int GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg) = 0;
+    virtual int GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg) = 0;
 };
 
 #endif

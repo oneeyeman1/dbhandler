@@ -3315,7 +3315,7 @@ int SQLiteDatabase::GetFieldStyles(std::map<std::wstring, std::vector<std::share
     return result;
 }
 
-int SQLiteDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<ValidatorSet> > > &validators, std::vector<std::wstring> &errorMsg)
+int SQLiteDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
     std::wstring query = L"SELECT abv_type, abv_name, abv_vald, abv_msg FROM abcatvld";
@@ -3336,7 +3336,7 @@ int SQLiteDatabase::GetValidatorStyle(std::map<int, std::vector<std::shared_ptr<
                 const char *name = (const char *) sqlite3_column_text( m_stmt, 1 );
                 const char *condition = (const char *) sqlite3_column_text( m_stmt, 2 );
                 const char *error = (const char *) sqlite3_column_text( m_stmt, 3 );
-                validators[type].emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
+                validators.emplace_back( std::make_shared<ValidatorSet>( std::make_tuple( type, sqlite_pimpl->m_myconv.from_bytes( name ), sqlite_pimpl->m_myconv.from_bytes( condition ), sqlite_pimpl->m_myconv.from_bytes( error ) ) ) );
             }
             else if( res == SQLITE_DONE )
                 break;
