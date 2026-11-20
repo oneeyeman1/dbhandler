@@ -41,13 +41,13 @@ protected:
     wxListBox *m_formats;
     wxButton *m_edit;
     wxButton *m_new;
-    wxComboBox *m_justify, *m_case;
+    wxComboBox *m_justify, *m_case = nullptr;
     wxTextCtrl *m_displayHeight;
     wxTextCtrl *m_displayWidth;
     // end wxGlade
     void OnPageModified(wxCommandEvent &event);
     wxStaticText *m_label1, *m_label2, *m_label3, *m_label4, *m_label5, *m_label6, *m_label7;
-    wxCheckBox *m_picture;
+    wxCheckBox *m_picture = nullptr;
 }; // wxGlade: end class
 
 
