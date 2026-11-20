@@ -43,7 +43,10 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     case EDITSTYLES:
         m_styles = new FieldStyles( this, true, db, errorMsg );
         if( m_styles->IsInitialized() )
+        {
             sizer_3->Add( m_styles );
+            m_initialized = true;
+        }
         break;
     case FIELDDSPLAY:
 //        sizer_3->Add( new DatabaseFieldDisplay( this, ) );
@@ -51,7 +54,10 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     case VALIDRULES:
         m_validation = new FieldValidation( this, true, db, "", errorMsg );
         if( m_validation->IsInitialized() )
+        {
             sizer_3->Add( m_validation );
+            m_initialized = true;
+        }
         break;
     }
     sizer_2->Add( sizer_3, 0, wxEXPAND, 0 );
