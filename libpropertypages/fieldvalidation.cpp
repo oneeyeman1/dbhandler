@@ -63,7 +63,7 @@ FieldValidation::FieldValidation(wxWindow* parent, bool isDialog, Database *db, 
         m_type = 80;
     for( auto &vals : m_validations )
     {
-        if( ( !isDialog && std::get<0>( *vals.get() ) == type ) || isDialog )
+        if( ( !isDialog && std::get<0>( *vals.get() ) == m_type ) || isDialog )
         {
             auto item = m_rules->Append( std::get<1>( *vals.get() ) );
             m_rules->SetClientData( item, vals.get() );
@@ -89,6 +89,13 @@ FieldValidation::FieldValidation(wxWindow* parent, bool isDialog, Database *db, 
     SetSizer( sizer_1 );
     sizer_1->Fit( this );
     // end wxGlade
+    if( isDialog )
+    {
+        m_initValue->Hide();
+        m_edit->Hide();
+        m_new->Hide();
+        m_label2->Hide();
+    }
     m_rules->SetSelection( wxNOT_FOUND );
     m_edit->Bind( wxEVT_UPDATE_UI, &FieldValidation::OnEditUpdateUI, this );
     m_edit->Bind( wxEVT_BUTTON, &FieldValidation::OnButtonPress, this );
