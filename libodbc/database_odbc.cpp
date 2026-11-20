@@ -10651,7 +10651,7 @@ int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > 
 {
     int result = 0, type = 0;
     SQLLEN cbType = 0, cbValidatorName = SQL_NTS, cbValidatorCondition = SQL_NTS, cbError = SQL_NTS;
-    SQLWCHAR validatorName[30], validatorCondition[254], error[254];
+    SQLWCHAR validatorName[32], validatorCondition[254], error[254];
     std::wstring query = L"SELECT abv_type, abv_name, abv_vald, abv_msg FROM abcatvld";
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2] );
     memset( qry.get(), '\0', query.length() + 2 );
@@ -10700,7 +10700,7 @@ int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > 
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 2, SQL_C_WCHAR, &validatorCondition, sizeof( validatorCondition ), &cbValidatorCondition );
+        ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, &validatorCondition, sizeof( validatorCondition ), &cbValidatorCondition );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
@@ -10709,7 +10709,7 @@ int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > 
     }
     if( !result )
     {
-        ret = SQLBindCol( m_hstmt, 3, SQL_C_WCHAR, &error, 254, &cbError );
+        ret = SQLBindCol( m_hstmt, 4, SQL_C_WCHAR, &error, 254, &cbError );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
