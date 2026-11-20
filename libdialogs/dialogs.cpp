@@ -582,7 +582,10 @@ extern "C" WXEXPORT int DBFieldMaintFunc(wxWindow *parent, const wxString &title
 #endif
     DBFieldMant dlg( parent, wxID_ANY, title, type, db, errorMsg );
     if( dlg.IsInitialized() )
+    {
+        dlg.Center();
         dlg.ShowModal();
+    }
     else
     {
         for( auto error : errorMsg )
