@@ -188,7 +188,7 @@ void SelectTables::FillTableList(bool sysTableIncluded)
                         insert = true;
                     }
                     if( size > 1 )
-                        tableName = catalogName + "." + schemaName + "." + tableName;
+                        tableName = catalogName + L"." + schemaName + L"." + tableName;
                 }
                 else if( ( type == L"ODBC" && subType == L"MySQL" ) || type == L"MySQL" )
                 {
