@@ -287,9 +287,11 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     Layout();
     Centre();
     // end wxGlade
+    m_panes->SetSelection( 0 );
+    m_dbName->SetFocus();
 }
 
-void SQLServerNewDB::OnPane(wxCommandEvent &event)  // wxGlade: SQLServerNewDB.<event_handler>
+void SQLServerNewDB::OnPane(wxCommandEvent &WXUNUSED(event))  // wxGlade: SQLServerNewDB.<event_handler>
 {
     switch( m_panes->GetSelection() )
     {
@@ -297,6 +299,7 @@ void SQLServerNewDB::OnPane(wxCommandEvent &event)  // wxGlade: SQLServerNewDB.<
         m_mainPanel1->Show();
         m_mainPanel2->Hide();
         m_mainPanel3->Hide();
+        m_dbName->SetFocus();
         break;
     case 1:
         m_mainPanel1->Hide();
@@ -309,9 +312,7 @@ void SQLServerNewDB::OnPane(wxCommandEvent &event)  // wxGlade: SQLServerNewDB.<
         m_mainPanel3->Show();
         break;
     }
-    event.Skip();
-    // notify the user that he hasn't implemented the event handler yet
-    wxLogDebug(wxT("Event handler (SQLServerNewDB::OnPane) not implemented yet"));
+    Layout();
 }
 
 
