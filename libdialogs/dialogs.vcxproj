@@ -533,6 +533,7 @@
     <ClCompile Include="saveview.cpp" />
     <ClCompile Include="selecttables.cpp" />
     <ClCompile Include="sqlserveraddfilespec.cpp" />
+    <ClCompile Include="sqlservercreatedatabase.cpp" />
     <ClCompile Include="toolbarsetup.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -568,6 +569,7 @@
     <ClInclude Include="saveview.h" />
     <ClInclude Include="selecttables.h" />
     <ClInclude Include="sqlserveraddfilespec.h" />
+    <ClInclude Include="sqlservercreatedatabase.h" />
     <ClInclude Include="toolbarsetup.h" />
   </ItemGroup>
   <ItemGroup>
