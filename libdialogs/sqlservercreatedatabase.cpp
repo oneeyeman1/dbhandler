@@ -126,6 +126,9 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
             animation.Add( anim );
     }
 #endif
+    m_progress->SetAnimation( animation );
+    sizer_10->Add( m_progress, 0, wxEXPAND, 0 );
+    sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label6 = new wxStaticText( m_panel2, wxID_ANY, _( "Ready" ) );
     sizer_10->Add( m_label6, 0, 0, 0 );
     sizer_5->Add( 10, 10, 0, wxEXPAND, 0 );
