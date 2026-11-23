@@ -10747,3 +10747,69 @@ int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > 
     }
     return result;
 }
+
+int ODBCDatabase::SQLServerGetDefaultDataPath(std::wstring &defPath, std::vector<std::wstring> &errorMsg)
+{
+    int result = 0;
+    SQLWCHAR path[254];
+    SQLLEN cbPath = SQL_NTS;
+    std::wstring query = L"SELECT SERVERPROPERTY('InstanceDefaultDataPath')";
+    std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2]  );
+    memset( qry.get(), '\0', query.length() + 2 );
+    uc_to_str_cpy( qry.get(), query );
+    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &path, 254, &cbPath );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+    }
+    if( !result )
+    {
+        ret = SQLFetch( m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        else
+            str_to_uc_cpy( defPath, path );
+    }
+    if( !result )
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+    else
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, STMT_ERROR );
+        result = 1;
+    }
+    if( !result )
+    {
+        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, STMT_ERROR );
+            result = 1;
+        }
+        m_hstmt = 0;
+    }
+    return result;
+}
