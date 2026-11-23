@@ -12,11 +12,15 @@
 #include <wx/wx.h>
 #include <wx/image.h>
 
-#include <wx/grid.h>
-#include <wx/hyperlink.h>
-#include <wx/listctrl.h>
-#include <wx/propgrid/manager.h>
-#include <wx/statline.h>
+#include "wx/grid.h"
+#include "wx/dynlib.h"
+#include "wx/hyperlink.h"
+#include "wx/listctrl.h"
+#include "wx/propgrid/manager.h"
+#include "wx/statline.h"
+#include "wx/mstream.h"
+#include "wx/animate.h"
+#include "wx/utils.h"
 #include "sqlservercreatedatabase.h"
 
 // begin wxGlade: ::extracode
@@ -24,8 +28,8 @@
 
 
 
-SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style):
-    wxDialog(parent, id, title, pos, size, wxDEFAULT_DIALOG_STYLE)
+SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title):
+    wxDialog(parent, id, title)
 {
     // begin wxGlade: SQLServerNewDB::SQLServerNewDB
     SetTitle( _( "New Database" ) );
@@ -90,6 +94,38 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     auto sizer_10 = new wxBoxSizer( wxHORIZONTAL );
     sizer_10->Add( 0, 0, 0, 0, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
+    m_progress = new wxAnimationCtrl( m_panel2, wxID_ANY );
+    wxAnimationBundle animation;
+#ifdef __WXMSW__
+    HANDLE gs_wxMainThread = NULL;
+    const HINSTANCE inst = wxDynamicLibrary::MSWGetModuleHandle( "dialogs", &gs_wxMainThread );
+    const void *data = nullptr, *data1 = nullptr;
+    size_t size1 = 0, size2 = 0;
+    if( !wxLoadUserResource( &data, &size1, "progress", RT_RCDATA, inst ) )
+    {
+        wxMessageBox( _( "Failed to load animation" ) );
+        return;
+    }
+    else
+    {
+        wxMemoryInputStream stream( data, size1 );
+        wxAnimation anim;
+        if( anim.Load( stream, wxANIMATION_TYPE_GIF ) )
+            animation.Add( anim );
+    }
+    if( !wxLoadUserResource( &data1, &size2, "progress2", RT_RCDATA, inst ) )
+    {
+        wxMessageBox( _( "Failed to load animation" ) );
+        return;
+    }
+    else
+    {
+        wxMemoryInputStream stream( data1, size2 );
+        wxAnimation anim;
+        if( anim.Load( stream, wxANIMATION_TYPE_GIF ) )
+            animation.Add( anim );
+    }
+#endif
     m_label6 = new wxStaticText( m_panel2, wxID_ANY, _( "Ready" ) );
     sizer_10->Add( m_label6, 0, 0, 0 );
     sizer_5->Add( 10, 10, 0, wxEXPAND, 0 );
@@ -107,7 +143,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     m_label7 = new wxStaticText( m_mainPanel1, wxID_ANY, _( "Database name:" ) );
     grid_sizer_2->Add( m_label7, 0, 0, 0 );
     m_dbName = new wxTextCtrl( m_mainPanel1, wxID_ANY, wxEmptyString );
-    grid_sizer_2->Add( m_dbName, 0, 0, 0 );
+    grid_sizer_2->Add( m_dbName, 0, wxEXPAND, 0 );
     wxStaticText* m_label8 = new wxStaticText( m_mainPanel1, wxID_ANY, _( "Owner:" ) );
     grid_sizer_2->Add( m_label8, 0, 0, 0 );
     auto sizer_20 = new wxBoxSizer( wxHORIZONTAL );

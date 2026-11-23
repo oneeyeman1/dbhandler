@@ -23,7 +23,7 @@ public:
     // begin wxGlade: SQLServerNewDB::ids
     // end wxGlade
 
-    SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos=wxDefaultPosition, const wxSize& size=wxDefaultSize, long style=wxDEFAULT_DIALOG_STYLE);
+    SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title);
 
 private:
 
@@ -41,6 +41,7 @@ protected:
     wxHyperlinkCtrl* m_hyperlink;
     wxStaticText* m_label5;
     wxPanel* m_panel2;
+    wxAnimationCtrl *m_progress;
     wxStaticText* m_label6;
     wxPanel* m_mainPanel1;
     wxStaticText* m_label7;
