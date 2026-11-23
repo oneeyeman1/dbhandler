@@ -657,8 +657,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     SQLUSMALLINT options;
     SQLWCHAR *user = nullptr, *password = nullptr;
     SQLWCHAR driverName[1024];
-    SQLWCHAR dbName[1024];
-    SQLWCHAR userName[1024];
+    SQLWCHAR dbName[1024], userName[1024], serverName[1024];
     std::wstring connectingDSN, connectingUser = L"", connectingPassword = L"";
     pimpl.m_type = L"ODBC";
     pimpl.m_pgLogFile = L"";
@@ -814,10 +813,7 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     {
         str_to_uc_cpy( odbc_pimpl->m_driverName, driverName );
         bufferSize = 1024;
-        if( pimpl.m_subtype != L"Oracle" )
-            ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
-        else
-            ret = SQLGetInfo( m_hdbc, SQL_SERVER_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+        ret = SQLGetInfo( m_hdbc, SQL_DATABASE_NAME, dbName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, CONN_ERROR );
@@ -831,6 +827,21 @@ int ODBCDatabase::Connect(const std::wstring &selectedDSN, std::vector<std::wstr
     if( !result )
     {
         str_to_uc_cpy( pimpl.m_dbName, dbName );
+        bufferSize = 1024;
+        ret = SQLGetInfo( m_hdbc, SQL_SERVER_NAME, serverName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
+        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        {
+            GetErrorMessage( errorMsg, CONN_ERROR );
+            result = 1;
+            SQLFreeHandle( SQL_HANDLE_DBC, m_hdbc );
+            m_hdbc = 0;
+            SQLFreeHandle( SQL_HANDLE_ENV, m_env );
+            m_env = 0;
+        }
+    }
+    if( !result )
+    {
+        str_to_uc_cpy( pimpl.m_serverName, serverName );
         bufferSize = 1024;
         ret = SQLGetInfo( m_hdbc, SQL_USER_NAME, userName, (SQLSMALLINT) bufferSize, (SQLSMALLINT *) &bufferSize );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )

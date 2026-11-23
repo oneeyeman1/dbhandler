@@ -729,7 +729,7 @@ struct /*Database::*/Impl
     std::map<std::wstring, std::vector<TableDefinition> > m_tableDefinitions;
     std::vector<std::wstring> m_tableNames;
     std::wstring m_dbName, m_type, m_subtype, m_connectString, m_connectedUser;
-    std::wstring m_serverVersion;
+    std::wstring m_serverVersion, m_serverName;
     std::wstring m_pgLogFile, m_pgLogDir;
     unsigned long m_versionMajor, m_versionMinor, m_versionRevision;
     unsigned long m_clientVersionMajor, m_clientVersionMinor, m_clientVersionRevision;
