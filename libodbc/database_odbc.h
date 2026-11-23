@@ -71,6 +71,7 @@ public:
     int ConnectionTest(const std::wstring &dsn, const std::wstring &uid, const std::wstring &password, std::vector<std::wstring> &errorMsg);
     virtual int GetFieldStyles(std::map<std::wstring, std::vector<std::shared_ptr<EditStyleSet> > > &m_styles, std::vector<std::wstring> &errors) override;
     virtual int GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > &validators, std::vector<std::wstring> &errorMsg) override;
+    int SQLServerGetDefaultDataPath(std::wstring &defPath, std::vector<std::wstring> &errorMsg);
 protected:
     struct ODBCImpl;
     ODBCImpl *odbc_pimpl;
