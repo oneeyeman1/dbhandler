@@ -24,7 +24,7 @@ public:
     // begin wxGlade: NewEditValidator::ids
     // end wxGlade
 
-    NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name);
+    NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name, bool isDialog);
     wxTextCtrl *GetNameCtrl() const { return m_name; }
     wxTextCtrl *GetRuleCtrl() const { return m_definition; }
     wxTextCtrl *GetErrorCtrl() const { return m_errorMsg; }
@@ -41,7 +41,7 @@ protected:
     wxStaticText* m_label;
     wxTextCtrl* m_name;
     wxStaticText* m_label2;
-    wxComboBox* m_type;
+    TypeComboBox* m_type;
     wxStaticText* m_label3;
     wxTextCtrl* m_definition;
     wxButton* m_ok;

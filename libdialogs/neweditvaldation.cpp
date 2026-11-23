@@ -13,13 +13,14 @@
 #include <algorithm>
 #include <memory>
 #include "database.h"
+#include "typecombobox.h"
 #include "functionlistbox.h"
 #include "neweditvaldation.h"
 
 // begin wxGlade: ::extracode
 // end wxGlade
 
-NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name):
+NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, int intType, const wxString &name, bool isDialog):
     wxDialog(parent, id, "" )
 {
     m_isNew = isNew;
@@ -65,8 +66,8 @@ NewEditValidator::NewEditValidator(wxWindow* parent, wxWindowID id, bool isNew, 
     grid_sizer_1->Add( m_name, 1, wxALIGN_CENTER_VERTICAL, 0 );
     m_label2 = new wxStaticText( m_panel, wxID_ANY, _( "Type" ) );
     grid_sizer_1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
-    m_type = new wxComboBox( m_panel, wxID_ANY, type, wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_DROPDOWN );
-    m_type->Enable( 0 );
+    m_type = new TypeComboBox( m_panel, db->GetTableVector().m_type, db->GetTableVector().m_subtype, type.ToStdWstring() );
+    m_type->Enable( false );
     grid_sizer_1->Add( m_type, 0, wxALIGN_CENTER_VERTICAL, 0 );
     sizer_7->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_8 = new wxBoxSizer( wxVERTICAL );
