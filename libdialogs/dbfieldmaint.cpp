@@ -87,5 +87,45 @@ DBFieldMant::DBFieldMant(wxWindow* parent, wxWindowID id, const wxString& title,
     sizer_1->Fit( this );
     Layout();
     // end wxGlade
+    m_edit->Bind( wxEVT_UPDATE_UI, &DBFieldMant::OnEditUpdateUI, this );
+    m_edit->Bind( wxEVT_BUTTON, &DBFieldMant::OnEdit, this );
+    m_delete->Bind( wxEVT_UPDATE_UI, &DBFieldMant::OnDeleteUpdateUI, this );
+    m_delete->Bind( wxEVT_BUTTON, &DBFieldMant::OnDelete, this );
 }
 
+void DBFieldMant::OnEditUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_validation )
+    {
+        if( m_validation->GetValidationCtrl()->GetSelection() != wxNOT_FOUND )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
+}
+
+void DBFieldMant::OnEdit(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_validation )
+    {
+        m_validation->NewEditValidationn( false, true );
+    }
+}
+
+void DBFieldMant::OnDeleteUpdateUI(wxUpdateUIEvent &event)
+{
+    if( m_validation )
+    {
+        if( m_validation->GetValidationCtrl()->GetSelection() != wxNOT_FOUND )
+            event.Enable( true );
+        else
+            event.Enable( false );
+    }
+}
+
+void DBFieldMant::OnDelete(wxCommandEvent &WXUNUSED(event))
+{
+    if( m_validation )
+    {
+    }
+}

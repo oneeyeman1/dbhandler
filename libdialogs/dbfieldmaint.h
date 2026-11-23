@@ -43,6 +43,10 @@ protected:
     wxButton* m_new;
     wxButton* m_delete;
     // end wxGlade
+    void OnEditUpdateUI(wxUpdateUIEvent &event);
+    void OnEdit(wxCommandEvent &event);
+    void OnDeleteUpdateUI(wxUpdateUIEvent &event);
+    void OnDelete(wxCommandEvent &event);
 }; // wxGlade: end class
 
 
