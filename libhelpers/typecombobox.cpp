@@ -59,6 +59,7 @@ TypeComboBox::TypeComboBox(wxWindow *parent, const std::wstring &type, const std
         Append( "hierarchyid" );
         Append( "image" );
         Append( "int" );
+        Append( "int identity" );
         Append( "money" );
         Append( "nchar" );
         Append( "ntextr" );
