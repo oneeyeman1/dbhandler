@@ -19,6 +19,7 @@
 #include <list>
 #include <memory>
 #include "wx/wizard.h"
+#include "wx/animate.h"
 #include "wx/filepicker.h"
 #include "wx/docmdi.h"
 #include "wx/dynlib.h"
@@ -30,6 +31,7 @@
 #include "wx/grid.h"
 #include "wx/propgrid/manager.h"
 #include "wx/propgrid/propgrid.h"
+#include "wx/hyperlink.h"
 #include "wx/collpane.h"
 #ifdef __WXGTK__
 #include "gtk/gtk.h"
@@ -108,6 +110,7 @@
 #include "scrolledcolumnlabel.h"
 #include "createdatabase.h"
 #include "dbfieldmaint.h"
+#include "sqlservercreatedatabase.h"
 
 extern "C" WXEXPORT void ODBCSetup(wxWindow *pParent)
 {
@@ -520,13 +523,13 @@ extern "C" WXEXPORT int NewEditStyle(wxWindow *parent, bool isNew)
     return 0;
 }
 
-extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name)
+extern "C" WXEXPORT int NewEditValidation(wxWindow *parent, bool isNew, const wxString &type, Database *db, std::tuple<int, std::wstring, std::wstring, std::wstring> *rule, const int intType, const wxString &name, bool isDialog)
 {
     int result = 0;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    NewEditValidator dlg( parent, wxID_ANY, isNew, type, db, rule, intType, name );
+    NewEditValidator dlg( parent, wxID_ANY, isNew, type, db, rule, intType, name, isDialog );
     dlg.Center();
     auto res = dlg.ShowModal();
     if( res == wxID_OK )
@@ -560,16 +563,27 @@ extern "C" WXEXPORT int GetDropIndexOption(wxWindow *parent, const std::wstring 
     return res;
 }
 
-extern  "C" WXEXPORT int CreateDB(wxWindow *parent, const std::wstring &type, const std::wstring &subtype, int versionMajor, int versionMinor, std::unique_ptr<CreateDBOptions> &options)
+extern  "C" WXEXPORT int CreateDB(wxWindow *parent, Database *db, int versionMajor, int versionMinor, std::unique_ptr<CreateDBOptions> &options)
 {
     int res;
 #ifdef __WXMSW__
     wxTheApp->SetTopWindow( parent );
 #endif
-    CreateDatabase dlg( parent, type, subtype, versionMajor, versionMinor, options );
-    if( ( res = dlg.ShowModal() ) == wxID_OK )
+    if( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) || db->GetTableVector().m_type == L"Microsoft SQL Server" )
     {
-        options = std::move( dlg.GetOptions() );
+        SQLServerNewDB dlg( parent, wxID_ANY, "", db );
+        if( ( res = dlg.ShowModal() ) == wxID_OK )
+        {
+//            options = std::move( dlg.GetOptions() );
+        }
+    }
+    else
+    {
+        CreateDatabase dlg( parent, db->GetTableVector().m_type, db->GetTableVector().m_subtype, versionMajor, versionMinor, options );
+        if( ( res = dlg.ShowModal() ) == wxID_OK )
+        {
+            options = std::move( dlg.GetOptions() );
+        }
     }
     return res;
 }

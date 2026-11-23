@@ -21,6 +21,7 @@
 #include "wx/mstream.h"
 #include "wx/animate.h"
 #include "wx/utils.h"
+#include "database.h"
 #include "sqlservercreatedatabase.h"
 
 // begin wxGlade: ::extracode
@@ -28,7 +29,7 @@
 
 
 
-SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title):
+SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db):
     wxDialog(parent, id, title)
 {
     // begin wxGlade: SQLServerNewDB::SQLServerNewDB
@@ -73,7 +74,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     sizer_8->Add( sizer_9, 1, wxEXPAND, 0 );
     m_label3 = new wxStaticText( m_panel1, wxID_ANY, _( "Server" ) );
     sizer_9->Add( m_label3, 0, wxEXPAND, 0 );
-    m_server = new wxStaticText( m_panel1, wxID_ANY, wxEmptyString );
+    m_server = new wxStaticText( m_panel1, wxID_ANY, db->GetTableVector().m_serverName );
     sizer_9->Add( m_server, 0, wxEXPAND, 0 );
     sizer_9->Add( 5, 5, 0, wxEXPAND, 0 );
     m_label4 = new wxStaticText( m_panel1, wxID_ANY, _( "Connection" ) );

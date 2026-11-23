@@ -23,7 +23,7 @@ public:
     // begin wxGlade: SQLServerNewDB::ids
     // end wxGlade
 
-    SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title);
+    SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db);
 
 private:
 

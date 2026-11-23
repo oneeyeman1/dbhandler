@@ -148,7 +148,7 @@ typedef int (*GETDATASOURCE)(wxWindow *parent, wxString &sorce, const std::vecto
 typedef int (*CREATEVIEWOPTIONS)(wxWindow *, const Database *, NewViewOptions &);
 typedef int (*SAVENEWVIEW)(wxWindow *, wxString &);
 typedef int (*CREATETABLESPACE)(wxWindow *);
-typedef int (*CREATEDATABASE)(wxWindow *, const std::wstring &, const std::wstring &, int, int, std::unique_ptr<CreateDBOptions> &);
+typedef int (*CREATEDATABASE)(wxWindow *, Database *, int, int, std::unique_ptr<CreateDBOptions> &);
 typedef int (*DBFIELDPROPMAINT)(wxWindow *, const wxString &, int, Database *, std::vector<std::wstring> &);
 #if _MSC_VER >= 1900 || !(defined __WXMSW__)
 std::mutex Impl::my_mutex;
@@ -3354,15 +3354,13 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     lib.Load( libName );
     if( lib.IsLoaded() )
     {
-        auto type = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseType();
-        auto subtype = GetDocument()->GetDatabase()->GetTableVector().GetDatabaseSubtype();
         auto versionMajor = GetDocument()->GetDatabase()->GetTableVector().m_versionMajor;
         auto versionMinor = GetDocument()->GetDatabase()->GetTableVector().m_versionMinor;
         res = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetCreateDBOptions( options, errors );
         if( !res )
         {
             CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
-            res = func( m_frame, type, subtype, versionMajor, versionMinor, options );
+            res = func( m_frame, GetDocument()->GetDatabase(), versionMajor, versionMinor, options );
             if( res == wxID_OK )
             {
                 wxBeginBusyCursor();
