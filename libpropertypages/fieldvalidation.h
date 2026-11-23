@@ -29,6 +29,7 @@ public:
     wxListBox *GetValidationCtrl() const { return m_rules; }
     wxComboBox *GetInitialCtrl() const { return m_initValue; }
     bool IsInitialized() const { return m_initialized; }
+    void NewEditValidationn(bool isNew, bool sDialog);
 
 private:
     Database *m_db;

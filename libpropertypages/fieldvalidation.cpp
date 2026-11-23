@@ -114,13 +114,20 @@ void FieldValidation::OnEditUpdateUI(wxUpdateUIEvent &event)
 
 void FieldValidation::OnButtonPress(wxCommandEvent &event)
 {
+    bool isNew = true;
+    if( event.GetEventObject() == m_edit )
+        isNew = false;;
+    NewEditValidationn( isNew, false );
+}
+
+void FieldValidation::NewEditValidationn(bool isNew, bool isDial)
+{
     m_rules->GetSelection();
     wxDynamicLibrary lib;
     wxString libName;
-    bool isNew;
     std::tuple<int, std::wstring, std::wstring, std::wstring> *rule;
     std::tuple<int, std::wstring, std::wstring, std::wstring> temp;
-    if( event.GetEventObject() == m_new )
+    if( isNew )
     {
         temp = std::make_tuple( 0, L"", L"", L"" );
         rule = &temp;
