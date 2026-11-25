@@ -10169,6 +10169,8 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     {
         std::unique_ptr<SQLWCHAR[]> qry;
         SQLWCHAR name[128], desc[128];
+        SQLWCHAR user[1024];
+        SQLLEN cbName = SQL_NTS;
         int lcid, langid;
         std::unique_ptr<SQLServerCreateDBOptions> opts( new SQLServerCreateDBOptions( L"", false ) );
         if( SQLServerGetDefaultDataPath( opts.get()->m_defaultDir, errorMsg ) )
@@ -10182,6 +10184,7 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
             query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
 //        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
             query3 = L"SELECT lcid, name FROM sys.syslanguages";
+            query4 = L"SELECT SUSER_SNAME();";
             dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
             qry.reset( new SQLWCHAR[query1.length() + 2] );
             memset( qry.get(), '\0', query1.length() + 2 );
@@ -10331,6 +10334,38 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
                     GetErrorMessage( errorMsg, STMT_ERROR );
                     result = 1;
                 }
+            }
+        }
+        if( !result )
+        {
+            qry.reset( new SQLWCHAR[query4.length() + 2] );
+            memset( qry.get(), '\0', query4.length() + 2 );
+            uc_to_str_cpy( qry.get(), query4 );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            ret = SQLBindCol( m_hstmt, 1, SQL_C_WCHAR, &name, 1024, &cbName );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO && ret != SQL_NO_DATA )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
+        }
+        if( !result )
+        {
+            SQLFetch( m_hstmt );
+            if( ret == SQL_SUCCESS || ret == SQL_SUCCESS_WITH_INFO )
+                str_to_uc_cpy( opts.get()->m_connectedUser, user );
+            else
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
             }
         }
     }
@@ -10770,6 +10805,7 @@ int ODBCDatabase::GetValidatorStyle(std::vector<std::shared_ptr<ValidatorSet> > 
 
 int ODBCDatabase::SQLServerGetDefaultDataPath(std::wstring &defPath, std::vector<std::wstring> &errorMsg)
 {
+    SQLRETURN ret;
     int result = 0;
     SQLWCHAR path[254];
     SQLLEN cbPath = SQL_NTS;
@@ -10777,12 +10813,6 @@ int ODBCDatabase::SQLServerGetDefaultDataPath(std::wstring &defPath, std::vector
     std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query.length() + 2]  );
     memset( qry.get(), '\0', query.length() + 2 );
     uc_to_str_cpy( qry.get(), query );
-    auto ret = SQLAllocHandle( SQL_HANDLE_STMT, m_hdbc, &m_hstmt );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
-    {
-        GetErrorMessage( errorMsg, CONN_ERROR );
-        result = 1;
-    }
     if( !result )
     {
         ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
@@ -10813,23 +10843,22 @@ int ODBCDatabase::SQLServerGetDefaultDataPath(std::wstring &defPath, std::vector
             str_to_uc_cpy( defPath, path );
     }
     if( !result )
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
-    else
-        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
-    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
     {
-        GetErrorMessage( errorMsg, STMT_ERROR );
-        result = 1;
-    }
-    if( !result )
-    {
-        ret = SQLFreeHandle( SQL_HANDLE_STMT, m_hstmt );
+        ret = SQLCloseCursor( m_hstmt );
         if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
         }
-        m_hstmt = 0;
+    }
+    if( !result )
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_COMMIT );
+    else
+        ret = SQLEndTran( SQL_HANDLE_DBC, m_hdbc, SQL_ROLLBACK );
+    if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+    {
+        GetErrorMessage( errorMsg, CONN_ERROR );
+        result = 1;
     }
     return result;
 }
