@@ -24,7 +24,7 @@ public:
     // end wxGlade
 
     SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db);
-
+    void OnCellLeftClick(wxGridEvent &event);
 private:
 
 protected:

@@ -14,6 +14,7 @@
 
 #include "wx/grid.h"
 #include "wx/dynlib.h"
+#include "wx/filepicker.h"
 #include "wx/hyperlink.h"
 #include "wx/listctrl.h"
 #include "wx/propgrid/manager.h"
@@ -22,6 +23,8 @@
 #include "wx/animate.h"
 #include "wx/utils.h"
 #include "database.h"
+
+#include "gridcellfilepickereditor.h"
 #include "sqlservercreatedatabase.h"
 
 // begin wxGlade: ::extracode
@@ -71,7 +74,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     sizer_7->Add( sizer_8, 0, wxEXPAND, 0 );
     sizer_8->Add( 5, 5, 0, wxEXPAND, 0 );
     auto sizer_9 = new wxBoxSizer( wxVERTICAL );
-    sizer_8->Add( sizer_9, 1, wxEXPAND, 0 );
+    sizer_8->Add( sizer_9, 0, wxEXPAND, 0 );
     m_label3 = new wxStaticText( m_panel1, wxID_ANY, _( "Server" ) );
     sizer_9->Add( m_label3, 0, wxEXPAND, 0 );
     wxString server( db->GetTableVector().m_serverName );
@@ -171,6 +174,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     sizer_21->Add( m_label9, 0, wxEXPAND, 0 );
     sizer_21->Add( 5, 5, 0, wxEXPAND, 0 );
     m_files = new wxGrid( m_mainPanel1, wxID_ANY );
+    m_files->Bind( wxEVT_GRID_CELL_LEFT_CLICK, &SQLServerNewDB::OnCellLeftClick, this );
     m_files->CreateGrid( 2, 7 );
     m_files->SetInitialSize( wxSize( -1, 17 * m_files->GetDefaultRowSize() ) );
     m_files->HideRowLabels();
@@ -187,7 +191,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     m_files->SetColSize( 2, -1 );
     m_files->SetColSize( 3, -1 );
     m_files->SetColSize( 4, -1 );
-    m_files->SetCellValue( 0, 1, "Rows" );
+    m_files->SetCellValue( 0, 1, "Rows Data" );
     m_files->SetReadOnly( 0, 1 );;
     m_files->SetCellValue( 0, 2, "PRIMARY" );
     m_files->SetReadOnly( 0, 2 );
@@ -195,6 +199,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     m_files->SetCellValue( 0, 3, "3" );
     m_files->SetCellValue( 0, 4, _( "By 1 MB / Unlimited" ) );
     m_files->SetReadOnly( 0, 4 );
+    m_files->SetCellEditor( 0, 5, new GridCellFilePickerEditor );
     m_files->SetCellValue( 1, 0, "_log" );
     m_files->SetCellValue( 1, 1, "Log" );
     m_files->SetReadOnly( 1, 1 );;
@@ -380,3 +385,14 @@ void SQLServerNewDB::OnPane(wxCommandEvent &WXUNUSED(event))  // wxGlade: SQLSer
 
 // wxGlade: add SQLServerNewDB event handlers
 
+void SQLServerNewDB::OnCellLeftClick(wxGridEvent &event)
+{
+    CallAfter( [this, row = event.GetRow(), col = event.GetCol() ] ()
+    {
+        if( !this->m_files->IsReadOnly( row, col ) && this->m_files->CanEnableCellControl() )
+        {
+            this->m_files->EnableCellEditControl( true );
+        }
+    } );
+    event.Skip();
+}
