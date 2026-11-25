@@ -32,7 +32,7 @@
 
 
 
-SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db):
+SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::unique_ptr<CreateDBOptions> &options):
     wxDialog(parent, id, title)
 {
     // begin wxGlade: SQLServerNewDB::SQLServerNewDB

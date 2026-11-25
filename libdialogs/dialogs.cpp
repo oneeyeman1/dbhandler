@@ -571,7 +571,7 @@ extern  "C" WXEXPORT int CreateDB(wxWindow *parent, Database *db, int versionMaj
 #endif
     if( ( db->GetTableVector().m_type == L"ODBC" && db->GetTableVector().m_subtype == L"Microsoft SQL Server" ) || db->GetTableVector().m_type == L"Microsoft SQL Server" )
     {
-        SQLServerNewDB dlg( parent, wxID_ANY, "", db );
+        SQLServerNewDB dlg( parent, wxID_ANY, "", db, options );
         if( ( res = dlg.ShowModal() ) == wxID_OK )
         {
 //            options = std::move( dlg.GetOptions() );
