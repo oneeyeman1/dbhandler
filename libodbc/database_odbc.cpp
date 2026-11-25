@@ -10167,22 +10167,31 @@ int ODBCDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, 
     }
     if( !result && pimpl.m_subtype == L"Microsoft SQL Server" )
     {
+        std::unique_ptr<SQLWCHAR[]> qry;
         SQLWCHAR name[128], desc[128];
         int lcid, langid;
         std::unique_ptr<SQLServerCreateDBOptions> opts( new SQLServerCreateDBOptions( L"", false ) );
-        query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
-        query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
-//        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
-        query3 = L"SELECT lcid, name FROM sys.syslanguages";
-        dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
-        std::unique_ptr<SQLWCHAR[]> qry( new SQLWCHAR[query1.length() + 2] );
-        memset( qry.get(), '\0', query1.length() + 2 );
-        uc_to_str_cpy( qry.get(), query1 );
-        ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
-        if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+        if( SQLServerGetDefaultDataPath( opts.get()->m_defaultDir, errorMsg ) )
         {
             GetErrorMessage( errorMsg, STMT_ERROR );
             result = 1;
+        }
+        if( !result )
+        {
+            query1 = L"SELECT name, description FROM sys.fn_helpcollations()";
+            query2 = L"SELECT lcid, name FROM sys.fulltext_languages ORDER BY lcid";
+//        query3 = L"SELECT lcid, langid, name FROM sys.syslanguages";
+            query3 = L"SELECT lcid, name FROM sys.syslanguages";
+            dynamic_cast<SQLServerCreateDBOptions *>( opts.get() )->m_collations.emplace_back( new SQLServerCharSet( std::make_tuple( L"Default", L"Default" ) ) );
+            qry.reset( new SQLWCHAR[query1.length() + 2] );
+            memset( qry.get(), '\0', query1.length() + 2 );
+            uc_to_str_cpy( qry.get(), query1 );
+            ret = SQLExecDirect( m_hstmt, qry.get(), SQL_NTS );
+            if( ret != SQL_SUCCESS && ret != SQL_SUCCESS_WITH_INFO )
+            {
+                GetErrorMessage( errorMsg, STMT_ERROR );
+                result = 1;
+            }
         }
         if( !result )
         {

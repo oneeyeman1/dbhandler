@@ -80,7 +80,7 @@ struct SQLServerCreateDBOptions : public CreateDBOptions
         std::wstring fgName, contaons;
         std::vector<FileSpec> specs;
     };
-    std::wstring m_containment, m_collation, m_fullText, m_persistentlog;
+    std::wstring m_containment, m_collation, m_fullText, m_persistentlog, m_defaultDir;
     std::vector<FileSpec> m_fileSpecs, m_logs;
     std::vector<fileGroup> m_fileGroups;
     std::vector<std::unique_ptr<SQLServerCharSet> > m_collations;
