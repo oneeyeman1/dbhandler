@@ -39,6 +39,7 @@
     <ClInclude Include="colorcombobox.h" />
     <ClInclude Include="configuration.h" />
     <ClInclude Include="functionlistbox.h" />
+    <ClInclude Include="gridcellfilepickereditor.h" />
     <ClInclude Include="guiobjectsproperties.h" />
     <ClInclude Include="maskededit.h" />
     <ClInclude Include="mycombocelleditor.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="ablbaseview.cpp" />
     <ClCompile Include="colorcombobox.cpp" />
     <ClCompile Include="functionlistbox.cpp" />
+    <ClCompile Include="gridcellfilepickereditor.cpp" />
     <ClCompile Include="maskededit.cpp" />
     <ClCompile Include="mycombocelleditor.cpp" />
     <ClCompile Include="mycombocellrenderer.cpp" />

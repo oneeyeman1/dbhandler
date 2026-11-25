@@ -48,6 +48,9 @@
     <ClInclude Include="functionlistbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gridcellfilepickereditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="typecombobox.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Fles</Filter>
     </ClCompile>
     <ClCompile Include="functionlistbox.cpp">
+      <Filter>Source Fles</Filter>
+    </ClCompile>
+    <ClCompile Include="gridcellfilepickereditor.cpp">
       <Filter>Source Fles</Filter>
     </ClCompile>
   </ItemGroup>
