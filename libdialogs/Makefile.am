@@ -68,7 +68,9 @@ libdialogs_la_SOURCES =  \
 	postgresodbcsetup.cpp \
 	postgresodbcsetup.h \
 	dbfieldmaint.cpp \
-	dbfieldmaint.h
+	dbfieldmaint.h \
+	sqlservercreatedatabase.cpp \
+	sqlservercreatedatabase.h
 
 libdialogs_la_CXXFLAGS = -DwxUSE_MASKED_EDIT \
 	-I../../dbinterface \

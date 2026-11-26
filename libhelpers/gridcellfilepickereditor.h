@@ -1,12 +1,12 @@
 #pragma once
-#include "C:\wxWidgets\include\wx\generic\grid.h"
+
 class WXEXPORT GridCellFilePickerEditor :  public wxGridCellEditor
 {
 public:
     GridCellFilePickerEditor(const wxString &message = wxFileSelectorPromptStr, const wxString &wildcards = wxFileSelectorDefaultWildcardStr, long style = wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL);
     void Create(wxWindow* parent, wxWindowID id, wxEvtHandler* evtHandler) override;
     void SetSize(const wxRect& rect) override;
-    void GridCellFilePickerEditor::BeginEdit(int row, int col, wxGrid* grid) override;
+    void BeginEdit(int row, int col, wxGrid* grid) override;
     bool EndEdit(int row, int col, const wxGrid* grid, const wxString& oldval, wxString* newval) override;
     void ApplyEdit(int row, int col, wxGrid* grid) override;
     void Reset() override;

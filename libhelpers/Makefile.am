@@ -23,7 +23,9 @@ libhelpers_a_SOURCES =  \
 	scrolledcolumnlabel.cpp \
 	scrolledcolumnlabel.h \
 	functionlistbox.cpp \
-	functionlistbox.h
+	functionlistbox.h \
+	gridcellfilepickereditor.cpp \
+	gridcellfilepickereditor.h
 
 libhelpers_a_CXXFLAGS = -DwxUSE_MASKED_EDIT -fPIC \
 	-ggdb3 @WX_CXXFLAGS@
