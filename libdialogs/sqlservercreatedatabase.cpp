@@ -27,6 +27,11 @@
 #include "gridcellfilepickereditor.h"
 #include "sqlservercreatedatabase.h"
 
+#ifdef __WXGTK__
+#include "throbber_gif.h"
+#include "throbber_2x_gif.h"
+#endif
+
 // begin wxGlade: ::extracode
 // end wxGlade
 
