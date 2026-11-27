@@ -9,8 +9,8 @@ GridCellFilePickerEditor::GridCellFilePickerEditor(const wxString &message, cons
 
 void GridCellFilePickerEditor::Create(wxWindow* parent, wxWindowID id, wxEvtHandler* evtHandler)
 {
-    wxGridCellEditor::Create( parent, id, evtHandler );
     m_control = new wxFilePickerCtrl( parent, id, wxEmptyString, m_message, m_wildcard, wxDefaultPosition, wxDefaultSize, m_style );
+    wxGridCellEditor::Create( parent, id, evtHandler );
 }
 
 void GridCellFilePickerEditor::SetSize(const wxRect &rect)
@@ -43,7 +43,7 @@ void GridCellFilePickerEditor::ApplyEdit(int row, int col, wxGrid* grid)
 
 void GridCellFilePickerEditor::Reset()
 {
-    GetPicker()->SetPath(m_startValue);
+    GetPicker()->SetPath( m_startValue );
 }
 
 wxString GridCellFilePickerEditor::GetValue() const
@@ -55,3 +55,4 @@ wxGridCellEditor *GridCellFilePickerEditor::Clone() const
 {
     return new GridCellFilePickerEditor( m_message, m_wildcard, m_style );
 }
+

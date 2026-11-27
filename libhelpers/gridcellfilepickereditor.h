@@ -21,6 +21,5 @@ private:
 
     wxString m_message, m_wildcard, m_startValue, m_value;
     long m_style;
-    wxFilePickerCtrl *m_control;
 };
 
