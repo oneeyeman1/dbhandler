@@ -2638,7 +2638,7 @@ int PostgresDatabase::EditPrimaryKey(const std::wstring &catalogName, const std:
     return result;
 }
 
-int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errors)
+int PostgresDatabase::GetCreateDBOptions(CreateDBOptions &options, std::vector<std::wstring> &errors)
 {
     int result = 0;
     std::wstring query1 = L"SELECT rolname FROM pg_roles";
@@ -2646,13 +2646,12 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     std::wstring query3 = L"SELECT pg_encoding_to_char( conforencoding ) AS name FROM pg_conversion";
     std::wstring query4 = L"SELECT collname, collencoding, collprovider collctype FROM pg_collation";
     std::wstring query5 = L"SELECT spcname FROM pg_tablespace";
-    options.reset( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( L"Default" );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( L"Default" );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( L"Default" );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
-    dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_tablespaces.push_back( L"Default" );
+    static_cast<PostgresCreateDBOptions &>( options ).m_roles.push_back( L"Default" );
+    static_cast<PostgresCreateDBOptions &>( options ).m_templates.push_back( L"Default" );
+    static_cast<PostgresCreateDBOptions &>( options ).m_encodings.push_back( L"Default" );
+    static_cast<PostgresCreateDBOptions &>( options ).m_collations.push_back( std::make_tuple( L"Default", L"Default" ) );
+    static_cast<PostgresCreateDBOptions &>( options ).m_ctypes.push_back( std::make_tuple( L"Default", L"Default" ) );
+    static_cast<PostgresCreateDBOptions &>( options ).m_tablespaces.push_back( L"Default" );
     auto res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query1.c_str() ).c_str() );
     if( PQresultStatus( res ) != PGRES_TUPLES_OK )
     {
@@ -2662,7 +2661,7 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     }
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_roles.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_roles.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
     }
     PQclear( res );
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query2.c_str() ).c_str() );
@@ -2674,7 +2673,7 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     }
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_templates.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_templates.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
     }
     PQclear( res );
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query3.c_str() ).c_str() );
@@ -2686,7 +2685,7 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     }
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_encodings.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_encodings.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
     }
     PQclear( res );
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query4.c_str() ).c_str() );
@@ -2698,8 +2697,8 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     }
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_ctypes.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_collations.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_ctypes.push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 1 ) ), m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 2 ) ) ) );
     }
     PQclear( res );
     res = PQexec( m_db, m_pimpl->m_myconv.to_bytes( query5.c_str() ).c_str() );
@@ -2711,7 +2710,7 @@ int PostgresDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &optio
     }
     for( auto i = 0; i < PQntuples( res ); ++i )
     {
-        dynamic_cast<PostgresCreateDBOptions *>( options.get() )->m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
+        static_cast<PostgresCreateDBOptions &>( options ).m_tablespaces.push_back( m_pimpl->m_myconv.from_bytes( PQgetvalue( res, i, 0 ) ) );
     }
     PQclear( res );
     return result;

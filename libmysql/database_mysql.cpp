@@ -3206,12 +3206,11 @@ int MySQLDatabase::EditPrimaryKey(const std::wstring &UNUSED(catalogNamme), cons
     return result;
 }
 
-int MySQLDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
+int MySQLDatabase::GetCreateDBOptions(CreateDBOptions &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
-    options.reset( new MySQLCreateDBOptions( L"", L"", L"", false , false ) );
-    dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
-    dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
+    static_cast<MySQLCreateDBOptions &>( options ).m_charSets.emplace_back( new CharSet( std::make_tuple( L"Default", L"Default", L"Default" ) ) );
+    static_cast<MySQLCreateDBOptions &>( options ).m_collations[L"Default"].push_back( std::make_tuple( L"Default", true, true ) );
     MYSQL_RES *res = nullptr;
     if( mysql_query( m_db, "SHOW CHARACTER SET" ) )
     {
@@ -3234,7 +3233,7 @@ int MySQLDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options,
         MYSQL_ROW row;
         while( ( row = mysql_fetch_row( res ) ) )
         {
-            dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_charSets.emplace_back( new CharSet( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) ) );
+            static_cast<MySQLCreateDBOptions &>( options ).m_charSets.emplace_back( new CharSet( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), m_pimpl->m_myconv.from_bytes( row[2] ), m_pimpl->m_myconv.from_bytes( row[1] )  ) ) );
         }
         mysql_free_result( res );
     }
@@ -3264,7 +3263,7 @@ int MySQLDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options,
                 def = false;
             if( m_pimpl->m_myconv.from_bytes( row[4] ) != L"Y" )
                 comp = false;
-            dynamic_cast<MySQLCreateDBOptions *>( options.get() )->m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
+            static_cast<MySQLCreateDBOptions &>( options ).m_collations[m_pimpl->m_myconv.from_bytes( row[1] )].push_back( std::make_tuple( m_pimpl->m_myconv.from_bytes( row[0] ), def, comp ) );
         }
         mysql_free_result( res );
     }

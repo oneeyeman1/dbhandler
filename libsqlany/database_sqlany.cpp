@@ -7551,7 +7551,7 @@ int SQLAnyDatabase::EditPrimaryKey(const std::wstring &catalogName, const std::w
     return result;
 }
 
-int SQLAnyDatabase::GetCreateDBOptions(std::unique_ptr<CreateDBOptions> &options, std::vector<std::wstring> &errorMsg)
+int SQLAnyDatabase::GetCreateDBOptions(CreateDBOptions &options, std::vector<std::wstring> &errorMsg)
 {
     int result = 0;
 /*    std::wstring query1, query2, query3, query4, query5;

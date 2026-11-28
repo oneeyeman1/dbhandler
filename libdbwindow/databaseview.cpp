@@ -3356,7 +3356,15 @@ void DrawingView::OnCreateDatabase(wxCommandEvent &WXUNUSED(event))
     {
         auto versionMajor = GetDocument()->GetDatabase()->GetTableVector().m_versionMajor;
         auto versionMinor = GetDocument()->GetDatabase()->GetTableVector().m_versionMinor;
-        res = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetCreateDBOptions( options, errors );
+        auto type = GetDocument()->GetDatabase()->GetTableVector().m_type;
+        auto subtype = GetDocument()->GetDatabase()->GetTableVector().m_subtype;
+        if( ( type == L"ODBC" && subtype == L"Microsoft SQL Server" ) || type == L"Microsoft SQL Server" )
+            options.reset( new SQLServerCreateDBOptions( L"", false ) );
+        if( ( type == L"ODBC" && subtype == L"PostgreSQL" ) || type == L"PostgreSQL" )
+            options.reset( new PostgresCreateDBOptions( L"", false, L"", L"", L"", L"", L"", L"" ) );
+        if( ( type == L"ODBC" && subtype == L"MySQL" ) || type == L"MySQL" )
+            options.reset( new MySQLCreateDBOptions( L"", L"", L"", false, false ) );
+        res = dynamic_cast<DrawingDocument *>( GetDocument() )->GetDatabase()->GetCreateDBOptions( *options, errors );
         if( !res )
         {
             CREATEDATABASE func = (CREATEDATABASE) lib.GetSymbol( "CreateDB" );
