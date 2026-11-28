@@ -106,6 +106,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     sizer_10->Add( 0, 0, 0, 0, 0 );
     sizer_10->Add( 5, 5, 0, wxEXPAND, 0 );
     m_progress = new wxAnimationCtrl( m_panel2, wxID_ANY );
+    wxAnimation anim1, anim2;
     wxAnimationBundle animation;
 #ifdef __WXMSW__
     HANDLE gs_wxMainThread = NULL;
@@ -120,9 +121,8 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     else
     {
         wxMemoryInputStream stream( data, size1 );
-        wxAnimation anim;
-        if( anim.Load( stream, wxANIMATION_TYPE_GIF ) )
-            animation.Add( anim );
+        if( anim1.Load( stream, wxANIMATION_TYPE_GIF ) )
+            animation.Add( anim1 );
     }
     if( !wxLoadUserResource( &data1, &size2, "progress2", RT_RCDATA, inst ) )
     {
@@ -132,10 +132,16 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     else
     {
         wxMemoryInputStream stream( data1, size2 );
-        wxAnimation anim;
-        if( anim.Load( stream, wxANIMATION_TYPE_GIF ) )
-            animation.Add( anim );
+        if( anim2.Load( stream, wxANIMATION_TYPE_GIF ) )
+            animation.Add( anim2 );
     }
+#elif __WXGTK__ || __WXQT__
+    wxMemoryInputStream stream1( throbber_gif, throbber_gif_len );
+    wxMemoryInputStream stream2( throbber_2x_gif, throbber_2x_gif_len );
+    if( anim1.Load( stream1, wxANIMATION_TYPE_GIF ) )
+        animation.Add( anim1 );
+    if( anim2.Load( stream2, wxANIMATION_TYPE_GIF ) )
+        animation.Add( anim2 );
 #endif
     m_progress->SetAnimation( animation );
     sizer_10->Add( m_progress, 0, wxEXPAND, 0 );
