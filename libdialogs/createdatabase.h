@@ -45,6 +45,7 @@ protected:
     void OnLog(wxCommandEvent &event);
     void OnMemoryData(wxCommandEvent &evemt);
     void OnCollapsblePaneChanged(wxCollapsiblePaneEvent &event);
+    void OnCollationUpdateUI(wxUpdateUIEvent &event);
 private:
     std::unique_ptr<CreateDBOptions> m_opts;
     wxStaticText *m_label1 = nullptr, *m_label2 = nullptr, *m_label3 = nullptr, *m_label4 = nullptr, *m_label5 = nullptr, *m_label6 = nullptr, *m_label7 = nullptr, *m_label8 = nullptr, *m_label9 = nullptr, *m_label10 = nullptr, *m_label11 = nullptr, *m_label12 = nullptr;

@@ -228,6 +228,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
     m_subtype = subtype;
     m_versionMajor = serverVersionMajor;
     m_versionMinor = serverVersionMinor;
+    m_opts = std::move( options );
     wxWindow *withPane = nullptr;
     auto main = new wxBoxSizer( wxHORIZONTAL );
     main->Add( 5, 5, 0, wxEXPAND, 0 );
@@ -396,12 +397,12 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"MySQL" || subtype == L"MySQL" )
         {
-            auto opts = dynamic_cast<MySQLCreateDBOptions *>( options.get() );
+//            auto opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() );
             paneSizer1 = new wxFlexGridSizer( 3, 2, 5, 5 );
             m_label2 = new wxStaticText( win, wxID_ANY, _( "Character Set:" ) );
             paneSizer1->Add( m_label2, 0, wxEXPAND, 0 );
             m_characterSet = new wxComboBox( win, wxID_ANY );
-            for( auto &charSet : opts->m_charSets )
+            for( auto &charSet : dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() )->m_charSets )
             {
                 int row = m_characterSet->Append( std::get<2>( *charSet ) );
                 m_characterSet->SetClientData( row, charSet.get() );
@@ -413,6 +414,8 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( m_label3, 0, wxEXPAND, 0 );
             m_collations = new wxComboBox( win, wxID_ANY );
             m_collations->Append( "Default" );
+            m_collations->Disable();
+            m_collations->Bind( wxEVT_UPDATE_UI, &CreateDatabase::OnCollationUpdateUI, this );
             m_collations->SetValue( "Default" );
             paneSizer1->Add( m_collations, 0, wxEXPAND, 0 );
             m_encrypted = new wxCheckBox( win, wxID_ANY, _( "Encrypted:" ) );
@@ -421,28 +424,28 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
         }
         if( type == L"PostgreSQL" || subtype == L"PostgreSQL" )
         {
-            auto opts = dynamic_cast<PostgresCreateDBOptions *>( options.get() );
+            auto opts = dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() );
             paneSizer1 = new wxFlexGridSizer( 9, 2, 5, 5 );
             m_label1 = new wxStaticText( win, wxID_ANY, _( "OWNER" ) );
             paneSizer1->Add( m_label1, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_owner = new wxComboBox( win, wxID_ANY );
             m_owner->SetToolTip( "The role name of the user who will own the new database, or DEFAULT to use the default (namely, the user executing the command)" );
             paneSizer1->Add( m_owner, 0, wxEXPAND, 0 );
-            for( auto user : opts->m_roles )
+            for( auto user : dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_roles )
                 m_owner->Append( user );
             m_owner->SetValue( "Default" );
             m_label2 = new wxStaticText( win, wxID_ANY, "TEMPLATE" );
             paneSizer1->Add( m_label2, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_template = new wxComboBox( win, wxID_ANY );
             m_template->SetToolTip( "The name of the template from which to create the new database, or DEFAULT to use the default template (template1)" );
-            for( auto tmplate : opts->m_templates )
+            for( auto tmplate : dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_templates )
                 m_template->Append( tmplate );
             paneSizer1->Add( m_template, 0, wxEXPAND, 0 );
             m_template->SetValue( "Default" );
             m_label3 = new wxStaticText( win, wxID_ANY, "ENCODING" );
             m_characterSet = new wxComboBox( win, wxID_ANY );
             m_characterSet->SetToolTip( "Character set encoding to use in the new database. Specify a string constant (e.g., 'SQL_ASCII'), or an integer encoding number, or DEFAULT to use the default encoding (namely, the encoding of the template database)" );
-            for( auto encoding : opts->m_encodings )
+            for( auto encoding : dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_encodings )
                 m_characterSet->Append( encoding );
             m_characterSet->SetValue( "Default" );
             paneSizer1->Add( m_label3, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -451,7 +454,7 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( m_label5, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_collations = new wxComboBox( win, wxID_ANY, "" );
             m_collations->SetToolTip( "Collation order (LC_COLLATE) to use in the new database. This affects the sort order applied to strings" );
-            for( auto collation : opts->m_collations )
+            for( auto collation : dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_collations )
                 m_collations->Append( std::get<0>( collation ) );
             m_collations->SetValue( "Default" );
             paneSizer1->Add( m_collations, 0, wxEXPAND, 0 );
@@ -459,14 +462,14 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
             paneSizer1->Add( m_label6, 0, wxALIGN_CENTER_VERTICAL, 0 );
             m_ctype = new wxComboBox( win, wxID_ANY, "" );
             m_ctype->SetToolTip( "Character classification (LC_CTYPE) to use in the new database. This affects the categorization of characters" );
-            for( auto ctype : opts->m_ctypes )
+            for( auto ctype : dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_ctypes )
                 m_ctype->Append( std::get<0>( ctype ) );
             m_ctype->SetValue( "Default" );
             paneSizer1->Add( m_ctype, 0, wxEXPAND, 0 );
             m_label4 = new wxStaticText( win, wxID_ANY, "TABLESPACE" );
             m_tablespace = new wxComboBox( win, wxID_ANY, "" );
             m_tablespace->SetToolTip( "The name of the tablespace that will be associated with the new database, or DEFAULT to use the template database's tablespace" );
-            for( auto space: opts->m_tablespaces )
+            for( auto space: dynamic_cast<PostgresCreateDBOptions *>( m_opts.get() )->m_tablespaces )
                 m_tablespace->Append( space );
             m_tablespace->SetValue( "Default" );
             paneSizer1->Add( m_label4, 0, wxALIGN_CENTER_VERTICAL, 0 );
@@ -651,11 +654,11 @@ CreateDatabase::CreateDatabase(wxWindow *parent, const std::wstring &type, const
 
 void CreateDatabase::OnCharacterSetChanged(wxCommandEvent &WXUNUSED(event))
 {
-    auto opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() );
+//    auto opts = dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() );
     CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
     wxString defValue = "";
     std::wstring charset = std::get<0>( *charSet );
-    for( auto collation : opts->m_collations[charset] )
+    for( auto collation : dynamic_cast<MySQLCreateDBOptions *>( m_opts.get() )->m_collations[charset] )
     {
         auto value = std::get<0>( collation );
         m_collations->Append( value );
@@ -675,8 +678,8 @@ void CreateDatabase::OnOKUpdateUI(wxUpdateUIEvent &event)
 
 void CreateDatabase::OnOK(wxCommandEvent &WXUNUSED(event))
 {
-//    m_opts->m_name = m_name->GetValue();
-//    m_opts->m_exist = m_exist->GetValue();
+    m_opts->m_name = m_name->GetValue();
+    m_opts->m_exist = m_exist->GetValue();
     if( m_type == L"MySQL" || m_subtype == L"MySQL" )
     {
         CharSet *charSet = static_cast<CharSet *>( m_characterSet->GetClientData( m_characterSet->GetSelection() ) );
@@ -789,3 +792,13 @@ void CreateDatabase::OnCollapsblePaneChanged(wxCollapsiblePaneEvent &WXUNUSED(ev
         m_panel3->RefreshHeader();
     }
 }
+
+void CreateDatabase::OnCollationUpdateUI(wxUpdateUIEvent &event)
+{
+    wxString value = m_characterSet->GetValue();
+    if( value == "Default" )
+        event.Enable( false );
+    else
+        event.Enable( true );
+}
+
