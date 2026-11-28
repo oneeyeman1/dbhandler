@@ -79,6 +79,7 @@ protected:
     void OnPane(wxCommandEvent &event); // wxGlade: <event_handler>
     void OnCellLeftClick(wxGridEvent &event);
     void OnEnteringDBName(wxCommandEvent &event);
+    void OnAddFiles(wxCommandEvent &event);
 }; // wxGlade: end class
 
 

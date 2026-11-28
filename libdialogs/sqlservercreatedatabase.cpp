@@ -226,6 +226,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     auto sizer_22 = new wxBoxSizer( wxHORIZONTAL );
     sizer_19->Add( sizer_22, 0, wxALIGN_RIGHT, 0 );
     m_addFile = new wxButton( m_mainPanel1, wxID_ANY, _( "Add" ) );
+    m_addFile->Bind( wxEVT_BUTTON, &SQLServerNewDB::OnAddFiles, this );
     sizer_22->Add( m_addFile, 0, wxEXPAND, 0 );
     sizer_22->Add( 5, 5, 0, wxEXPAND, 0 );
     m_removeFile = new wxButton( m_mainPanel1, wxID_ANY, _( "Remove" ) );
@@ -347,12 +348,13 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     
     auto sizer_16 = CreateStdDialogButtonSizer( wxOK | wxCANCEL | wxHELP );
     
-    sizer_16->Add(0, 0, 0, 0, 0);
-    sizer_16->Add(0, 0, 0, 0, 0);
-    sizer_16->Add(0, 0, 0, 0, 0);
-    sizer_16->Add(0, 0, 0, 0, 0);
-    sizer_16->Add(0, 0, 0, 0, 0);
+//    sizer_16->Add(0, 0, 0, 0, 0);
+//    sizer_16->Add(0, 0, 0, 0, 0);
+//    sizer_16->Add(0, 0, 0, 0, 0);
+//    sizer_16->Add(0, 0, 0, 0, 0);
+//    sizer_16->Add(0, 0, 0, 0, 0);
     sizer_3->Add(5, 5, 0, wxEXPAND, 0);
+    sizer_2->Add( sizer_16, 0, wxALIGN_RIGHT, 0 );
     sizer_2->Add(5, 5, 0, wxEXPAND, 0);
     
     m_mainPanel3->SetSizer( sizer_28 );
@@ -416,5 +418,10 @@ void SQLServerNewDB::OnEnteringDBName(wxCommandEvent &event)
     auto logValue = m_files->GetCellValue( 1, 0 );
     logValue = value + logValue;
     m_files->SetCellValue( 1, 0, logValue );
+}
+
+void  SQLServerNewDB::OnAddFiles(wxCommandEvent &event)
+{
+    m_files->AppendRows();
 }
 
