@@ -24,7 +24,6 @@ public:
     // end wxGlade
 
     SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& title, Database *db, std::unique_ptr<CreateDBOptions> &options);
-    void OnCellLeftClick(wxGridEvent &event);
 private:
 
 protected:
@@ -78,6 +77,8 @@ protected:
     // end wxGlade
 
     void OnPane(wxCommandEvent &event); // wxGlade: <event_handler>
+    void OnCellLeftClick(wxGridEvent &event);
+    void OnEnteringDBName(wxCommandEvent &event);
 }; // wxGlade: end class
 
 

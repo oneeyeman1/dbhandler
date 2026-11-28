@@ -163,6 +163,7 @@ SQLServerNewDB::SQLServerNewDB(wxWindow* parent, wxWindowID id, const wxString& 
     m_label7 = new wxStaticText( m_mainPanel1, wxID_ANY, _( "Database name:" ) );
     grid_sizer_2->Add( m_label7, 0, 0, 0 );
     m_dbName = new wxTextCtrl( m_mainPanel1, wxID_ANY, wxEmptyString );
+    m_dbName->Bind( wxEVT_TEXT, &SQLServerNewDB::OnEnteringDBName, this );
     grid_sizer_2->Add( m_dbName, 1, wxEXPAND, 0 );
     wxStaticText* m_label8 = new wxStaticText( m_mainPanel1, wxID_ANY, _( "Owner:" ) );
     grid_sizer_2->Add( m_label8, 0, 0, 0 );
@@ -407,3 +408,13 @@ void SQLServerNewDB::OnCellLeftClick(wxGridEvent &event)
     } );
     event.Skip();
 }
+
+void SQLServerNewDB::OnEnteringDBName(wxCommandEvent &event)
+{
+    auto value = m_dbName->GetValue();
+    m_files->SetCellValue( 0, 0, value );
+    auto logValue = m_files->GetCellValue( 1, 0 );
+    logValue = value + logValue;
+    m_files->SetCellValue( 1, 0, logValue );
+}
+
